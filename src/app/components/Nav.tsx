@@ -6,6 +6,7 @@ export default function Nav() {
       <li className="my-1"><Link className="hover:bg-[#3b3b3b]" href="/dashboard">Home</Link></li>
       <li className="my-1"><Link className="hover:bg-[#3b3b3b]" href="/dashboard/hardware">Hardware</Link></li>
       <li className="my-1"><Link className="hover:bg-[#3b3b3b]" href="/teams">Teams</Link></li>
+      <li className="my-1"><Link className="hover:bg-[#3b3b3b]" href="/admin">Admin</Link></li>
     </ul>
   );
 }

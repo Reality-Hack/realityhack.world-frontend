@@ -23,13 +23,13 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
       <html lang="en">
         <body className={inter.className}>
           <div className="flex flex-row">
-            <div className="min-w-[288px] h-screen p-3 bg-[#f8f7ff] fixed">
+            <div className="min-w-[288px] h-screen p-3 bg-[#f8f7ff]">
               <h2 className="text-3xl">RH2024</h2>
                 <AuthStatus />
               <hr />
                 <Nav />
             </div>
-            <div className="w-full h-full p-3 bg-[#ffffff]">{children}</div>
+            <div className="flex-1 h-full p-3 bg-[#ffffff]">{children}</div>
           </div>
         </body>
       </html>
