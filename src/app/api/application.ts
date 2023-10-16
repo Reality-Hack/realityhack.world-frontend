@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export async function getAllApplications() {
+export async function getAllHackerApplications() {
   const url = `http://64.227.22.206/applications/`;
   const resp = await fetch(url, {
     headers: {

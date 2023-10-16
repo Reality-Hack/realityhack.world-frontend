@@ -29,7 +29,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
               <hr />
                 <Nav />
             </div>
-            <div className="flex-1 h-full p-3 bg-[#ffffff]">{children}</div>
+            <div className="w-full h-full p-3 bg-[#ffffff]">{children}</div>
           </div>
         </body>
       </html>

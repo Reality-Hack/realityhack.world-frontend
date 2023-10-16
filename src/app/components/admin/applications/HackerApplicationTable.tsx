@@ -9,7 +9,7 @@ type Props = {
   applications: Application[];
 };
 
-export default function ApplicationTable({ applications }: Props) {
+export default function HackerApplicationTable({ applications }: Props) {
   const [dialogRow, setDialogRow] = useState<any | void>(undefined);
 
   const columnHelper = createColumnHelper<Application>();
