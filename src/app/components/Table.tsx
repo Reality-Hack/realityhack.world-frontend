@@ -126,7 +126,7 @@ export default function Table<T>({
                   >
                     {header.isPlaceholder ? null : (
                       <div
-                        className="pl-6 text-left cursor-pointer"
+                        className="pl-6 text-left cursor-pointer flex flex-row"
                         {...{
                           onClick: header.column.getToggleSortingHandler(),
                         }}

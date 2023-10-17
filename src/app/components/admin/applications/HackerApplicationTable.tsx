@@ -89,9 +89,9 @@ export default function HackerApplicationTable({ applications }: Props) {
   );
 
   return (
-    <>
-      <Table data={applications} columns={columns} />
+    <div className="overflow-y-auto max-h-[480px] max-w-screen">
+      <Table data={applications} columns={columns} search={true} pagination={true}/>
       {/* TODO: Add dialog here */}
-    </>
+    </div>
   );
 }
