@@ -1,5 +1,5 @@
 export async function getAllHardware(accessToken: string) {
-  const url = `http://64.227.22.206/hardware/`;
+  const url = `${process.env.BACKEND_URL}/hardware/`;
   
   const resp = await fetch(url, {
     headers: {

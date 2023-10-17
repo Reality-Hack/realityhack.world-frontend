@@ -1,7 +1,7 @@
 "use client"
 import type { NextPage } from 'next'
 import { useState } from 'react'
-import Loader from '../components/Loader';
+import Loader from '@/components/Loader';
 
 const Dashboard: NextPage = ({ }: any) => {
   const [loading, setLoading] = useState(false)
