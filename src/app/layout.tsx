@@ -1,8 +1,8 @@
 
 import './globals.css'
 import { Inter } from 'next/font/google'
-import Nav from './components/Nav'
-import AuthStatus from './components/AuthStatus'
+import Nav from '@/components/Nav'
+import AuthStatus from '@/components/AuthStatus'
 import { ReactNode } from 'react';
 import SessionProviderWrapper from './utils/SessionProviderWrapper'
 

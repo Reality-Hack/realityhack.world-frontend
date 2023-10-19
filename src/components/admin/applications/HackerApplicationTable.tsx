@@ -2,7 +2,7 @@
 import { Application } from "@/types";
 import { createColumnHelper, Row, ColumnDef } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import Table from "@/app/components/Table";
+import Table from "@/components/Table";
 import { DateTime } from "luxon";
 
 type Props = {
