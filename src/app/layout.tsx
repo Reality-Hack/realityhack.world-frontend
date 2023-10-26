@@ -1,4 +1,3 @@
-
 import './globals.css'
 import { Inter } from 'next/font/google'
 import Nav from '@/components/Nav'
@@ -19,21 +18,21 @@ interface RootLayoutProps {
 
 const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
-      <SessionProviderWrapper>
+    <SessionProviderWrapper>
       <html lang="en">
         <body className={inter.className}>
           <div className="flex flex-row">
-            <div className="min-w-[288px] h-screen p-3 bg-[#f8f7ff]">
+            <div className="w-1/6 h-screen p-3 bg-[#f8f7ff]"> {/* Adjust width */}
               <h2 className="text-3xl">RH2024</h2>
-                <AuthStatus />
+              <AuthStatus />
               <hr />
-                <Nav />
+              <Nav />
             </div>
-            <div className="w-full h-full p-3 bg-[#ffffff]">{children}</div>
+            <div className="flex-grow p-3 bg-[#ffffff]">{children}</div>
           </div>
         </body>
       </html>
-      </SessionProviderWrapper>
+    </SessionProviderWrapper>
   )
 }
 
