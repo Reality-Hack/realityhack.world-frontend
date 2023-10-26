@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
-import ScheduleIcon from '@mui/icons-material/Schedule';
+import { default as HardwareIcon, default as ToolsIcon } from '@mui/icons-material/Build';
+import EventGuideIcon from '@mui/icons-material/EventNote';
 import TeamIcon from '@mui/icons-material/Group';
-import HardwareIcon from '@mui/icons-material/Build';
-import ShowcaseIcon from '@mui/icons-material/ViewCarousel';
 import SpatialIcon from '@mui/icons-material/LocationOn';
 import TracksIcon from '@mui/icons-material/Map';
-import ToolsIcon from '@mui/icons-material/Build';
-import SettingsIcon from '@mui/icons-material/Settings';
-import EventGuideIcon from '@mui/icons-material/EventNote';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ShowcaseIcon from '@mui/icons-material/ViewCarousel';
+import React, { useEffect, useRef, useState } from 'react';
 
 
 
@@ -19,6 +18,7 @@ interface AdminOverlayProps {
 const AdminOverlay: React.FC<AdminOverlayProps> = ({ onClose }) => {
 
     const FLAGS = ["Schedule", "Team", "Hardware", "Showcase", "Spatial", "Tracks", "Tools", "Settings", "Event Guide", " Report a problem"]
+    // eslint-disable-next-line react/jsx-key
     const icons = [<ScheduleIcon />, <TeamIcon />, <HardwareIcon />, <ShowcaseIcon />, <SpatialIcon />, <TracksIcon />, <ToolsIcon />, <SettingsIcon />, <EventGuideIcon />, <ReportProblemIcon />]
     const [flagStates, setFlagStates] = useState([true, true, true, true, true, false, false, false, false, false])
     const toggleBox = (index: number): void => {

@@ -1,13 +1,9 @@
 "use client"
-import React, { useState } from 'react';
-import type { NextPage } from 'next';
-import Tabs from "@mui/material/Tabs"
-import Tab from '@mui/material/Tab';
-import Link from 'next/link';
+import AnyApp from '@/app/components/applications/applicationAny';
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
-import Layout from '@/components/HotkeyLayout';
-import AnyApp from '@/app/components/applications/applicationAny';
+import type { NextPage } from 'next';
+import Link from 'next/link';
 
 
 const MentorApp: NextPage = ({ }: any) => {
@@ -61,7 +57,7 @@ const MentorApp: NextPage = ({ }: any) => {
             <div className='flex flex-col gap-4 p-4'>
                 <div>
 
-                    We encourage all participants to form new connections with cool creative people that they've never worked with before.
+                    We encourage all participants to form new connections with cool creative people that they&apos;ve never worked with before.
                 </div>
                 <div>
 
@@ -121,13 +117,13 @@ const MentorApp: NextPage = ({ }: any) => {
 
     // Define your tabs as an array of components or elements
     const tabs = [
-        <CustomTab1 />,
-        <CustomTab2 />,
-        <CustomTab3 />,
-        <CustomTab4 />,
-        <CustomTab5 />,
-        <CustomTab6 />,
-        <CustomTab7 />,
+        <CustomTab1 key={0}/>,
+        <CustomTab2 key={1}/>,
+        <CustomTab3 key={2}/>,
+        <CustomTab4 key={3}/>,
+        <CustomTab5 key={4}/>,
+        <CustomTab6 key={5}/>,
+        <CustomTab7 key={6}/>,
     ];
 
 
