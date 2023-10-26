@@ -1,4 +1,4 @@
-import AdminOverlay from '@/app/components/admin/adminEnablePanel';
+import AdminOverlay from '@/components/admin/adminEnablePanel';
 import { useEffect, useState } from 'react';
 
 interface LayoutProps {

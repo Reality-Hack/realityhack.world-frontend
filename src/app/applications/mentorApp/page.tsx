@@ -1,5 +1,5 @@
 "use client"
-import AnyApp from '@/app/components/applications/applicationAny';
+import AnyApp from '@/components/applications/applicationAny';
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import type { NextPage } from 'next';

@@ -12,11 +12,13 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
+
 interface TableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
   search?: boolean;
   pagination?: boolean;
+  toggleOverlay: any;
 }
 
 /**
@@ -37,6 +39,7 @@ export default function Table<T>({
   columns,
   search,
   pagination,
+  toggleOverlay,
 }: TableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -160,6 +163,7 @@ export default function Table<T>({
         <tbody className="text-sm transition-all divide-y divide-gray-100 dark:divide-borderDark text-textPrimary dark:bg-contentDark dark:text-gray-300">
           {table.getRowModel().rows.map((row) => (
             <tr
+
               key={row.id}
               className="bg-white dark:bg-contentDark hover:bg-[#FAFCFF] h-[58px] hover:bg-opacity-70 dark:hover:bg-[#242424]"
             >
@@ -169,6 +173,7 @@ export default function Table<T>({
                   key={cell.id}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  {/* <div className="hover:cursor-pointer" onClick={()=>console.log((cell.column.id))}>boop</div> */}
                 </td>
               ))}
             </tr>

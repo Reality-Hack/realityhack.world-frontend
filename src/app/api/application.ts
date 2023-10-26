@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 
 export async function getAllHackerApplications() {
   const url = `${process.env.BACKEND_URL}/applications/`;
