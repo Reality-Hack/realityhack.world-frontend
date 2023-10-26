@@ -4,7 +4,7 @@ module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}'
   ],
   darkMode: 'class',
   theme: {
@@ -12,12 +12,12 @@ module.exports = {
       sm: '640px',
       md: '768px',
       lg: '1600px',
-      xl: '3200px',
+      xl: '3200px'
     },
     container: {
       center: true,
       padding: '1.5rem',
-      sizes: {}, // defaults to breakpoint (screens) sizes
+      sizes: {} // defaults to breakpoint (screens) sizes
     },
     extend: {
       backgroundImage: {
@@ -59,7 +59,7 @@ module.exports = {
         themeTurquoise: '#59bfdc',
         themeGreen: '#8fc382',
         themeYellow: '#fbed53',
-        filterLight: "#E3E3E3",
+        filterLight: '#E3E3E3',
         backgroundDark: '#171717',
         contentDark: '#1E1E1E',
         innerDark: '#333333',
@@ -69,18 +69,19 @@ module.exports = {
       boxShadow: {
         themeActive: '0px 0px 1px 1px rgba(73, 59, 138, 0.2)',
         red: '0px 0px 1px 1px rgba(232,121,117,0.15)',
-        button: '0px 1px 3px 0px rgba(0,0,0,0.1) 0px 2px 1px 0px rgba(0,0,0,0.06) 0px 1px 1px 0px rgba(0,0,0,0.08)',
+        button:
+          '0px 1px 3px 0px rgba(0,0,0,0.1) 0px 2px 1px 0px rgba(0,0,0,0.06) 0px 1px 1px 0px rgba(0,0,0,0.08)',
         main: '0px 1px 3px rgba(0, 0, 0, 0.1), 0px 2px 1px rgba(0, 0, 0, 0.06), 0px 1px 1px rgba(0, 0, 0, 0.08);'
       },
       keyframes: {
         opaqueKey: {
           '0%': { opacity: '0' },
-          '100%': { opacity: '100' },
+          '100%': { opacity: '100' }
         }
       },
       animation: {
-        'opaque': 'opaqueKey .5s linear',
-      },
+        opaque: 'opaqueKey .5s linear'
+      }
     },
     fontFamily: {
       interRegular: ['InterRegular', 'sans-serif'],
@@ -88,7 +89,7 @@ module.exports = {
       interSemibold: ['InterSemibold', 'sans-serif'],
       ethnocentric: ['ethnocentric', 'sans-serif'],
       futuraCondensed: ['futura-pt-condensed', 'sans-serif']
-    },
+    }
   },
-  plugins: [],
-}
+  plugins: []
+};

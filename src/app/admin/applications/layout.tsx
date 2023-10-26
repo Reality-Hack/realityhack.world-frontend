@@ -1,13 +1,13 @@
-"use client";
-import { Tab } from "@/components/Tab";
-import { usePathname } from 'next/navigation'
+'use client';
+import { Tab } from '@/components/Tab';
+import { usePathname } from 'next/navigation';
 
 export default function ApplicationLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname()
+  const pathname = usePathname();
   return (
     <main className="pl-2">
       <h1 className="text-4xl">Applications</h1>

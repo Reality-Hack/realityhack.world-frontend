@@ -6,10 +6,10 @@ interface SessionProviderWrapperProps {
   children: ReactNode;
 }
 
-const SessionProviderWrapper: React.FC<SessionProviderWrapperProps> = ({children}) => {
-  return (
-    <SessionProvider>{children}</SessionProvider>
-  );
-}
+const SessionProviderWrapper: React.FC<SessionProviderWrapperProps> = ({
+  children
+}) => {
+  return <SessionProvider>{children}</SessionProvider>;
+};
 
 export default SessionProviderWrapper;

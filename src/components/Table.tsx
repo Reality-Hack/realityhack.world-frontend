@@ -1,24 +1,22 @@
-"use client";
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
+'use client';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
 import {
   ColumnDef,
+  SortingState,
   flexRender,
   getCoreRowModel,
-  useReactTable,
-  SortingState,
-  getSortedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-} from "@tanstack/react-table";
-import { useEffect, useState } from "react";
-
+  getSortedRowModel,
+  useReactTable
+} from '@tanstack/react-table';
+import { useEffect, useState } from 'react';
 
 interface TableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
   search?: boolean;
   pagination?: boolean;
-  toggleOverlay: any;
 }
 
 /**
@@ -38,18 +36,17 @@ export default function Table<T>({
   data,
   columns,
   search,
-  pagination,
-  toggleOverlay,
+  pagination
 }: TableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable<T>({
     data,
     columns,
     state: {
       sorting,
-      globalFilter,
+      globalFilter
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -57,7 +54,7 @@ export default function Table<T>({
     getFilteredRowModel: getFilteredRowModel(),
     ...(pagination && { getPaginationRowModel: getPaginationRowModel() }),
     onGlobalFilterChange: setGlobalFilter,
-    debugTable: true,
+    debugTable: true
   });
 
   function DebouncedInput({
@@ -69,7 +66,7 @@ export default function Table<T>({
     value: string | number;
     onChange: (value: string | number) => void;
     debounce?: number;
-  } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
+  } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>) {
     const [value, setValue] = useState(initialValue);
 
     useEffect(() => {
@@ -89,7 +86,7 @@ export default function Table<T>({
         {...props}
         value={value}
         className="h-8 py-2 pl-2 text-sm border rounded dark:border-borderDark text dark:bg-inputDark"
-        onChange={(e) => setValue(e.target.value)}
+        onChange={e => setValue(e.target.value)}
       />
     );
   }
@@ -100,15 +97,15 @@ export default function Table<T>({
         <>
           <div className="p-2 text-gray-600 dark:text-gray-400 dark:border-borderDark bg-slate-100 dark:bg-backgroundDark">
             <DebouncedInput
-              value={globalFilter ?? ""}
-              onChange={(value) => setGlobalFilter(String(value))}
+              value={globalFilter ?? ''}
+              onChange={value => setGlobalFilter(String(value))}
               className="p-2 text-sm border border-block w-[328px] h-2 rounded"
               placeholder="Search..."
             />
             {globalFilter && (
               <button
                 className="ml-2 text-sm text-gray-400 hover:text-gray-500"
-                onClick={() => setGlobalFilter("")}
+                onClick={() => setGlobalFilter('')}
               >
                 Clear
               </button>
@@ -119,9 +116,9 @@ export default function Table<T>({
       <table className="h-[58px] overflow-scroll table-auto dark:bg-contentDark dark:bg-border-borderDark">
         <thead className="text-sm text-gray-600 dark:text-gray-400 font-interMedium h-11 bg-slate-100 dark:bg-backgroundDark">
           <>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
+                {headerGroup.headers.map(header => (
                   <th
                     className="my-auto p-2 whitespace-nowrap border-y-[1px] dark:border-borderDark"
                     key={header.id}
@@ -131,7 +128,7 @@ export default function Table<T>({
                       <div
                         className="pl-6 text-left cursor-pointer flex flex-row"
                         {...{
-                          onClick: header.column.getToggleSortingHandler(),
+                          onClick: header.column.getToggleSortingHandler()
                         }}
                       >
                         {flexRender(
@@ -150,7 +147,7 @@ export default function Table<T>({
                               className="w-5 h-5 text-gray-600 dark:text-gray-400"
                               aria-hidden="true"
                             />
-                          ),
+                          )
                         }[header.column.getIsSorted() as string] ?? null}
                       </div>
                     )}
@@ -161,13 +158,12 @@ export default function Table<T>({
           </>
         </thead>
         <tbody className="text-sm transition-all divide-y divide-gray-100 dark:divide-borderDark text-textPrimary dark:bg-contentDark dark:text-gray-300">
-          {table.getRowModel().rows.map((row) => (
+          {table.getRowModel().rows.map(row => (
             <tr
-
               key={row.id}
               className="bg-white dark:bg-contentDark hover:bg-[#FAFCFF] h-[58px] hover:bg-opacity-70 dark:hover:bg-[#242424]"
             >
-              {row.getVisibleCells().map((cell) => (
+              {row.getVisibleCells().map(cell => (
                 <td
                   className="pl-8 first:pl-5 py-[6px] h-[58px] border-b-[1px] dark:border-borderDark"
                   key={cell.id}
@@ -187,11 +183,11 @@ export default function Table<T>({
               <select
                 className="dark:bg-[#242424] py-1 rounded border dark:border-borderDark text-sm"
                 value={table.getState().pagination.pageSize}
-                onChange={(e) => {
+                onChange={e => {
                   table.setPageSize(Number(e.target.value));
                 }}
               >
-                {[10, 25, 50, 75, 100].map((pageSize) => (
+                {[10, 25, 50, 75, 100].map(pageSize => (
                   <option
                     key={pageSize}
                     value={pageSize}
@@ -209,33 +205,33 @@ export default function Table<T>({
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
-              {"<<"}
+              {'<<'}
             </button>
             <button
               className="p-1 border rounded content shadow-none hover:bg-[#FAFCFF] hover:bg-opacity-70 dark:hover:bg-[#242424]"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              {"<"}
+              {'<'}
             </button>
             <button
               className="p-1 border rounded content shadow-none hover:bg-[#FAFCFF] hover:bg-opacity-70 dark:hover:bg-[#242424]"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              {">"}
+              {'>'}
             </button>
             <button
               className="p-1 border rounded content shadow-none hover:bg-[#FAFCFF] hover:bg-opacity-70 dark:hover:bg-[#242424]"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >
-              {">>"}
+              {'>>'}
             </button>
             <span className="flex items-center gap-1 text-sm">
               <div className="text-sm">Page</div>
               <strong className="text-sm">
-                {table.getState().pagination.pageIndex + 1} of{" "}
+                {table.getState().pagination.pageIndex + 1} of{' '}
                 {table.getPageCount()}
               </strong>
             </span>

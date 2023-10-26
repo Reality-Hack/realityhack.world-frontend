@@ -36,9 +36,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {isOverlayVisible && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
           <div className="flex flex-col bg-white p-4 rounded-lg h-3/4 w-1/2">
-            <AdminOverlay 
-              onClose={closeOverlay}
-            />
+            <AdminOverlay onClose={closeOverlay} />
           </div>
         </div>
       )}

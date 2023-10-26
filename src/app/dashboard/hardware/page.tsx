@@ -1,19 +1,19 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../api/auth/[...nextauth]/route";
-import { redirect } from "next/navigation";
-import { SetDynamicRoute } from "../../utils/setDynamicRoute";
-import { getAllHardware } from "@/app/api/hardware";
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
+import { SetDynamicRoute } from '../../utils/setDynamicRoute';
+import { getAllHardware } from '@/app/api/hardware';
 
 export default async function Hardware() {
   const session: any = await getServerSession(authOptions);
 
-  if (session && session?.roles?.includes("default-roles-rh2024")) {
+  if (session && session?.roles?.includes('default-roles-rh2024')) {
     try {
-      const hardware: any = await getAllHardware(session.access_token);          
+      const hardware: any = await getAllHardware(session.access_token);
 
-      return (        
-        <main>  
-            <SetDynamicRoute/>
+      return (
+        <main>
+          <SetDynamicRoute />
           <h1 className="text-4xl text-center">Hardware</h1>
           <table className="mt-6 ml-auto mr-auto text-lg border border-gray-500">
             <thead>
@@ -51,5 +51,5 @@ export default async function Hardware() {
     }
   }
 
-  redirect("/unauthorized");
+  redirect('/unauthorized');
 }

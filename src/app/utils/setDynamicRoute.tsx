@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { useEffect } from 'react';
 import { useRouter, redirect } from 'next/navigation';
@@ -11,8 +11,6 @@ export function SetDynamicRoute(): JSX.Element | null {
       redirect('/dashboard');
     }
   }, [router]);
-  
-  
 
   return <></>;
 }

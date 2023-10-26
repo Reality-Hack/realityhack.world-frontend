@@ -1,11 +1,11 @@
 export async function getAllHardware(accessToken: string) {
   const url = `${process.env.BACKEND_URL}/hardware/`;
-  
+
   const resp = await fetch(url, {
     headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + accessToken,
-    },
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + accessToken
+    }
   });
 
   if (resp.ok) {
@@ -13,5 +13,5 @@ export async function getAllHardware(accessToken: string) {
     return data;
   }
 
-  throw new Error("Failed to fetch data. Status: " + resp.status);
+  throw new Error('Failed to fetch data. Status: ' + resp.status);
 }

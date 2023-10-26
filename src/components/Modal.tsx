@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 type ModalProps = {
   toggleOverlay: () => void;
@@ -23,23 +23,26 @@ export default function Modal({ toggleOverlay, children }: ModalProps) {
     };
 
     const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         closeModal();
       }
     };
 
-    document.addEventListener("mousedown", handleOutsideClick);
-    document.addEventListener("keydown", handleEscapeKey);
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('keydown', handleEscapeKey);
 
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-      document.removeEventListener("keydown", handleEscapeKey);
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleEscapeKey);
     };
   }, []);
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-20">
-      <div ref={modalContainerRef} className="relative flex flex-col items-center bg-white rounded-lg h-3/4 w-1/2">
+      <div
+        ref={modalContainerRef}
+        className="relative flex flex-col items-center bg-white rounded-lg h-3/4 w-1/2"
+      >
         <div className="absolute top-2 right-2">
           <div
             onClick={closeModal}

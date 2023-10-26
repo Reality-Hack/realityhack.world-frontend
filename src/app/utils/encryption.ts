@@ -1,5 +1,4 @@
-
-import Cryptr from "cryptr";
+import Cryptr from 'cryptr';
 
 export function encrypt(text: string): string {
   const secretKey: string = process.env.NEXTAUTH_SECRET as string;

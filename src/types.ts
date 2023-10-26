@@ -13,4 +13,4 @@ export type Application = {
   status: string;
   submitted_at: string;
   updated_at: string;
-}
+};

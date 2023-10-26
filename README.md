@@ -35,8 +35,26 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Formatting
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+If using VS Code, use the following plugins so you can see inline linting errors:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+ESLint: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+Prettier: https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
+Prettier ESLint: https://marketplace.visualstudio.com/items?itemName=rvest.vs-code-prettier-eslint
+
+Follow these steps to enable linting of files on save for VS Code. https://www.digitalocean.com/community/tutorials/workflow-auto-eslinting#step-4-adding-code-actions-on-save
+
+TLDR: You will want to add the following to your `.vscode/settings.json`:
+```json
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.validate": ["javascript"]
+}
+```
+
+Refer to https://prettier.io/docs/en/editors and https://eslint.org/docs/latest/use/integrations if using another editor.
+
+Before committing changes, run `npm run lint:fix` to fix any lint errors and format files.

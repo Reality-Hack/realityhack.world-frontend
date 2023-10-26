@@ -1,16 +1,16 @@
-import './globals.css'
-import { Inter } from 'next/font/google'
-import Nav from '@/components/Nav'
-import AuthStatus from '@/components/AuthStatus'
+import AuthStatus from '@/components/AuthStatus';
+import Nav from '@/components/Nav';
+import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
-import SessionProviderWrapper from './utils/SessionProviderWrapper'
+import './globals.css';
+import SessionProviderWrapper from './utils/SessionProviderWrapper';
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'RH2024',
-  description: 'hackathon portal',
-}
+  description: 'hackathon portal'
+};
 
 interface RootLayoutProps {
   children: ReactNode;
@@ -22,10 +22,14 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
       <html lang="en">
         <body className={inter.className}>
           <div className="flex flex-row">
-            <div className="w-1/6 h-screen p-3 bg-[#f8f7ff]"> {/* Adjust width */}
+            <div className="w-1/6 h-screen p-3 bg-[#f8f7ff]">
+              {' '}
+              {/* Adjust width */}
               <h2 className="text-3xl">RH2024</h2>
               <AuthStatus />
+              <AuthStatus />
               <hr />
+              <Nav />
               <Nav />
             </div>
             <div className="flex-grow p-3 bg-[#ffffff]">{children}</div>
@@ -33,7 +37,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
         </body>
       </html>
     </SessionProviderWrapper>
-  )
-}
+  );
+};
 
 export default RootLayout;
