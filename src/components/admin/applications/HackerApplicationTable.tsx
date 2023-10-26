@@ -149,9 +149,7 @@ export default function HackerApplicationTable({ applications }: Props) {
           columns={columns}
           search={true}
           pagination={true}
-          toggleOverlay={toggleOverlayAndPassData}
         />
-        {/* TODO: Add dialog here */}
       </div>
       {isOverlayVisible && (
         <ReviewModal
