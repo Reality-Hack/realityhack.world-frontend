@@ -24,12 +24,9 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
           <div className="flex flex-row">
             <div className="w-1/6 h-screen p-3 bg-[#f8f7ff]">
               {' '}
-              {/* Adjust width */}
               <h2 className="text-3xl">RH2024</h2>
               <AuthStatus />
-              <AuthStatus />
               <hr />
-              <Nav />
               <Nav />
             </div>
             <div className="flex-grow p-3 bg-[#ffffff]">{children}</div>
