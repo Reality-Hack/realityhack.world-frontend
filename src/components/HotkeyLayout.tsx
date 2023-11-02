@@ -28,14 +28,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     return () => {
       window.removeEventListener('keydown', eventListener);
     };
-  }, []);
+  });
 
   return (
     <div>
       {children}
       {isOverlayVisible && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-          <div className="flex flex-col bg-white p-4 rounded-lg h-3/4 w-1/2">
+        <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+          <div className="flex flex-col w-1/2 p-4 bg-white rounded-lg h-3/4">
             <AdminOverlay onClose={closeOverlay} />
           </div>
         </div>

@@ -1,5 +1,4 @@
 'use client';
-import AnyApp from '@/components/applications/applicationAny';
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import type { NextPage } from 'next';
@@ -8,6 +7,7 @@ import Link from 'next/link';
 const HackerApp: NextPage = ({}: any) => {
   function CheckBoxComponent({ label }: { label: string }) {
     const onChange = (e: CheckboxChangeEvent) => {
+      // eslint-disable-next-line no-console
       console.log(`checked = ${e.target.checked}`);
     };
 
@@ -15,7 +15,7 @@ const HackerApp: NextPage = ({}: any) => {
   }
 
   const CustomTab1 = () => (
-    <div className="text-sm px-4">
+    <div className="px-4 text-sm">
       <div className="">
         Welcome to the Reality Hack 2024 participant application form. Please
         fill out this form to apply for a spot at Reality Hack 2024. For all
@@ -51,7 +51,7 @@ const HackerApp: NextPage = ({}: any) => {
 
   const CustomTab2 = () => (
     <div className="overflow-y-auto">
-      <div className="text-xl text-purple-900 font-bold">Disclaimers</div>
+      <div className="text-xl font-bold text-purple-900">Disclaimers</div>
       <div className="flex flex-col gap-4 p-4">
         <div>
           We encourage all participants to form new connections with cool
@@ -70,7 +70,7 @@ const HackerApp: NextPage = ({}: any) => {
         <div className="p-4">
           <CheckBoxComponent label="I understand and accept the above disclaimer." />
         </div>
-        <div className="border border-1 border-gray-200"></div>
+        <div className="border border-gray-200 border-1"></div>
         <div>
           Our participants are literally building the future by making their
           work available for further development.
@@ -109,7 +109,7 @@ const HackerApp: NextPage = ({}: any) => {
     <CustomTab7 key={6} />
   ];
 
-  return <AnyApp key="1" tabs={tabs} AppType="Hacker" />;
+  return <div>tab</div>;
 };
 
 export default HackerApp;

@@ -108,7 +108,7 @@ export enum heard_about_us {
 
 export type uploaded_file_reference = string;
 
-export interface Application {
+export interface form_data {
   disclaimer_groups: boolean | null;
   disclaimer_open_source: boolean | null;
   id: string;
