@@ -1,0 +1,5 @@
+steps:
+  build:
+    image: node:21.1-alpine3.17
+    commands:
+      - npm install
