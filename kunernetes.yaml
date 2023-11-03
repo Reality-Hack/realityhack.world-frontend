@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "nextjs-app"
+  name: "nextjs-app"
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "nextjs-app"
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: "nextjs-app"
+    spec:
+      containers:
+        - image: asia.gcr.io/lyrical-catfish-287707/nextjs-app:7258086604fea5ea316cf4f606bc16064cd7c398
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /manifest.json
+              port: 3000
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+            initialDelaySeconds: 60
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /manifest.json
+              port: 3000
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+            initialDelaySeconds: 30
+          name: "nextjs-app"
+          env:
+            - name: "REACT_APP_ENVIRONMENT"
+              value: "PROD"
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 2G
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
