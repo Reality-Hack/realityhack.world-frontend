@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "next lint --fix"
+    "lint:fix": "next lint --fix",
+    "gen-types": "npx openapi-typescript https://dev-api.realityhack.world/schema/spectacular -o ./src/schema.d.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -39,6 +40,7 @@
     "eslint-config-next": "13.4.10",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
+    "openapi-typescript": "^6.7.0",
     "prettier": "^3.0.3",
     "typescript": "5.1.6"
   }

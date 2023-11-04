@@ -35,6 +35,10 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
+## Type Generation
+
+In order to generate types from the backend, run `npm run gen-types`. It will fetch the types from the dev environment and write them to schema.d.ts.
+
 ## Formatting
 
 If using VS Code, use the following plugins so you can see inline linting errors:
