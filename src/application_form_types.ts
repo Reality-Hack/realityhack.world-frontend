@@ -106,7 +106,34 @@ export enum heard_about_us {
   other = 'O'
 }
 
+export const Enums = {
+  ...status,
+  ...age_group,
+  ...gender_identities,
+  ...race_ethnic_groups,
+  ...disability_identity,
+  ...disabilities,
+  ...participation_capacity,
+  ...previous_participation,
+  ...participation_role,
+  ...design_experience,
+  ...specialty_experience,
+  ...heard_about_us
+};
+
+export const exemptFields = [
+  'age_group',
+  'disability_identity',
+  'participation_role',
+  'participation_capacity'
+];
+
 export type uploaded_file_reference = string;
+
+export type option_value = {
+  value: string;
+  display_name: string;
+};
 
 export interface form_data {
   disclaimer_groups: boolean | null;
@@ -141,26 +168,20 @@ export interface form_data {
   status?: status | null;
   xr_familiarity_tools?: string | null;
   additional_skills: string | null;
-  previously_participated?: boolean | null;
+  previously_participated?: string | null;
   previous_participation: previous_participation[] | null;
   proficient_languages: string | null;
   participation_role?: participation_role | null;
   experience_with_xr?: boolean;
   theme_essay?: string | null;
   theme_essay_follow_up?: string | null;
-  heard_about_us?: heard_about_us[] | null;
-  shirt_size?: string | null;
+  heard_about_us?: heard_about_us[] | '';
   dietary_restrictions?: string | null;
   additional_accommodations?: string | null;
   phone_number_country_alpha_2_options?: string | null;
   phone_number: string;
   design_experience?: design_experience[] | null;
   specialty_experience?: specialty_experience[] | null;
-  emergency_contact_name: string;
-  emergency_contact_phone_number: string;
-  emergency_contact_email: string;
-  emergency_contact_relationship: string;
-  parental_consent_form?: uploaded_file_reference | null;
   us_visa_support_is_required?: boolean;
   us_visa_support_full_name?: string | null;
   us_visa_support_passport_number?: string | null;
@@ -168,8 +189,6 @@ export interface form_data {
   us_visa_support_citizenship?: string | null;
   us_visa_support_address_line_1?: string | null;
   us_visa_support_address_line_2?: string | null;
-  media_release?: uploaded_file_reference | null;
-  liability_release?: uploaded_file_reference | null;
   submitted_at: Date;
   updated_at: Date;
 }

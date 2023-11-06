@@ -5,13 +5,18 @@ import type { NextPage } from 'next';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Layout from '@/components/HotkeyLayout';
-import { createApplication } from '@/app/api/application';
+import {
+  createApplication,
+  fileUpload,
+  patchFileUpload
+} from '@/app/api/application';
 
 interface AnyAppProps {
   tabs: React.ReactNode[];
   AppType: string;
   formData: any;
   isTabValid: (tabName: string) => boolean;
+  acceptedFiles: File[];
 }
 
 const tabNames = [
@@ -29,6 +34,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   tabs,
   AppType,
   isTabValid,
+  acceptedFiles,
   ...formData
 }) {
   const DEBUG = true;
@@ -38,35 +44,31 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
     setSelectedTab(newValue);
   };
 
-  const handleNextTab = () => {
+  const callRequest = async () => {
+    let updatedPayload = formData.formData || formData;
+    let fileUploadResponse;
+
+    // File upload
+    if (acceptedFiles.length > 0) {
+      const file = acceptedFiles[0];
+      fileUploadResponse = await fileUpload(file);
+      updatedPayload.resume = fileUploadResponse.file;
+    }
+
+    // Send payload
+    await createApplication(updatedPayload);
+
+    // Patch file upload to set 'claimed' to true
+    await patchFileUpload(fileUploadResponse.id);
+
+    // POST skill proficiencies here...
+
+    return;
+  };
+
+  const handleNextTab = async () => {
     if (isOnFinalTab) {
-      let updatedPayload = formData.formData || formData;
-
-      // 'heard_about_us' should be multiselect
-      if (
-        Array.isArray(updatedPayload.heard_about_us) &&
-        updatedPayload.heard_about_us.length > 0
-      ) {
-        updatedPayload.heard_about_us = updatedPayload.heard_about_us[0];
-      }
-
-      // 'ocupation', 'employer', and 'middle_name' should not be required
-
-      // 'city' and 'country' fields using 'current_city' and 'current_country'
-      // duplicates of 'city' and 'country' fields in application form
-      updatedPayload.city = updatedPayload.current_city;
-      updatedPayload.country = updatedPayload.current_country;
-
-      // dummy data for RSVP form (not part of application form)
-      updatedPayload.emergency_contact_email = 'dummy_email@test.com';
-      updatedPayload.emergency_contact_name = 'Dummy Name';
-      updatedPayload.emergency_contact_phone_number = '+19526207121';
-      updatedPayload.emergency_contact_relationship = 'Friend';
-      updatedPayload.phone_number = '+19526207121';
-      updatedPayload.us_visa_support_is_required = false;
-
-      // send payload
-      createApplication(updatedPayload);
+      callRequest();
       return;
     }
     setSelectedTab(prevTab => (prevTab + 1) % tabs.length);
@@ -85,16 +87,20 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
         className="fixed w-screen h-screen bg-center bg-cover"
         style={{ backgroundImage: `url('/images/starfield-grad.jpg')` }}
       />
-      <div className="flex items-center justify-center py-32">
-        <div className="flex flex-col w-2/3 px-2 py-11 bg-white rounded-lg shadow-md z-[10] min-h-[500px]">
-          <h1 className="text-2xl text-center font-italics">
-            MIT Reality Hack 2024 -
-            <span className="mb-4 text-2xl font-bold text-center">
+      <div className="flex flex-col items-center justify-center py-8 pb-32">
+        <div className="relative z-10 items-center mx-auto">
+          <div className="w-[250px] h-[250px] mt-8 mx-auto bg-logocolor dark:bg-logobw bg-contain bg-no-repeat bg-center" />
+          <div className="pb-8">
+            <h1 className="py-1 text-2xl leading-8 text-center text-themeSecondary drop-shadow-md font-ethnocentric">
+              MIT Reality Hack 2024
+            </h1>
+            <h2 className="text-2xl font-bold leading-8 text-center text-themeYellow drop-shadow-md font-futuraCondensed">
               {' '}
-              {AppType}{' '}
-            </span>
-            Application
-          </h1>
+              {AppType} Application
+            </h2>
+          </div>
+        </div>
+        <div className="flex flex-col w-2/3 px-2 py-2 bg-white rounded-lg shadow-md z-[10] min-h-[500px]">
           <div className="flex flex-row justify-center mb-4 overflow-x-auto overflow-y-hidden ">
             <Tabs
               value={selectedTab}

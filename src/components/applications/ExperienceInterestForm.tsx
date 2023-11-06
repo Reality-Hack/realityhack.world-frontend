@@ -148,25 +148,23 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
       <RadioInput
         name="previously_participated"
         value="true"
-        checked={formData.previously_participated === true}
+        checked={formData.previously_participated === 'true'}
         onChange={handleChange}
         label="Yes"
       />
       <RadioInput
         name="previously_participated"
         value="false"
-        checked={formData.previously_participated === false}
+        checked={formData.previously_participated === 'false'}
         onChange={handleChange}
         label="No"
       />
 
-      {formData.previously_participated && (
-        <p className="py-4">
-          What years did you previously attend? Select all that apply.
-        </p>
-      )}
-      {formData.previously_participated && (
+      {formData.previously_participated === 'true' && (
         <>
+          <p className="py-4">
+            What years did you previously attend? Select all that apply.
+          </p>
           <hr className="mb-4" />
           {Object.keys(previous_participation).map(key => (
             <CheckboxInput

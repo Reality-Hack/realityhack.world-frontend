@@ -1,26 +1,50 @@
 import React from 'react';
-import { TextInput, RadioInput } from '../Inputs';
-import { form_data, age_group } from '../../application_form_types';
+import { TextInput, RadioInput, SelectInput } from '../Inputs';
+import {
+  form_data,
+  age_group,
+  option_value
+} from '../../application_form_types';
+import Dropzone from '../Dropzone';
 
 interface FormProps {
   formData: Partial<form_data>;
+  setFormData: React.Dispatch<React.SetStateAction<Partial<form_data>>>;
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
   handleBlur: (
     e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
-  // handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   errors: Record<string, string>;
+  acceptedFiles: File[];
+  setAcceptedFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  rejectedFiles: File[];
+  setRejectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  countries: option_value[];
+  nationalities: option_value[];
 }
 
 const PersonalInformationForm: React.FC<FormProps> = ({
   formData,
+  setFormData,
   handleChange,
   handleBlur,
-  errors
-  // handleFileChange
+  errors,
+  acceptedFiles,
+  setAcceptedFiles,
+  rejectedFiles,
+  setRejectedFiles,
+  countries,
+  nationalities
 }) => {
+  const handleSelectChange = (value: string | string[], name: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   return (
     <div className="px-6">
       <p className="mb-4 text-xl font-bold text-purple-900">
@@ -118,48 +142,36 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         Link to your portfolio or an example of your past work
       </TextInput>
 
-      {/* <label className="mb-2">Upload your resume</label>
-      <input type="file" name="resume" onChange={handleFileChange} />
-      <p className="mb-4">File formats: .doc, .docx, .pdf</p> */}
+      <p>Upload your resume</p>
+      <Dropzone
+        setFormData={setFormData}
+        acceptedFiles={acceptedFiles}
+        setAcceptedFiles={setAcceptedFiles}
+        rejectedFiles={rejectedFiles}
+        setRejectedFiles={setRejectedFiles}
+      />
 
-      <TextInput
-        name="resume"
-        placeholder="e.g. https://example.com/alex"
-        type="url"
-        value={formData.resume || ''}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        error={errors.resume}
-        valid={!errors.resume}
-      >
-        Resume (should be file upload)
-      </TextInput>
-
-      <TextInput
+      <SelectInput
         name="nationality"
-        placeholder="e.g. American"
-        type="text"
+        placeholder="Select your nationality"
+        options={nationalities}
         value={formData.nationality || ''}
-        onChange={handleChange}
-        onBlur={handleBlur}
+        onChange={handleSelectChange}
         error={errors.nationality}
-        valid={!errors.nationality}
       >
         What is your nationality?
-      </TextInput>
+      </SelectInput>
 
-      <TextInput
+      <SelectInput
         name="current_country"
-        placeholder="e.g. United States"
-        type="text"
+        placeholder="Select your country"
+        options={countries}
         value={formData.current_country || ''}
-        onChange={handleChange}
-        onBlur={handleBlur}
+        onChange={handleSelectChange}
         error={errors.current_country}
-        valid={!errors.current_country}
       >
         What country do you currently reside in?
-      </TextInput>
+      </SelectInput>
 
       <TextInput
         name="current_city"

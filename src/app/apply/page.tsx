@@ -13,11 +13,21 @@ import ClosingForm from '@/components/applications/ClosingForm';
 import {
   form_data,
   participation_role,
-  participation_capacity
+  participation_capacity,
+  Enums,
+  exemptFields
 } from '../../application_form_types';
 import { CheckboxInput, validateField } from '@/components/Inputs';
+import { getSkills } from '../api/skills';
+import { applicationOptions } from '../api/application';
 
 const Application: NextPage = ({}: any) => {
+  const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
+  const [rejectedFiles, setRejectedFiles] = useState<any>(null);
+  const [skills, setSkills] = useState<any>(null);
+  const [countries, setCountries] = useState<any>(null);
+  const [nationalities, setNationalities] = useState<any>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [requiredFields, setRequiredFields] = useState<
     Record<string, string[]>
   >({
@@ -54,7 +64,7 @@ const Application: NextPage = ({}: any) => {
     disclaimer_groups: null,
     disclaimer_open_source: null,
     first_name: '',
-    middle_name: '',
+    middle_name: null,
     last_name: '',
     pronouns: '',
     email: '',
@@ -71,12 +81,12 @@ const Application: NextPage = ({}: any) => {
     disabilities: [],
     disability_accommodations: '',
     participation_capacity: null,
-    student_school: '',
-    student_field_of_study: '',
+    student_school: null,
+    student_field_of_study: null,
     design_experience: [],
     specialty_experience: [],
-    occupation: '',
-    employer: '',
+    occupation: null,
+    employer: null,
     previously_participated: null,
     previous_participation: [],
     participation_role: null,
@@ -88,7 +98,16 @@ const Application: NextPage = ({}: any) => {
     heard_about_us: []
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  useEffect(() => {
+    const getData = async () => {
+      const data = await getSkills();
+      const options = await applicationOptions(formData);
+      setCountries(options.actions.POST.current_country.choices);
+      setNationalities(options.actions.POST.nationality.choices);
+      setSkills(data);
+    };
+    getData();
+  }, []);
 
   useEffect(() => {
     // let updatedFormData = { ...formData };
@@ -130,7 +149,9 @@ const Application: NextPage = ({}: any) => {
         : formData.participation_capacity
         ? ['occupation', 'employer']
         : []),
-      ...(formData.previously_participated ? ['previous_participation'] : []),
+      ...(formData.previously_participated === 'true'
+        ? ['previous_participation']
+        : []),
       ...(formData.participation_role === participation_role.designer
         ? ['design_experience']
         : []),
@@ -144,7 +165,7 @@ const Application: NextPage = ({}: any) => {
 
     setRequiredFields(current => ({
       ...current,
-      EXPERIENCE: updatedFields // Update only the EXPERIENCE field
+      EXPERIENCE: updatedFields
     }));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -177,11 +198,14 @@ const Application: NextPage = ({}: any) => {
       const { name, value, type } = e.target;
       const checked = (e.target as HTMLInputElement).checked;
 
+      console.log(name, type, checked);
+
       setFormData(prev => {
+        // CHECKBOX
         if (type === 'checkbox') {
           const currentValue = prev[name as keyof typeof prev];
           if (Array.isArray(currentValue)) {
-            const arrayValue = currentValue as Array<any>; // Add this line
+            const arrayValue = currentValue as Array<any>;
             if (checked) {
               return {
                 ...prev,
@@ -200,14 +224,16 @@ const Application: NextPage = ({}: any) => {
             };
           }
         } else if (
+          // RADIO
           type === 'radio' &&
           (value === 'true' || value === 'false')
         ) {
           return {
             ...prev,
-            [name]: value === 'true'
+            [name]: value
           };
         } else {
+          // TEXT
           return {
             ...prev,
             [name]: value
@@ -273,18 +299,34 @@ const Application: NextPage = ({}: any) => {
     for (let field of required_fields) {
       const fieldValue = formData[field as keyof typeof formData];
 
-      if (typeof fieldValue === 'boolean') continue;
+      if (
+        typeof fieldValue === 'string' &&
+        !(fieldValue in Enums) &&
+        !exemptFields.includes(field) &&
+        fieldValue.trim().length < 3
+      ) {
+        console.log(`field ${field} is invalid (string): `, fieldValue);
+        return false;
+      }
+
+      if (typeof fieldValue === 'boolean' && fieldValue === null) {
+        console.log(`field ${field} is invalid (boolean): `, fieldValue);
+        return false;
+      }
 
       if (!fieldValue) {
         return false;
       } else if (typeof fieldValue === 'string' && !fieldValue.trim()) {
+        console.log(`field ${field} is invalid (empty string): `, fieldValue);
         return false;
       } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
+        console.log(`field ${field} is invalid (empty array): `, fieldValue);
         return false;
       }
 
       const validationError = validateField(field, fieldValue, true);
       if (validationError) {
+        console.log(`validationError for field ${field}: `, validationError);
         return false;
       }
     }
@@ -292,18 +334,11 @@ const Application: NextPage = ({}: any) => {
     return true;
   };
 
-  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setFormData(prev => ({
-  //     ...prev,
-  //     resume: e.target.files ? e.target.files[0] : null
-  //   }));
-  // };
-
   const WelcomeTab = () => (
-    <div className="px-6 overflow-y-auto">
+    <div className="px-4 overflow-y-auto min-h-[496px]">
       <div className="text-xl font-bold text-purple-900">Welcome</div>
-      <div className="flex flex-col gap-4 p-4">
-        <div className="">
+      <div className="flex flex-col gap-4">
+        <div className="pt-8">
           Welcome to the Reality Hack 2024 participant application form. Please
           fill out this form to apply for a spot at Reality Hack 2024. For all
           applications-related questions, contact{' '}
@@ -337,10 +372,10 @@ const Application: NextPage = ({}: any) => {
   );
 
   const DisclaimerTab = () => (
-    <div className="px-6 overflow-y-auto">
+    <div className="px-4 overflow-y-auto min-h-[496px]">
       <div className="text-xl font-bold text-purple-900">Disclaimers</div>
-      <div className="flex flex-col gap-4 p-4">
-        <div>
+      <div className="flex flex-col gap-4">
+        <div className="pt-8">
           We encourage all participants to form new connections with cool
           creative people that they&apos;ve never worked with before.
         </div>
@@ -354,7 +389,7 @@ const Application: NextPage = ({}: any) => {
           the event.
         </div>
 
-        <div className="p-4">
+        <div className="pt-4">
           <CheckboxInput
             name="disclaimer_groups"
             value={formData.disclaimer_groups?.toString() || ''}
@@ -375,7 +410,7 @@ const Application: NextPage = ({}: any) => {
           under an open source license (see opensource.org).
         </div>
 
-        <div className="p-4">
+        <div className="pt-4 pb-6">
           <CheckboxInput
             name="disclaimer_open_source"
             value={formData.disclaimer_open_source?.toString() || ''}
@@ -402,10 +437,16 @@ const Application: NextPage = ({}: any) => {
     <PersonalInformationForm
       key={2}
       formData={formData}
+      setFormData={setFormData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
-      // handleFileChange={handleFileChange}
+      acceptedFiles={acceptedFiles}
+      setAcceptedFiles={setAcceptedFiles}
+      rejectedFiles={rejectedFiles}
+      setRejectedFiles={setRejectedFiles}
+      countries={countries}
+      nationalities={nationalities}
     />,
     <DiversityInclusionForm
       key={3}
@@ -445,6 +486,7 @@ const Application: NextPage = ({}: any) => {
       AppType="Hacker"
       formData={formData}
       isTabValid={isTabValid}
+      acceptedFiles={acceptedFiles}
     />
   );
 };

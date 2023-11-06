@@ -20,7 +20,6 @@ interface FormProps {
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => void;
-  // handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   errors: Record<string, string>;
 }
 
@@ -102,7 +101,7 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
               formData.gender_identity?.includes(key as gender_identities) ??
               false
             }
-            label={`${index + 1}. ${label}`}
+            label={label}
             onChange={handleChange}
             error={errors.gender_identity}
           />
@@ -122,7 +121,7 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
               formData.race_ethnic_group?.includes(key as race_ethnic_groups) ??
               false
             }
-            label={`${index + 1}. ${label}`}
+            label={label}
             onChange={handleChange}
             error={errors.race_ethnic_group}
           />
@@ -137,7 +136,7 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
             name="disability_identity"
             value={key}
             checked={formData.disability_identity === key}
-            label={`${index + 1}. ${label}`}
+            label={label}
             onChange={handleChange}
           />
         ))}
@@ -155,25 +154,24 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
               checked={
                 formData.disabilities?.includes(key as disabilities) ?? false
               }
-              label={`${index + 1}. ${label}`}
+              label={label}
               onChange={handleChange}
               error={errors.disabilities}
             />
           ))}
+          <TextAreaInput
+            name="disability_accommodations"
+            placeholder="Enter any accommodations required..."
+            value={formData.disability_accommodations || ''}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={errors.disability_accommodations}
+          >
+            If you are accepted, what disability accommodations would enable you
+            to attend the event? (Optional)
+          </TextAreaInput>
         </div>
       )}
-
-      <TextAreaInput
-        name="disability_accommodations"
-        placeholder="Enter any accommodations required..."
-        value={formData.disability_accommodations || ''}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        error={errors.disability_accommodations}
-      >
-        5. If you are accepted, what disability accommodations would enable you
-        to attend the event? (Optional)
-      </TextAreaInput>
     </div>
   );
 };

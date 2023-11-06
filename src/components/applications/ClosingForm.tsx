@@ -39,9 +39,11 @@ const ClosingForm: React.FC<FormProps> = ({ formData, handleChange }) => {
           name="heard_about_us"
           value={heard_about_us[key as keyof typeof heard_about_us]}
           checked={
-            formData.heard_about_us?.includes(
-              heard_about_us[key as keyof typeof heard_about_us]
-            ) || false
+            (Array.isArray(formData.heard_about_us) &&
+              formData.heard_about_us.includes(
+                heard_about_us[key as keyof typeof heard_about_us]
+              )) ||
+            false
           }
           onChange={handleChange}
           label={heardAboutUsLabels[key as keyof typeof heard_about_us]}
