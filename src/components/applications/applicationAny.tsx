@@ -52,7 +52,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
       fileUploadResponse = await fileUpload(file);
-      updatedPayload.resume = fileUploadResponse.file;
+      updatedPayload.resume = fileUploadResponse.id;
     }
 
     // Send payload
