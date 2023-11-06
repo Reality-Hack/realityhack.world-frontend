@@ -2,7 +2,6 @@ import HackerApplicationTable from '@/components/admin/applications/HackerApplic
 import { getAllHackerApplications } from '@/app/api/application';
 
 export default async function Participants() {
-  const applications = await getAllHackerApplications();
-
-  return <HackerApplicationTable applications={applications} />;
+  // const applications = await getAllHackerApplications();
+  // return <HackerApplicationTable applications={applications} />;
 }
