@@ -17,7 +17,7 @@ export enum age_group {
   prefer_not_to_say = 'H'
 }
 
-export enum gender_identities {
+export enum gender_identity {
   cisgender_female = 'A',
   cisgender_male = 'B',
   transgender_female = 'C',
@@ -28,7 +28,7 @@ export enum gender_identities {
   prefer_not_to_say = 'H'
 }
 
-export enum race_ethnic_groups {
+export enum race_ethnic_group {
   asian = 'A',
   black = 'B',
   hispanic = 'C',
@@ -76,7 +76,8 @@ export enum previous_participation {
 export enum participation_role {
   designer = 'A',
   developer = 'D',
-  specialist = 'S'
+  specialist = 'S',
+  project_manager = 'P'
 }
 
 export enum digital_designer_skills {
@@ -96,6 +97,13 @@ export enum specialized_expertise {
   other = 'E'
 }
 
+export enum hardware_hack_interest {
+  not_interested = 'A',
+  mild_interest = 'B',
+  likely = 'C',
+  certain = 'D'
+}
+
 export enum heard_about_us {
   friend = 'F',
   volunteer = 'V',
@@ -106,9 +114,37 @@ export enum heard_about_us {
   other = 'O'
 }
 
+export const Enums = {
+  ...status,
+  ...age_group,
+  ...gender_identity,
+  ...race_ethnic_group,
+  ...disability_identity,
+  ...disabilities,
+  ...participation_capacity,
+  ...previous_participation,
+  ...participation_role,
+  ...digital_designer_skills,
+  ...specialized_expertise,
+  ...hardware_hack_interest,
+  ...heard_about_us
+};
+
+export const exemptFields = [
+  'age_group',
+  'disability_identity',
+  'participation_role',
+  'participation_capacity'
+];
+
 export type uploaded_file_reference = string;
 
-export interface Application {
+export type option_value = {
+  value: string;
+  display_name: string;
+};
+
+export interface form_data {
   disclaimer_groups: boolean | null;
   disclaimer_open_source: boolean | null;
   id: string;
@@ -128,8 +164,8 @@ export interface Application {
   event_year: number;
   city: string;
   country: string;
-  gender_identity: gender_identities[] | null;
-  race_ethnic_group: race_ethnic_groups[];
+  gender_identity: gender_identity[] | null;
+  race_ethnic_group: race_ethnic_group[] | null;
   disability_identity: disability_identity | null;
   disabilities?: disabilities[] | null;
   disability_accommodations?: string | null;
@@ -141,35 +177,26 @@ export interface Application {
   status?: status | null;
   xr_familiarity_tools?: string | null;
   additional_skills: string | null;
-  previously_participated?: boolean | null;
+  previously_participated?: string | null;
   previous_participation: previous_participation[] | null;
   proficient_languages: string | null;
   participation_role?: participation_role | null;
   experience_with_xr?: boolean;
   theme_essay?: string | null;
   theme_essay_follow_up?: string | null;
-  heard_about_us?: heard_about_us[] | null;
-  shirt_size?: string | null;
-  dietary_restrictions?: string | null;
-  additional_accommodations?: string | null;
-  phone_number_country_alpha_2_options?: string | null;
-  phone_number: string;
+  heard_about_us?: heard_about_us[] | '';
   digital_designer_skills?: digital_designer_skills[] | null;
-  specialized_expertise?: specialized_expertise[] | null;
-  emergency_contact_name: string;
-  emergency_contact_phone_number: string;
-  emergency_contact_email: string;
-  emergency_contact_relationship: string;
-  parental_consent_form?: uploaded_file_reference | null;
-  us_visa_support_is_required?: boolean;
-  us_visa_support_full_name?: string | null;
-  us_visa_support_passport_number?: string | null;
-  us_visa_support_national_identification_document_information?: string | null;
-  us_visa_support_citizenship?: string | null;
-  us_visa_support_address_line_1?: string | null;
-  us_visa_support_address_line_2?: string | null;
-  media_release?: uploaded_file_reference | null;
-  liability_release?: uploaded_file_reference | null;
+  specialized_expertise?: string | null;
+  industry: string | null;
+  hardware_hack_interest?: hardware_hack_interest[] | null;
+  outreach_groups?: string | null;
+  gender_identity_other?: string | null;
+  race_ethnic_group_other?: string | null;
+  digital_designer_skills_other?: string | null;
+  heard_about_us_other?: string | null;
   submitted_at: Date;
   updated_at: Date;
+  current_country_option: null;
+  nationality_option: null;
+  industry_option: null;
 }

@@ -1,0 +1,14 @@
+steps:
+  deploy-image:
+    image: woodpeckerci/plugin-docker-buildx
+    secrets: [registry, registry_user, registry_password]
+    settings:
+      auto_tag: true
+      repo: registry.digitalocean.com/reality-hack-inc/frontend
+      registry:
+        from_secret: registry
+      username:
+        from_secret: registry_user
+      password:
+        from_secret: registry_password
+      cache_from: registry.digitalocean.com/reality-hack-inc/frontend

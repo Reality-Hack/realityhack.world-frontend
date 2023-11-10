@@ -1,12 +1,11 @@
 'use client';
-import AnyApp from '@/components/applications/applicationAny';
-import Layout from '@/components/HotkeyLayout';
+// import AnyApp from '@/components/applications/applicationAny';
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import type { NextPage } from 'next';
 import Link from 'next/link';
 
-const JudgeApp: NextPage = ({}: any) => {
+const MentorApp: NextPage = ({}: any) => {
   function CheckBoxComponent({ label }: { label: string }) {
     const onChange = (e: CheckboxChangeEvent) => {
       console.log(`checked = ${e.target.checked}`);
@@ -17,8 +16,6 @@ const JudgeApp: NextPage = ({}: any) => {
 
   const CustomTab1 = () => (
     <div className="text-sm px-4">
-      <div className="text-xl text-purple-900 font-bold">Welcome</div>
-
       <div className="">
         Welcome to the Reality Hack 2024 participant application form. Please
         fill out this form to apply for a spot at Reality Hack 2024. For all
@@ -53,9 +50,9 @@ const JudgeApp: NextPage = ({}: any) => {
   );
 
   const CustomTab2 = () => (
-    <div className="text-sm px-4">
+    <div className="overflow-y-auto">
       <div className="text-xl text-purple-900 font-bold">Disclaimers</div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 p-4">
         <div>
           We encourage all participants to form new connections with cool
           creative people that they&apos;ve never worked with before.
@@ -113,10 +110,9 @@ const JudgeApp: NextPage = ({}: any) => {
   ];
 
   return (
-    <Layout>
-      <AnyApp AppType={'Judge'} tabs={tabs} />
-    </Layout>
+    // <AnyApp key="1" tabs={tabs} AppType="Mentor" />;
+    <div>tab</div>
   );
 };
 
-export default JudgeApp;
+export default MentorApp;
