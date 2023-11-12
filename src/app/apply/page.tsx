@@ -24,6 +24,7 @@ import {
 } from '../../application_form_types';
 import { applicationOptions } from '../api/application';
 import { getSkills } from '../api/skills';
+import ReviewPage from '@/components/admin/ReviewPage';
 
 const Application: NextPage = ({}: any) => {
   const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
@@ -506,7 +507,7 @@ const Application: NextPage = ({}: any) => {
       <p>Submit form</p>
     </div>
   );
-
+  
   // Define your tabs as an array of components or elements
   const tabs = [
     <WelcomeTab key={0} />,
@@ -524,15 +525,15 @@ const Application: NextPage = ({}: any) => {
       setRejectedFiles={setRejectedFiles}
       countries={countries}
       nationalities={nationalities}
-    />,
-    <DiversityInclusionForm
+      />,
+      <DiversityInclusionForm
       key={3}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
-    />,
-    <ExperienceInterestForm
+      />,
+      <ExperienceInterestForm
       key={4}
       formData={formData}
       setFormData={setFormData}
@@ -540,28 +541,39 @@ const Application: NextPage = ({}: any) => {
       handleChange={handleChange}
       errors={errors}
       industries={industries}
-    />,
-    <ThematicForm
+      />,
+      <ThematicForm
       key={5}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
-    />,
-    <ClosingForm
+      />,
+      <ClosingForm
       key={6}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
-    />,
-    <CustomTab3 />
+      />,
+      <ReviewPage allInfo={formData} acceptedFiles={acceptedFiles}/>,
+    ];
+    const tabNames = [
+    'WELCOME',
+    'DISCLAIMERS',
+    'PERSONAL INFO',
+    'DIVERSITY & INCLUSION',
+    'EXPERIENCE',
+    'THEMATIC',
+    'CLOSING',
+    'REVIEW & SUBMIT'
   ];
 
   return (
     <AnyApp
       key="1"
       tabs={tabs}
+      tabNames={tabNames}
       AppType="Hacker"
       formData={formData}
       isTabValid={isTabValid}

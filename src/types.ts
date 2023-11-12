@@ -76,7 +76,8 @@ export enum previous_participation {
 export enum participation_role {
   designer = 'A',
   developer = 'D',
-  specialist = 'S'
+  specialist = 'S',
+  project_manager = "PM"
 }
 
 export enum digital_designer_skills {

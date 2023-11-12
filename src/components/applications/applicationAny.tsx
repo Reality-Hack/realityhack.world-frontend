@@ -22,21 +22,12 @@ interface AnyAppProps {
   formData: any;
   isTabValid: (tabName: string) => boolean;
   acceptedFiles: File[];
+  tabNames:string[]
 }
-
-const tabNames = [
-  'WELCOME',
-  'DISCLAIMERS',
-  'PERSONAL INFO',
-  'DIVERSITY & INCLUSION',
-  'EXPERIENCE',
-  'THEMATIC',
-  'CLOSING',
-  'REVIEW & SUBMIT'
-];
 
 const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   tabs,
+  tabNames,
   AppType,
   isTabValid,
   acceptedFiles,

@@ -95,10 +95,10 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
           <CheckboxInput
             key={key}
             name="gender_identity"
-            value={gender_identity[key as keyof typeof gender_identity]}
+            value={genderIdentityLabels[key as keyof typeof genderIdentityLabels]}
             checked={
               formData.gender_identity?.includes(
-                gender_identity[key as keyof typeof gender_identity]
+                genderIdentityLabels[key as keyof typeof genderIdentityLabels] as gender_identity
               ) || false
             }
             onChange={handleChange}
@@ -134,10 +134,10 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
           <CheckboxInput
             key={key}
             name="race_ethnic_group"
-            value={race_ethnic_group[key as keyof typeof race_ethnic_group]}
+            value={raceEthnicGroupLabels[key as keyof typeof raceEthnicGroupLabels]}
             checked={
               formData.race_ethnic_group?.includes(
-                race_ethnic_group[key as keyof typeof race_ethnic_group]
+                raceEthnicGroupLabels[key as keyof typeof raceEthnicGroupLabels] as race_ethnic_group
               ) || false
             }
             onChange={handleChange}

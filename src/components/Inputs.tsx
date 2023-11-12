@@ -27,9 +27,13 @@ export const validateField = (
       break;
     case 'url':
       try {
-        new URL(value);
+        new URL(value); // Try creating a URL directly
       } catch (e) {
-        return 'Invalid URL.';
+        try {
+          new URL(`https://${value}`); // Try creating a URL with 'https://' prefix
+        } catch (e) {
+          return 'Invalid URL.';
+        }
       }
       break;
     case 'checkbox':

@@ -55,7 +55,7 @@ const ThematicForm: React.FC<FormProps> = ({
 
       <TextAreaInput
         name="theme_essay_follow_up"
-        placeholder="Describe any other skills or experiences (Optional)"
+        placeholder="Describe your XR tech and Connection ideas."
         value={formData.theme_essay_follow_up || ''}
         onChange={handleChange}
         error={errors.theme_essay_follow_up}
@@ -77,13 +77,13 @@ const ThematicForm: React.FC<FormProps> = ({
             key={key}
             name="hardware_hack_interest"
             value={
-              hardware_hack_interest[key as keyof typeof hardware_hack_interest]
+              hardwareHackLabels[key as keyof typeof hardwareHackLabels]
             }
             checked={
               formData.hardware_hack_interest?.includes(
-                hardware_hack_interest[
-                  key as keyof typeof hardware_hack_interest
-                ]
+                hardwareHackLabels[
+                  key as keyof typeof hardwareHackLabels
+                ] as hardware_hack_interest
               ) || false
             }
             onChange={handleChange}

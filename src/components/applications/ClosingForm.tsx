@@ -42,11 +42,11 @@ const ClosingForm: React.FC<FormProps> = ({
         <CheckboxInput
           key={key}
           name="heard_about_us"
-          value={heard_about_us[key as keyof typeof heard_about_us]}
+          value={heardAboutUsLabels[key as keyof typeof heardAboutUsLabels]}
           checked={
             (Array.isArray(formData.heard_about_us) &&
               formData.heard_about_us.includes(
-                heard_about_us[key as keyof typeof heard_about_us]
+                heardAboutUsLabels[key as keyof typeof heardAboutUsLabels] as heard_about_us
               )) ||
             false
           }

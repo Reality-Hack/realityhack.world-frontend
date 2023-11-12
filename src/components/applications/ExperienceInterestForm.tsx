@@ -40,6 +40,22 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
   errors,
   industries
 }) => {
+
+  const previousParticipationLabels = {
+    _2016: '2016',
+    _2017: '2017',
+    _2018: '2018',
+    _2019: '2019',
+    _2020: '2020',
+    _2022: '2022',
+    _2023: '2023'
+  }
+  const participationCapacityLabels = {
+    student : 'Student',
+    professional : 'Professional',
+    hobbyist : 'Hobbyist'
+  }
+
   const handleSelectChange = (
     value: string[],
     name: string,
@@ -207,15 +223,15 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
               key={key}
               name="previous_participation"
               value={
-                previous_participation[
-                  key as keyof typeof previous_participation
-                ]
+                previousParticipationLabels[
+                  key as keyof typeof previousParticipationLabels
+                ] as previous_participation
               }
               checked={
                 formData.previous_participation?.includes(
-                  previous_participation[
-                    key as keyof typeof previous_participation
-                  ]
+                  previousParticipationLabels[
+                    key as keyof typeof previousParticipationLabels
+                  ] as previous_participation
                 ) || false
               }
               onChange={handleChange}

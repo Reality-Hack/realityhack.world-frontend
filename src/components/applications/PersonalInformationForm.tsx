@@ -45,8 +45,7 @@ const PersonalInformationForm: React.FC<FormProps> = ({
   ) => {
     const selectedOption = options.find(option => option.value === value[0]);
     const displayName = selectedOption ? selectedOption.display_name : null;
-
-    console.log('value', value);
+    alert(displayName)
     setFormData(prev => ({
       ...prev,
       [name]: value,
@@ -69,7 +68,7 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         error={errors.first_name}
         valid={!errors.first_name}
       >
-        First Name<span className="font-bold text-themeSecondary">*</span>
+        First Name or Preferred Name<span className="font-bold text-themeSecondary">*</span>
       </TextInput>
       <TextInput
         name="middle_name"
