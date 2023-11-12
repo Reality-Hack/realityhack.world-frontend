@@ -18,6 +18,7 @@ export const metadata = {
 const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
     <SessionProviderWrapper>
+      <link rel="shortcut icon" href='/images/favicon.ico'/>
       <html lang="en">
         <body className={inter.className}>
           <AuthContent>{children}</AuthContent>
