@@ -179,7 +179,7 @@ export interface form_data {
   heard_about_us?: heard_about_us[] | '';
   digital_designer_skills?: digital_designer_skills[] | null;
   specialized_expertise?: string | null;
-  industry: string;
+  industry: string[];
   hardware_hack_interest?: hardware_hack_interest[] | null;
   outreach_groups?: string | null;
   gender_identity_other?: string | null;

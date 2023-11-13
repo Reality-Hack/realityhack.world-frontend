@@ -61,6 +61,19 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
       }
     });
 
+    // // If industry has no values, set to null
+    // updatedPayload.industry = updatedPayload.industry || ['hello'];
+
+    // if hardware_hack_interest has no values, set to A
+    updatedPayload.hardware_hack_interest =
+      updatedPayload.hardware_hack_interest || 'A';
+
+    // Check if middle_name is not null, then trim and check if it's empty to set to null
+    updatedPayload.middle_name =
+      updatedPayload.middle_name && updatedPayload.middle_name.trim() === ''
+        ? null
+        : updatedPayload.middle_name;
+
     // Send payload
     await createApplication(updatedPayload);
 

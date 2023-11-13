@@ -96,7 +96,7 @@ const Application: NextPage = ({}: any) => {
     specialized_expertise: null,
     occupation: null,
     employer: null,
-    industry: '',
+    industry: [],
     previously_participated: null,
     previous_participation: [],
     participation_role: null,
@@ -105,7 +105,7 @@ const Application: NextPage = ({}: any) => {
     additional_skills: '',
     theme_essay: '',
     theme_essay_follow_up: '',
-    hardware_hack_interest: [],
+    hardware_hack_interest: null,
     heard_about_us: [],
     outreach_groups: null,
     gender_identity_other: null,
@@ -160,7 +160,7 @@ const Application: NextPage = ({}: any) => {
         student_field_of_study: null,
         occupation: null,
         employer: null,
-        industry: '',
+        industry: [],
         industry_option: null
       };
     }
