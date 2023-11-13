@@ -33,7 +33,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   acceptedFiles,
   ...formData
 }) {
-  const DEBUG = true;
   const [selectedTab, setSelectedTab] = useState(0);
 
   const handleTabChange = (_event: any, newValue: number) => {
@@ -186,14 +185,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
               >
                 {isOnSubmitTab ? 'Submit' : 'Next'}
               </button>
-              {DEBUG && (
-                <button
-                  onClick={handleNextTab}
-                  className="ml-4 cursor-pointer text-white w-20 bg-[#493B8A] px-4 py-2 rounded-lg disabled:opacity-50 transition-all"
-                >
-                  Debug
-                </button>
-              )}
             </div>
           )}
         </div>
