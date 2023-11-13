@@ -1,9 +1,11 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import Nav from '@/components/Nav';
 import AuthStatus from './AuthStatus';
 import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
+import Loader from './Loader';
 
 interface RootLayoutProps {
   children: ReactNode;
@@ -12,12 +14,18 @@ interface RootLayoutProps {
 const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname != '/apply') router.replace('/apply');
+  }, []);
 
   return (
     <>
       {session && !loading ? (
         <div className="flex flex-row">
-          <div className="min-w-[288px] h-screen p-3 bg-[#f8f7ff]">
+          <div className="min-w-[288px] h-screen p-3 bg-[#ffffff]">
             <h2 className="text-3xl">RH2024</h2>
             <AuthStatus />
             <hr />
@@ -26,9 +34,7 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
           <div className="w-full h-full p-3 bg-[#ffffff]">{children}</div>
         </div>
       ) : (
-        <div className="flex flex-row">
-          <div className="flex-grow bg-[#ffffff]">{children}</div>
-        </div>
+        <main>{pathname != '/apply' ? <Loader /> : children}</main>
       )}
     </>
   );

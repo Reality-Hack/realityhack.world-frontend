@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-console */
 'use client';
 
@@ -15,11 +16,18 @@ import {
   participation_role,
   participation_capacity,
   Enums,
-  exemptFields
+  exemptFields,
+  heard_about_us,
+  digital_designer_skills,
+  gender_identity,
+  race_ethnic_group,
+  disabilities,
+  disability_identity
 } from '../../application_form_types';
 import { CheckboxInput, validateField } from '@/components/Inputs';
 import { getSkills } from '../api/skills';
 import { applicationOptions } from '../api/application';
+import ReviewPage from '@/components/admin/ReviewPage';
 
 const Application: NextPage = ({}: any) => {
   const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
@@ -27,6 +35,7 @@ const Application: NextPage = ({}: any) => {
   const [skills, setSkills] = useState<any>(null);
   const [countries, setCountries] = useState<any>(null);
   const [nationalities, setNationalities] = useState<any>(null);
+  const [industries, setIndustries] = useState<any>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [requiredFields, setRequiredFields] = useState<
     Record<string, string[]>
@@ -83,10 +92,11 @@ const Application: NextPage = ({}: any) => {
     participation_capacity: null,
     student_school: null,
     student_field_of_study: null,
-    design_experience: [],
-    specialty_experience: [],
+    digital_designer_skills: [],
+    specialized_expertise: null,
     occupation: null,
     employer: null,
+    industry: '',
     previously_participated: null,
     previous_participation: [],
     participation_role: null,
@@ -95,85 +105,80 @@ const Application: NextPage = ({}: any) => {
     additional_skills: '',
     theme_essay: '',
     theme_essay_follow_up: '',
-    heard_about_us: []
+    hardware_hack_interest: [],
+    heard_about_us: [],
+    outreach_groups: null,
+    gender_identity_other: null,
+    race_ethnic_group_other: null,
+    disabilities_other: null,
+    digital_designer_skills_other: null,
+    heard_about_us_other: null,
+    current_country_option: null,
+    nationality_option: null,
+    industry_option: null
   });
+
+  useEffect(() => {
+    let updatedFormData = { ...formData };
+
+    if (formData.previously_participated === 'false') {
+      updatedFormData.previous_participation = [];
+    }
+
+    setFormData(updatedFormData);
+  }, [formData.previously_participated]);
+
+  useEffect(() => {
+    let updatedFormData = { ...formData };
+
+    if (formData.participation_role === participation_role.designer) {
+      updatedFormData.digital_designer_skills = [];
+    } else if (formData.participation_role === participation_role.developer) {
+      updatedFormData.proficient_languages = '';
+    } else if (formData.participation_role === participation_role.specialist) {
+      updatedFormData.specialized_expertise = null;
+    } else if (
+      formData.participation_role === participation_role.project_manager
+    ) {
+      updatedFormData.additional_skills = '';
+    }
+
+    setFormData(updatedFormData);
+  }, [formData.participation_role]);
+
+  useEffect(() => {
+    let updatedFormData = { ...formData };
+
+    if (
+      formData.participation_capacity === participation_capacity.student ||
+      formData.participation_capacity === participation_capacity.professional ||
+      formData.participation_capacity === participation_capacity.hobbyist
+    ) {
+      updatedFormData = {
+        ...updatedFormData,
+        student_school: null,
+        student_field_of_study: null,
+        occupation: null,
+        employer: null,
+        industry: ''
+      };
+    }
+
+    setFormData(updatedFormData);
+  }, [formData.participation_capacity]);
 
   useEffect(() => {
     const getData = async () => {
       const data = await getSkills();
       const options = await applicationOptions(formData);
+      console.log('options: ', options);
       setCountries(options.actions.POST.current_country.choices);
       setNationalities(options.actions.POST.nationality.choices);
+      setIndustries(options.actions.POST.industry.choices);
       setSkills(data);
     };
     getData();
   }, []);
-
-  useEffect(() => {
-    // let updatedFormData = { ...formData };
-
-    // if (
-    //   formData.participation_capacity === participation_capacity.student ||
-    //   formData.participation_capacity === participation_capacity.professional ||
-    //   formData.participation_capacity === participation_capacity.hobbyist
-    // ) {
-    //   updatedFormData = {
-    //     ...updatedFormData,
-    //     student_school: '',
-    //     student_field_of_study: '',
-    //     occupation: '',
-    //     employer: ''
-    //   };
-    // }
-
-    // if (!formData.previously_participated) {
-    //   updatedFormData.previous_participation = [];
-    // }
-
-    // if (formData.participation_role === participation_role.designer) {
-    //   updatedFormData.design_experience = [];
-    // } else if (formData.participation_role === participation_role.developer) {
-    //   updatedFormData.proficient_languages = '';
-    // } else if (formData.participation_role === participation_role.specialist) {
-    //   updatedFormData.specialty_experience = [];
-    // }
-
-    // setFormData(updatedFormData); // Reset formData fields
-
-    const updatedFields: string[] = [
-      'participation_capacity',
-      'participation_role',
-      'previously_participated',
-      ...(formData.participation_capacity === participation_capacity.student
-        ? ['student_school', 'student_field_of_study']
-        : formData.participation_capacity
-        ? ['occupation', 'employer']
-        : []),
-      ...(formData.previously_participated === 'true'
-        ? ['previous_participation']
-        : []),
-      ...(formData.participation_role === participation_role.designer
-        ? ['design_experience']
-        : []),
-      ...(formData.participation_role === participation_role.developer
-        ? ['proficient_languages']
-        : []),
-      ...(formData.participation_role === participation_role.specialist
-        ? ['specialty_experience']
-        : [])
-    ];
-
-    setRequiredFields(current => ({
-      ...current,
-      EXPERIENCE: updatedFields
-    }));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    formData.participation_capacity,
-    formData.previously_participated,
-    formData.participation_role
-  ]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -197,8 +202,6 @@ const Application: NextPage = ({}: any) => {
     ) => {
       const { name, value, type } = e.target;
       const checked = (e.target as HTMLInputElement).checked;
-
-      console.log(name, type, checked);
 
       setFormData(prev => {
         // CHECKBOX
@@ -264,7 +267,6 @@ const Application: NextPage = ({}: any) => {
       if (!fieldTab) return;
 
       const isFieldRequired = requiredFields[fieldTab].includes(e.target.name);
-
       const validationError = validateField(
         fieldType,
         e.target.value,
@@ -294,6 +296,11 @@ const Application: NextPage = ({}: any) => {
 
     if (required_fields.every(field => field === '')) {
       return true;
+    }
+
+    if (tabName === `PERSONAL INFO` && !acceptedFiles) {
+      console.log(`file upload is invalid: `, acceptedFiles);
+      return false;
     }
 
     for (let field of required_fields) {
@@ -334,6 +341,80 @@ const Application: NextPage = ({}: any) => {
     return true;
   };
 
+  useEffect(() => {
+    const updatedExperience: string[] = [
+      'participation_capacity',
+      'participation_role',
+      'previously_participated',
+      ...(formData.participation_capacity === participation_capacity.student
+        ? ['student_school', 'student_field_of_study']
+        : formData.participation_capacity
+        ? ['occupation', 'employer', 'industry']
+        : []),
+      ...(formData.previously_participated === 'true'
+        ? ['previous_participation']
+        : []),
+      ...(formData.participation_role === participation_role.designer
+        ? ['digital_designer_skills']
+        : []),
+      ...(formData.participation_role === participation_role.developer
+        ? ['proficient_languages']
+        : []),
+      ...(formData.participation_role === participation_role.specialist
+        ? ['specialized_expertise']
+        : []),
+      ...(formData.digital_designer_skills &&
+      formData.digital_designer_skills.includes(digital_designer_skills.other)
+        ? ['digital_designer_skills_other']
+        : [])
+    ];
+
+    const updatedDiversityInclusion = [
+      ...(formData.gender_identity &&
+      formData.gender_identity.includes(gender_identity.other)
+        ? ['gender_identity_other']
+        : []),
+      ...(formData.race_ethnic_group &&
+      formData.race_ethnic_group.includes(race_ethnic_group.other)
+        ? ['race_ethnic_group_other']
+        : []),
+      ...(formData.disability_identity &&
+      formData.disability_identity === disability_identity.yes
+        ? ['disabilities']
+        : []),
+      ...(formData.disabilities &&
+      formData.disabilities.includes(disabilities.other)
+        ? ['disabilities_other']
+        : []),
+      'gender_identity',
+      'race_ethnic_group',
+      'disability_identity'
+    ];
+
+    const updatedClosing = [
+      ...(formData.heard_about_us &&
+      formData.heard_about_us.includes(heard_about_us.other)
+        ? ['heard_about_us_other']
+        : []),
+      'heard_about_us'
+    ];
+
+    setRequiredFields(current => ({
+      ...current,
+      'DIVERSITY & INCLUSION': updatedDiversityInclusion,
+      EXPERIENCE: updatedExperience,
+      CLOSING: updatedClosing
+    }));
+  }, [
+    formData.participation_capacity,
+    formData.previously_participated,
+    formData.participation_role,
+    formData.gender_identity,
+    formData.race_ethnic_group,
+    formData.heard_about_us,
+    formData.disability_identity
+  ]);
+
   const WelcomeTab = () => (
     <div className="px-4 overflow-y-auto min-h-[496px]">
       <div className="text-xl font-bold text-purple-900">Welcome</div>
@@ -343,7 +424,7 @@ const Application: NextPage = ({}: any) => {
           fill out this form to apply for a spot at Reality Hack 2024. For all
           applications-related questions, contact{' '}
           <Link href="mailto:apply@mitrealityhack.com">
-            <span className="text-blue-500">apply@mitrealityhack.com</span>
+            <span className="text-themePrimary">apply@mitrealityhack.com</span>
           </Link>
           .
         </div>
@@ -351,7 +432,7 @@ const Application: NextPage = ({}: any) => {
         <div className="py-4">
           For general inquiries, contact{' '}
           <Link href="team@mitrealityhack.com">
-            <span className="text-blue-500">team@mitrealityhack.com</span>
+            <span className="text-themePrimary">team@mitrealityhack.com</span>
           </Link>
           .
         </div>
@@ -396,6 +477,7 @@ const Application: NextPage = ({}: any) => {
             checked={!!formData.disclaimer_groups}
             label="I understand and accept the above disclaimer."
             onChange={handleChange}
+            onBlur={handleBlur}
             error={errors.disclaimer_groups}
           />
         </div>
@@ -417,6 +499,7 @@ const Application: NextPage = ({}: any) => {
             checked={!!formData.disclaimer_open_source}
             label="I understand and accept the above disclaimer."
             onChange={handleChange}
+            onBlur={handleBlur}
             error={errors.disclaimer_open_source}
           />
         </div>
@@ -424,9 +507,15 @@ const Application: NextPage = ({}: any) => {
     </div>
   );
 
-  const CustomTab3 = () => (
+  const ReviewTab = () => (
     <div className="px-6">
       <p>Submit form</p>
+    </div>
+  );
+
+  const ConfirmationTab = () => (
+    <div className="px-6 h-[256px]">
+      <p>{`Thank you for applying to MIT Reality Hack 2023, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 
@@ -458,9 +547,11 @@ const Application: NextPage = ({}: any) => {
     <ExperienceInterestForm
       key={4}
       formData={formData}
+      setFormData={setFormData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
+      industries={industries}
     />,
     <ThematicForm
       key={5}
@@ -476,13 +567,25 @@ const Application: NextPage = ({}: any) => {
       handleChange={handleChange}
       errors={errors}
     />,
-    <CustomTab3 />
+    <ReviewPage key={7} allInfo={formData} acceptedFiles={acceptedFiles} />,
+    <ConfirmationTab key={8} />
+  ];
+  const tabNames = [
+    'WELCOME',
+    'DISCLAIMERS',
+    'PERSONAL INFO',
+    'DIVERSITY & INCLUSION',
+    'EXPERIENCE',
+    'THEMATIC',
+    'CLOSING',
+    'REVIEW & SUBMIT'
   ];
 
   return (
     <AnyApp
       key="1"
       tabs={tabs}
+      tabNames={tabNames}
       AppType="Hacker"
       formData={formData}
       isTabValid={isTabValid}

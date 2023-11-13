@@ -17,18 +17,18 @@ export enum age_group {
   prefer_not_to_say = 'H'
 }
 
-export enum gender_identities {
+export enum gender_identity {
   cisgender_female = 'A',
   cisgender_male = 'B',
   transgender_female = 'C',
   transgender_male = 'D',
   gender_nonconforming_nonbinary_or_gender_queer = 'E',
   two_spirit = 'F',
-  other = 'G',
-  prefer_not_to_say = 'H'
+  prefer_not_to_say = 'G',
+  other = 'O'
 }
 
-export enum race_ethnic_groups {
+export enum race_ethnic_group {
   asian = 'A',
   black = 'B',
   hispanic = 'C',
@@ -37,8 +37,8 @@ export enum race_ethnic_groups {
   pacific_islander = 'F',
   white = 'G',
   multi_racial_or_multi_ethnic = 'H',
-  other = 'I',
-  prefer_not_to_say = 'J'
+  prefer_not_to_say = 'I',
+  other = 'O'
 }
 
 export enum disability_identity {
@@ -54,7 +54,8 @@ export enum disabilities {
   ambulatory_difficulty = 'D',
   self_care_difficulty = 'E',
   independent_living_difficulty = 'F',
-  prefer_not_to_say = 'G'
+  prefer_not_to_say = 'G',
+  other = 'O'
 }
 
 export enum participation_capacity {
@@ -76,10 +77,11 @@ export enum previous_participation {
 export enum participation_role {
   designer = 'A',
   developer = 'D',
-  specialist = 'S'
+  specialist = 'S',
+  project_manager = 'P'
 }
 
-export enum design_experience {
+export enum digital_designer_skills {
   digital_art = 'A',
   animation = 'B',
   sound = 'C',
@@ -88,12 +90,11 @@ export enum design_experience {
   other = 'F'
 }
 
-export enum specialty_experience {
-  expertise_domain = 'A',
-  project_management = 'B',
-  creative_guidance = 'C',
-  storytelling = 'D',
-  other = 'E'
+export enum hardware_hack_interest {
+  not_interested = 'A',
+  mild_interest = 'B',
+  likely = 'C',
+  certain = 'D'
 }
 
 export enum heard_about_us {
@@ -109,15 +110,15 @@ export enum heard_about_us {
 export const Enums = {
   ...status,
   ...age_group,
-  ...gender_identities,
-  ...race_ethnic_groups,
+  ...gender_identity,
+  ...race_ethnic_group,
   ...disability_identity,
   ...disabilities,
   ...participation_capacity,
   ...previous_participation,
   ...participation_role,
-  ...design_experience,
-  ...specialty_experience,
+  ...digital_designer_skills,
+  ...hardware_hack_interest,
   ...heard_about_us
 };
 
@@ -155,8 +156,8 @@ export interface form_data {
   event_year: number;
   city: string;
   country: string;
-  gender_identity: gender_identities[] | null;
-  race_ethnic_group: race_ethnic_groups[];
+  gender_identity: gender_identity[] | null;
+  race_ethnic_group: race_ethnic_group[] | null;
   disability_identity: disability_identity | null;
   disabilities?: disabilities[] | null;
   disability_accommodations?: string | null;
@@ -176,19 +177,19 @@ export interface form_data {
   theme_essay?: string | null;
   theme_essay_follow_up?: string | null;
   heard_about_us?: heard_about_us[] | '';
-  dietary_restrictions?: string | null;
-  additional_accommodations?: string | null;
-  phone_number_country_alpha_2_options?: string | null;
-  phone_number: string;
-  design_experience?: design_experience[] | null;
-  specialty_experience?: specialty_experience[] | null;
-  us_visa_support_is_required?: boolean;
-  us_visa_support_full_name?: string | null;
-  us_visa_support_passport_number?: string | null;
-  us_visa_support_national_identification_document_information?: string | null;
-  us_visa_support_citizenship?: string | null;
-  us_visa_support_address_line_1?: string | null;
-  us_visa_support_address_line_2?: string | null;
+  digital_designer_skills?: digital_designer_skills[] | null;
+  specialized_expertise?: string | null;
+  industry: string;
+  hardware_hack_interest?: hardware_hack_interest[] | null;
+  outreach_groups?: string | null;
+  gender_identity_other?: string | null;
+  race_ethnic_group_other?: string | null;
+  disabilities_other?: string | null;
+  digital_designer_skills_other?: string | null;
+  heard_about_us_other?: string | null;
   submitted_at: Date;
   updated_at: Date;
+  current_country_option: null;
+  nationality_option: null;
+  industry_option: null;
 }

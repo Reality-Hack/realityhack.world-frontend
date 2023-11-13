@@ -91,5 +91,6 @@ module.exports = {
       futuraCondensed: ['futura-pt-condensed', 'sans-serif']
     }
   },
-  plugins: []
+  plugins: [
+  ]
 };

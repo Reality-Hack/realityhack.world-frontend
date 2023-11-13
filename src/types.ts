@@ -76,10 +76,11 @@ export enum previous_participation {
 export enum participation_role {
   designer = 'A',
   developer = 'D',
-  specialist = 'S'
+  specialist = 'S',
+  project_manager = 'PM'
 }
 
-export enum design_experience {
+export enum digital_designer_skills {
   digital_art = 'A',
   animation = 'B',
   sound = 'C',
@@ -88,7 +89,7 @@ export enum design_experience {
   other = 'F'
 }
 
-export enum specialty_experience {
+export enum specialized_expertise {
   expertise_domain = 'A',
   project_management = 'B',
   creative_guidance = 'C',
@@ -154,8 +155,8 @@ export interface Application {
   additional_accommodations?: string | null;
   phone_number_country_alpha_2_options?: string | null;
   phone_number: string;
-  design_experience?: design_experience[] | null;
-  specialty_experience?: specialty_experience[] | null;
+  digital_designer_skills?: digital_designer_skills[] | null;
+  specialized_expertise?: specialized_expertise[] | null;
   emergency_contact_name: string;
   emergency_contact_phone_number: string;
   emergency_contact_email: string;

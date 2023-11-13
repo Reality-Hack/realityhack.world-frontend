@@ -1,4 +1,5 @@
 'use client';
+import { form_data } from '@/application_form_types';
 import React, { useState, useRef, useEffect } from 'react';
 
 export enum FocusState {
@@ -26,9 +27,13 @@ export const validateField = (
       break;
     case 'url':
       try {
-        new URL(value);
+        new URL(value); // Try creating a URL directly
       } catch (e) {
-        return 'Invalid URL.';
+        try {
+          new URL(`https://${value}`); // Try creating a URL with 'https://' prefix
+        } catch (e) {
+          return 'Invalid URL.';
+        }
       }
       break;
     case 'checkbox':
@@ -52,7 +57,8 @@ export const TextInput: React.FC<{
   error?: string;
   valid?: boolean;
   required?: boolean;
-  children: React.ReactNode;
+  other?: boolean;
+  children?: React.ReactNode;
 }> = ({
   name,
   placeholder,
@@ -64,6 +70,7 @@ export const TextInput: React.FC<{
   error,
   valid = true,
   required = false,
+  other = false,
   children
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -78,8 +85,14 @@ export const TextInput: React.FC<{
     if (onBlur) onBlur(e);
   };
 
-  let style =
-    'h-8 placeholder:transition-all transition-all border-[1px] bg-white w-full px-3 py-2 rounded-lg appearance-none rounded-t-md focus:z-10 sm:text-sm outline-0 ';
+  let style = `h-8 placeholder:transition-all transition-all border-[1px] bg-white px-3 py-2 rounded-lg appearance-none rounded-t-md focus:z-10 sm:text-sm outline-0 hover:text-themelight hover:border-themePrimary hover:shadow-themeActive hover:border-opacity-100 '
+  `;
+
+  if (other === true) {
+    style += ' w-[160px] ';
+  } else {
+    style += ' w-full ';
+  }
 
   if (isFocused) {
     style +=
@@ -151,7 +164,7 @@ export const TextAreaInput: React.FC<{
   };
 
   let style =
-    'mt-4 placeholder:transition-all transition-all border-[1px] bg-white w-full px-3 py-2 rounded-lg appearance-none rounded-t-md focus:z-10 sm:text-sm outline-0 ';
+    'mt-4 placeholder:transition-all transition-all border-[1px] bg-white w-full px-3 py-2 rounded-lg appearance-none rounded-t-md focus:z-10 sm:text-sm outline-0 hover:text-themelight hover:border-themePrimary hover:shadow-themeActive hover:border-opacity-100 ';
   if (isFocused) {
     style +=
       'text-themelight border-themePrimary shadow-themeActive border-opacity-100 ';
@@ -188,27 +201,57 @@ export const SelectInput: React.FC<{
   placeholder: string;
   options: { value: string; display_name: string }[];
   value: string;
-  onChange: (value: string[], name: string) => void;
+  onChange: (
+    value: string[],
+    name: string,
+    options: { value: string; display_name: string }[]
+  ) => void;
+
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   error?: string;
   valid?: boolean;
   children: React.ReactNode;
+  required?: boolean;
 }> = ({
   name,
   placeholder,
   options,
   value,
   onChange,
+  onBlur,
   error,
   valid = true,
-  children
+  children,
+  required
 }) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(value);
   const [filteredOptions, setFilteredOptions] = useState(options);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [optionClicked, setOptionClicked] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState('');
   const activeOptionRef = useRef<HTMLDivElement>(null);
+
+  const validateInput = () => {
+    const isValid = options.some(option => option.display_name === inputValue);
+    if (!isValid) {
+      setValidationError('Invalid value');
+    } else {
+      setValidationError('');
+    }
+  };
+
+  const manualBlur = () => {
+    const syntheticEvent = {
+      target: { name, value: inputValue, tagName: name, type: 'blur' },
+      currentTarget: { name, value: inputValue }
+    };
+
+    if (onBlur) {
+      onBlur(syntheticEvent as React.FocusEvent<HTMLInputElement>);
+    }
+  };
 
   useEffect(() => {
     if (isOptionsVisible && activeOptionRef.current) {
@@ -233,30 +276,33 @@ export const SelectInput: React.FC<{
   }, [inputValue, options]);
 
   useEffect(() => {
-    setInputValue(value || '');
-  }, [value]);
+    if (inputValue === optionClicked) {
+      manualBlur();
+    }
+  }, [inputValue, optionClicked]);
+
+  const setVal = (val: string) => {
+    setInputValue(val);
+  };
 
   useEffect(() => {
-    if (optionClicked) {
-      setInputValue(optionClicked);
-      setOptionClicked(null);
-    }
-  }, [optionClicked]);
+    setInputValue(value);
+  }, [value]);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    switch (event.key) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    switch (e.key) {
       case 'ArrowUp':
-        event.preventDefault();
+        e.preventDefault();
         setActiveIndex(prevIndex => Math.max(0, prevIndex - 1));
         break;
       case 'ArrowDown':
-        event.preventDefault();
+        e.preventDefault();
         setActiveIndex(prevIndex =>
           Math.min(filteredOptions.length - 1, prevIndex + 1)
         );
         break;
       case 'Enter':
-        event.preventDefault();
+        e.preventDefault();
         if (filteredOptions[activeIndex]) {
           handleOptionClick(filteredOptions[activeIndex]);
           setIsOptionsVisible(false);
@@ -272,7 +318,9 @@ export const SelectInput: React.FC<{
     setIsOptionsVisible(true);
   };
 
-  const handleBlur = () => {
+  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    validateInput();
+    if (onBlur) onBlur(e);
     setIsFocused(false);
     setIsOptionsVisible(false);
     setActiveIndex(0);
@@ -286,17 +334,21 @@ export const SelectInput: React.FC<{
     value: string;
     display_name: string;
   }) => {
-    onChange([option.value], name);
-    setOptionClicked(option.display_name);
+    onChange([option.value], name, options);
+    setOptionClicked(option.value);
+    setVal(option.value);
+    setInputValue(option.display_name);
+    setIsOptionsVisible(false);
+    setValidationError('');
   };
 
   let style =
-    'h-8 placeholder:transition-all transition-all border-[1px] bg-white w-full px-3 py-2 rounded-lg appearance-none rounded-t-md focus:z-10 sm:text-sm outline-0 ';
+    'h-8 placeholder:transition-all transition-all border-[1px] bg-white w-full px-3 py-2 rounded-lg appearance-none rounded-t-md focus:z-10 sm:text-sm outline-0 hover:text-themelight hover:border-themePrimary hover:shadow-themeActive hover:border-opacity-100 ';
 
   if (isFocused) {
     style +=
       'text-themelight border-themePrimary shadow-themeActive border-opacity-100 ';
-  } else if (!valid) {
+  } else if (!valid || error || validationError) {
     style +=
       'text-themeSecondary placeholder-themeSecondary border-themeSecondary shadow-themeSecondary border-opacity-100 ';
   } else {
@@ -308,12 +360,15 @@ export const SelectInput: React.FC<{
       <p>{children}</p>
       <input
         value={inputValue}
+        name={name}
         onChange={handleInputChange}
         onFocus={handleFocus}
-        onBlur={handleBlur}
+        onBlur={handleInputBlur}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
+        required={required}
         className={style}
+        autoComplete="off"
       />
       {isOptionsVisible && (
         <div
@@ -335,9 +390,13 @@ export const SelectInput: React.FC<{
           ))}
         </div>
       )}
-      {error && (
+      {error ? (
         <p className="absolute ml-1 text-xs text-themeSecondary">{error}</p>
-      )}
+      ) : validationError ? (
+        <p className="absolute ml-1 text-xs text-themeSecondary">
+          {validationError}
+        </p>
+      ) : null}
     </div>
   );
 };
@@ -347,24 +406,32 @@ export const CheckboxInput: React.FC<{
   value: string;
   checked: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   label: string;
   error?: string;
-}> = ({ name, value, checked, onChange, label, error }) => (
-  <div className="mb-2">
-    <label>
-      <input
-        type="checkbox"
-        name={name}
-        value={value}
-        checked={checked}
-        onChange={onChange}
-        className="mr-2"
-      />
-      {label}
-    </label>
-    {error && <p className="ml-1 text-xs text-themeSecondary">{error}</p>}
-  </div>
-);
+}> = ({ name, value, checked, onChange, onBlur, label, error }) => {
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (onBlur) onBlur(e);
+  };
+
+  return (
+    <div className="mb-2">
+      <label>
+        <input
+          type="checkbox"
+          name={name}
+          value={value}
+          checked={checked}
+          onChange={onChange}
+          className="px-3 py-3 mr-2 bg-white outline-none accent-themePrimary rounded-xl "
+          onBlur={handleBlur}
+        />
+        {label}
+      </label>
+      {error && <p className="ml-1 text-xs text-themeSecondary">{error}</p>}
+    </div>
+  );
+};
 
 export const RadioInput: React.FC<{
   name: string;
@@ -381,7 +448,7 @@ export const RadioInput: React.FC<{
         value={value}
         checked={checked}
         onChange={onChange}
-        className="mr-2"
+        className="mr-2 text-black accent-themePrimary rounded-xl w-fit"
       />
       {label}
     </label>

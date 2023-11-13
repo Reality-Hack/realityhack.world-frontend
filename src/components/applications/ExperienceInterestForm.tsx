@@ -1,16 +1,23 @@
 import React from 'react';
-import { TextInput, TextAreaInput, RadioInput, CheckboxInput } from '../Inputs';
+import {
+  TextInput,
+  TextAreaInput,
+  RadioInput,
+  CheckboxInput,
+  SelectInput
+} from '../Inputs';
 import {
   form_data,
   participation_capacity,
   previous_participation,
   participation_role,
-  design_experience,
-  specialty_experience
+  digital_designer_skills,
+  option_value
 } from '../../application_form_types';
 
 interface FormProps {
   formData: Partial<form_data>;
+  setFormData: React.Dispatch<React.SetStateAction<Partial<form_data>>>;
   handleChange: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -22,20 +29,50 @@ interface FormProps {
     >
   ) => void;
   errors: Record<string, string>;
+  industries: option_value[];
 }
+
+export const previousParticipationLabels = {
+  _2016: '2016',
+  _2017: '2017',
+  _2018: '2018',
+  _2019: '2019',
+  _2020: '2020',
+  _2021: '2021',
+  _2022: '2022',
+  _2023: '2023'
+};
+
+export const DesignSkillsLabels = {
+  digital_art: 'Digital Art',
+  animation: 'Animation',
+  sound: 'Sound',
+  ux_ui: 'UX and UI',
+  video: 'Video',
+  other: 'Other'
+};
 
 const ExperienceInterestForm: React.FC<FormProps> = ({
   formData,
+  setFormData,
   handleChange,
   handleBlur,
-  errors
+  errors,
+  industries
 }) => {
-  const specialtyExperienceLabels = {
-    expertise_domain: 'Expertise in a professional or academic domain',
-    project_management: 'Expertise in project management or rapid prototyping',
-    creative_guidance: 'Creative guidance and motivation',
-    storytelling: 'Storytelling',
-    other: 'Other'
+  const handleSelectChange = (
+    value: string[],
+    name: string,
+    options: { value: string; display_name: string }[]
+  ) => {
+    const selectedOption = options.find(option => option.value === value[0]);
+    const displayName = selectedOption ? selectedOption.display_name : null;
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+      [`${name}_option`]: displayName
+    }));
   };
 
   return (
@@ -46,7 +83,7 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
       <p className="pb-4">
         Select the option that best describes you. This option should best
         describe you now and not necessarily in relation to the XR industries.
-        (Select one)
+        <span className="font-bold text-themeSecondary">*</span>
       </p>
       <RadioInput
         name="participation_capacity"
@@ -89,7 +126,8 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
             valid={!errors.student_school}
             onBlur={handleBlur}
           >
-            What is the name of your school?
+            What is the name of your school?{' '}
+            <span className="font-bold text-themeSecondary">*</span>
           </TextInput>
           <TextInput
             name="student_field_of_study"
@@ -102,7 +140,8 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
             onBlur={handleBlur}
           >
             If you are attending a higher education institution, what is your
-            field of study?
+            field of study?{' '}
+            <span className="font-bold text-themeSecondary">*</span>
           </TextInput>
           <hr className="mb-4" />
         </>
@@ -123,7 +162,8 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
             valid={!errors.occupation}
             onBlur={handleBlur}
           >
-            What is your current occupation?
+            What is your current occupation?{' '}
+            <span className="font-bold text-themeSecondary">*</span>
           </TextInput>
           <TextInput
             name="employer"
@@ -135,14 +175,30 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
             valid={!errors.employer}
             onBlur={handleBlur}
           >
-            What company do you currently work for?
+            What company do you currently work for?{' '}
+            <span className="font-bold text-themeSecondary">*</span>
           </TextInput>
+          <SelectInput
+            name="industry"
+            placeholder="Select your industry"
+            options={industries}
+            value={formData.industry_option || ''}
+            onChange={handleSelectChange}
+            onBlur={handleBlur}
+            error={errors.industry}
+            required={true}
+            valid={!errors.industry}
+          >
+            What industry represents your expertise?{' '}
+            <span className="font-bold text-themeSecondary">*</span>
+          </SelectInput>
           <hr className="my-4" />
         </>
       )}
 
       <p className="py-4">
-        Have you ever participated in the MIT XR Hackathon before?
+        Have you ever participated in the MIT XR Hackathon before?{' '}
+        <span className="font-bold text-themeSecondary">*</span>
       </p>
 
       <RadioInput
@@ -192,7 +248,8 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
       )}
 
       <p className="py-4">
-        What primary role do you see yourself fulfilling for your team?
+        What primary role do you see yourself fulfilling for your team?{' '}
+        <span className="font-bold text-themeSecondary">*</span>
       </p>
       <div className="mb-4">
         {Object.keys(participation_role).map(key => (
@@ -205,25 +262,41 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
               participation_role[key as keyof typeof participation_role]
             }
             onChange={handleChange}
-            label={key.charAt(0).toUpperCase() + key.slice(1)}
+            label={key
+              .split('_')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ')}
           />
         ))}
+        <p className="ml-4 text-xs italic max-w-[520px]">
+          Recommended for management students and others experienced in
+          business, marketing, and project management. Project managers help
+          their team by doing market research, refining concepts, guiding the
+          project pitch, and preparing presentation materials.
+        </p>
       </div>
       {formData.participation_role === participation_role.designer && (
         <div className="py-4">
           <hr className="mb-4" />
           <p className="mb-4">
-            What design skills are you proficient in? Select all that apply:
+            What design skills are you proficient in? Select all that apply:{' '}
+            <span className="font-bold text-themeSecondary">*</span>
           </p>
 
-          {Object.keys(design_experience).map(key => (
+          {Object.keys(digital_designer_skills).map(key => (
             <CheckboxInput
               key={key}
-              name="design_experience"
-              value={design_experience[key as keyof typeof design_experience]}
+              name="digital_designer_skills"
+              value={
+                digital_designer_skills[
+                  key as keyof typeof digital_designer_skills
+                ]
+              }
               checked={
-                formData.design_experience?.includes(
-                  design_experience[key as keyof typeof design_experience]
+                formData.digital_designer_skills?.includes(
+                  digital_designer_skills[
+                    key as keyof typeof digital_designer_skills
+                  ]
                 ) || false
               }
               onChange={handleChange}
@@ -233,9 +306,26 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
                   : key.charAt(0).toUpperCase() +
                     key.slice(1).replace(/_/g, ' ')
               }
-              error={errors.previous_participation}
+              error={errors.digital_designer_skills}
             />
           ))}
+
+          {formData.digital_designer_skills?.includes(
+            digital_designer_skills.other
+          ) && (
+            <TextInput
+              name="digital_designer_skills_other"
+              placeholder="Please specify"
+              type="text"
+              value={formData.digital_designer_skills_other || ''}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={errors.digital_designer_skills_other}
+              valid={!errors.digital_designer_skills_other}
+              other={true}
+              required={true}
+            />
+          )}
           <hr />
         </div>
       )}
@@ -252,7 +342,7 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
             onBlur={handleBlur}
           >
             What platforms and programming languages are you already proficient
-            with?
+            with? <span className="font-bold text-themeSecondary">*</span>
           </TextAreaInput>
           <hr />
         </div>
@@ -260,31 +350,19 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
       {formData.participation_role === participation_role.specialist && (
         <div className="py-4">
           <hr className="mb-4" />
-          <p className="mb-4">
-            What specialty skills are you proficient in? Select all that apply:
-          </p>
-          {Object.keys(specialty_experience).map(key => (
-            <CheckboxInput
-              key={key}
-              name="specialty_experience"
-              value={
-                specialty_experience[key as keyof typeof specialty_experience]
-              }
-              checked={
-                formData.specialty_experience?.includes(
-                  specialty_experience[key as keyof typeof specialty_experience]
-                ) || false
-              }
-              onChange={handleChange}
-              label={
-                specialtyExperienceLabels[
-                  key as keyof typeof specialtyExperienceLabels
-                ]
-              }
-              error={errors.specialty_experience}
-            />
-          ))}
-          <hr />
+          <TextAreaInput
+            name="specialized_expertise"
+            placeholder="List tools you are familiar with (Optional)"
+            value={formData.specialized_expertise || ''}
+            onChange={handleChange}
+            error={errors.specialized_expertise}
+            valid={!errors.specialized_expertise}
+            onBlur={handleBlur}
+          >
+            What are your areas or skills of expertise?{' '}
+            <span className="font-bold text-themeSecondary">*</span>
+          </TextAreaInput>
+          <br />
         </div>
       )}
       <TextAreaInput

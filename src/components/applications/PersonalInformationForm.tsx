@@ -25,6 +25,17 @@ interface FormProps {
   nationalities: option_value[];
 }
 
+export const ageGroupLabels = {
+  seventeen_or_younger: '17 or younger',
+  eighteen_to_twenty: '18-20',
+  twenty_one_to_twenty_nine: '21-29',
+  thirty_to_thirty_nine: '30-39',
+  forty_to_forty_nine: '40-49',
+  fifty_to_fifty_nine: '50-59',
+  sixty_or_older: '60 or older',
+  prefer_not_to_say: 'I prefer not to say'
+};
+
 const PersonalInformationForm: React.FC<FormProps> = ({
   formData,
   setFormData,
@@ -38,10 +49,19 @@ const PersonalInformationForm: React.FC<FormProps> = ({
   countries,
   nationalities
 }) => {
-  const handleSelectChange = (value: string | string[], name: string) => {
+  const handleSelectChange = (
+    value: string[],
+    name: string,
+    options: { value: string; display_name: string }[]
+  ) => {
+    const selectedOption = options.find(option => option.value === value[0]);
+    const displayName = selectedOption ? selectedOption.display_name : null;
+
+    console.log('value', value);
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: value,
+      [`${name}_option`]: displayName
     }));
   };
 
@@ -50,7 +70,6 @@ const PersonalInformationForm: React.FC<FormProps> = ({
       <p className="mb-4 text-xl font-bold text-purple-900">
         Basic Info and Demographics
       </p>
-
       <TextInput
         name="first_name"
         placeholder="e.g. Alex"
@@ -61,9 +80,8 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         error={errors.first_name}
         valid={!errors.first_name}
       >
-        First Name
+        First Name<span className="font-bold text-themeSecondary">*</span>
       </TextInput>
-
       <TextInput
         name="middle_name"
         placeholder="e.g. John"
@@ -76,7 +94,6 @@ const PersonalInformationForm: React.FC<FormProps> = ({
       >
         Middle name or initial (optional)
       </TextInput>
-
       <TextInput
         name="last_name"
         placeholder="e.g. Smith"
@@ -87,9 +104,8 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         error={errors.last_name}
         valid={!errors.last_name}
       >
-        Last Name
+        Last Name <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
-
       <TextInput
         name="pronouns"
         placeholder="e.g. she/her/hers"
@@ -101,8 +117,8 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         valid={!errors.pronouns}
       >
         Preferred pronouns{' '}
+        <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
-
       <TextInput
         name="email"
         placeholder="e.g. alex@example.com"
@@ -113,9 +129,8 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         error={errors.email}
         valid={!errors.email}
       >
-        Email
+        Email <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
-
       <TextInput
         name="communications_platform_username"
         placeholder="e.g. https://example.com/alex"
@@ -126,9 +141,9 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         error={errors.communications_platform_username}
         valid={!errors.communications_platform_username}
       >
-        Link to your preferred social media account
+        Link to your preferred social media account{' '}
+        <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
-
       <TextInput
         name="portfolio"
         placeholder="e.g. https://example.com/alex"
@@ -139,10 +154,14 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         error={errors.portfolio}
         valid={!errors.portfolio}
       >
-        Link to your portfolio or an example of your past work
+        Link to your portfolio or an example of your past work{' '}
+        <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
+      <p>
+        Upload your resume{' '}
+        <span className="font-bold text-themeSecondary">*</span>
+      </p>
 
-      <p>Upload your resume</p>
       <Dropzone
         setFormData={setFormData}
         acceptedFiles={acceptedFiles}
@@ -150,29 +169,34 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         rejectedFiles={rejectedFiles}
         setRejectedFiles={setRejectedFiles}
       />
-
       <SelectInput
         name="nationality"
         placeholder="Select your nationality"
         options={nationalities}
-        value={formData.nationality || ''}
+        value={formData.nationality_option || ''}
         onChange={handleSelectChange}
+        onBlur={handleBlur}
         error={errors.nationality}
+        required={true}
+        valid={!errors.nationality}
       >
-        What is your nationality?
+        What is your nationality?{' '}
+        <span className="font-bold text-themeSecondary">*</span>
       </SelectInput>
-
       <SelectInput
         name="current_country"
         placeholder="Select your country"
         options={countries}
-        value={formData.current_country || ''}
+        value={formData.current_country_option || ''}
         onChange={handleSelectChange}
+        onBlur={handleBlur}
         error={errors.current_country}
+        required={true}
+        valid={!errors.current_country}
       >
-        What country do you currently reside in?
+        What country do you currently reside in?{' '}
+        <span className="font-bold text-themeSecondary">*</span>
       </SelectInput>
-
       <TextInput
         name="current_city"
         placeholder="e.g. Cambridge, MA."
@@ -183,14 +207,14 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         error={errors.current_city}
         valid={!errors.current_city}
       >
-        What city are you based in?
+        What city are you based in?{' '}
+        <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
-
       <label className="mb-2">
-        As of January 25, 2024, I will fall under this age group: (single option
-        select)
+        As of January 25, 2024, I will fall under this age group:{' '}
       </label>
-      <div>
+      <span className="font-bold text-themeSecondary">*</span>
+      <div className="mb-8">
         <RadioInput
           name="age_group"
           value={age_group.seventeen_or_younger}
