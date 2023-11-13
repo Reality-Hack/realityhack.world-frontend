@@ -51,6 +51,16 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
       updatedPayload.resume = fileUploadResponse.id;
     }
 
+    // Add https:// prefix if missing
+    ['communications_platform_username', 'portfolio'].forEach(field => {
+      if (
+        updatedPayload[field] &&
+        !updatedPayload[field].startsWith('https://')
+      ) {
+        updatedPayload[field] = `https://${updatedPayload[field]}`;
+      }
+    });
+
     // Send payload
     await createApplication(updatedPayload);
 

@@ -26,16 +26,15 @@ export const validateField = (
         return 'Input should be at least 3 characters.';
       break;
     case 'url':
-      try {
-        new URL(value); // Try creating a URL directly
-      } catch (e) {
-        try {
-          new URL(`https://${value}`); // Try creating a URL with 'https://' prefix
-        } catch (e) {
-          return 'Invalid URL.';
-        }
-      }
+      if (value.trim().length < 3)
+        return 'Input should be at least 3 characters.';
+
+      // Regex for URL validation
+      const urlPattern =
+        /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
+      if (!urlPattern.test(value)) return 'Invalid URL.';
       break;
+
     case 'checkbox':
       if (isRequired && !checked) return 'This checkbox must be checked.';
       break;
