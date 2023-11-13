@@ -13,18 +13,25 @@ interface RootLayoutProps {
 
 const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   const { data: session, status } = useSession();
-  const loading = status === 'loading';
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!session && pathname != '/apply' && pathname != '/signin')
+    if (status === 'loading') return;
+
+    if (!session && pathname !== '/apply' && pathname !== '/signin') {
       router.replace('/apply');
-  }, []);
+      return;
+    }
+
+    if (session && pathname !== '/') {
+      router.replace('/');
+    }
+  }, [session, pathname, router, status]);
 
   return (
     <>
-      {session && !loading ? (
+      {session ? (
         <div className="flex flex-row">
           <div className="min-w-[288px] h-screen p-3 bg-[#ffffff]">
             <h2 className="text-3xl">RH2024</h2>
@@ -36,7 +43,7 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
         </div>
       ) : (
         <main>
-          {pathname != '/apply' && pathname != '/signin' ? (
+          {!session && pathname != '/apply' && pathname != '/signin' ? (
             <Loader />
           ) : (
             children
