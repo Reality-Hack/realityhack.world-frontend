@@ -32,6 +32,26 @@ interface FormProps {
   industries: option_value[];
 }
 
+export const previousParticipationLabels = {
+  _2016: '2016',
+  _2017: '2017',
+  _2018: '2018',
+  _2019: '2019',
+  _2020: '2020',
+  _2021: '2021',
+  _2022: '2022',
+  _2023: '2023'
+};
+
+export const DesignSkillsLabels = {
+  digital_art: 'Digital Art',
+  animation: 'Animation',
+  sound: 'Sound',
+  ux_ui: 'UX and UI',
+  video: 'Video',
+  other: 'Other'
+};
+
 const ExperienceInterestForm: React.FC<FormProps> = ({
   formData,
   setFormData,

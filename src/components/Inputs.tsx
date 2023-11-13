@@ -27,9 +27,13 @@ export const validateField = (
       break;
     case 'url':
       try {
-        new URL(value);
+        new URL(value); // Try creating a URL directly
       } catch (e) {
-        return 'Invalid URL.';
+        try {
+          new URL(`https://${value}`); // Try creating a URL with 'https://' prefix
+        } catch (e) {
+          return 'Invalid URL.';
+        }
       }
       break;
     case 'checkbox':
@@ -221,7 +225,7 @@ export const SelectInput: React.FC<{
   required
 }) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(value);
   const [filteredOptions, setFilteredOptions] = useState(options);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -280,6 +284,10 @@ export const SelectInput: React.FC<{
   const setVal = (val: string) => {
     setInputValue(val);
   };
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     switch (e.key) {
@@ -415,7 +423,7 @@ export const CheckboxInput: React.FC<{
           value={value}
           checked={checked}
           onChange={onChange}
-          className="px-3 py-3 mr-2 bg-white outline-none mr-2block accent-themePrimary rounded-xl w-fit"
+          className="px-3 py-3 mr-2 bg-white outline-none accent-themePrimary rounded-xl "
           onBlur={handleBlur}
         />
         {label}

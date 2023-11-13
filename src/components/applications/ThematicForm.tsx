@@ -20,19 +20,19 @@ interface FormProps {
   errors: Record<string, string>;
 }
 
+export const hardwareHackLabels = {
+  not_interested: 'Not at all interested, I’ll pass',
+  mild_interest: 'Some mild interest',
+  likely: 'Most likely',
+  certain: '100% I want to join'
+};
+
 const ThematicForm: React.FC<FormProps> = ({
   formData,
   handleChange,
   handleBlur,
   errors
 }) => {
-  const hardwareHackLabels = {
-    not_interested: 'Not at all interested, I’ll pass',
-    mild_interest: 'Some mild interest',
-    likely: 'Most likely',
-    certain: '100% I want to join'
-  };
-
   return (
     <div className="px-6">
       <p className="mb-4 text-xl font-bold text-purple-900">Thematic</p>

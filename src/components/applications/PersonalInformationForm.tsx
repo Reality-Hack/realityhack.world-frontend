@@ -25,6 +25,17 @@ interface FormProps {
   nationalities: option_value[];
 }
 
+export const ageGroupLabels = {
+  seventeen_or_younger: '17 or younger',
+  eighteen_to_twenty: '18-20',
+  twenty_one_to_twenty_nine: '21-29',
+  thirty_to_thirty_nine: '30-39',
+  forty_to_forty_nine: '40-49',
+  fifty_to_fifty_nine: '50-59',
+  sixty_or_older: '60 or older',
+  prefer_not_to_say: 'I prefer not to say'
+};
+
 const PersonalInformationForm: React.FC<FormProps> = ({
   formData,
   setFormData,

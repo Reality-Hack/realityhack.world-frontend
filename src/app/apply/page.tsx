@@ -1,29 +1,33 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-console */
 'use client';
 
-import { CheckboxInput, validateField } from '@/components/Inputs';
-import ClosingForm from '@/components/applications/ClosingForm';
-import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
-import ExperienceInterestForm from '@/components/applications/ExperienceInterestForm';
-import PersonalInformationForm from '@/components/applications/PersonalInformationForm';
-import ThematicForm from '@/components/applications/ThematicForm';
+import React, { useState, useEffect, useCallback } from 'react';
 import AnyApp from '@/components/applications/applicationAny';
 import type { NextPage } from 'next';
 import Link from 'next/link';
-import React, { useCallback, useEffect, useState } from 'react';
+import PersonalInformationForm from '@/components/applications/PersonalInformationForm';
+import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
+import ExperienceInterestForm from '@/components/applications/ExperienceInterestForm';
+import ThematicForm from '@/components/applications/ThematicForm';
+import ClosingForm from '@/components/applications/ClosingForm';
 import {
-  Enums,
-  digital_designer_skills,
-  exemptFields,
   form_data,
-  gender_identity,
-  heard_about_us,
-  participation_capacity,
   participation_role,
-  race_ethnic_group
+  participation_capacity,
+  Enums,
+  exemptFields,
+  heard_about_us,
+  digital_designer_skills,
+  gender_identity,
+  race_ethnic_group,
+  disabilities,
+  disability_identity
 } from '../../application_form_types';
-import { applicationOptions } from '../api/application';
+import { CheckboxInput, validateField } from '@/components/Inputs';
 import { getSkills } from '../api/skills';
+import { applicationOptions } from '../api/application';
+import ReviewPage from '@/components/admin/ReviewPage';
 
 const Application: NextPage = ({}: any) => {
   const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
@@ -43,7 +47,7 @@ const Application: NextPage = ({}: any) => {
       'last_name',
       'email',
       'pronouns',
-      'communications_platfgsorm_username',
+      'communications_platform_username',
       'portfolio',
       'current_city',
       'current_country',
@@ -92,7 +96,7 @@ const Application: NextPage = ({}: any) => {
     specialized_expertise: null,
     occupation: null,
     employer: null,
-    industry: null,
+    industry: '',
     previously_participated: null,
     previous_participation: [],
     participation_role: null,
@@ -105,14 +109,14 @@ const Application: NextPage = ({}: any) => {
     heard_about_us: [],
     outreach_groups: null,
     gender_identity_other: null,
+    race_ethnic_group_other: null,
+    disabilities_other: null,
     digital_designer_skills_other: null,
     heard_about_us_other: null,
     current_country_option: null,
     nationality_option: null,
     industry_option: null
   });
-
-  console.log(requiredFields);
 
   useEffect(() => {
     let updatedFormData = { ...formData };
@@ -156,13 +160,11 @@ const Application: NextPage = ({}: any) => {
         student_field_of_study: null,
         occupation: null,
         employer: null,
-        industry: null
+        industry: ''
       };
     }
 
     setFormData(updatedFormData);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.participation_capacity]);
 
   useEffect(() => {
@@ -258,8 +260,6 @@ const Application: NextPage = ({}: any) => {
         fieldType = e.target.type;
       }
 
-      console.log('validate field type:', fieldType);
-
       const fieldTab = Object.entries(requiredFields).find(([_, fields]) =>
         fields.includes(e.target.name)
       )?.[0];
@@ -267,7 +267,6 @@ const Application: NextPage = ({}: any) => {
       if (!fieldTab) return;
 
       const isFieldRequired = requiredFields[fieldTab].includes(e.target.name);
-      console.log(isFieldRequired);
       const validationError = validateField(
         fieldType,
         e.target.value,
@@ -379,6 +378,14 @@ const Application: NextPage = ({}: any) => {
       formData.race_ethnic_group.includes(race_ethnic_group.other)
         ? ['race_ethnic_group_other']
         : []),
+      ...(formData.disability_identity &&
+      formData.disability_identity === disability_identity.yes
+        ? ['disabilities']
+        : []),
+      ...(formData.disabilities &&
+      formData.disabilities.includes(disabilities.other)
+        ? ['disabilities_other']
+        : []),
       'gender_identity',
       'race_ethnic_group',
       'disability_identity'
@@ -398,15 +405,14 @@ const Application: NextPage = ({}: any) => {
       EXPERIENCE: updatedExperience,
       CLOSING: updatedClosing
     }));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     formData.participation_capacity,
     formData.previously_participated,
     formData.participation_role,
     formData.gender_identity,
     formData.race_ethnic_group,
-    formData.heard_about_us
+    formData.heard_about_us,
+    formData.disability_identity
   ]);
 
   const WelcomeTab = () => (
@@ -501,9 +507,15 @@ const Application: NextPage = ({}: any) => {
     </div>
   );
 
-  const CustomTab3 = () => (
+  const ReviewTab = () => (
     <div className="px-6">
       <p>Submit form</p>
+    </div>
+  );
+
+  const ConfirmationTab = () => (
+    <div className="px-6 h-[256px]">
+      <p>{`Thank you for applying to MIT Reality Hack 2023, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 
@@ -555,13 +567,25 @@ const Application: NextPage = ({}: any) => {
       handleChange={handleChange}
       errors={errors}
     />,
-    <CustomTab3 />
+    <ReviewPage key={7} allInfo={formData} acceptedFiles={acceptedFiles} />,
+    <ConfirmationTab key={8} />
+  ];
+  const tabNames = [
+    'WELCOME',
+    'DISCLAIMERS',
+    'PERSONAL INFO',
+    'DIVERSITY & INCLUSION',
+    'EXPERIENCE',
+    'THEMATIC',
+    'CLOSING',
+    'REVIEW & SUBMIT'
   ];
 
   return (
     <AnyApp
       key="1"
       tabs={tabs}
+      tabNames={tabNames}
       AppType="Hacker"
       formData={formData}
       isTabValid={isTabValid}
