@@ -179,11 +179,9 @@ export default function ReviewPage({
         <LabelAndValue label="Email Address" value={allInfo.email} />
         <LabelAndValue
           label="Full Name"
-          value={`${allInfo.first_name} ${allInfo.middle_name} ${allInfo.last_name}`}
-        />
-        <LabelAndValue
-          label="What should we call you?"
-          value={allInfo.first_name}
+          value={`${allInfo.first_name} ${
+            allInfo.middle_name ? allInfo.middle_name + ' ' : ''
+          }${allInfo.last_name}`}
         />
         <LabelAndValue label="Pronouns to use" value={allInfo.pronouns} />
         <LabelAndValue
