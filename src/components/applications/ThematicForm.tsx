@@ -39,7 +39,7 @@ const ThematicForm: React.FC<FormProps> = ({
 
       <TextAreaInput
         name="theme_essay"
-        placeholder="List tools you are familiar with (Optional)"
+        placeholder="Enter your response here."
         value={formData.theme_essay || ''}
         onChange={handleChange}
         error={errors.theme_essay}
@@ -55,7 +55,7 @@ const ThematicForm: React.FC<FormProps> = ({
 
       <TextAreaInput
         name="theme_essay_follow_up"
-        placeholder="Describe any other skills or experiences (Optional)"
+        placeholder="Enter your response here."
         value={formData.theme_essay_follow_up || ''}
         onChange={handleChange}
         error={errors.theme_essay_follow_up}

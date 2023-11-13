@@ -218,10 +218,11 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
 
       {formData.previously_participated === 'true' && (
         <>
+          <br />
+          <hr className="mb-4" />
           <p className="py-4">
             What years did you previously attend? Select all that apply.
           </p>
-          <hr className="mb-4" />
           {Object.keys(previous_participation).map(key => (
             <CheckboxInput
               key={key}
@@ -352,7 +353,7 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
           <hr className="mb-4" />
           <TextAreaInput
             name="specialized_expertise"
-            placeholder="List tools you are familiar with (Optional)"
+            placeholder="List your domain areas or skills of expertise."
             value={formData.specialized_expertise || ''}
             onChange={handleChange}
             error={errors.specialized_expertise}

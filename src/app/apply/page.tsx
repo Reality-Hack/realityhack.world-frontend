@@ -65,7 +65,7 @@ const Application: NextPage = ({}: any) => {
       'previously_participated'
     ],
     THEMATIC: ['theme_essay', 'theme_essay_follow_up'],
-    CLOSING: ['heard_about_us'],
+    CLOSING: [''],
     'REVIEW & SUBMIT': ['']
   });
 
@@ -160,7 +160,8 @@ const Application: NextPage = ({}: any) => {
         student_field_of_study: null,
         occupation: null,
         employer: null,
-        industry: ''
+        industry: '',
+        industry_option: null
       };
     }
 
@@ -391,19 +392,10 @@ const Application: NextPage = ({}: any) => {
       'disability_identity'
     ];
 
-    const updatedClosing = [
-      ...(formData.heard_about_us &&
-      formData.heard_about_us.includes(heard_about_us.other)
-        ? ['heard_about_us_other']
-        : []),
-      'heard_about_us'
-    ];
-
     setRequiredFields(current => ({
       ...current,
       'DIVERSITY & INCLUSION': updatedDiversityInclusion,
-      EXPERIENCE: updatedExperience,
-      CLOSING: updatedClosing
+      EXPERIENCE: updatedExperience
     }));
   }, [
     formData.participation_capacity,
@@ -515,7 +507,7 @@ const Application: NextPage = ({}: any) => {
 
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
-      <p>{`Thank you for applying to MIT Reality Hack 2023, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+      <p>{`Thank you for applying to MIT Reality Hack 2024, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 

@@ -18,7 +18,8 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (pathname != '/apply') router.replace('/apply');
+    if (!session && pathname != '/apply' && pathname != '/signin')
+      router.replace('/apply');
   }, []);
 
   return (
@@ -34,7 +35,13 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
           <div className="w-full h-full p-3 bg-[#ffffff]">{children}</div>
         </div>
       ) : (
-        <main>{pathname != '/apply' ? <Loader /> : children}</main>
+        <main>
+          {pathname != '/apply' && pathname != '/signin' ? (
+            <Loader />
+          ) : (
+            children
+          )}
+        </main>
       )}
     </>
   );
