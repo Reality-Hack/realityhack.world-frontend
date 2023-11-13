@@ -69,13 +69,10 @@ export const authOptions: any = {
       } else if (nowTimeStamp < token.expires_at) {
         return token;
       } else {
-        console.log('Token has expired. Will refresh...');
         try {
           const refreshedToken = await refreshAccessToken(token);
-          console.log('Token is refreshed.');
           return refreshedToken;
         } catch (error) {
-          console.error('Error refreshing access token', error);
           return { ...token, error: 'RefreshAccessTokenError' };
         }
       }

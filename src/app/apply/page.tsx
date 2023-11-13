@@ -172,7 +172,6 @@ const Application: NextPage = ({}: any) => {
     const getData = async () => {
       const data = await getSkills();
       const options = await applicationOptions(formData);
-      console.log('options: ', options);
       setCountries(options.actions.POST.current_country.choices);
       setNationalities(options.actions.POST.nationality.choices);
       setIndustries(options.actions.POST.industry.choices);
@@ -300,7 +299,6 @@ const Application: NextPage = ({}: any) => {
     }
 
     if (tabName === `PERSONAL INFO` && !acceptedFiles) {
-      console.log(`file upload is invalid: `, acceptedFiles);
       return false;
     }
 
@@ -313,28 +311,23 @@ const Application: NextPage = ({}: any) => {
         !exemptFields.includes(field) &&
         fieldValue.trim().length < 3
       ) {
-        console.log(`field ${field} is invalid (string): `, fieldValue);
         return false;
       }
 
       if (typeof fieldValue === 'boolean' && fieldValue === null) {
-        console.log(`field ${field} is invalid (boolean): `, fieldValue);
         return false;
       }
 
       if (!fieldValue) {
         return false;
       } else if (typeof fieldValue === 'string' && !fieldValue.trim()) {
-        console.log(`field ${field} is invalid (empty string): `, fieldValue);
         return false;
       } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
-        console.log(`field ${field} is invalid (empty array): `, fieldValue);
         return false;
       }
 
       const validationError = validateField(field, fieldValue, true);
       if (validationError) {
-        console.log(`validationError for field ${field}: `, validationError);
         return false;
       }
     }

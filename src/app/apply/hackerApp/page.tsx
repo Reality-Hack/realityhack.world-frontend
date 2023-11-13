@@ -6,10 +6,7 @@ import Link from 'next/link';
 
 const HackerApp: NextPage = ({}: any) => {
   function CheckBoxComponent({ label }: { label: string }) {
-    const onChange = (e: CheckboxChangeEvent) => {
-      // eslint-disable-next-line no-console
-      console.log(`checked = ${e.target.checked}`);
-    };
+    const onChange = (e: CheckboxChangeEvent) => {};
 
     return <Checkbox onChange={onChange}>{label}</Checkbox>;
   }

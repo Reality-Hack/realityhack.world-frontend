@@ -139,7 +139,7 @@ export default function ReviewPage({
             checked={true}
             name={'name'}
             value=""
-            onChange={() => console.log('nothing')}
+            onChange={() => {}}
             label={'I understand and accept the above disclaimer'}
           />
         </div>
@@ -164,7 +164,7 @@ export default function ReviewPage({
               checked={true}
               name={'name'}
               value=""
-              onChange={() => console.log('nothing')}
+              onChange={() => {}}
               label={'I understand and accept the above disclaimer'}
             />
           </div>

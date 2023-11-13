@@ -126,7 +126,7 @@ export default function Table<T>({
                   >
                     {header.isPlaceholder ? null : (
                       <div
-                        className="pl-6 text-left cursor-pointer flex flex-row"
+                        className="flex flex-row pl-6 text-left cursor-pointer"
                         {...{
                           onClick: header.column.getToggleSortingHandler()
                         }}
@@ -169,7 +169,6 @@ export default function Table<T>({
                   key={cell.id}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  {/* <div className="hover:cursor-pointer" onClick={()=>console.log((cell.column.id))}>boop</div> */}
                 </td>
               ))}
             </tr>

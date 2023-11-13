@@ -26,7 +26,6 @@ const Dropzone: React.FC<FormProps> = ({
 }) => {
   function handleUpload(data: File[]) {
     const file = data[0];
-    console.log(file, 'kpokpokpokpokpokfepaokafepj');
     if (file) {
       setFormData(prevFormData => ({
         ...prevFormData

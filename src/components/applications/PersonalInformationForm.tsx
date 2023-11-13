@@ -57,7 +57,6 @@ const PersonalInformationForm: React.FC<FormProps> = ({
     const selectedOption = options.find(option => option.value === value[0]);
     const displayName = selectedOption ? selectedOption.display_name : null;
 
-    console.log('value', value);
     setFormData(prev => ({
       ...prev,
       [name]: value,
