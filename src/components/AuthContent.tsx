@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import Nav from '@/components/Nav';
 import AuthStatus from './AuthStatus';
 import { useSession } from 'next-auth/react';
@@ -17,7 +17,9 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  if (pathname != '/apply') router.replace('/apply');
+  useEffect(() => {
+    if (pathname != '/apply') router.replace('/apply');
+  }, []);
 
   return (
     <>
