@@ -335,7 +335,7 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
           <hr className="mb-4" />
           <TextAreaInput
             name="specialized_expertise"
-            placeholder="List tools you are familiar with (Optional)"
+            placeholder="List your domain areas or skills of expertise."
             value={formData.specialized_expertise || ''}
             onChange={handleChange}
             error={errors.specialized_expertise}

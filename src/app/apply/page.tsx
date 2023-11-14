@@ -254,7 +254,7 @@ const Application: NextPage = ({}: any) => {
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
       >
     ) => {
-      let fieldType = e.target.tagName.toLowerCase();
+      let fieldType = e.target.type.toLowerCase();
 
       const fieldName = e.target.name;
       const fieldTab = Object.entries(requiredFields).find(([_, fields]) =>
@@ -309,29 +309,31 @@ const Application: NextPage = ({}: any) => {
 
     for (let field of required_fields) {
       const fieldValue = formData[field as keyof typeof formData];
+      const fieldOptions = options?.actions?.POST[field];
+      const maxLength = fieldOptions?.max_length || 0;
 
-      if (
-        typeof fieldValue === 'string' &&
-        !(fieldValue in Enums) &&
-        !exemptFields.includes(field) &&
-        fieldValue.trim().length < 3
-      ) {
-        return false;
-      }
-
-      if (typeof fieldValue === 'boolean' && fieldValue === null) {
-        return false;
-      }
-
-      if (!fieldValue) {
-        return false;
-      } else if (typeof fieldValue === 'string' && !fieldValue.trim()) {
-        return false;
+      if (typeof fieldValue === 'string') {
+        if (
+          fieldValue.trim().length < 1 ||
+          (maxLength > 0 && fieldValue.trim().length > maxLength)
+        ) {
+          return false;
+        }
       } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
         return false;
+      } else if (typeof fieldValue === 'boolean' && fieldValue === null) {
+        return false;
+      } else if (!fieldValue) {
+        return false;
       }
 
-      const validationError = validateField(field, fieldValue, true);
+      const validationError = validateField(
+        field,
+        fieldValue,
+        true,
+        false,
+        maxLength
+      );
       if (validationError) {
         return false;
       }
@@ -355,9 +357,6 @@ const Application: NextPage = ({}: any) => {
         : []),
       ...(formData.participation_role === participation_role.designer
         ? ['digital_designer_skills']
-        : []),
-      ...(formData.participation_role === participation_role.developer
-        ? ['proficient_languages']
         : []),
       ...(formData.participation_role === participation_role.specialist
         ? ['specialized_expertise']
