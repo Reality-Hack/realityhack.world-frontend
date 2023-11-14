@@ -28,20 +28,12 @@ export const validateField = (
       }
       break;
     case 'text':
-      // Minimum length check (if needed)
-      if (value.trim().length < 3) {
-        return 'Input should be at least 3 characters.';
-      }
       // Max length check
       if (maxLength > 0 && value.trim().length > maxLength) {
         return `Input should not exceed ${maxLength} characters.`;
       }
       break;
     case 'input':
-      // Minimum length check (if needed)
-      if (value.trim().length < 3) {
-        return 'Input should be at least 3 characters.';
-      }
       // Max length check
       if (maxLength > 0 && value.trim().length > maxLength) {
         return `Input should not exceed ${maxLength} characters.`;
@@ -54,11 +46,6 @@ export const validateField = (
       }
       break;
     case 'url':
-      // Minimum length check (if needed)
-      if (value.trim().length < 3) {
-        return 'Input should be at least 3 characters.';
-      }
-
       // Regex for URL validation
       const urlPattern =
         /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
