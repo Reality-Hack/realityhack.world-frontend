@@ -303,7 +303,7 @@ const Application: NextPage = ({}: any) => {
       return true;
     }
 
-    if (tabName === `PERSONAL INFO` && !acceptedFiles) {
+    if (tabName === 'PERSONAL INFO' && !acceptedFiles) {
       return false;
     }
 
@@ -312,29 +312,26 @@ const Application: NextPage = ({}: any) => {
       const fieldOptions = options?.actions?.POST[field];
       const maxLength = fieldOptions?.max_length || 0;
 
-      if (typeof fieldValue === 'string') {
-        if (
-          fieldValue.trim().length < 1 ||
-          (maxLength > 0 && fieldValue.trim().length > maxLength)
-        ) {
-          return false;
-        }
-      } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
-        return false;
-      } else if (typeof fieldValue === 'boolean' && fieldValue === null) {
-        return false;
-      } else if (!fieldValue) {
-        return false;
-      }
-
+      const fieldType = fieldOptions?.type || 'text';
       const validationError = validateField(
-        field,
+        fieldType,
         fieldValue,
         true,
         false,
         maxLength
       );
+
       if (validationError) {
+        return false;
+      }
+
+      if (typeof fieldValue === 'string' && fieldValue.trim().length < 1) {
+        return false;
+      } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
+        return false;
+      } else if (typeof fieldValue === 'boolean' && fieldValue === null) {
+        return false;
+      } else if (!fieldValue) {
         return false;
       }
     }

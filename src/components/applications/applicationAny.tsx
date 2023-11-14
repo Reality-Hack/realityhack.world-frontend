@@ -76,14 +76,26 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
         ? null
         : updatedPayload.middle_name;
 
+    // Ensure that certain fields do not exceed 1000 characters
+    [
+      'disability_accommodations',
+      'experience_with_xr',
+      'outreach_groups'
+    ].forEach(field => {
+      if (updatedPayload[field] && updatedPayload[field].length > 1000) {
+        updatedPayload[field] = updatedPayload[field].slice(0, 1000);
+      }
+    });
+
     try {
       await createApplication(updatedPayload);
-      alert('Application submitted successfully.');
       // Move to next tab with user confirmation
       setSelectedTab(prevTab => (prevTab + 1) % tabs.length);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error in creating application:', error);
-      alert('Application submission failed. Please try again later.');
+      alert(
+        `Application submission failed: ${error.message}. Please try again later.`
+      );
     } finally {
       setIsUploading(false);
     }
@@ -190,6 +202,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
               >
                 {isOnSubmitTab ? 'Submit' : 'Next'}
               </button>
+
               {DEBUG && (
                 <button
                   onClick={handleNextTab}

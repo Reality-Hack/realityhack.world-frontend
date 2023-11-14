@@ -18,7 +18,6 @@ export const validateField = (
   if (isRequired && (!value || (typeof value === 'string' && !value.trim()))) {
     return 'This field is required.';
   }
-  console.log('type', type);
   // Field-specific validations
   switch (type) {
     case 'email':

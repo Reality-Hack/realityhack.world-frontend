@@ -373,14 +373,6 @@ export default function ReviewPage({
             />
           )}
           <br />
-          {allInfo.participation_role === participation_role.developer && (
-            <LabelAndValue
-              label={
-                'What platforms and programming languages are you already proficient with?'
-              }
-              value={allInfo.proficient_languages}
-            />
-          )}
           {allInfo.participation_role === participation_role.specialist && (
             <LabelAndValue
               label={'What are your areas or skills of expertise?'}
@@ -395,12 +387,6 @@ export default function ReviewPage({
               value={allInfo.experience_with_xr}
             />
             <br />
-            <LabelAndValue
-              label={
-                "Do you have any other skills or experiences that you'd like to tell us about?"
-              }
-              value={allInfo.additional_skills}
-            />
             <br />
           </div>
         </div>
