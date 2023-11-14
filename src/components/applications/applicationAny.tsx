@@ -28,7 +28,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   acceptedFiles,
   ...formData
 }) {
-  const DEBUG = true;
+  const DEBUG = false;
   const [selectedTab, setSelectedTab] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
