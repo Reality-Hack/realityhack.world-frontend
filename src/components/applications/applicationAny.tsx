@@ -1,15 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import type { NextPage } from 'next';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Layout from '@/components/HotkeyLayout';
-import {
-  disability_identity,
-  hardware_hack_interest,
-  gender_identity
-} from '../../application_form_types';
 import {
   createApplication,
   fileUpload,
@@ -33,21 +28,32 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   acceptedFiles,
   ...formData
 }) {
+  const DEBUG = false;
   const [selectedTab, setSelectedTab] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleTabChange = (_event: any, newValue: number) => {
     setSelectedTab(newValue);
   };
 
   const callRequest = async () => {
+    console.log('Submitting application...');
+    if (isUploading) return;
+    setIsUploading(true);
+
     let updatedPayload = formData.formData || formData;
     let fileUploadResponse;
 
-    // File upload
     if (acceptedFiles?.length > 0) {
-      const file = acceptedFiles[0];
-      fileUploadResponse = await fileUpload(file);
-      updatedPayload.resume = fileUploadResponse.id;
+      try {
+        fileUploadResponse = await fileUpload(acceptedFiles[0]);
+        updatedPayload.resume = fileUploadResponse.id;
+      } catch (error) {
+        console.error('Error in file upload:', error);
+        setIsUploading(false);
+        alert('File upload failed.');
+        return;
+      }
     }
 
     // Add https:// prefix if missing
@@ -60,9 +66,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
       }
     });
 
-    // // If industry has no values, set to null
-    // updatedPayload.industry = updatedPayload.industry || ['hello'];
-
     // if hardware_hack_interest has no values, set to A
     updatedPayload.hardware_hack_interest =
       updatedPayload.hardware_hack_interest || 'A';
@@ -73,15 +76,17 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
         ? null
         : updatedPayload.middle_name;
 
-    // Send payload
-    await createApplication(updatedPayload);
-
-    // Patch file upload to set 'claimed' to true
-    await patchFileUpload(fileUploadResponse.id);
-
-    // POST skill proficiencies here...
-
-    setSelectedTab(prevTab => (prevTab + 1) % tabs.length);
+    try {
+      await createApplication(updatedPayload);
+      alert('Application submitted successfully.');
+      // Move to next tab with user confirmation
+      setSelectedTab(prevTab => (prevTab + 1) % tabs.length);
+    } catch (error) {
+      console.error('Error in creating application:', error);
+      alert('Application submission failed. Please try again later.');
+    } finally {
+      setIsUploading(false);
+    }
 
     return;
   };
@@ -185,6 +190,14 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
               >
                 {isOnSubmitTab ? 'Submit' : 'Next'}
               </button>
+              {DEBUG && (
+                <button
+                  onClick={handleNextTab}
+                  className="ml-4 cursor-pointer text-white w-20 bg-[#493B8A] px-4 py-2 rounded-lg disabled:opacity-50 transition-all"
+                >
+                  Debug
+                </button>
+              )}
             </div>
           )}
         </div>

@@ -116,6 +116,7 @@ export const TextInput: React.FC<{
         onBlur={handleInputBlur}
         required={required}
         className={style}
+        autoComplete="off"
       />
       {error && (
         <p className="absolute ml-1 text-xs text-themeSecondary">{error}</p>
@@ -357,18 +358,20 @@ export const SelectInput: React.FC<{
   return (
     <div className="relative mb-6">
       <p>{children}</p>
-      <input
-        value={inputValue}
-        name={name}
-        onChange={handleInputChange}
-        onFocus={handleFocus}
-        onBlur={handleInputBlur}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        required={required}
-        className={style}
-        autoComplete="off"
-      />
+      <form autoComplete="off">
+        <input
+          value={inputValue}
+          name={name}
+          onChange={handleInputChange}
+          onFocus={handleFocus}
+          onBlur={handleInputBlur}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          required={required}
+          className={style}
+          autoComplete="off"
+        />
+      </form>
       {isOptionsVisible && (
         <div
           className={`transition-all absolute z-20 w-full bg-white border border-gray-300 rounded-lg ${
