@@ -167,13 +167,12 @@ export interface form_data {
   occupation?: string | null;
   employer?: string | null;
   status?: status | null;
-  xr_familiarity_tools?: string | null;
+  experience_with_xr?: string | null;
   additional_skills: string | null;
   previously_participated?: string | null;
   previous_participation: previous_participation[] | null;
   proficient_languages: string | null;
   participation_role?: participation_role | null;
-  experience_with_xr?: boolean;
   theme_essay?: string | null;
   theme_essay_follow_up?: string | null;
   heard_about_us?: heard_about_us[] | '';

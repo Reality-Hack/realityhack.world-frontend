@@ -11,37 +11,72 @@ export const validateField = (
   type: string,
   value: any,
   isRequired: boolean = false,
-  checked: boolean = false
+  checked: boolean = false,
+  maxLength: number = 0
 ): string => {
-  if (isRequired && (!value || (typeof value === 'string' && !value.trim())))
+  // Check for required field
+  if (isRequired && (!value || (typeof value === 'string' && !value.trim()))) {
     return 'This field is required.';
+  }
 
+  // Field-specific validations
   switch (type) {
     case 'email':
       const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-      if (!emailPattern.test(value)) return 'Invalid email format.';
+      if (!emailPattern.test(value)) {
+        return 'Invalid email format.';
+      }
       break;
     case 'text':
-      if (value.trim().length < 3)
+      // Minimum length check (if needed)
+      if (value.trim().length < 3) {
         return 'Input should be at least 3 characters.';
+      }
+      // Max length check
+      if (maxLength > 0 && value.trim().length > maxLength) {
+        return `Input should not exceed ${maxLength} characters.`;
+      }
+      break;
+    case 'input':
+      // Minimum length check (if needed)
+      if (value.trim().length < 3) {
+        return 'Input should be at least 3 characters.';
+      }
+      // Max length check
+      if (maxLength > 0 && value.trim().length > maxLength) {
+        return `Input should not exceed ${maxLength} characters.`;
+      }
+      break;
+    case 'textarea':
+      // Max length check
+      if (maxLength > 0 && value.trim().length > maxLength) {
+        return `Input should not exceed ${maxLength} characters.`;
+      }
       break;
     case 'url':
-      if (value.trim().length < 3)
+      // Minimum length check (if needed)
+      if (value.trim().length < 3) {
         return 'Input should be at least 3 characters.';
+      }
 
       // Regex for URL validation
       const urlPattern =
         /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
-      if (!urlPattern.test(value)) return 'Invalid URL.';
+      if (!urlPattern.test(value)) {
+        return 'Invalid URL.';
+      }
       break;
-
     case 'checkbox':
-      if (isRequired && !checked) return 'This checkbox must be checked.';
+      if (isRequired && !checked) {
+        return 'This checkbox must be checked.';
+      }
       break;
+    // Add more cases as necessary for other types of inputs
     default:
       break;
   }
-  return '';
+
+  return ''; // Return empty string if no validation errors
 };
 
 export const TextInput: React.FC<{

@@ -17,7 +17,6 @@ import {
   participation_capacity,
   Enums,
   exemptFields,
-  heard_about_us,
   digital_designer_skills,
   gender_identity,
   race_ethnic_group,
@@ -37,6 +36,7 @@ const Application: NextPage = ({}: any) => {
   const [nationalities, setNationalities] = useState<any>(null);
   const [industries, setIndustries] = useState<any>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [options, setOptions] = useState<any>(null);
   const [requiredFields, setRequiredFields] = useState<
     Record<string, string[]>
   >({
@@ -101,7 +101,7 @@ const Application: NextPage = ({}: any) => {
     previous_participation: [],
     participation_role: null,
     proficient_languages: '',
-    xr_familiarity_tools: '',
+    experience_with_xr: '',
     additional_skills: '',
     theme_essay: '',
     theme_essay_follow_up: '',
@@ -172,6 +172,7 @@ const Application: NextPage = ({}: any) => {
     const getData = async () => {
       const data = await getSkills();
       const options = await applicationOptions(formData);
+      setOptions(options);
       setCountries(options.actions.POST.current_country.choices);
       setNationalities(options.actions.POST.nationality.choices);
       setIndustries(options.actions.POST.industry.choices);
@@ -254,39 +255,43 @@ const Application: NextPage = ({}: any) => {
       >
     ) => {
       let fieldType = e.target.tagName.toLowerCase();
-      if (fieldType === 'textarea') {
-        fieldType = 'text';
-      } else {
-        fieldType = e.target.type;
-      }
 
+      const fieldName = e.target.name;
       const fieldTab = Object.entries(requiredFields).find(([_, fields]) =>
-        fields.includes(e.target.name)
+        fields.includes(fieldName)
       )?.[0];
 
-      if (!fieldTab) return;
+      let isFieldRequired = false;
 
-      const isFieldRequired = requiredFields[fieldTab].includes(e.target.name);
+      if (fieldTab !== undefined) {
+        isFieldRequired = requiredFields[fieldTab].includes(fieldName);
+      }
+
+      const fieldOptions = options?.actions?.POST[fieldName];
+      const maxLength = fieldOptions?.max_length;
+
       const validationError = validateField(
         fieldType,
         e.target.value,
-        isFieldRequired
+        isFieldRequired,
+        false,
+        maxLength
       );
 
       if (validationError) {
         setErrors(prevErrors => ({
           ...prevErrors,
-          [e.target.name]: validationError
+          [fieldName]: validationError
         }));
       } else {
         setErrors(prevErrors => {
           const newErrors = { ...prevErrors };
-          delete newErrors[e.target.name];
+          delete newErrors[fieldName];
           return newErrors;
         });
       }
     },
-    [requiredFields]
+    [requiredFields, options]
   );
 
   const isTabValid = (tabName: string): boolean => {

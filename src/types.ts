@@ -140,7 +140,7 @@ export interface Application {
   occupation?: string | null;
   employer?: string | null;
   status?: status | null;
-  xr_familiarity_tools?: string | null;
+  experience_with_xr?: string | null;
   additional_skills: string | null;
   previously_participated?: boolean | null;
   previous_participation: previous_participation[] | null;

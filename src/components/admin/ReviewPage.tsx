@@ -392,7 +392,7 @@ export default function ReviewPage({
               label={
                 'Can you demonstrate familiarity with any tools related to design or development for XR? If so, please list.'
               }
-              value={allInfo.xr_familiarity_tools}
+              value={allInfo.experience_with_xr}
             />
             <br />
             <LabelAndValue
