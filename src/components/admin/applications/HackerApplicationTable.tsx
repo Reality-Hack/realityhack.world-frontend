@@ -136,7 +136,6 @@ export default function HackerApplicationTable({ applications }: Props) {
     setOverlayVisible(prev => !prev);
   };
   const toggleOverlayAndPassData = (row: any) => {
-    console.log(row);
     toggleOverlay();
     setDialogRow(row);
   };

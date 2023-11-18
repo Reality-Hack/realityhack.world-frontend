@@ -11,38 +11,58 @@ export const validateField = (
   type: string,
   value: any,
   isRequired: boolean = false,
-  checked: boolean = false
+  checked: boolean = false,
+  maxLength: number = 0
 ): string => {
-  if (isRequired && (!value || (typeof value === 'string' && !value.trim())))
+  // Check for required field
+  if (isRequired && (!value || (typeof value === 'string' && !value.trim()))) {
     return 'This field is required.';
-
+  }
+  // Field-specific validations
   switch (type) {
     case 'email':
       const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-      if (!emailPattern.test(value)) return 'Invalid email format.';
+      if (!emailPattern.test(value)) {
+        return 'Invalid email format.';
+      }
       break;
     case 'text':
-      if (value.trim().length < 3)
-        return 'Input should be at least 3 characters.';
+      // Max length check
+      if (maxLength > 0 && value.trim().length > maxLength) {
+        return `Input should not exceed ${maxLength} characters.`;
+      }
+      break;
+    case 'input':
+      // Max length check
+      if (maxLength > 0 && value.trim().length > maxLength) {
+        return `Input should not exceed ${maxLength} characters.`;
+      }
+      break;
+    case 'textarea':
+      // Max length check
+      if (maxLength > 0 && value.trim().length > maxLength) {
+        return `Input should not exceed ${maxLength} characters.`;
+      }
       break;
     case 'url':
-      try {
-        new URL(value); // Try creating a URL directly
-      } catch (e) {
-        try {
-          new URL(`https://${value}`); // Try creating a URL with 'https://' prefix
-        } catch (e) {
-          return 'Invalid URL.';
-        }
+      // Regex for URL validation
+      const urlPattern =
+        /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
+      if (!urlPattern.test(value)) {
+        return 'Invalid URL.';
       }
       break;
     case 'checkbox':
-      if (isRequired && !checked) return 'This checkbox must be checked.';
+      if (isRequired && !checked) {
+        return 'This checkbox must be checked.';
+      }
       break;
+    // Add more cases as necessary for other types of inputs
     default:
       break;
   }
-  return '';
+
+  return ''; // Return empty string if no validation errors
 };
 
 export const TextInput: React.FC<{
@@ -117,6 +137,7 @@ export const TextInput: React.FC<{
         onBlur={handleInputBlur}
         required={required}
         className={style}
+        autoComplete="off"
       />
       {error && (
         <p className="absolute ml-1 text-xs text-themeSecondary">{error}</p>
@@ -225,7 +246,7 @@ export const SelectInput: React.FC<{
   required
 }) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(value);
   const [filteredOptions, setFilteredOptions] = useState(options);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -284,6 +305,10 @@ export const SelectInput: React.FC<{
   const setVal = (val: string) => {
     setInputValue(val);
   };
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     switch (e.key) {
@@ -354,18 +379,20 @@ export const SelectInput: React.FC<{
   return (
     <div className="relative mb-6">
       <p>{children}</p>
-      <input
-        value={inputValue}
-        name={name}
-        onChange={handleInputChange}
-        onFocus={handleFocus}
-        onBlur={handleInputBlur}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        required={required}
-        className={style}
-        autoComplete="off"
-      />
+      <form autoComplete="off">
+        <input
+          value={inputValue}
+          name={name}
+          onChange={handleInputChange}
+          onFocus={handleFocus}
+          onBlur={handleInputBlur}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          required={required}
+          className={style}
+          autoComplete="off"
+        />
+      </form>
       {isOptionsVisible && (
         <div
           className={`transition-all absolute z-20 w-full bg-white border border-gray-300 rounded-lg ${
@@ -419,7 +446,7 @@ export const CheckboxInput: React.FC<{
           value={value}
           checked={checked}
           onChange={onChange}
-          className="px-3 py-3 mr-2 bg-white outline-none mr-2block accent-themePrimary rounded-xl w-fit"
+          className="px-3 py-3 mr-2 bg-white outline-none accent-themePrimary rounded-xl "
           onBlur={handleBlur}
         />
         {label}

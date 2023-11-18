@@ -7,9 +7,7 @@ import Link from 'next/link';
 
 const MentorApp: NextPage = ({}: any) => {
   function CheckBoxComponent({ label }: { label: string }) {
-    const onChange = (e: CheckboxChangeEvent) => {
-      console.log(`checked = ${e.target.checked}`);
-    };
+    const onChange = (e: CheckboxChangeEvent) => {};
 
     return <Checkbox onChange={onChange}>{label}</Checkbox>;
   }

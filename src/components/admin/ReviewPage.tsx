@@ -1,9 +1,32 @@
 import React from 'react';
 import { SelectChangeEvent } from '@mui/material';
 import { CheckboxInput } from '../Inputs';
-import { participation_capacity } from '@/application_form_types';
+import {
+  age_group,
+  previous_participation,
+  participation_capacity,
+  gender_identity,
+  race_ethnic_group,
+  disabilities,
+  hardware_hack_interest,
+  digital_designer_skills,
+  heard_about_us
+} from '@/application_form_types';
 import { participation_role } from '@/types';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import {
+  genderIdentityLabels,
+  raceEthnicGroupLabels,
+  disabilityIdentityLabels,
+  disabilitiesLabels
+} from '../applications/DiversityInclusionForm';
+import { hardwareHackLabels } from '../applications/ThematicForm';
+import { heardAboutUsLabels } from '../applications/ClosingForm';
+import { ageGroupLabels } from '../applications/PersonalInformationForm';
+import {
+  previousParticipationLabels,
+  DesignSkillsLabels
+} from '../applications/ExperienceInterestForm';
 
 export default function ReviewPage({
   allInfo,
@@ -22,19 +45,77 @@ export default function ReviewPage({
         return 'Hobbyist';
     }
   };
+
   const LabelAndValue = ({
     label,
     value = ''
   }: {
-    label: String;
-    value: String;
+    label: string;
+    value: string | string[];
   }) => {
+    const labelToEnumKeyMap: any = {
+      'What race or ethnic group(s) do you identify with?': 'race_ethnic_group',
+      'How would you describe your gender identity?': 'gender_identity',
+      'Disability Status': 'disabilities',
+      'What design skills are you proficient in?': 'digital_designer_skills',
+      'Have you participated in the MIT RH Hack before?':
+        'previous_participation',
+      'How did you hear about Reality Hack?': 'heard_about_us'
+    };
+
+    const renderValue = (val: string | string[]) => {
+      if (
+        (Array.isArray(val) && val.length === 0) ||
+        (!Array.isArray(val) && val === '')
+      ) {
+        return <div>[none]</div>;
+      }
+
+      const otherValues: JSX.Element[] = [];
+      const listItems = Array.isArray(val)
+        ? val
+            .map((item, index) => {
+              if (item === 'Other') {
+                const enumKey = labelToEnumKeyMap[label];
+                const otherValueKey = `${enumKey}_other`;
+                const otherValue = allInfo[otherValueKey];
+                if (otherValue) {
+                  otherValues.push(
+                    <div key={`other-${index}`}>• Other: {otherValue}</div>
+                  );
+                  return null;
+                }
+              }
+              return <div key={index}>• {item}</div>;
+            })
+            .filter(Boolean)
+        : [<div key="single-value">• {val}</div>];
+
+      return (
+        <>
+          {listItems}
+          {otherValues.length > 0 ? otherValues : null}
+        </>
+      );
+    };
+
     return (
       <div>
         <div className="text-md">{label}</div>
-        <div className="text-sm text-gray-500">{value}</div>
+        <div className="text-sm text-gray-500">{renderValue(value)}</div>
       </div>
     );
+  };
+
+  const getLabelFromEnumValue = (
+    enumValue: string,
+    enumObject: any,
+    labelsObject: any
+  ) => {
+    const enumKey = Object.keys(enumObject).find(
+      key => enumObject[key] === enumValue
+    );
+    return enumKey ? labelsObject[enumKey] : enumValue;
   };
 
   const Disclaimers = () => {
@@ -58,12 +139,12 @@ export default function ReviewPage({
             checked={true}
             name={'name'}
             value=""
-            onChange={() => console.log('nothing')}
+            onChange={() => {}}
             label={'I understand and accept the above disclaimer'}
           />
         </div>
 
-        <div className="flex flex-col gap-4 border-t-2 border-gray-200 py-2">
+        <div className="flex flex-col gap-4 py-2 border-t-2 border-gray-200">
           <div>
             Our participants are literally building the future by making their
             work available for further development.
@@ -83,7 +164,7 @@ export default function ReviewPage({
               checked={true}
               name={'name'}
               value=""
-              onChange={() => console.log('nothing')}
+              onChange={() => {}}
               label={'I understand and accept the above disclaimer'}
             />
           </div>
@@ -98,11 +179,9 @@ export default function ReviewPage({
         <LabelAndValue label="Email Address" value={allInfo.email} />
         <LabelAndValue
           label="Full Name"
-          value={`${allInfo.first_name} ${allInfo.middle_name} ${allInfo.last_name}`}
-        />
-        <LabelAndValue
-          label="What should we call you?"
-          value={allInfo.first_name}
+          value={`${allInfo.first_name} ${
+            allInfo.middle_name ? allInfo.middle_name + ' ' : ''
+          }${allInfo.last_name}`}
         />
         <LabelAndValue label="Pronouns to use" value={allInfo.pronouns} />
         <LabelAndValue
@@ -141,7 +220,15 @@ export default function ReviewPage({
         />
         <LabelAndValue
           label={'What age will you be as of January 25, 2024?'}
-          value={allInfo.age_group} //FIX THIS
+          value={
+            allInfo.age_group
+              ? getLabelFromEnumValue(
+                  allInfo.age_group,
+                  age_group,
+                  ageGroupLabels
+                )
+              : '[none]'
+          }
         />
       </div>
     );
@@ -152,15 +239,47 @@ export default function ReviewPage({
       <div className="flex flex-col gap-4">
         <LabelAndValue
           label={'How would you describe your gender identity?'}
-          value={Object.values(allInfo.gender_identity).join(' , ')}
+          value={
+            allInfo.gender_identity && allInfo.gender_identity.length > 0
+              ? allInfo.gender_identity.map((enumValue: string) =>
+                  getLabelFromEnumValue(
+                    enumValue,
+                    gender_identity,
+                    genderIdentityLabels
+                  )
+                )
+              : []
+          }
         />
+
         <LabelAndValue
           label={'What race or ethnic group(s) do you identify with?'}
-          value={Object.values(allInfo.race_ethnic_group).join(' , ')}
+          value={
+            allInfo.race_ethnic_group && allInfo.race_ethnic_group.length > 0
+              ? allInfo.race_ethnic_group.map((enumValue: string) =>
+                  getLabelFromEnumValue(
+                    enumValue,
+                    race_ethnic_group,
+                    raceEthnicGroupLabels
+                  )
+                )
+              : []
+          }
         />
+
         <LabelAndValue
-          label={'Disabiliy Status'}
-          value={Object.values(allInfo.disabilities).join(' , ')}
+          label={'Disability Status'}
+          value={
+            allInfo.disabilities && allInfo.disabilities.length > 0
+              ? allInfo.disabilities.map((enumValue: string) =>
+                  getLabelFromEnumValue(
+                    enumValue,
+                    disabilities,
+                    disabilitiesLabels
+                  )
+                )
+              : []
+          }
         />
       </div>
     );
@@ -212,30 +331,48 @@ export default function ReviewPage({
         <div>
           <LabelAndValue
             label={'Have you participated in the MIT RH Hack before?'}
-            value={allInfo.previously_participated ? 'Yes' : 'No'}
+            value={allInfo.previously_participated === 'true' ? 'Yes' : 'No'}
           />
           {allInfo.previously_participated && (
-            <LabelAndValue
-              label={'What years did you previously participate?'}
-              value={Object.values(allInfo.previous_participation).join(' , ')}
-            />
+            <>
+              <br />
+              <LabelAndValue
+                label={'What years did you previously participate?'}
+                value={
+                  allInfo.previous_participation &&
+                  allInfo.previous_participation.length > 0
+                    ? allInfo.previous_participation.map((enumValue: string) =>
+                        getLabelFromEnumValue(
+                          enumValue,
+                          previous_participation,
+                          previousParticipationLabels
+                        )
+                      )
+                    : []
+                }
+              />
+            </>
           )}
         </div>
         <div>
           {allInfo.participation_role === participation_role.designer && (
             <LabelAndValue
               label={'What design skills are you proficient in?'}
-              value={allInfo.digital_designer_skills}
-            />
-          )}
-          {allInfo.participation_role === participation_role.developer && (
-            <LabelAndValue
-              label={
-                'What platforms and programming languages are you already proficient with?'
+              value={
+                allInfo.digital_designer_skills &&
+                allInfo.digital_designer_skills.length > 0
+                  ? allInfo.digital_designer_skills.map((enumValue: string) =>
+                      getLabelFromEnumValue(
+                        enumValue,
+                        digital_designer_skills,
+                        DesignSkillsLabels
+                      )
+                    )
+                  : []
               }
-              value={allInfo.proficient_languages}
             />
           )}
+          <br />
           {allInfo.participation_role === participation_role.specialist && (
             <LabelAndValue
               label={'What are your areas or skills of expertise?'}
@@ -247,14 +384,10 @@ export default function ReviewPage({
               label={
                 'Can you demonstrate familiarity with any tools related to design or development for XR? If so, please list.'
               }
-              value={allInfo.xr_familiarity_tools}
+              value={allInfo.experience_with_xr}
             />
-            <LabelAndValue
-              label={
-                "Do you have any other skills or experiences that you'd like to tell us about?"
-              }
-              value={allInfo.additional_skills}
-            />
+            <br />
+            <br />
           </div>
         </div>
       </div>
@@ -280,7 +413,15 @@ export default function ReviewPage({
           label={
             'Would you be interested in participating in the hardware hack this year?'
           }
-          value={allInfo.hardware_hack_interest}
+          value={
+            allInfo.hardware_hack_interest
+              ? getLabelFromEnumValue(
+                  allInfo.hardware_hack_interest,
+                  hardware_hack_interest,
+                  hardwareHackLabels
+                )
+              : '[none]'
+          }
         />
       </div>
     );
@@ -291,15 +432,22 @@ export default function ReviewPage({
       <div className="flex flex-col gap-4">
         <LabelAndValue
           label={'How did you hear about Reality Hack?'}
-          value={`${allInfo.heard_about_us.join(' , ')} ${
-            allInfo.heard_about_us_other
-              ? `${allInfo.heard_about_us} ${allInfo.heard_about_us_other}`
-              : ''
-          }`}
+          value={
+            allInfo.heard_about_us && allInfo.heard_about_us.length > 0
+              ? allInfo.heard_about_us.map((enumValue: string) =>
+                  getLabelFromEnumValue(
+                    enumValue,
+                    heard_about_us,
+                    heardAboutUsLabels
+                  )
+                )
+              : []
+          }
         />
+
         <LabelAndValue
           label={'What are your favorite online groups?'}
-          value={allInfo.outreach_groups}
+          value={allInfo.outreach_groups || '[none]'}
         />
       </div>
     );
@@ -380,17 +528,17 @@ export default function ReviewPage({
   return (
     <div>
       <div className="flex flex-col gap-2 p-4">
-        <div className="text-3xl text-purple-900 font-bold">
+        <div className="text-3xl font-bold text-purple-900">
           Review & Submit
         </div>
-        <div className="text-sm mb-8">
+        <div className="mb-8 text-sm">
           Before submitting your application, please review your responses.
         </div>
         <div className="flex flex-col gap-4">
           {sections.map(section => (
             <div
               key={section.label}
-              className="border-b-2 border-gray-400 pb-4 flex flex-col gap-2"
+              className="flex flex-col gap-2 pb-4 border-b-2 border-gray-400"
             >
               <div className="text-xl font-bold">{section.label}</div>
               {section.component}

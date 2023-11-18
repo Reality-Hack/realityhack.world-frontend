@@ -23,62 +23,63 @@ interface FormProps {
   errors: Record<string, string>;
 }
 
+export const genderIdentityLabels = {
+  cisgender_female: 'Cisgender female',
+  cisgender_male: 'Cisgender male',
+  transgender_female: 'Transgender female',
+  transgender_male: 'Transgender male',
+  gender_nonconforming_nonbinary_or_gender_queer:
+    'Gender non-conforming, non-binary, or gender queer',
+  two_spirit: 'Two-spirit',
+  other: 'Other',
+  prefer_not_to_say: 'I prefer not to say'
+};
+
+export const raceEthnicGroupLabels = {
+  asian: 'Asian, Asian American, or of Asian descent',
+  black: 'Black, African American, or of African descent',
+  hispanic:
+    'Hispanic, Latino, Latina, Latinx, or of Latinx or Spanish-speaking descent',
+  middle_eastern_north_african:
+    'Middle Eastern, North African, or of North African descent',
+  native_american:
+    'Native American, American Indian, Alaska Native, or Indigenous',
+  pacific_islander: 'Pacific Islander or Native Hawaiian',
+  white: 'White or of European descent',
+  multi_racial_or_multi_ethnic: 'Multi-racial or multi-ethnic',
+  other: 'Other',
+  prefer_not_to_say: 'I prefer not to say'
+};
+
+export const disabilityIdentityLabels = {
+  A: 'Yes',
+  B: 'No',
+  C: 'I prefer not to say'
+};
+
+export const disabilitiesLabels = {
+  hearing_difficulty:
+    'Hearing difficulty - Deaf or having serious difficulty hearing',
+  vision_difficulty:
+    'Vision difficulty - Blind or having serious difficulty seeing, even when wearing glasses',
+  cognitive_difficulty:
+    'Cognitive difficulty - Because of a physical, mental, or emotional problem, having difficulty remembering, concentrating, or making decisions',
+  ambulatory_difficulty:
+    'Ambulatory difficulty - Having serious difficulty walking or climbing stairs',
+  self_care_difficulty:
+    'Self-care difficulty - Having difficulty bathing or dressing',
+  independent_living_difficulty:
+    'Independent living difficulty - Because of a physical, mental, or emotional problem, having difficulty doing errands alone such as visiting a doctor’s office or shopping',
+  prefer_not_to_say: 'I prefer not to say',
+  other: 'Other'
+};
+
 const DiversityInclusionForm: React.FC<FormProps> = ({
   formData,
   handleChange,
   handleBlur,
   errors
 }) => {
-  const genderIdentityLabels = {
-    cisgender_female: 'Cisgender female',
-    cisgender_male: 'Cisgender male',
-    transgender_female: 'Transgender female',
-    transgender_male: 'Transgender male',
-    gender_nonconforming_nonbinary_or_gender_queer:
-      'Gender non-conforming, non-binary, or gender queer',
-    two_spirit: 'Two-spirit',
-    other: 'Other',
-    prefer_not_to_say: 'I prefer not to say'
-  };
-
-  const raceEthnicGroupLabels = {
-    asian: 'Asian, Asian American, or of Asian descent',
-    black: 'Black, African American, or of African descent',
-    hispanic:
-      'Hispanic, Latino, Latina, Latinx, or of Latinx or Spanish-speaking descent',
-    middle_eastern_north_african:
-      'Middle Eastern, North African, or of North African descent',
-    native_american:
-      'Native American, American Indian, Alaska Native, or Indigenous',
-    pacific_islander: 'Pacific Islander or Native Hawaiian',
-    white: 'White or of European descent',
-    multi_racial_or_multi_ethnic: 'Multi-racial or multi-ethnic',
-    other: 'Other',
-    prefer_not_to_say: 'I prefer not to say'
-  };
-
-  const disabilityIdentityLabels = {
-    A: 'Yes',
-    B: 'No',
-    C: 'I prefer not to say'
-  };
-
-  const disabilitiesLabels = {
-    hearing_difficulty:
-      'Hearing difficulty - Deaf or having serious difficulty hearing',
-    vision_difficulty:
-      'Vision difficulty - Blind or having serious difficulty seeing, even when wearing glasses',
-    cognitive_difficulty:
-      'Cognitive difficulty - Because of a physical, mental, or emotional problem, having difficulty remembering, concentrating, or making decisions',
-    ambulatory_difficulty:
-      'Ambulatory difficulty - Having serious difficulty walking or climbing stairs',
-    self_care_difficulty:
-      'Self-care difficulty - Having difficulty bathing or dressing',
-    independent_living_difficulty:
-      'Independent living difficulty - Because of a physical, mental, or emotional problem, having difficulty doing errands alone such as visiting a doctor’s office or shopping',
-    prefer_not_to_say: 'I prefer not to say'
-  };
-
   return (
     <div className="px-6">
       <p className="mb-4 text-xl font-bold text-purple-900">
@@ -186,19 +187,37 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
               What kind of disability do you experience? Select all that apply.{' '}
               <span className="font-bold text-themeSecondary">*</span>
             </p>
-            {Object.entries(disabilitiesLabels).map(([key, label], index) => (
+            {Object.keys(disabilities).map(key => (
               <CheckboxInput
                 key={key}
                 name="disabilities"
-                value={key}
+                value={disabilities[key as keyof typeof disabilities]}
                 checked={
-                  formData.disabilities?.includes(key as disabilities) ?? false
+                  formData.disabilities?.includes(
+                    disabilities[key as keyof typeof disabilities]
+                  ) || false
                 }
-                label={label}
                 onChange={handleChange}
+                label={
+                  disabilitiesLabels[key as keyof typeof disabilitiesLabels]
+                }
                 error={errors.disabilities}
               />
             ))}
+            {formData.disabilities?.includes(disabilities.other) && (
+              <TextInput
+                name="disabilities_other"
+                placeholder="Please specify"
+                type="text"
+                value={formData.disabilities_other || ''}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={errors.disabilities_other}
+                valid={!errors.disabilities_other}
+                other={true}
+                required={true}
+              />
+            )}
           </div>
           <TextAreaInput
             name="disability_accommodations"

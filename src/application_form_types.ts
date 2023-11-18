@@ -24,8 +24,8 @@ export enum gender_identity {
   transgender_male = 'D',
   gender_nonconforming_nonbinary_or_gender_queer = 'E',
   two_spirit = 'F',
-  other = 'G',
-  prefer_not_to_say = 'H'
+  prefer_not_to_say = 'G',
+  other = 'O'
 }
 
 export enum race_ethnic_group {
@@ -37,8 +37,8 @@ export enum race_ethnic_group {
   pacific_islander = 'F',
   white = 'G',
   multi_racial_or_multi_ethnic = 'H',
-  other = 'I',
-  prefer_not_to_say = 'J'
+  prefer_not_to_say = 'I',
+  other = 'O'
 }
 
 export enum disability_identity {
@@ -54,7 +54,8 @@ export enum disabilities {
   ambulatory_difficulty = 'D',
   self_care_difficulty = 'E',
   independent_living_difficulty = 'F',
-  prefer_not_to_say = 'G'
+  prefer_not_to_say = 'G',
+  other = 'O'
 }
 
 export enum participation_capacity {
@@ -89,14 +90,6 @@ export enum digital_designer_skills {
   other = 'F'
 }
 
-export enum specialized_expertise {
-  expertise_domain = 'A',
-  project_management = 'B',
-  creative_guidance = 'C',
-  storytelling = 'D',
-  other = 'E'
-}
-
 export enum hardware_hack_interest {
   not_interested = 'A',
   mild_interest = 'B',
@@ -125,7 +118,6 @@ export const Enums = {
   ...previous_participation,
   ...participation_role,
   ...digital_designer_skills,
-  ...specialized_expertise,
   ...hardware_hack_interest,
   ...heard_about_us
 };
@@ -175,23 +167,23 @@ export interface form_data {
   occupation?: string | null;
   employer?: string | null;
   status?: status | null;
-  xr_familiarity_tools?: string | null;
+  experience_with_xr?: string | null;
   additional_skills: string | null;
   previously_participated?: string | null;
   previous_participation: previous_participation[] | null;
   proficient_languages: string | null;
   participation_role?: participation_role | null;
-  experience_with_xr?: boolean;
   theme_essay?: string | null;
   theme_essay_follow_up?: string | null;
   heard_about_us?: heard_about_us[] | '';
   digital_designer_skills?: digital_designer_skills[] | null;
   specialized_expertise?: string | null;
-  industry: string | null;
+  industry: string[];
   hardware_hack_interest?: hardware_hack_interest[] | null;
   outreach_groups?: string | null;
   gender_identity_other?: string | null;
   race_ethnic_group_other?: string | null;
+  disabilities_other?: string | null;
   digital_designer_skills_other?: string | null;
   heard_about_us_other?: string | null;
   submitted_at: Date;

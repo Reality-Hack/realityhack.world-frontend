@@ -17,22 +17,22 @@ interface FormProps {
   errors: Record<string, string>;
 }
 
+export const heardAboutUsLabels = {
+  friend: 'A friend',
+  volunteer: 'A Reality Hack organizer or volunteer',
+  network: 'A teacher or someone in my professional network',
+  social: 'Social Media',
+  campus: 'Campus poster or ad',
+  participated: 'I participated in the MIT XR Hackathon before',
+  other: 'Other'
+};
+
 const ClosingForm: React.FC<FormProps> = ({
   formData,
   handleChange,
   handleBlur,
   errors
 }) => {
-  const heardAboutUsLabels = {
-    friend: 'A friend',
-    volunteer: 'A Reality Hack organizer or volunteer',
-    network: 'A teacher or someone in my professional network',
-    social: 'Social Media',
-    campus: 'Campus poster or ad',
-    participated: 'I participated in the MIT XR Hackathon before',
-    other: 'Other'
-  };
-
   return (
     <div className="px-6">
       <p className="mb-4">

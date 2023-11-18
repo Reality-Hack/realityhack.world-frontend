@@ -23,5 +23,9 @@
 }
 
 body {
-  background-color: aliceblue;
+  background-color: white;
+}
+
+div, p, input {
+  font-size: 15px;
 }

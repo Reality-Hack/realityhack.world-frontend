@@ -32,6 +32,26 @@ interface FormProps {
   industries: option_value[];
 }
 
+export const previousParticipationLabels = {
+  _2016: '2016',
+  _2017: '2017',
+  _2018: '2018',
+  _2019: '2019',
+  _2020: '2020',
+  _2021: '2021',
+  _2022: '2022',
+  _2023: '2023'
+};
+
+export const DesignSkillsLabels = {
+  digital_art: 'Digital Art',
+  animation: 'Animation',
+  sound: 'Sound',
+  ux_ui: 'UX and UI',
+  video: 'Video',
+  other: 'Other'
+};
+
 const ExperienceInterestForm: React.FC<FormProps> = ({
   formData,
   setFormData,
@@ -214,10 +234,11 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
 
       {formData.previously_participated === 'true' && (
         <>
+          <br />
+          <hr className="mb-4" />
           <p className="py-4">
             What years did you previously attend? Select all that apply.
           </p>
-          <hr className="mb-4" />
           {Object.keys(previous_participation).map(key => (
             <CheckboxInput
               key={key}
@@ -325,30 +346,12 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
           <hr />
         </div>
       )}
-      {formData.participation_role === participation_role.developer && (
-        <div className="py-4">
-          <hr className="mb-4" />
-          <TextAreaInput
-            name="proficient_languages"
-            placeholder="List platforms and programming languages"
-            value={formData.proficient_languages || ''}
-            onChange={handleChange}
-            error={errors.proficient_languages}
-            valid={!errors.proficient_languages}
-            onBlur={handleBlur}
-          >
-            What platforms and programming languages are you already proficient
-            with? <span className="font-bold text-themeSecondary">*</span>
-          </TextAreaInput>
-          <hr />
-        </div>
-      )}
       {formData.participation_role === participation_role.specialist && (
         <div className="py-4">
           <hr className="mb-4" />
           <TextAreaInput
             name="specialized_expertise"
-            placeholder="List tools you are familiar with (Optional)"
+            placeholder="List your domain areas or skills of expertise."
             value={formData.specialized_expertise || ''}
             onChange={handleChange}
             error={errors.specialized_expertise}
@@ -362,28 +365,16 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
         </div>
       )}
       <TextAreaInput
-        name="xr_familiarity_tools"
+        name="experience_with_xr"
         placeholder="List tools you are familiar with (Optional)"
-        value={formData.xr_familiarity_tools || ''}
+        value={formData.experience_with_xr || ''}
         onChange={handleChange}
-        error={errors.xr_familiarity_tools}
-        valid={!errors.xr_familiarity_tools}
+        error={errors.experience_with_xr}
+        valid={!errors.experience_with_xr}
         onBlur={handleBlur}
       >
-        Can you demonstrate familiarity with any tools related to design or
-        development for XR? If so, please list.
-      </TextAreaInput>
-      <TextAreaInput
-        name="additional_skills"
-        placeholder="Describe any other skills or experiences (Optional)"
-        value={formData.additional_skills || ''}
-        onChange={handleChange}
-        error={errors.additional_skills}
-        valid={!errors.additional_skills}
-        onBlur={handleBlur}
-      >
-        Do you have any other skills or experiences that you&apos;d like to tell
-        us about?
+        Can you demonstrate familiarity with any tools related to design,
+        development, or programming languages for XR? If so, please list.
       </TextAreaInput>
     </div>
   );

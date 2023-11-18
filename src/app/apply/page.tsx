@@ -1,29 +1,31 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-console */
 'use client';
 
-import { CheckboxInput, validateField } from '@/components/Inputs';
-import ClosingForm from '@/components/applications/ClosingForm';
-import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
-import ExperienceInterestForm from '@/components/applications/ExperienceInterestForm';
-import PersonalInformationForm from '@/components/applications/PersonalInformationForm';
-import ThematicForm from '@/components/applications/ThematicForm';
+import React, { useState, useEffect, useCallback } from 'react';
 import AnyApp from '@/components/applications/applicationAny';
 import type { NextPage } from 'next';
 import Link from 'next/link';
-import React, { useCallback, useEffect, useState } from 'react';
+import PersonalInformationForm from '@/components/applications/PersonalInformationForm';
+import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
+import ExperienceInterestForm from '@/components/applications/ExperienceInterestForm';
+import ThematicForm from '@/components/applications/ThematicForm';
+import ClosingForm from '@/components/applications/ClosingForm';
 import {
-  Enums,
-  digital_designer_skills,
-  exemptFields,
   form_data,
-  gender_identity,
-  heard_about_us,
-  participation_capacity,
   participation_role,
-  race_ethnic_group
+  participation_capacity,
+  Enums,
+  exemptFields,
+  digital_designer_skills,
+  gender_identity,
+  race_ethnic_group,
+  disabilities,
+  disability_identity
 } from '../../application_form_types';
-import { applicationOptions } from '../api/application';
+import { CheckboxInput, validateField } from '@/components/Inputs';
 import { getSkills } from '../api/skills';
+import { applicationOptions } from '../api/application';
 import ReviewPage from '@/components/admin/ReviewPage';
 
 const Application: NextPage = ({}: any) => {
@@ -34,6 +36,7 @@ const Application: NextPage = ({}: any) => {
   const [nationalities, setNationalities] = useState<any>(null);
   const [industries, setIndustries] = useState<any>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [options, setOptions] = useState<any>(null);
   const [requiredFields, setRequiredFields] = useState<
     Record<string, string[]>
   >({
@@ -44,7 +47,7 @@ const Application: NextPage = ({}: any) => {
       'last_name',
       'email',
       'pronouns',
-      'communications_platfgsorm_username',
+      'communications_platform_username',
       'portfolio',
       'current_city',
       'current_country',
@@ -62,7 +65,7 @@ const Application: NextPage = ({}: any) => {
       'previously_participated'
     ],
     THEMATIC: ['theme_essay', 'theme_essay_follow_up'],
-    CLOSING: ['heard_about_us'],
+    CLOSING: [''],
     'REVIEW & SUBMIT': ['']
   });
 
@@ -93,27 +96,27 @@ const Application: NextPage = ({}: any) => {
     specialized_expertise: null,
     occupation: null,
     employer: null,
-    industry: null,
+    industry: [],
     previously_participated: null,
     previous_participation: [],
     participation_role: null,
     proficient_languages: '',
-    xr_familiarity_tools: '',
+    experience_with_xr: '',
     additional_skills: '',
     theme_essay: '',
     theme_essay_follow_up: '',
-    hardware_hack_interest: [],
+    hardware_hack_interest: null,
     heard_about_us: [],
     outreach_groups: null,
     gender_identity_other: null,
+    race_ethnic_group_other: null,
+    disabilities_other: null,
     digital_designer_skills_other: null,
     heard_about_us_other: null,
     current_country_option: null,
     nationality_option: null,
     industry_option: null
   });
-
-  console.log(requiredFields);
 
   useEffect(() => {
     let updatedFormData = { ...formData };
@@ -157,20 +160,19 @@ const Application: NextPage = ({}: any) => {
         student_field_of_study: null,
         occupation: null,
         employer: null,
-        industry: null
+        industry: [],
+        industry_option: null
       };
     }
 
     setFormData(updatedFormData);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.participation_capacity]);
 
   useEffect(() => {
     const getData = async () => {
       const data = await getSkills();
       const options = await applicationOptions(formData);
-      console.log('options: ', options);
+      setOptions(options);
       setCountries(options.actions.POST.current_country.choices);
       setNationalities(options.actions.POST.nationality.choices);
       setIndustries(options.actions.POST.industry.choices);
@@ -252,43 +254,44 @@ const Application: NextPage = ({}: any) => {
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
       >
     ) => {
-      let fieldType = e.target.tagName.toLowerCase();
-      if (fieldType === 'textarea') {
-        fieldType = 'text';
-      } else {
-        fieldType = e.target.type;
-      }
+      let fieldType = e.target.type.toLowerCase();
 
-      console.log('validate field type:', fieldType);
-
+      const fieldName = e.target.name;
       const fieldTab = Object.entries(requiredFields).find(([_, fields]) =>
-        fields.includes(e.target.name)
+        fields.includes(fieldName)
       )?.[0];
 
-      if (!fieldTab) return;
+      let isFieldRequired = false;
 
-      const isFieldRequired = requiredFields[fieldTab].includes(e.target.name);
-      console.log(isFieldRequired);
+      if (fieldTab !== undefined) {
+        isFieldRequired = requiredFields[fieldTab].includes(fieldName);
+      }
+
+      const fieldOptions = options?.actions?.POST[fieldName];
+      const maxLength = fieldOptions?.max_length;
+
       const validationError = validateField(
         fieldType,
         e.target.value,
-        isFieldRequired
+        isFieldRequired,
+        false,
+        maxLength
       );
 
       if (validationError) {
         setErrors(prevErrors => ({
           ...prevErrors,
-          [e.target.name]: validationError
+          [fieldName]: validationError
         }));
       } else {
         setErrors(prevErrors => {
           const newErrors = { ...prevErrors };
-          delete newErrors[e.target.name];
+          delete newErrors[fieldName];
           return newErrors;
         });
       }
     },
-    [requiredFields]
+    [requiredFields, options]
   );
 
   const isTabValid = (tabName: string): boolean => {
@@ -300,42 +303,35 @@ const Application: NextPage = ({}: any) => {
       return true;
     }
 
-    if (tabName === `PERSONAL INFO` && !acceptedFiles) {
-      console.log(`file upload is invalid: `, acceptedFiles);
+    if (tabName === 'PERSONAL INFO' && !acceptedFiles) {
       return false;
     }
 
     for (let field of required_fields) {
       const fieldValue = formData[field as keyof typeof formData];
+      const fieldOptions = options?.actions?.POST[field];
+      const maxLength = fieldOptions?.max_length || 0;
 
-      if (
-        typeof fieldValue === 'string' &&
-        !(fieldValue in Enums) &&
-        !exemptFields.includes(field) &&
-        fieldValue.trim().length < 3
-      ) {
-        console.log(`field ${field} is invalid (string): `, fieldValue);
+      const fieldType = fieldOptions?.type || 'text';
+      const validationError = validateField(
+        fieldType,
+        fieldValue,
+        true,
+        false,
+        maxLength
+      );
+
+      if (validationError) {
         return false;
       }
 
-      if (typeof fieldValue === 'boolean' && fieldValue === null) {
-        console.log(`field ${field} is invalid (boolean): `, fieldValue);
-        return false;
-      }
-
-      if (!fieldValue) {
-        return false;
-      } else if (typeof fieldValue === 'string' && !fieldValue.trim()) {
-        console.log(`field ${field} is invalid (empty string): `, fieldValue);
+      if (typeof fieldValue === 'string' && fieldValue.trim().length < 1) {
         return false;
       } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
-        console.log(`field ${field} is invalid (empty array): `, fieldValue);
         return false;
-      }
-
-      const validationError = validateField(field, fieldValue, true);
-      if (validationError) {
-        console.log(`validationError for field ${field}: `, validationError);
+      } else if (typeof fieldValue === 'boolean' && fieldValue === null) {
+        return false;
+      } else if (!fieldValue) {
         return false;
       }
     }
@@ -359,9 +355,6 @@ const Application: NextPage = ({}: any) => {
       ...(formData.participation_role === participation_role.designer
         ? ['digital_designer_skills']
         : []),
-      ...(formData.participation_role === participation_role.developer
-        ? ['proficient_languages']
-        : []),
       ...(formData.participation_role === participation_role.specialist
         ? ['specialized_expertise']
         : []),
@@ -380,34 +373,32 @@ const Application: NextPage = ({}: any) => {
       formData.race_ethnic_group.includes(race_ethnic_group.other)
         ? ['race_ethnic_group_other']
         : []),
+      ...(formData.disability_identity &&
+      formData.disability_identity === disability_identity.yes
+        ? ['disabilities']
+        : []),
+      ...(formData.disabilities &&
+      formData.disabilities.includes(disabilities.other)
+        ? ['disabilities_other']
+        : []),
       'gender_identity',
       'race_ethnic_group',
       'disability_identity'
     ];
 
-    const updatedClosing = [
-      ...(formData.heard_about_us &&
-      formData.heard_about_us.includes(heard_about_us.other)
-        ? ['heard_about_us_other']
-        : []),
-      'heard_about_us'
-    ];
-
     setRequiredFields(current => ({
       ...current,
       'DIVERSITY & INCLUSION': updatedDiversityInclusion,
-      EXPERIENCE: updatedExperience,
-      CLOSING: updatedClosing
+      EXPERIENCE: updatedExperience
     }));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     formData.participation_capacity,
     formData.previously_participated,
     formData.participation_role,
     formData.gender_identity,
     formData.race_ethnic_group,
-    formData.heard_about_us
+    formData.heard_about_us,
+    formData.disability_identity
   ]);
 
   const WelcomeTab = () => (
@@ -502,12 +493,18 @@ const Application: NextPage = ({}: any) => {
     </div>
   );
 
-  const CustomTab3 = () => (
+  const ReviewTab = () => (
     <div className="px-6">
       <p>Submit form</p>
     </div>
   );
-  
+
+  const ConfirmationTab = () => (
+    <div className="px-6 h-[256px]">
+      <p>{`Thank you for applying to MIT Reality Hack 2024, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+    </div>
+  );
+
   // Define your tabs as an array of components or elements
   const tabs = [
     <WelcomeTab key={0} />,
@@ -525,15 +522,15 @@ const Application: NextPage = ({}: any) => {
       setRejectedFiles={setRejectedFiles}
       countries={countries}
       nationalities={nationalities}
-      />,
-      <DiversityInclusionForm
+    />,
+    <DiversityInclusionForm
       key={3}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
-      />,
-      <ExperienceInterestForm
+    />,
+    <ExperienceInterestForm
       key={4}
       formData={formData}
       setFormData={setFormData}
@@ -541,24 +538,25 @@ const Application: NextPage = ({}: any) => {
       handleChange={handleChange}
       errors={errors}
       industries={industries}
-      />,
-      <ThematicForm
+    />,
+    <ThematicForm
       key={5}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
-      />,
-      <ClosingForm
+    />,
+    <ClosingForm
       key={6}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
-      />,
-      <ReviewPage allInfo={formData} acceptedFiles={acceptedFiles}/>,
-    ];
-    const tabNames = [
+    />,
+    <ReviewPage key={7} allInfo={formData} acceptedFiles={acceptedFiles} />,
+    <ConfirmationTab key={8} />
+  ];
+  const tabNames = [
     'WELCOME',
     'DISCLAIMERS',
     'PERSONAL INFO',

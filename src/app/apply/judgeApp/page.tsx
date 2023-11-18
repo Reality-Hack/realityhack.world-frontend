@@ -8,16 +8,14 @@ import Link from 'next/link';
 
 const JudgeApp: NextPage = ({}: any) => {
   function CheckBoxComponent({ label }: { label: string }) {
-    const onChange = (e: CheckboxChangeEvent) => {
-      console.log(`checked = ${e.target.checked}`);
-    };
+    const onChange = (e: CheckboxChangeEvent) => {};
 
     return <Checkbox onChange={onChange}>{label}</Checkbox>;
   }
 
   const CustomTab1 = () => (
-    <div className="text-sm px-4">
-      <div className="text-xl text-purple-900 font-bold">Welcome</div>
+    <div className="px-4 text-sm">
+      <div className="text-xl font-bold text-purple-900">Welcome</div>
 
       <div className="">
         Welcome to the Reality Hack 2024 participant application form. Please
@@ -53,8 +51,8 @@ const JudgeApp: NextPage = ({}: any) => {
   );
 
   const CustomTab2 = () => (
-    <div className="text-sm px-4">
-      <div className="text-xl text-purple-900 font-bold">Disclaimers</div>
+    <div className="px-4 text-sm">
+      <div className="text-xl font-bold text-purple-900">Disclaimers</div>
       <div className="flex flex-col gap-4">
         <div>
           We encourage all participants to form new connections with cool
@@ -73,7 +71,7 @@ const JudgeApp: NextPage = ({}: any) => {
         <div className="p-4">
           <CheckBoxComponent label="I understand and accept the above disclaimer." />
         </div>
-        <div className="border border-1 border-gray-200"></div>
+        <div className="border border-gray-200 border-1"></div>
         <div>
           Our participants are literally building the future by making their
           work available for further development.
