@@ -1,12 +1,12 @@
 import React from 'react';
-import { TextInput, TextAreaInput, CheckboxInput, RadioInput } from '../Inputs';
 import {
+  disabilities,
+  disability_identity,
   form_data,
   gender_identity,
-  race_ethnic_group,
-  disability_identity,
-  disabilities
-} from '../../application_form_types';
+  race_ethnic_group
+} from '../../types/application_form_types';
+import { CheckboxInput, RadioInput, TextAreaInput, TextInput } from '../Inputs';
 
 interface FormProps {
   formData: Partial<form_data>;

@@ -1,6 +1,6 @@
 import React from 'react';
+import { form_data, heard_about_us } from '../../types/application_form_types';
 import { CheckboxInput } from '../Inputs';
-import { form_data, heard_about_us } from '../../application_form_types';
 
 interface FormProps {
   formData: Partial<form_data>;

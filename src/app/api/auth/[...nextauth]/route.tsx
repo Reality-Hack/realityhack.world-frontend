@@ -1,19 +1,11 @@
+/* eslint-disable no-console */
 import jwt_decode from 'jwt-decode';
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
 import KeycloakProvider from 'next-auth/providers/keycloak';
-import { encrypt } from '../../../utils/encryption';
-
-interface Token {
-  decoded?: any;
-  access_token: string;
-  id_token: string;
-  expires_at: number;
-  refresh_token?: string;
-  error?: string;
-}
 
 // this will refresh an expired access token, when needed
-async function refreshAccessToken(token: Token): Promise<Token> {
+async function refreshAccessToken(token: JWT): Promise<JWT> {
   const resp = await fetch(
     `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
     {
@@ -40,7 +32,7 @@ async function refreshAccessToken(token: Token): Promise<Token> {
   };
 }
 
-export const authOptions: any = {
+export const authOptions: NextAuthOptions = {
   providers: [
     KeycloakProvider({
       clientId: `${process.env.KEYCLOAK_ID || ''}`,
@@ -48,15 +40,11 @@ export const authOptions: any = {
       issuer: `${process.env.KEYCLOAK_ISSUER || ''}`
     })
   ],
-
+  session: {
+    strategy: 'jwt'
+  },
   callbacks: {
-    async jwt({
-      token,
-      account
-    }: {
-      token: Token;
-      account?: any;
-    }): Promise<Token> {
+    async jwt({ token, account }) {
       const nowTimeStamp = Math.floor(Date.now() / 1000);
 
       if (account) {
@@ -77,15 +65,9 @@ export const authOptions: any = {
         }
       }
     },
-    async session({
-      session,
-      token
-    }: {
-      session: any;
-      token: Token;
-    }): Promise<any> {
-      session.access_token = encrypt(token.access_token);
-      session.id_token = encrypt(token.id_token);
+    async session({ session, token }) {
+      session.access_token = token.access_token;
+      session.id_token = token.id_token;
       session.roles = token.decoded.realm_access.roles;
       session.error = token.error;
       return session;

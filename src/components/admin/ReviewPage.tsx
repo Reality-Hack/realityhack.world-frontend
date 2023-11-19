@@ -1,32 +1,29 @@
-import React from 'react';
-import { SelectChangeEvent } from '@mui/material';
-import { CheckboxInput } from '../Inputs';
 import {
   age_group,
-  previous_participation,
-  participation_capacity,
-  gender_identity,
-  race_ethnic_group,
-  disabilities,
-  hardware_hack_interest,
   digital_designer_skills,
-  heard_about_us
-} from '@/application_form_types';
-import { participation_role } from '@/types';
+  disabilities,
+  gender_identity,
+  hardware_hack_interest,
+  heard_about_us,
+  participation_capacity,
+  previous_participation,
+  race_ethnic_group
+} from '@/types/application_form_types';
+import { participation_role } from '@/types/types';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import {
-  genderIdentityLabels,
-  raceEthnicGroupLabels,
-  disabilityIdentityLabels,
-  disabilitiesLabels
-} from '../applications/DiversityInclusionForm';
-import { hardwareHackLabels } from '../applications/ThematicForm';
+import { CheckboxInput } from '../Inputs';
 import { heardAboutUsLabels } from '../applications/ClosingForm';
-import { ageGroupLabels } from '../applications/PersonalInformationForm';
 import {
-  previousParticipationLabels,
-  DesignSkillsLabels
+  disabilitiesLabels,
+  genderIdentityLabels,
+  raceEthnicGroupLabels
+} from '../applications/DiversityInclusionForm';
+import {
+  DesignSkillsLabels,
+  previousParticipationLabels
 } from '../applications/ExperienceInterestForm';
+import { ageGroupLabels } from '../applications/PersonalInformationForm';
+import { hardwareHackLabels } from '../applications/ThematicForm';
 
 export default function ReviewPage({
   allInfo,
@@ -549,5 +546,3 @@ export default function ReviewPage({
     </div>
   );
 }
-
-// components/CustomSelect.tsx

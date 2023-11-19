@@ -1,10 +1,9 @@
 'use client';
 
-import { ReactElement, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter, usePathname } from 'next/navigation';
 import Loader from '@/components/Loader';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
+import { ReactElement, useEffect } from 'react';
 
 export default function SignIn(): ReactElement {
   const { data: session, status } = useSession();

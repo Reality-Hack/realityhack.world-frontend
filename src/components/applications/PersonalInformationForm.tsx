@@ -1,11 +1,11 @@
 import React from 'react';
-import { TextInput, RadioInput, SelectInput } from '../Inputs';
 import {
-  form_data,
   age_group,
+  form_data,
   option_value
-} from '../../application_form_types';
+} from '../../types/application_form_types';
 import Dropzone from '../Dropzone';
+import { RadioInput, SelectInput, TextInput } from '../Inputs';
 
 interface FormProps {
   formData: Partial<form_data>;

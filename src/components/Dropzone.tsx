@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import { useDropzone, FileRejection } from 'react-dropzone';
 import { formatBytes } from '@/app/utils/utils';
-import { form_data } from '@/application_form_types';
+import { form_data } from '@/types/application_form_types';
+import { FileRejection, useDropzone } from 'react-dropzone';
 
 type AcceptedFile = {
   file: File;

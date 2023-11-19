@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
-import { Inter } from 'next/font/google';
-import SessionProviderWrapper from './utils/SessionProviderWrapper';
 import AuthContent from '@/components/AuthContent';
+import { Inter } from 'next/font/google';
+import { ReactNode } from 'react';
 import './globals.css';
+import SessionProviderWrapper from './utils/SessionProviderWrapper';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,7 +18,7 @@ export const metadata = {
 const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
     <SessionProviderWrapper>
-      <link rel="shortcut icon" href='/images/favicon.ico'/>
+      <link rel="shortcut icon" href="/images/favicon.ico" />
       <html lang="en">
         <body className={inter.className}>
           <AuthContent>{children}</AuthContent>

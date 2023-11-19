@@ -10,7 +10,8 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import DebouncedInput from './DebouncedInput';
 
 interface TableProps<T> {
   data: T[];
@@ -56,40 +57,6 @@ export default function Table<T>({
     onGlobalFilterChange: setGlobalFilter,
     debugTable: true
   });
-
-  function DebouncedInput({
-    value: initialValue,
-    onChange,
-    debounce = 500,
-    ...props
-  }: {
-    value: string | number;
-    onChange: (value: string | number) => void;
-    debounce?: number;
-  } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>) {
-    const [value, setValue] = useState(initialValue);
-
-    useEffect(() => {
-      setValue(initialValue);
-    }, [initialValue]);
-
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        onChange(value);
-      }, debounce);
-
-      return () => clearTimeout(timeout);
-    }, [value, debounce, onChange]);
-
-    return (
-      <input
-        {...props}
-        value={value}
-        className="h-8 py-2 pl-2 text-sm border rounded dark:border-borderDark text dark:bg-inputDark"
-        onChange={e => setValue(e.target.value)}
-      />
-    );
-  }
 
   return (
     <>

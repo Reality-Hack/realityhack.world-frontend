@@ -1,15 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import type { NextPage } from 'next';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+import { createApplication, fileUpload } from '@/app/api/application';
 import Layout from '@/components/HotkeyLayout';
-import {
-  createApplication,
-  fileUpload,
-  patchFileUpload
-} from '@/app/api/application';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import type { NextPage } from 'next';
+import React, { useState } from 'react';
 
 interface AnyAppProps {
   tabs: React.ReactNode[];
@@ -28,7 +24,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   acceptedFiles,
   ...formData
 }) {
-  const DEBUG = false;
+  const DEBUG = process.env.NODE_ENV === 'development';
   const [selectedTab, setSelectedTab] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -37,7 +33,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   };
 
   const callRequest = async () => {
-    console.log('Submitting application...');
     if (isUploading) return;
     setIsUploading(true);
 
