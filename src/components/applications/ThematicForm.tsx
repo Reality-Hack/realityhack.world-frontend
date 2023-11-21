@@ -1,9 +1,9 @@
 import React from 'react';
+import { TextAreaInput, RadioInput } from '../Inputs';
 import {
   form_data,
   hardware_hack_interest
-} from '../../types/application_form_types';
-import { RadioInput, TextAreaInput } from '../Inputs';
+} from '@/types/application_form_types';
 
 interface FormProps {
   formData: Partial<form_data>;

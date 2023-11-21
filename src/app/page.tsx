@@ -21,9 +21,5 @@ export default function Dashboard() {
     }
   }, []);
 
-  return (
-    <div className="h-screen p-6">
-      <h1 className="mb-5 text-2xl font-bold text-center text">Home</h1>
-    </div>
-  );
+  return <div className="h-screen p-6"></div>;
 }
