@@ -70,12 +70,19 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
     updatedPayload.hardware_hack_interest =
       updatedPayload.hardware_hack_interest || 'A';
 
-    // Check if middle_name is not null, then trim and check if it's empty to set to null
-    updatedPayload.middle_name =
-      updatedPayload.middle_name && updatedPayload.middle_name.trim() === ''
-        ? null
-        : updatedPayload.middle_name;
+    // Assuming updatedPayload.middle_name may contain a "blank" character like a space
+    if (updatedPayload.middle_name) {
+      // Trim the value to remove leading and trailing spaces
+      updatedPayload.middle_name = updatedPayload.middle_name.trim();
 
+      // If the trimmed value is an empty string, set it to null
+      if (updatedPayload.middle_name === '') {
+        updatedPayload.middle_name = null;
+      }
+    } else {
+      // If middle_name is undefined or null, ensure it remains null
+      updatedPayload.middle_name = null;
+    }
     // Ensure that certain fields do not exceed 1000 characters
     [
       'disability_accommodations',
