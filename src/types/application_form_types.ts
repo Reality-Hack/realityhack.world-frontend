@@ -7,14 +7,14 @@ export enum status {
 }
 
 export enum age_group {
-  seventeen_or_younger = '17 or younger',
-  eighteen_to_twenty = '18-20',
-  twenty_one_to_twenty_nine = '21-29',
-  thirty_to_thirty_nine = '30-39',
-  forty_to_forty_nine = '40-49',
-  fifty_to_fifty_nine = '50-59',
-  sixty_or_older = '60 or older',
-  prefer_not_to_say = 'prefer not to say'
+  seventeen_or_younger = 'A',
+  eighteen_to_twenty = 'B',
+  twenty_one_to_twenty_nine = 'C',
+  thirty_to_thirty_nine = 'D',
+  forty_to_forty_nine = 'E',
+  fifty_to_fifty_nine = 'F',
+  sixty_or_older = 'G',
+  prefer_not_to_say = 'H'
 }
 
 export enum gender_identity {

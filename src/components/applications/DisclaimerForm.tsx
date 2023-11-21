@@ -1,5 +1,5 @@
 import React from 'react';
-import { form_data, heard_about_us } from '../../types/application_form_types';
+import { form_data, heard_about_us } from '@/types/application_form_types';
 import { CheckboxInput } from '../Inputs';
 
 interface FormProps {

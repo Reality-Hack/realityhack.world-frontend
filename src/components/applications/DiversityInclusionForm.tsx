@@ -1,12 +1,12 @@
 import React from 'react';
+import { TextInput, TextAreaInput, CheckboxInput, RadioInput } from '../Inputs';
 import {
-  disabilities,
-  disability_identity,
   form_data,
   gender_identity,
-  race_ethnic_group
-} from '../../types/application_form_types';
-import { CheckboxInput, RadioInput, TextAreaInput, TextInput } from '../Inputs';
+  race_ethnic_group,
+  disability_identity,
+  disabilities
+} from '@/types/application_form_types';
 
 interface FormProps {
   formData: Partial<form_data>;
@@ -96,10 +96,10 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
           <CheckboxInput
             key={key}
             name="gender_identity"
-            value={genderIdentityLabels[key as keyof typeof genderIdentityLabels]}
+            value={gender_identity[key as keyof typeof gender_identity]}
             checked={
               formData.gender_identity?.includes(
-                genderIdentityLabels[key as keyof typeof genderIdentityLabels] as gender_identity
+                gender_identity[key as keyof typeof gender_identity]
               ) || false
             }
             onChange={handleChange}
@@ -135,10 +135,10 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
           <CheckboxInput
             key={key}
             name="race_ethnic_group"
-            value={raceEthnicGroupLabels[key as keyof typeof raceEthnicGroupLabels]}
+            value={race_ethnic_group[key as keyof typeof race_ethnic_group]}
             checked={
               formData.race_ethnic_group?.includes(
-                raceEthnicGroupLabels[key as keyof typeof raceEthnicGroupLabels] as race_ethnic_group
+                race_ethnic_group[key as keyof typeof race_ethnic_group]
               ) || false
             }
             onChange={handleChange}

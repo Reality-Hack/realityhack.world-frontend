@@ -115,7 +115,6 @@ const Application: NextPage = ({}: any) => {
     nationality_option: null,
     industry_option: null
   });
-
   useEffect(() => {
     let updatedFormData = { ...formData };
 
