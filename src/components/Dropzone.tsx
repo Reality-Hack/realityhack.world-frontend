@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import { useDropzone, FileRejection } from 'react-dropzone';
 import { formatBytes } from '@/app/utils/utils';
-import { form_data } from '@/application_form_types';
+import { form_data } from '@/types/application_form_types';
+import { FileRejection, useDropzone } from 'react-dropzone';
 
 type AcceptedFile = {
   file: File;
@@ -26,6 +26,7 @@ const Dropzone: React.FC<FormProps> = ({
 }) => {
   function handleUpload(data: File[]) {
     const file = data[0];
+    console.log(file, "kpokpokpokpokpokfepaokafepj")
     if (file) {
       setFormData(prevFormData => ({
         ...prevFormData

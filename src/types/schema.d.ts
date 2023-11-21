@@ -268,6 +268,38 @@ export interface paths {
     /** @description API endpoint that allows files to be viewed or edited. */
     patch: operations["uploaded_files_partial_update"];
   };
+  "/workshopattendees/": {
+    /** @description API endpoint that allows workshops to be viewed or edited. */
+    get: operations["workshopattendees_list"];
+    /** @description API endpoint that allows workshops to be viewed or edited. */
+    post: operations["workshopattendees_create"];
+  };
+  "/workshopattendees/{id}/": {
+    /** @description API endpoint that allows workshops to be viewed or edited. */
+    get: operations["workshopattendees_retrieve"];
+    /** @description API endpoint that allows workshops to be viewed or edited. */
+    put: operations["workshopattendees_update"];
+    /** @description API endpoint that allows workshops to be viewed or edited. */
+    delete: operations["workshopattendees_destroy"];
+    /** @description API endpoint that allows workshops to be viewed or edited. */
+    patch: operations["workshopattendees_partial_update"];
+  };
+  "/workshops/": {
+    /** @description API endpoint that allows workshops to be viewed ot edited. */
+    get: operations["workshops_list"];
+    /** @description API endpoint that allows workshops to be viewed ot edited. */
+    post: operations["workshops_create"];
+  };
+  "/workshops/{id}/": {
+    /** @description API endpoint that allows workshops to be viewed ot edited. */
+    get: operations["workshops_retrieve"];
+    /** @description API endpoint that allows workshops to be viewed ot edited. */
+    put: operations["workshops_update"];
+    /** @description API endpoint that allows workshops to be viewed ot edited. */
+    delete: operations["workshops_destroy"];
+    /** @description API endpoint that allows workshops to be viewed ot edited. */
+    patch: operations["workshops_partial_update"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -290,69 +322,56 @@ export interface components {
       /** Format: uuid */
       id: string;
       gender_identity: components["schemas"]["GenderIdentityEnum"][];
+      nationality: components["schemas"]["NationalityEnum"][];
+      current_country: components["schemas"]["CurrentCountryEnum"][];
       race_ethnic_group: components["schemas"]["RaceEthnicGroupEnum"][];
       disabilities: components["schemas"]["DisabilitiesEnum"][];
       previous_participation: components["schemas"]["PreviousParticipationEnum"][];
+      heard_about_us: components["schemas"]["HeardAboutUsEnum"][];
+      digital_designer_skills: components["schemas"]["DigitalDesignerSkillsEnum"][];
+      industry: components["schemas"]["IndustryEnum"][];
       first_name: string;
       middle_name?: string | null;
       last_name: string;
-      current_country: string;
       current_city: string;
       pronouns?: string | null;
       age_group?: components["schemas"]["AgeGroupEnum"];
-      bio?: string;
       /** Format: email */
       email: string;
       event_year?: number;
       /** Format: uri */
-      portfolio: string;
+      portfolio?: string | null;
       /** Format: uri */
-      resume: string;
-      city: string;
-      country: string;
-      nationality: string;
+      secondary_portfolio?: string | null;
+      gender_identity_other?: string | null;
+      race_ethnic_group_other?: string | null;
       disability_identity?: components["schemas"]["DisabilityIdentityEnum"];
+      disabilities_other?: string | null;
       disability_accommodations?: string | null;
       participation_capacity?: components["schemas"]["ParticipationCapacityEnum"];
       student_school?: string | null;
       student_field_of_study?: string | null;
       occupation?: string | null;
       employer?: string | null;
+      industry_other?: string | null;
+      specialized_expertise?: string | null;
       status?: components["schemas"]["StatusEnum"] | components["schemas"]["NullEnum"] | null;
       previously_participated?: boolean;
-      participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
-      experience_with_xr?: boolean;
+      participation_role?: components["schemas"]["ParticipationRoleEnum"];
+      experience_with_xr?: string | null;
       theme_essay?: string | null;
       theme_essay_follow_up?: string | null;
-      heard_about_us?: components["schemas"]["HeardAboutUsEnum"] | components["schemas"]["NullEnum"] | null;
-      shirt_size?: components["schemas"]["ShirtSizeEnum"] | components["schemas"]["NullEnum"] | null;
+      hardware_hack_interest?: components["schemas"]["HardwareHackInterestEnum"];
+      heard_about_us_other?: string | null;
+      digital_designer_skills_other?: string | null;
       communications_platform_username?: string | null;
-      dietary_restrictions?: string | null;
-      additional_accommodations?: string | null;
-      phone_number_country_alpha_2_options?: components["schemas"]["PhoneNumberCountryAlpha2OptionsEnum"] | components["schemas"]["NullEnum"] | null;
-      phone_number: string;
-      emergency_contact_name: string;
-      emergency_contact_phone_number: string;
-      /** Format: email */
-      emergency_contact_email: string;
-      emergency_contact_relationship: string;
-      us_visa_support_is_required: boolean;
-      us_visa_support_full_name?: string | null;
-      us_visa_support_passport_number?: string | null;
-      us_visa_support_national_identification_document_information?: string | null;
-      us_visa_support_citizenship?: components["schemas"]["UsVisaSupportCitizenshipEnum"] | components["schemas"]["NullEnum"] | null;
-      us_visa_support_address_line_1?: string | null;
-      us_visa_support_address_line_2?: string | null;
+      outreach_groups?: string | null;
       /** Format: date-time */
       submitted_at: string;
       /** Format: date-time */
       updated_at: string;
       /** Format: uuid */
-      parental_consent_form?: string | null;
-      /** Format: uuid */
-      media_release?: string | null;
-      /** Format: uuid */
-      liability_release?: string | null;
+      resume: string;
     };
     Attendee: {
       /** Format: uuid */
@@ -378,6 +397,269 @@ export interface components {
       updated_at: string;
     };
     /**
+     * @description * `AW` - Aruba
+     * * `AF` - Afghanistan
+     * * `AO` - Angola
+     * * `AI` - Anguilla
+     * * `AX` - Åland Islands
+     * * `AL` - Albania
+     * * `AD` - Andorra
+     * * `AE` - United Arab Emirates
+     * * `AR` - Argentina
+     * * `AM` - Armenia
+     * * `AS` - American Samoa
+     * * `AQ` - Antarctica
+     * * `TF` - French Southern Territories
+     * * `AG` - Antigua and Barbuda
+     * * `AU` - Australia
+     * * `AT` - Austria
+     * * `AZ` - Azerbaijan
+     * * `BI` - Burundi
+     * * `BE` - Belgium
+     * * `BJ` - Benin
+     * * `BQ` - Bonaire, Sint Eustatius and Saba
+     * * `BF` - Burkina Faso
+     * * `BD` - Bangladesh
+     * * `BG` - Bulgaria
+     * * `BH` - Bahrain
+     * * `BS` - Bahamas
+     * * `BA` - Bosnia and Herzegovina
+     * * `BL` - Saint Barthélemy
+     * * `BY` - Belarus
+     * * `BZ` - Belize
+     * * `BM` - Bermuda
+     * * `BO` - Bolivia, Plurinational State of
+     * * `BR` - Brazil
+     * * `BB` - Barbados
+     * * `BN` - Brunei Darussalam
+     * * `BT` - Bhutan
+     * * `BV` - Bouvet Island
+     * * `BW` - Botswana
+     * * `CF` - Central African Republic
+     * * `CA` - Canada
+     * * `CC` - Cocos (Keeling) Islands
+     * * `CH` - Switzerland
+     * * `CL` - Chile
+     * * `CN` - China
+     * * `CI` - Côte d'Ivoire
+     * * `CM` - Cameroon
+     * * `CD` - Congo, The Democratic Republic of the
+     * * `CG` - Congo
+     * * `CK` - Cook Islands
+     * * `CO` - Colombia
+     * * `KM` - Comoros
+     * * `CV` - Cabo Verde
+     * * `CR` - Costa Rica
+     * * `CU` - Cuba
+     * * `CW` - Curaçao
+     * * `CX` - Christmas Island
+     * * `KY` - Cayman Islands
+     * * `CY` - Cyprus
+     * * `CZ` - Czechia
+     * * `DE` - Germany
+     * * `DJ` - Djibouti
+     * * `DM` - Dominica
+     * * `DK` - Denmark
+     * * `DO` - Dominican Republic
+     * * `DZ` - Algeria
+     * * `EC` - Ecuador
+     * * `EG` - Egypt
+     * * `ER` - Eritrea
+     * * `EH` - Western Sahara
+     * * `ES` - Spain
+     * * `EE` - Estonia
+     * * `ET` - Ethiopia
+     * * `FI` - Finland
+     * * `FJ` - Fiji
+     * * `FK` - Falkland Islands (Malvinas)
+     * * `FR` - France
+     * * `FO` - Faroe Islands
+     * * `FM` - Micronesia, Federated States of
+     * * `GA` - Gabon
+     * * `GB` - United Kingdom
+     * * `GE` - Georgia
+     * * `GG` - Guernsey
+     * * `GH` - Ghana
+     * * `GI` - Gibraltar
+     * * `GN` - Guinea
+     * * `GP` - Guadeloupe
+     * * `GM` - Gambia
+     * * `GW` - Guinea-Bissau
+     * * `GQ` - Equatorial Guinea
+     * * `GR` - Greece
+     * * `GD` - Grenada
+     * * `GL` - Greenland
+     * * `GT` - Guatemala
+     * * `GF` - French Guiana
+     * * `GU` - Guam
+     * * `GY` - Guyana
+     * * `HK` - Hong Kong
+     * * `HM` - Heard Island and McDonald Islands
+     * * `HN` - Honduras
+     * * `HR` - Croatia
+     * * `HT` - Haiti
+     * * `HU` - Hungary
+     * * `ID` - Indonesia
+     * * `IM` - Isle of Man
+     * * `IN` - India
+     * * `IO` - British Indian Ocean Territory
+     * * `IE` - Ireland
+     * * `IR` - Iran, Islamic Republic of
+     * * `IQ` - Iraq
+     * * `IS` - Iceland
+     * * `IL` - Israel
+     * * `IT` - Italy
+     * * `JM` - Jamaica
+     * * `JE` - Jersey
+     * * `JO` - Jordan
+     * * `JP` - Japan
+     * * `KZ` - Kazakhstan
+     * * `KE` - Kenya
+     * * `KG` - Kyrgyzstan
+     * * `KH` - Cambodia
+     * * `KI` - Kiribati
+     * * `KN` - Saint Kitts and Nevis
+     * * `KR` - Korea, Republic of
+     * * `KW` - Kuwait
+     * * `LA` - Lao People's Democratic Republic
+     * * `LB` - Lebanon
+     * * `LR` - Liberia
+     * * `LY` - Libya
+     * * `LC` - Saint Lucia
+     * * `LI` - Liechtenstein
+     * * `LK` - Sri Lanka
+     * * `LS` - Lesotho
+     * * `LT` - Lithuania
+     * * `LU` - Luxembourg
+     * * `LV` - Latvia
+     * * `MO` - Macao
+     * * `MF` - Saint Martin (French part)
+     * * `MA` - Morocco
+     * * `MC` - Monaco
+     * * `MD` - Moldova, Republic of
+     * * `MG` - Madagascar
+     * * `MV` - Maldives
+     * * `MX` - Mexico
+     * * `MH` - Marshall Islands
+     * * `MK` - North Macedonia
+     * * `ML` - Mali
+     * * `MT` - Malta
+     * * `MM` - Myanmar
+     * * `ME` - Montenegro
+     * * `MN` - Mongolia
+     * * `MP` - Northern Mariana Islands
+     * * `MZ` - Mozambique
+     * * `MR` - Mauritania
+     * * `MS` - Montserrat
+     * * `MQ` - Martinique
+     * * `MU` - Mauritius
+     * * `MW` - Malawi
+     * * `MY` - Malaysia
+     * * `YT` - Mayotte
+     * * `NA` - Namibia
+     * * `NC` - New Caledonia
+     * * `NE` - Niger
+     * * `NF` - Norfolk Island
+     * * `NG` - Nigeria
+     * * `NI` - Nicaragua
+     * * `NU` - Niue
+     * * `NL` - Netherlands
+     * * `NO` - Norway
+     * * `NP` - Nepal
+     * * `NR` - Nauru
+     * * `NZ` - New Zealand
+     * * `OM` - Oman
+     * * `PK` - Pakistan
+     * * `PA` - Panama
+     * * `PN` - Pitcairn
+     * * `PE` - Peru
+     * * `PH` - Philippines
+     * * `PW` - Palau
+     * * `PG` - Papua New Guinea
+     * * `PL` - Poland
+     * * `PR` - Puerto Rico
+     * * `KP` - Korea, Democratic People's Republic of
+     * * `PT` - Portugal
+     * * `PY` - Paraguay
+     * * `PS` - Palestine, State of
+     * * `PF` - French Polynesia
+     * * `QA` - Qatar
+     * * `RE` - Réunion
+     * * `RO` - Romania
+     * * `RU` - Russian Federation
+     * * `RW` - Rwanda
+     * * `SA` - Saudi Arabia
+     * * `SD` - Sudan
+     * * `SN` - Senegal
+     * * `SG` - Singapore
+     * * `GS` - South Georgia and the South Sandwich Islands
+     * * `SH` - Saint Helena, Ascension and Tristan da Cunha
+     * * `SJ` - Svalbard and Jan Mayen
+     * * `SB` - Solomon Islands
+     * * `SL` - Sierra Leone
+     * * `SV` - El Salvador
+     * * `SM` - San Marino
+     * * `SO` - Somalia
+     * * `PM` - Saint Pierre and Miquelon
+     * * `RS` - Serbia
+     * * `SS` - South Sudan
+     * * `ST` - Sao Tome and Principe
+     * * `SR` - Suriname
+     * * `SK` - Slovakia
+     * * `SI` - Slovenia
+     * * `SE` - Sweden
+     * * `SZ` - Eswatini
+     * * `SX` - Sint Maarten (Dutch part)
+     * * `SC` - Seychelles
+     * * `SY` - Syrian Arab Republic
+     * * `TC` - Turks and Caicos Islands
+     * * `TD` - Chad
+     * * `TG` - Togo
+     * * `TH` - Thailand
+     * * `TJ` - Tajikistan
+     * * `TK` - Tokelau
+     * * `TM` - Turkmenistan
+     * * `TL` - Timor-Leste
+     * * `TO` - Tonga
+     * * `TT` - Trinidad and Tobago
+     * * `TN` - Tunisia
+     * * `TR` - Turkey
+     * * `TV` - Tuvalu
+     * * `TW` - Taiwan, Province of China
+     * * `TZ` - Tanzania, United Republic of
+     * * `UG` - Uganda
+     * * `UA` - Ukraine
+     * * `UM` - United States Minor Outlying Islands
+     * * `UY` - Uruguay
+     * * `US` - United States
+     * * `UZ` - Uzbekistan
+     * * `VA` - Holy See (Vatican City State)
+     * * `VC` - Saint Vincent and the Grenadines
+     * * `VE` - Venezuela, Bolivarian Republic of
+     * * `VG` - Virgin Islands, British
+     * * `VI` - Virgin Islands, U.S.
+     * * `VN` - Viet Nam
+     * * `VU` - Vanuatu
+     * * `WF` - Wallis and Futuna
+     * * `WS` - Samoa
+     * * `YE` - Yemen
+     * * `ZA` - South Africa
+     * * `ZM` - Zambia
+     * * `ZW` - Zimbabwe
+     * @enum {string}
+     */
+    CurrentCountryEnum: "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AQ" | "TF" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BQ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BV" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CG" | "CK" | "CO" | "KM" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HM" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SH" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UM" | "UY" | "US" | "UZ" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
+    /**
+     * @description * `A` - Digital Art
+     * * `B` - Animation
+     * * `C` - Sound
+     * * `D` - UX and UI
+     * * `E` - Video
+     * * `F` - Other
+     * @enum {string}
+     */
+    DigitalDesignerSkillsEnum: "A" | "B" | "C" | "D" | "E" | "F";
+    /**
      * @description * `A` - Hearing difficulty - Deaf or having serious difficulty hearing (DEAR).
      * * `B` - Vision difficulty - Blind or having serious difficulty seeing, even when wearing glasses (DEYE).
      * * `C` - Cognitive difficulty - Because of a physical, mental, or emotional problem, having difficulty remembering, concentrating, or making decisions (DREM).
@@ -385,9 +667,10 @@ export interface components {
      * * `E` - Self-care difficulty - Having difficulty bathing or dressing (DDRS).
      * * `F` - Independent living difficulty - Because of a physical, mental, or emotional problem, having difficulty doing errands alone such as visiting a doctor's office or shopping (DOUT).
      * * `G` - I prefer not to say
+     * * `O` - Other
      * @enum {string}
      */
-    DisabilitiesEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G";
+    DisabilitiesEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "O";
     /**
      * @description * `A` - Yes
      * * `B` - No
@@ -411,11 +694,11 @@ export interface components {
      * * `D` - Transgender male
      * * `E` - Gender non-conforming, non-binary, or gender queer
      * * `F` - Two-spirit
-     * * `G` - Other
-     * * `H` - I prefer not to say
+     * * `G` - I prefer not to say
+     * * `O` - Other
      * @enum {string}
      */
-    GenderIdentityEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
+    GenderIdentityEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "O";
     GroupDetail: {
       id: number;
       name: string;
@@ -477,6 +760,14 @@ export interface components {
       updated_at: string;
     };
     /**
+     * @description * `A` - Not at all interested; I'll pass
+     * * `B` - Some mild interest
+     * * `C` - Most likely
+     * * `D` - 100%; I want to join
+     * @enum {string}
+     */
+    HardwareHackInterestEnum: "A" | "B" | "C" | "D";
+    /**
      * @description * `F` - A friend
      * * `V` - A Reality Hack organizer or volunteer
      * * `N` - A teacher or someone in my professional network
@@ -487,6 +778,158 @@ export interface components {
      * @enum {string}
      */
     HeardAboutUsEnum: "F" | "V" | "N" | "S" | "C" | "P" | "O";
+    /**
+     * @description * `Industry` - Industry
+     * * `Accounting ` - Accounting
+     * * `Airlines/Aviation` - Airlines/Aviation
+     * * `Alternative Dispute Resolution` - Alternative Dispute Resolution
+     * * `Alternative Medicine` - Alternative Medicine
+     * * `Animation` - Animation
+     * * `Apparel/Fashion` - Apparel/Fashion
+     * * `Architecture/Planning` - Architecture/Planning
+     * * `Arts/Crafts` - Arts/Crafts
+     * * `Automotive` - Automotive
+     * * `Aviation/Aerospace` - Aviation/Aerospace
+     * * `Banking/Mortgage` - Banking/Mortgage
+     * * `Biotechnology/Greentech` - Biotechnology/Greentech
+     * * `Broadcast Media` - Broadcast Media
+     * * `Building Materials` - Building Materials
+     * * `Business Supplies/Equipment` - Business Supplies/Equipment
+     * * `Capital Markets/Hedge Fund/Private Equity` - Capital Markets/Hedge Fund/Private Equity
+     * * `Chemicals` - Chemicals
+     * * `Civic/Social Organization` - Civic/Social Organization
+     * * `Civil Engineering` - Civil Engineering
+     * * `Commercial Real Estate` - Commercial Real Estate
+     * * `Computer Games` - Computer Games
+     * * `Computer Hardware` - Computer Hardware
+     * * `Computer Networking` - Computer Networking
+     * * `Computer Software/Engineering` - Computer Software/Engineering
+     * * `Computer/Network Security` - Computer/Network Security
+     * * `Construction` - Construction
+     * * `Consumer Electronics` - Consumer Electronics
+     * * `Consumer Goods` - Consumer Goods
+     * * `Consumer Services` - Consumer Services
+     * * `Cosmetics` - Cosmetics
+     * * `Dairy` - Dairy
+     * * `Defense/Space` - Defense/Space
+     * * `Design` - Design
+     * * `E-Learning` - E-Learning
+     * * `Education Management` - Education Management
+     * * `Electrical/Electronic Manufacturing` - Electrical/Electronic Manufacturing
+     * * `Entertainment/Movie Production` - Entertainment/Movie Production
+     * * `Environmental Services` - Environmental Services
+     * * `Events Services` - Events Services
+     * * `Executive Office` - Executive Office
+     * * `Facilities Services` - Facilities Services
+     * * `Farming` - Farming
+     * * `Financial Services` - Financial Services
+     * * `Fine Art` - Fine Art
+     * * `Fishery` - Fishery
+     * * `Food Production` - Food Production
+     * * `Food/Beverages` - Food/Beverages
+     * * `Fundraising` - Fundraising
+     * * `Furniture` - Furniture
+     * * `Gambling/Casinos` - Gambling/Casinos
+     * * `Glass/Ceramics/Concrete` - Glass/Ceramics/Concrete
+     * * `Government Administration` - Government Administration
+     * * `Government Relations` - Government Relations
+     * * `Graphic Design/Web Design` - Graphic Design/Web Design
+     * * `Health/Fitness` - Health/Fitness
+     * * `Higher Education/Acadamia` - Higher Education/Acadamia
+     * * `Hospital/Health Care` - Hospital/Health Care
+     * * `Hospitality` - Hospitality
+     * * `Human Resources/HR` - Human Resources/HR
+     * * `Import/Export` - Import/Export
+     * * `Individual/Family Services` - Individual/Family Services
+     * * `Industrial Automation` - Industrial Automation
+     * * `Information Services` - Information Services
+     * * `Information Technology/IT` - Information Technology/IT
+     * * `Insurance` - Insurance
+     * * `International Affairs` - International Affairs
+     * * `International Trade/Development` - International Trade/Development
+     * * `Internet` - Internet
+     * * `Investment Banking/Venture` - Investment Banking/Venture
+     * * `Investment Management/Hedge Fund/Private Equity` - Investment Management/Hedge Fund/Private Equity
+     * * `Judiciary` - Judiciary
+     * * `Law Enforcement` - Law Enforcement
+     * * `Law Practice/Law Firms` - Law Practice/Law Firms
+     * * `Legal Services` - Legal Services
+     * * `Legislative Office` - Legislative Office
+     * * `Leisure/Travel` - Leisure/Travel
+     * * `Library` - Library
+     * * `Logistics/Procurement` - Logistics/Procurement
+     * * `Luxury Goods/Jewelry` - Luxury Goods/Jewelry
+     * * `Machinery` - Machinery
+     * * `Management Consulting` - Management Consulting
+     * * `Maritime` - Maritime
+     * * `Market Research` - Market Research
+     * * `Marketing/Advertising/Sales` - Marketing/Advertising/Sales
+     * * `Mechanical or Industrial Engineering` - Mechanical or Industrial Engineering
+     * * `Media Production` - Media Production
+     * * `Medical Equipment` - Medical Equipment
+     * * `Medical Practice` - Medical Practice
+     * * `Mental Health Care` - Mental Health Care
+     * * `Military Industry` - Military Industry
+     * * `Mining/Metals` - Mining/Metals
+     * * `Motion Pictures/Film` - Motion Pictures/Film
+     * * `Museums/Institutions` - Museums/Institutions
+     * * `Music` - Music
+     * * `Nanotechnology` - Nanotechnology
+     * * `Newspapers/Journalism` - Newspapers/Journalism
+     * * `Non-Profit/Volunteering` - Non-Profit/Volunteering
+     * * `Oil/Energy/Solar/Greentech` - Oil/Energy/Solar/Greentech
+     * * `Online Publishing` - Online Publishing
+     * * `Outsourcing/Offshoring` - Outsourcing/Offshoring
+     * * `Package/Freight Delivery` - Package/Freight Delivery
+     * * `Packaging/Containers` - Packaging/Containers
+     * * `Paper/Forest Products` - Paper/Forest Products
+     * * `Performing Arts` - Performing Arts
+     * * `Pharmaceuticals` - Pharmaceuticals
+     * * `Philanthropy` - Philanthropy
+     * * `Photography` - Photography
+     * * `Plastics` - Plastics
+     * * `Political Organization` - Political Organization
+     * * `Primary/Secondary Education` - Primary/Secondary Education
+     * * `Printing` - Printing
+     * * `Professional Training` - Professional Training
+     * * `Program Development` - Program Development
+     * * `Public Relations/PR` - Public Relations/PR
+     * * `Public Safety` - Public Safety
+     * * `Publishing Industry` - Publishing Industry
+     * * `Railroad Manufacture` - Railroad Manufacture
+     * * `Ranching` - Ranching
+     * * `Real Estate/Mortgage` - Real Estate/Mortgage
+     * * `Recreational Facilities/Services` - Recreational Facilities/Services
+     * * `Religious Institutions` - Religious Institutions
+     * * `Renewables/Environment` - Renewables/Environment
+     * * `Research Industry` - Research Industry
+     * * `Restaurants` - Restaurants
+     * * `Retail Industry` - Retail Industry
+     * * `Security/Investigations` - Security/Investigations
+     * * `Semiconductors` - Semiconductors
+     * * `Shipbuilding` - Shipbuilding
+     * * `Sporting Goods` - Sporting Goods
+     * * `Sports` - Sports
+     * * `Staffing/Recruiting` - Staffing/Recruiting
+     * * `Supermarkets` - Supermarkets
+     * * `Telecommunications` - Telecommunications
+     * * `Textiles` - Textiles
+     * * `Think Tanks` - Think Tanks
+     * * `Tobacco` - Tobacco
+     * * `Translation/Localization` - Translation/Localization
+     * * `Transportation` - Transportation
+     * * `Utilities` - Utilities
+     * * `Venture Capital/VC` - Venture Capital/VC
+     * * `Veterinary` - Veterinary
+     * * `Warehousing` - Warehousing
+     * * `Wholesale` - Wholesale
+     * * `Wine/Spirits` - Wine/Spirits
+     * * `Wireless` - Wireless
+     * * `Writing/Editing` - Writing/Editing
+     * * `Other` - Other
+     * @enum {string}
+     */
+    IndustryEnum: "Industry" | "Accounting " | "Airlines/Aviation" | "Alternative Dispute Resolution" | "Alternative Medicine" | "Animation" | "Apparel/Fashion" | "Architecture/Planning" | "Arts/Crafts" | "Automotive" | "Aviation/Aerospace" | "Banking/Mortgage" | "Biotechnology/Greentech" | "Broadcast Media" | "Building Materials" | "Business Supplies/Equipment" | "Capital Markets/Hedge Fund/Private Equity" | "Chemicals" | "Civic/Social Organization" | "Civil Engineering" | "Commercial Real Estate" | "Computer Games" | "Computer Hardware" | "Computer Networking" | "Computer Software/Engineering" | "Computer/Network Security" | "Construction" | "Consumer Electronics" | "Consumer Goods" | "Consumer Services" | "Cosmetics" | "Dairy" | "Defense/Space" | "Design" | "E-Learning" | "Education Management" | "Electrical/Electronic Manufacturing" | "Entertainment/Movie Production" | "Environmental Services" | "Events Services" | "Executive Office" | "Facilities Services" | "Farming" | "Financial Services" | "Fine Art" | "Fishery" | "Food Production" | "Food/Beverages" | "Fundraising" | "Furniture" | "Gambling/Casinos" | "Glass/Ceramics/Concrete" | "Government Administration" | "Government Relations" | "Graphic Design/Web Design" | "Health/Fitness" | "Higher Education/Acadamia" | "Hospital/Health Care" | "Hospitality" | "Human Resources/HR" | "Import/Export" | "Individual/Family Services" | "Industrial Automation" | "Information Services" | "Information Technology/IT" | "Insurance" | "International Affairs" | "International Trade/Development" | "Internet" | "Investment Banking/Venture" | "Investment Management/Hedge Fund/Private Equity" | "Judiciary" | "Law Enforcement" | "Law Practice/Law Firms" | "Legal Services" | "Legislative Office" | "Leisure/Travel" | "Library" | "Logistics/Procurement" | "Luxury Goods/Jewelry" | "Machinery" | "Management Consulting" | "Maritime" | "Market Research" | "Marketing/Advertising/Sales" | "Mechanical or Industrial Engineering" | "Media Production" | "Medical Equipment" | "Medical Practice" | "Mental Health Care" | "Military Industry" | "Mining/Metals" | "Motion Pictures/Film" | "Museums/Institutions" | "Music" | "Nanotechnology" | "Newspapers/Journalism" | "Non-Profit/Volunteering" | "Oil/Energy/Solar/Greentech" | "Online Publishing" | "Outsourcing/Offshoring" | "Package/Freight Delivery" | "Packaging/Containers" | "Paper/Forest Products" | "Performing Arts" | "Pharmaceuticals" | "Philanthropy" | "Photography" | "Plastics" | "Political Organization" | "Primary/Secondary Education" | "Printing" | "Professional Training" | "Program Development" | "Public Relations/PR" | "Public Safety" | "Publishing Industry" | "Railroad Manufacture" | "Ranching" | "Real Estate/Mortgage" | "Recreational Facilities/Services" | "Religious Institutions" | "Renewables/Environment" | "Research Industry" | "Restaurants" | "Retail Industry" | "Security/Investigations" | "Semiconductors" | "Shipbuilding" | "Sporting Goods" | "Sports" | "Staffing/Recruiting" | "Supermarkets" | "Telecommunications" | "Textiles" | "Think Tanks" | "Tobacco" | "Translation/Localization" | "Transportation" | "Utilities" | "Venture Capital/VC" | "Veterinary" | "Warehousing" | "Wholesale" | "Wine/Spirits" | "Wireless" | "Writing/Editing" | "Other";
     Location: {
       /** Format: uuid */
       id: string;
@@ -497,6 +940,259 @@ export interface components {
       /** Format: date-time */
       updated_at: string;
     };
+    /**
+     * @description * `AW` - Aruba
+     * * `AF` - Afghanistan
+     * * `AO` - Angola
+     * * `AI` - Anguilla
+     * * `AX` - Åland Islands
+     * * `AL` - Albania
+     * * `AD` - Andorra
+     * * `AE` - United Arab Emirates
+     * * `AR` - Argentina
+     * * `AM` - Armenia
+     * * `AS` - American Samoa
+     * * `AQ` - Antarctica
+     * * `TF` - French Southern Territories
+     * * `AG` - Antigua and Barbuda
+     * * `AU` - Australia
+     * * `AT` - Austria
+     * * `AZ` - Azerbaijan
+     * * `BI` - Burundi
+     * * `BE` - Belgium
+     * * `BJ` - Benin
+     * * `BQ` - Bonaire, Sint Eustatius and Saba
+     * * `BF` - Burkina Faso
+     * * `BD` - Bangladesh
+     * * `BG` - Bulgaria
+     * * `BH` - Bahrain
+     * * `BS` - Bahamas
+     * * `BA` - Bosnia and Herzegovina
+     * * `BL` - Saint Barthélemy
+     * * `BY` - Belarus
+     * * `BZ` - Belize
+     * * `BM` - Bermuda
+     * * `BO` - Bolivia, Plurinational State of
+     * * `BR` - Brazil
+     * * `BB` - Barbados
+     * * `BN` - Brunei Darussalam
+     * * `BT` - Bhutan
+     * * `BV` - Bouvet Island
+     * * `BW` - Botswana
+     * * `CF` - Central African Republic
+     * * `CA` - Canada
+     * * `CC` - Cocos (Keeling) Islands
+     * * `CH` - Switzerland
+     * * `CL` - Chile
+     * * `CN` - China
+     * * `CI` - Côte d'Ivoire
+     * * `CM` - Cameroon
+     * * `CD` - Congo, The Democratic Republic of the
+     * * `CG` - Congo
+     * * `CK` - Cook Islands
+     * * `CO` - Colombia
+     * * `KM` - Comoros
+     * * `CV` - Cabo Verde
+     * * `CR` - Costa Rica
+     * * `CU` - Cuba
+     * * `CW` - Curaçao
+     * * `CX` - Christmas Island
+     * * `KY` - Cayman Islands
+     * * `CY` - Cyprus
+     * * `CZ` - Czechia
+     * * `DE` - Germany
+     * * `DJ` - Djibouti
+     * * `DM` - Dominica
+     * * `DK` - Denmark
+     * * `DO` - Dominican Republic
+     * * `DZ` - Algeria
+     * * `EC` - Ecuador
+     * * `EG` - Egypt
+     * * `ER` - Eritrea
+     * * `EH` - Western Sahara
+     * * `ES` - Spain
+     * * `EE` - Estonia
+     * * `ET` - Ethiopia
+     * * `FI` - Finland
+     * * `FJ` - Fiji
+     * * `FK` - Falkland Islands (Malvinas)
+     * * `FR` - France
+     * * `FO` - Faroe Islands
+     * * `FM` - Micronesia, Federated States of
+     * * `GA` - Gabon
+     * * `GB` - United Kingdom
+     * * `GE` - Georgia
+     * * `GG` - Guernsey
+     * * `GH` - Ghana
+     * * `GI` - Gibraltar
+     * * `GN` - Guinea
+     * * `GP` - Guadeloupe
+     * * `GM` - Gambia
+     * * `GW` - Guinea-Bissau
+     * * `GQ` - Equatorial Guinea
+     * * `GR` - Greece
+     * * `GD` - Grenada
+     * * `GL` - Greenland
+     * * `GT` - Guatemala
+     * * `GF` - French Guiana
+     * * `GU` - Guam
+     * * `GY` - Guyana
+     * * `HK` - Hong Kong
+     * * `HM` - Heard Island and McDonald Islands
+     * * `HN` - Honduras
+     * * `HR` - Croatia
+     * * `HT` - Haiti
+     * * `HU` - Hungary
+     * * `ID` - Indonesia
+     * * `IM` - Isle of Man
+     * * `IN` - India
+     * * `IO` - British Indian Ocean Territory
+     * * `IE` - Ireland
+     * * `IR` - Iran, Islamic Republic of
+     * * `IQ` - Iraq
+     * * `IS` - Iceland
+     * * `IL` - Israel
+     * * `IT` - Italy
+     * * `JM` - Jamaica
+     * * `JE` - Jersey
+     * * `JO` - Jordan
+     * * `JP` - Japan
+     * * `KZ` - Kazakhstan
+     * * `KE` - Kenya
+     * * `KG` - Kyrgyzstan
+     * * `KH` - Cambodia
+     * * `KI` - Kiribati
+     * * `KN` - Saint Kitts and Nevis
+     * * `KR` - Korea, Republic of
+     * * `KW` - Kuwait
+     * * `LA` - Lao People's Democratic Republic
+     * * `LB` - Lebanon
+     * * `LR` - Liberia
+     * * `LY` - Libya
+     * * `LC` - Saint Lucia
+     * * `LI` - Liechtenstein
+     * * `LK` - Sri Lanka
+     * * `LS` - Lesotho
+     * * `LT` - Lithuania
+     * * `LU` - Luxembourg
+     * * `LV` - Latvia
+     * * `MO` - Macao
+     * * `MF` - Saint Martin (French part)
+     * * `MA` - Morocco
+     * * `MC` - Monaco
+     * * `MD` - Moldova, Republic of
+     * * `MG` - Madagascar
+     * * `MV` - Maldives
+     * * `MX` - Mexico
+     * * `MH` - Marshall Islands
+     * * `MK` - North Macedonia
+     * * `ML` - Mali
+     * * `MT` - Malta
+     * * `MM` - Myanmar
+     * * `ME` - Montenegro
+     * * `MN` - Mongolia
+     * * `MP` - Northern Mariana Islands
+     * * `MZ` - Mozambique
+     * * `MR` - Mauritania
+     * * `MS` - Montserrat
+     * * `MQ` - Martinique
+     * * `MU` - Mauritius
+     * * `MW` - Malawi
+     * * `MY` - Malaysia
+     * * `YT` - Mayotte
+     * * `NA` - Namibia
+     * * `NC` - New Caledonia
+     * * `NE` - Niger
+     * * `NF` - Norfolk Island
+     * * `NG` - Nigeria
+     * * `NI` - Nicaragua
+     * * `NU` - Niue
+     * * `NL` - Netherlands
+     * * `NO` - Norway
+     * * `NP` - Nepal
+     * * `NR` - Nauru
+     * * `NZ` - New Zealand
+     * * `OM` - Oman
+     * * `PK` - Pakistan
+     * * `PA` - Panama
+     * * `PN` - Pitcairn
+     * * `PE` - Peru
+     * * `PH` - Philippines
+     * * `PW` - Palau
+     * * `PG` - Papua New Guinea
+     * * `PL` - Poland
+     * * `PR` - Puerto Rico
+     * * `KP` - Korea, Democratic People's Republic of
+     * * `PT` - Portugal
+     * * `PY` - Paraguay
+     * * `PS` - Palestine, State of
+     * * `PF` - French Polynesia
+     * * `QA` - Qatar
+     * * `RE` - Réunion
+     * * `RO` - Romania
+     * * `RU` - Russian Federation
+     * * `RW` - Rwanda
+     * * `SA` - Saudi Arabia
+     * * `SD` - Sudan
+     * * `SN` - Senegal
+     * * `SG` - Singapore
+     * * `GS` - South Georgia and the South Sandwich Islands
+     * * `SH` - Saint Helena, Ascension and Tristan da Cunha
+     * * `SJ` - Svalbard and Jan Mayen
+     * * `SB` - Solomon Islands
+     * * `SL` - Sierra Leone
+     * * `SV` - El Salvador
+     * * `SM` - San Marino
+     * * `SO` - Somalia
+     * * `PM` - Saint Pierre and Miquelon
+     * * `RS` - Serbia
+     * * `SS` - South Sudan
+     * * `ST` - Sao Tome and Principe
+     * * `SR` - Suriname
+     * * `SK` - Slovakia
+     * * `SI` - Slovenia
+     * * `SE` - Sweden
+     * * `SZ` - Eswatini
+     * * `SX` - Sint Maarten (Dutch part)
+     * * `SC` - Seychelles
+     * * `SY` - Syrian Arab Republic
+     * * `TC` - Turks and Caicos Islands
+     * * `TD` - Chad
+     * * `TG` - Togo
+     * * `TH` - Thailand
+     * * `TJ` - Tajikistan
+     * * `TK` - Tokelau
+     * * `TM` - Turkmenistan
+     * * `TL` - Timor-Leste
+     * * `TO` - Tonga
+     * * `TT` - Trinidad and Tobago
+     * * `TN` - Tunisia
+     * * `TR` - Turkey
+     * * `TV` - Tuvalu
+     * * `TW` - Taiwan, Province of China
+     * * `TZ` - Tanzania, United Republic of
+     * * `UG` - Uganda
+     * * `UA` - Ukraine
+     * * `UM` - United States Minor Outlying Islands
+     * * `UY` - Uruguay
+     * * `US` - United States
+     * * `UZ` - Uzbekistan
+     * * `VA` - Holy See (Vatican City State)
+     * * `VC` - Saint Vincent and the Grenadines
+     * * `VE` - Venezuela, Bolivarian Republic of
+     * * `VG` - Virgin Islands, British
+     * * `VI` - Virgin Islands, U.S.
+     * * `VN` - Viet Nam
+     * * `VU` - Vanuatu
+     * * `WF` - Wallis and Futuna
+     * * `WS` - Samoa
+     * * `YE` - Yemen
+     * * `ZA` - South Africa
+     * * `ZM` - Zambia
+     * * `ZW` - Zimbabwe
+     * @enum {string}
+     */
+    NationalityEnum: "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AQ" | "TF" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BQ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BV" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CG" | "CK" | "CO" | "KM" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HM" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SH" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UM" | "UY" | "US" | "UZ" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
     /** @enum {unknown} */
     NullEnum: "";
     /**
@@ -507,79 +1203,75 @@ export interface components {
      */
     ParticipationCapacityEnum: "S" | "P" | "H";
     /**
-     * @description * `A` - Designer
-     * * `D` - Developer
-     * * `S` - Specialist
+     * @description * `R` - RSVP'd
+     * * `C` - Confirmed
+     * * `I` - Instructor
+     * * `V` - Volunteer
      * @enum {string}
      */
-    ParticipationRoleEnum: "A" | "D" | "S";
+    ParticipationEnum: "R" | "C" | "I" | "V";
+    /**
+     * @description * `A` - Digital Designer
+     * * `D` - Developer
+     * * `S` - Domain or other Specialized Skill Expert
+     * * `P` - Project Manager
+     * @enum {string}
+     */
+    ParticipationRoleEnum: "A" | "D" | "S" | "P";
     PatchedApplication: {
       /** Format: uuid */
       id?: string;
       gender_identity?: components["schemas"]["GenderIdentityEnum"][];
+      nationality?: components["schemas"]["NationalityEnum"][];
+      current_country?: components["schemas"]["CurrentCountryEnum"][];
       race_ethnic_group?: components["schemas"]["RaceEthnicGroupEnum"][];
       disabilities?: components["schemas"]["DisabilitiesEnum"][];
       previous_participation?: components["schemas"]["PreviousParticipationEnum"][];
+      heard_about_us?: components["schemas"]["HeardAboutUsEnum"][];
+      digital_designer_skills?: components["schemas"]["DigitalDesignerSkillsEnum"][];
+      industry?: components["schemas"]["IndustryEnum"][];
       first_name?: string;
       middle_name?: string | null;
       last_name?: string;
-      current_country?: string;
       current_city?: string;
       pronouns?: string | null;
       age_group?: components["schemas"]["AgeGroupEnum"];
-      bio?: string;
       /** Format: email */
       email?: string;
       event_year?: number;
       /** Format: uri */
-      portfolio?: string;
+      portfolio?: string | null;
       /** Format: uri */
-      resume?: string;
-      city?: string;
-      country?: string;
-      nationality?: string;
+      secondary_portfolio?: string | null;
+      gender_identity_other?: string | null;
+      race_ethnic_group_other?: string | null;
       disability_identity?: components["schemas"]["DisabilityIdentityEnum"];
+      disabilities_other?: string | null;
       disability_accommodations?: string | null;
       participation_capacity?: components["schemas"]["ParticipationCapacityEnum"];
       student_school?: string | null;
       student_field_of_study?: string | null;
       occupation?: string | null;
       employer?: string | null;
+      industry_other?: string | null;
+      specialized_expertise?: string | null;
       status?: components["schemas"]["StatusEnum"] | components["schemas"]["NullEnum"] | null;
       previously_participated?: boolean;
-      participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
-      experience_with_xr?: boolean;
+      participation_role?: components["schemas"]["ParticipationRoleEnum"];
+      experience_with_xr?: string | null;
       theme_essay?: string | null;
       theme_essay_follow_up?: string | null;
-      heard_about_us?: components["schemas"]["HeardAboutUsEnum"] | components["schemas"]["NullEnum"] | null;
-      shirt_size?: components["schemas"]["ShirtSizeEnum"] | components["schemas"]["NullEnum"] | null;
+      hardware_hack_interest?: components["schemas"]["HardwareHackInterestEnum"];
+      heard_about_us_other?: string | null;
+      digital_designer_skills_other?: string | null;
       communications_platform_username?: string | null;
-      dietary_restrictions?: string | null;
-      additional_accommodations?: string | null;
-      phone_number_country_alpha_2_options?: components["schemas"]["PhoneNumberCountryAlpha2OptionsEnum"] | components["schemas"]["NullEnum"] | null;
-      phone_number?: string;
-      emergency_contact_name?: string;
-      emergency_contact_phone_number?: string;
-      /** Format: email */
-      emergency_contact_email?: string;
-      emergency_contact_relationship?: string;
-      us_visa_support_is_required?: boolean;
-      us_visa_support_full_name?: string | null;
-      us_visa_support_passport_number?: string | null;
-      us_visa_support_national_identification_document_information?: string | null;
-      us_visa_support_citizenship?: components["schemas"]["UsVisaSupportCitizenshipEnum"] | components["schemas"]["NullEnum"] | null;
-      us_visa_support_address_line_1?: string | null;
-      us_visa_support_address_line_2?: string | null;
+      outreach_groups?: string | null;
       /** Format: date-time */
       submitted_at?: string;
       /** Format: date-time */
       updated_at?: string;
       /** Format: uuid */
-      parental_consent_form?: string | null;
-      /** Format: uuid */
-      media_release?: string | null;
-      /** Format: uuid */
-      liability_release?: string | null;
+      resume?: string;
     };
     PatchedAttendee: {
       /** Format: uuid */
@@ -722,259 +1414,39 @@ export interface components {
       /** Format: date-time */
       updated_at?: string;
     };
-    /**
-     * @description * `AW` - Aruba
-     * * `AF` - Afghanistan
-     * * `AO` - Angola
-     * * `AI` - Anguilla
-     * * `AX` - Åland Islands
-     * * `AL` - Albania
-     * * `AD` - Andorra
-     * * `AE` - United Arab Emirates
-     * * `AR` - Argentina
-     * * `AM` - Armenia
-     * * `AS` - American Samoa
-     * * `AQ` - Antarctica
-     * * `TF` - French Southern Territories
-     * * `AG` - Antigua and Barbuda
-     * * `AU` - Australia
-     * * `AT` - Austria
-     * * `AZ` - Azerbaijan
-     * * `BI` - Burundi
-     * * `BE` - Belgium
-     * * `BJ` - Benin
-     * * `BQ` - Bonaire, Sint Eustatius and Saba
-     * * `BF` - Burkina Faso
-     * * `BD` - Bangladesh
-     * * `BG` - Bulgaria
-     * * `BH` - Bahrain
-     * * `BS` - Bahamas
-     * * `BA` - Bosnia and Herzegovina
-     * * `BL` - Saint Barthélemy
-     * * `BY` - Belarus
-     * * `BZ` - Belize
-     * * `BM` - Bermuda
-     * * `BO` - Bolivia, Plurinational State of
-     * * `BR` - Brazil
-     * * `BB` - Barbados
-     * * `BN` - Brunei Darussalam
-     * * `BT` - Bhutan
-     * * `BV` - Bouvet Island
-     * * `BW` - Botswana
-     * * `CF` - Central African Republic
-     * * `CA` - Canada
-     * * `CC` - Cocos (Keeling) Islands
-     * * `CH` - Switzerland
-     * * `CL` - Chile
-     * * `CN` - China
-     * * `CI` - Côte d'Ivoire
-     * * `CM` - Cameroon
-     * * `CD` - Congo, The Democratic Republic of the
-     * * `CG` - Congo
-     * * `CK` - Cook Islands
-     * * `CO` - Colombia
-     * * `KM` - Comoros
-     * * `CV` - Cabo Verde
-     * * `CR` - Costa Rica
-     * * `CU` - Cuba
-     * * `CW` - Curaçao
-     * * `CX` - Christmas Island
-     * * `KY` - Cayman Islands
-     * * `CY` - Cyprus
-     * * `CZ` - Czechia
-     * * `DE` - Germany
-     * * `DJ` - Djibouti
-     * * `DM` - Dominica
-     * * `DK` - Denmark
-     * * `DO` - Dominican Republic
-     * * `DZ` - Algeria
-     * * `EC` - Ecuador
-     * * `EG` - Egypt
-     * * `ER` - Eritrea
-     * * `EH` - Western Sahara
-     * * `ES` - Spain
-     * * `EE` - Estonia
-     * * `ET` - Ethiopia
-     * * `FI` - Finland
-     * * `FJ` - Fiji
-     * * `FK` - Falkland Islands (Malvinas)
-     * * `FR` - France
-     * * `FO` - Faroe Islands
-     * * `FM` - Micronesia, Federated States of
-     * * `GA` - Gabon
-     * * `GB` - United Kingdom
-     * * `GE` - Georgia
-     * * `GG` - Guernsey
-     * * `GH` - Ghana
-     * * `GI` - Gibraltar
-     * * `GN` - Guinea
-     * * `GP` - Guadeloupe
-     * * `GM` - Gambia
-     * * `GW` - Guinea-Bissau
-     * * `GQ` - Equatorial Guinea
-     * * `GR` - Greece
-     * * `GD` - Grenada
-     * * `GL` - Greenland
-     * * `GT` - Guatemala
-     * * `GF` - French Guiana
-     * * `GU` - Guam
-     * * `GY` - Guyana
-     * * `HK` - Hong Kong
-     * * `HM` - Heard Island and McDonald Islands
-     * * `HN` - Honduras
-     * * `HR` - Croatia
-     * * `HT` - Haiti
-     * * `HU` - Hungary
-     * * `ID` - Indonesia
-     * * `IM` - Isle of Man
-     * * `IN` - India
-     * * `IO` - British Indian Ocean Territory
-     * * `IE` - Ireland
-     * * `IR` - Iran, Islamic Republic of
-     * * `IQ` - Iraq
-     * * `IS` - Iceland
-     * * `IL` - Israel
-     * * `IT` - Italy
-     * * `JM` - Jamaica
-     * * `JE` - Jersey
-     * * `JO` - Jordan
-     * * `JP` - Japan
-     * * `KZ` - Kazakhstan
-     * * `KE` - Kenya
-     * * `KG` - Kyrgyzstan
-     * * `KH` - Cambodia
-     * * `KI` - Kiribati
-     * * `KN` - Saint Kitts and Nevis
-     * * `KR` - Korea, Republic of
-     * * `KW` - Kuwait
-     * * `LA` - Lao People's Democratic Republic
-     * * `LB` - Lebanon
-     * * `LR` - Liberia
-     * * `LY` - Libya
-     * * `LC` - Saint Lucia
-     * * `LI` - Liechtenstein
-     * * `LK` - Sri Lanka
-     * * `LS` - Lesotho
-     * * `LT` - Lithuania
-     * * `LU` - Luxembourg
-     * * `LV` - Latvia
-     * * `MO` - Macao
-     * * `MF` - Saint Martin (French part)
-     * * `MA` - Morocco
-     * * `MC` - Monaco
-     * * `MD` - Moldova, Republic of
-     * * `MG` - Madagascar
-     * * `MV` - Maldives
-     * * `MX` - Mexico
-     * * `MH` - Marshall Islands
-     * * `MK` - North Macedonia
-     * * `ML` - Mali
-     * * `MT` - Malta
-     * * `MM` - Myanmar
-     * * `ME` - Montenegro
-     * * `MN` - Mongolia
-     * * `MP` - Northern Mariana Islands
-     * * `MZ` - Mozambique
-     * * `MR` - Mauritania
-     * * `MS` - Montserrat
-     * * `MQ` - Martinique
-     * * `MU` - Mauritius
-     * * `MW` - Malawi
-     * * `MY` - Malaysia
-     * * `YT` - Mayotte
-     * * `NA` - Namibia
-     * * `NC` - New Caledonia
-     * * `NE` - Niger
-     * * `NF` - Norfolk Island
-     * * `NG` - Nigeria
-     * * `NI` - Nicaragua
-     * * `NU` - Niue
-     * * `NL` - Netherlands
-     * * `NO` - Norway
-     * * `NP` - Nepal
-     * * `NR` - Nauru
-     * * `NZ` - New Zealand
-     * * `OM` - Oman
-     * * `PK` - Pakistan
-     * * `PA` - Panama
-     * * `PN` - Pitcairn
-     * * `PE` - Peru
-     * * `PH` - Philippines
-     * * `PW` - Palau
-     * * `PG` - Papua New Guinea
-     * * `PL` - Poland
-     * * `PR` - Puerto Rico
-     * * `KP` - Korea, Democratic People's Republic of
-     * * `PT` - Portugal
-     * * `PY` - Paraguay
-     * * `PS` - Palestine, State of
-     * * `PF` - French Polynesia
-     * * `QA` - Qatar
-     * * `RE` - Réunion
-     * * `RO` - Romania
-     * * `RU` - Russian Federation
-     * * `RW` - Rwanda
-     * * `SA` - Saudi Arabia
-     * * `SD` - Sudan
-     * * `SN` - Senegal
-     * * `SG` - Singapore
-     * * `GS` - South Georgia and the South Sandwich Islands
-     * * `SH` - Saint Helena, Ascension and Tristan da Cunha
-     * * `SJ` - Svalbard and Jan Mayen
-     * * `SB` - Solomon Islands
-     * * `SL` - Sierra Leone
-     * * `SV` - El Salvador
-     * * `SM` - San Marino
-     * * `SO` - Somalia
-     * * `PM` - Saint Pierre and Miquelon
-     * * `RS` - Serbia
-     * * `SS` - South Sudan
-     * * `ST` - Sao Tome and Principe
-     * * `SR` - Suriname
-     * * `SK` - Slovakia
-     * * `SI` - Slovenia
-     * * `SE` - Sweden
-     * * `SZ` - Eswatini
-     * * `SX` - Sint Maarten (Dutch part)
-     * * `SC` - Seychelles
-     * * `SY` - Syrian Arab Republic
-     * * `TC` - Turks and Caicos Islands
-     * * `TD` - Chad
-     * * `TG` - Togo
-     * * `TH` - Thailand
-     * * `TJ` - Tajikistan
-     * * `TK` - Tokelau
-     * * `TM` - Turkmenistan
-     * * `TL` - Timor-Leste
-     * * `TO` - Tonga
-     * * `TT` - Trinidad and Tobago
-     * * `TN` - Tunisia
-     * * `TR` - Turkey
-     * * `TV` - Tuvalu
-     * * `TW` - Taiwan, Province of China
-     * * `TZ` - Tanzania, United Republic of
-     * * `UG` - Uganda
-     * * `UA` - Ukraine
-     * * `UM` - United States Minor Outlying Islands
-     * * `UY` - Uruguay
-     * * `US` - United States
-     * * `UZ` - Uzbekistan
-     * * `VA` - Holy See (Vatican City State)
-     * * `VC` - Saint Vincent and the Grenadines
-     * * `VE` - Venezuela, Bolivarian Republic of
-     * * `VG` - Virgin Islands, British
-     * * `VI` - Virgin Islands, U.S.
-     * * `VN` - Viet Nam
-     * * `VU` - Vanuatu
-     * * `WF` - Wallis and Futuna
-     * * `WS` - Samoa
-     * * `YE` - Yemen
-     * * `ZA` - South Africa
-     * * `ZM` - Zambia
-     * * `ZW` - Zimbabwe
-     * @enum {string}
-     */
-    PhoneNumberCountryAlpha2OptionsEnum: "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AQ" | "TF" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BQ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BV" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CG" | "CK" | "CO" | "KM" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HM" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SH" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UM" | "UY" | "US" | "UZ" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
+    PatchedWorkshop: {
+      /** Format: uuid */
+      id?: string;
+      recommended_for?: components["schemas"]["RecommendedForEnum"][];
+      name?: string;
+      /** Format: date-time */
+      datetime?: string | null;
+      duration?: number | null;
+      description?: string | null;
+      /** Format: uri */
+      course_materials?: string | null;
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+      /** Format: uuid */
+      location?: string | null;
+      skills?: string[];
+      hardware?: string[];
+    };
+    PatchedWorkshopAttendee: {
+      /** Format: uuid */
+      id?: string;
+      participation?: components["schemas"]["ParticipationEnum"];
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+      /** Format: uuid */
+      workshop?: string;
+      /** Format: uuid */
+      attendee?: string;
+    };
     /**
      * @description * `A` - 2016
      * * `B` - 2017
@@ -1018,27 +1490,25 @@ export interface components {
      * * `F` - Pacific Islander or Native Hawaiian
      * * `G` - White or of European descent
      * * `H` - Multi-racial or multi-ethnic
-     * * `I` - Other
-     * * `J` - I prefer not to say
+     * * `I` - I prefer not to say
+     * * `O` - Other
      * @enum {string}
      */
-    RaceEthnicGroupEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J";
+    RaceEthnicGroupEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "O";
+    /**
+     * @description * `A` - Digital Designer
+     * * `D` - Developer
+     * * `S` - Domain or other Specialized Skill Expert
+     * * `P` - Project Manager
+     * @enum {string}
+     */
+    RecommendedForEnum: "A" | "D" | "S" | "P";
     /**
      * @description * `MH` - Main Hall
      * * `AT` - Atlantis
      * @enum {string}
      */
     RoomEnum: "MH" | "AT";
-    /**
-     * @description * `1` - XS
-     * * `2` - S
-     * * `3` - M
-     * * `4` - L
-     * * `5` - XL
-     * * `6` - XXL
-     * @enum {string}
-     */
-    ShirtSizeEnum: "1" | "2" | "3" | "4" | "5" | "6";
     Skill: {
       /** Format: uuid */
       id: string;
@@ -1145,259 +1615,39 @@ export interface components {
     TokenVerify: {
       token: string;
     };
-    /**
-     * @description * `AW` - Aruba
-     * * `AF` - Afghanistan
-     * * `AO` - Angola
-     * * `AI` - Anguilla
-     * * `AX` - Åland Islands
-     * * `AL` - Albania
-     * * `AD` - Andorra
-     * * `AE` - United Arab Emirates
-     * * `AR` - Argentina
-     * * `AM` - Armenia
-     * * `AS` - American Samoa
-     * * `AQ` - Antarctica
-     * * `TF` - French Southern Territories
-     * * `AG` - Antigua and Barbuda
-     * * `AU` - Australia
-     * * `AT` - Austria
-     * * `AZ` - Azerbaijan
-     * * `BI` - Burundi
-     * * `BE` - Belgium
-     * * `BJ` - Benin
-     * * `BQ` - Bonaire, Sint Eustatius and Saba
-     * * `BF` - Burkina Faso
-     * * `BD` - Bangladesh
-     * * `BG` - Bulgaria
-     * * `BH` - Bahrain
-     * * `BS` - Bahamas
-     * * `BA` - Bosnia and Herzegovina
-     * * `BL` - Saint Barthélemy
-     * * `BY` - Belarus
-     * * `BZ` - Belize
-     * * `BM` - Bermuda
-     * * `BO` - Bolivia, Plurinational State of
-     * * `BR` - Brazil
-     * * `BB` - Barbados
-     * * `BN` - Brunei Darussalam
-     * * `BT` - Bhutan
-     * * `BV` - Bouvet Island
-     * * `BW` - Botswana
-     * * `CF` - Central African Republic
-     * * `CA` - Canada
-     * * `CC` - Cocos (Keeling) Islands
-     * * `CH` - Switzerland
-     * * `CL` - Chile
-     * * `CN` - China
-     * * `CI` - Côte d'Ivoire
-     * * `CM` - Cameroon
-     * * `CD` - Congo, The Democratic Republic of the
-     * * `CG` - Congo
-     * * `CK` - Cook Islands
-     * * `CO` - Colombia
-     * * `KM` - Comoros
-     * * `CV` - Cabo Verde
-     * * `CR` - Costa Rica
-     * * `CU` - Cuba
-     * * `CW` - Curaçao
-     * * `CX` - Christmas Island
-     * * `KY` - Cayman Islands
-     * * `CY` - Cyprus
-     * * `CZ` - Czechia
-     * * `DE` - Germany
-     * * `DJ` - Djibouti
-     * * `DM` - Dominica
-     * * `DK` - Denmark
-     * * `DO` - Dominican Republic
-     * * `DZ` - Algeria
-     * * `EC` - Ecuador
-     * * `EG` - Egypt
-     * * `ER` - Eritrea
-     * * `EH` - Western Sahara
-     * * `ES` - Spain
-     * * `EE` - Estonia
-     * * `ET` - Ethiopia
-     * * `FI` - Finland
-     * * `FJ` - Fiji
-     * * `FK` - Falkland Islands (Malvinas)
-     * * `FR` - France
-     * * `FO` - Faroe Islands
-     * * `FM` - Micronesia, Federated States of
-     * * `GA` - Gabon
-     * * `GB` - United Kingdom
-     * * `GE` - Georgia
-     * * `GG` - Guernsey
-     * * `GH` - Ghana
-     * * `GI` - Gibraltar
-     * * `GN` - Guinea
-     * * `GP` - Guadeloupe
-     * * `GM` - Gambia
-     * * `GW` - Guinea-Bissau
-     * * `GQ` - Equatorial Guinea
-     * * `GR` - Greece
-     * * `GD` - Grenada
-     * * `GL` - Greenland
-     * * `GT` - Guatemala
-     * * `GF` - French Guiana
-     * * `GU` - Guam
-     * * `GY` - Guyana
-     * * `HK` - Hong Kong
-     * * `HM` - Heard Island and McDonald Islands
-     * * `HN` - Honduras
-     * * `HR` - Croatia
-     * * `HT` - Haiti
-     * * `HU` - Hungary
-     * * `ID` - Indonesia
-     * * `IM` - Isle of Man
-     * * `IN` - India
-     * * `IO` - British Indian Ocean Territory
-     * * `IE` - Ireland
-     * * `IR` - Iran, Islamic Republic of
-     * * `IQ` - Iraq
-     * * `IS` - Iceland
-     * * `IL` - Israel
-     * * `IT` - Italy
-     * * `JM` - Jamaica
-     * * `JE` - Jersey
-     * * `JO` - Jordan
-     * * `JP` - Japan
-     * * `KZ` - Kazakhstan
-     * * `KE` - Kenya
-     * * `KG` - Kyrgyzstan
-     * * `KH` - Cambodia
-     * * `KI` - Kiribati
-     * * `KN` - Saint Kitts and Nevis
-     * * `KR` - Korea, Republic of
-     * * `KW` - Kuwait
-     * * `LA` - Lao People's Democratic Republic
-     * * `LB` - Lebanon
-     * * `LR` - Liberia
-     * * `LY` - Libya
-     * * `LC` - Saint Lucia
-     * * `LI` - Liechtenstein
-     * * `LK` - Sri Lanka
-     * * `LS` - Lesotho
-     * * `LT` - Lithuania
-     * * `LU` - Luxembourg
-     * * `LV` - Latvia
-     * * `MO` - Macao
-     * * `MF` - Saint Martin (French part)
-     * * `MA` - Morocco
-     * * `MC` - Monaco
-     * * `MD` - Moldova, Republic of
-     * * `MG` - Madagascar
-     * * `MV` - Maldives
-     * * `MX` - Mexico
-     * * `MH` - Marshall Islands
-     * * `MK` - North Macedonia
-     * * `ML` - Mali
-     * * `MT` - Malta
-     * * `MM` - Myanmar
-     * * `ME` - Montenegro
-     * * `MN` - Mongolia
-     * * `MP` - Northern Mariana Islands
-     * * `MZ` - Mozambique
-     * * `MR` - Mauritania
-     * * `MS` - Montserrat
-     * * `MQ` - Martinique
-     * * `MU` - Mauritius
-     * * `MW` - Malawi
-     * * `MY` - Malaysia
-     * * `YT` - Mayotte
-     * * `NA` - Namibia
-     * * `NC` - New Caledonia
-     * * `NE` - Niger
-     * * `NF` - Norfolk Island
-     * * `NG` - Nigeria
-     * * `NI` - Nicaragua
-     * * `NU` - Niue
-     * * `NL` - Netherlands
-     * * `NO` - Norway
-     * * `NP` - Nepal
-     * * `NR` - Nauru
-     * * `NZ` - New Zealand
-     * * `OM` - Oman
-     * * `PK` - Pakistan
-     * * `PA` - Panama
-     * * `PN` - Pitcairn
-     * * `PE` - Peru
-     * * `PH` - Philippines
-     * * `PW` - Palau
-     * * `PG` - Papua New Guinea
-     * * `PL` - Poland
-     * * `PR` - Puerto Rico
-     * * `KP` - Korea, Democratic People's Republic of
-     * * `PT` - Portugal
-     * * `PY` - Paraguay
-     * * `PS` - Palestine, State of
-     * * `PF` - French Polynesia
-     * * `QA` - Qatar
-     * * `RE` - Réunion
-     * * `RO` - Romania
-     * * `RU` - Russian Federation
-     * * `RW` - Rwanda
-     * * `SA` - Saudi Arabia
-     * * `SD` - Sudan
-     * * `SN` - Senegal
-     * * `SG` - Singapore
-     * * `GS` - South Georgia and the South Sandwich Islands
-     * * `SH` - Saint Helena, Ascension and Tristan da Cunha
-     * * `SJ` - Svalbard and Jan Mayen
-     * * `SB` - Solomon Islands
-     * * `SL` - Sierra Leone
-     * * `SV` - El Salvador
-     * * `SM` - San Marino
-     * * `SO` - Somalia
-     * * `PM` - Saint Pierre and Miquelon
-     * * `RS` - Serbia
-     * * `SS` - South Sudan
-     * * `ST` - Sao Tome and Principe
-     * * `SR` - Suriname
-     * * `SK` - Slovakia
-     * * `SI` - Slovenia
-     * * `SE` - Sweden
-     * * `SZ` - Eswatini
-     * * `SX` - Sint Maarten (Dutch part)
-     * * `SC` - Seychelles
-     * * `SY` - Syrian Arab Republic
-     * * `TC` - Turks and Caicos Islands
-     * * `TD` - Chad
-     * * `TG` - Togo
-     * * `TH` - Thailand
-     * * `TJ` - Tajikistan
-     * * `TK` - Tokelau
-     * * `TM` - Turkmenistan
-     * * `TL` - Timor-Leste
-     * * `TO` - Tonga
-     * * `TT` - Trinidad and Tobago
-     * * `TN` - Tunisia
-     * * `TR` - Turkey
-     * * `TV` - Tuvalu
-     * * `TW` - Taiwan, Province of China
-     * * `TZ` - Tanzania, United Republic of
-     * * `UG` - Uganda
-     * * `UA` - Ukraine
-     * * `UM` - United States Minor Outlying Islands
-     * * `UY` - Uruguay
-     * * `US` - United States
-     * * `UZ` - Uzbekistan
-     * * `VA` - Holy See (Vatican City State)
-     * * `VC` - Saint Vincent and the Grenadines
-     * * `VE` - Venezuela, Bolivarian Republic of
-     * * `VG` - Virgin Islands, British
-     * * `VI` - Virgin Islands, U.S.
-     * * `VN` - Viet Nam
-     * * `VU` - Vanuatu
-     * * `WF` - Wallis and Futuna
-     * * `WS` - Samoa
-     * * `YE` - Yemen
-     * * `ZA` - South Africa
-     * * `ZM` - Zambia
-     * * `ZW` - Zimbabwe
-     * @enum {string}
-     */
-    UsVisaSupportCitizenshipEnum: "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AQ" | "TF" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BQ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BV" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CG" | "CK" | "CO" | "KM" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HM" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SH" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UM" | "UY" | "US" | "UZ" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
+    Workshop: {
+      /** Format: uuid */
+      id: string;
+      recommended_for: components["schemas"]["RecommendedForEnum"][];
+      name: string;
+      /** Format: date-time */
+      datetime?: string | null;
+      duration?: number | null;
+      description?: string | null;
+      /** Format: uri */
+      course_materials?: string | null;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+      /** Format: uuid */
+      location?: string | null;
+      skills: string[];
+      hardware: string[];
+    };
+    WorkshopAttendee: {
+      /** Format: uuid */
+      id: string;
+      participation?: components["schemas"]["ParticipationEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+      /** Format: uuid */
+      workshop: string;
+      /** Format: uuid */
+      attendee: string;
+    };
   };
   responses: never;
   parameters: never;
@@ -1417,7 +1667,6 @@ export interface operations {
     parameters: {
       query?: {
         email?: string;
-        experience_with_xr?: boolean;
         /**
          * @description * `S` - Student
          * * `P` - Professional
@@ -1425,11 +1674,12 @@ export interface operations {
          */
         participation_capacity?: "H" | "P" | "S";
         /**
-         * @description * `A` - Designer
+         * @description * `A` - Digital Designer
          * * `D` - Developer
-         * * `S` - Specialist
+         * * `S` - Domain or other Specialized Skill Expert
+         * * `P` - Project Manager
          */
-        participation_role?: "A" | "D" | "S" | null;
+        participation_role?: "A" | "D" | "P" | "S";
         /** @description A search term. */
         search?: string;
       };
@@ -3043,6 +3293,245 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["FileUpload"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed or edited. */
+  workshopattendees_list: {
+    parameters: {
+      query?: {
+        attendee?: string;
+        /**
+         * @description * `R` - RSVP'd
+         * * `C` - Confirmed
+         * * `I` - Instructor
+         * * `V` - Volunteer
+         */
+        participation?: "C" | "I" | "R" | "V";
+        /** @description A search term. */
+        search?: string;
+        workshop?: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["WorkshopAttendee"][];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed or edited. */
+  workshopattendees_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["WorkshopAttendee"];
+        "application/x-www-form-urlencoded": components["schemas"]["WorkshopAttendee"];
+        "multipart/form-data": components["schemas"]["WorkshopAttendee"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": components["schemas"]["WorkshopAttendee"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed or edited. */
+  workshopattendees_retrieve: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this workshop attendee. */
+        id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["WorkshopAttendee"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed or edited. */
+  workshopattendees_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this workshop attendee. */
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["WorkshopAttendee"];
+        "application/x-www-form-urlencoded": components["schemas"]["WorkshopAttendee"];
+        "multipart/form-data": components["schemas"]["WorkshopAttendee"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["WorkshopAttendee"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed or edited. */
+  workshopattendees_destroy: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this workshop attendee. */
+        id: string;
+      };
+    };
+    responses: {
+      /** @description No response body */
+      204: {
+        content: never;
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed or edited. */
+  workshopattendees_partial_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this workshop attendee. */
+        id: string;
+      };
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedWorkshopAttendee"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedWorkshopAttendee"];
+        "multipart/form-data": components["schemas"]["PatchedWorkshopAttendee"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["WorkshopAttendee"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed ot edited. */
+  workshops_list: {
+    parameters: {
+      query?: {
+        datetime?: string;
+        hardware?: string[];
+        location?: string;
+        /**
+         * @description * `A` - Digital Designer
+         * * `D` - Developer
+         * * `S` - Domain or other Specialized Skill Expert
+         * * `P` - Project Manager
+         */
+        recommended_for?: "A" | "D" | "P" | "S" | null;
+        /** @description A search term. */
+        search?: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["Workshop"][];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed ot edited. */
+  workshops_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Workshop"];
+        "application/x-www-form-urlencoded": components["schemas"]["Workshop"];
+        "multipart/form-data": components["schemas"]["Workshop"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": components["schemas"]["Workshop"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed ot edited. */
+  workshops_retrieve: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this workshop. */
+        id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["Workshop"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed ot edited. */
+  workshops_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this workshop. */
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Workshop"];
+        "application/x-www-form-urlencoded": components["schemas"]["Workshop"];
+        "multipart/form-data": components["schemas"]["Workshop"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["Workshop"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed ot edited. */
+  workshops_destroy: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this workshop. */
+        id: string;
+      };
+    };
+    responses: {
+      /** @description No response body */
+      204: {
+        content: never;
+      };
+    };
+  };
+  /** @description API endpoint that allows workshops to be viewed ot edited. */
+  workshops_partial_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this workshop. */
+        id: string;
+      };
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedWorkshop"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedWorkshop"];
+        "multipart/form-data": components["schemas"]["PatchedWorkshop"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["Workshop"];
         };
       };
     };

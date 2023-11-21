@@ -1,3 +1,4 @@
+
 export enum status {
   accepted_in_person = 'AI',
   accepted_online = 'AO',

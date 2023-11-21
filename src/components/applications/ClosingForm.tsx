@@ -1,6 +1,6 @@
 import React from 'react';
-import { CheckboxInput, TextInput, TextAreaInput } from '../Inputs'; // Ensure TextInput is imported
-import { form_data, heard_about_us } from '../../application_form_types';
+import { form_data, heard_about_us } from '../../types/application_form_types';
+import { CheckboxInput, TextAreaInput, TextInput } from '../Inputs'; // Ensure TextInput is imported
 
 interface FormProps {
   formData: Partial<form_data>;
@@ -42,11 +42,11 @@ const ClosingForm: React.FC<FormProps> = ({
         <CheckboxInput
           key={key}
           name="heard_about_us"
-          value={heard_about_us[key as keyof typeof heard_about_us]}
+          value={heardAboutUsLabels[key as keyof typeof heardAboutUsLabels]}
           checked={
             (Array.isArray(formData.heard_about_us) &&
               formData.heard_about_us.includes(
-                heard_about_us[key as keyof typeof heard_about_us]
+                heardAboutUsLabels[key as keyof typeof heardAboutUsLabels] as heard_about_us
               )) ||
             false
           }

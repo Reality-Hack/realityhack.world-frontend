@@ -1,12 +1,34 @@
-export async function getAllHackerApplications() {
+import { status } from '@/types/types';
+
+export async function getAllHackerApplications(accessToken: string) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
+      Authorization: 'JWT ' + accessToken
     }
   });
 
+  if (resp.ok) {
+    return await resp.json();
+  }
+  throw new Error('Failed to fetch data. Status: ' + resp.status);
+}
+
+export async function updateApplicationStatus(
+  appID: string,
+  status: status | null,
+  accessToken: string
+) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/${appID}`;
+  const resp = await fetch(url, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    },
+    body: JSON.stringify({ status })
+  });
   if (resp.ok) {
     return await resp.json();
   }

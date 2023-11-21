@@ -1,4 +1,3 @@
-import { getIdToken } from '@/app/utils/sessionTokenAccessor';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../[...nextauth]/route';
 
@@ -14,12 +13,10 @@ export async function GET(): Promise<Response> {
   const encodedUrl = encodeURIComponent(nextAuthUrl);
 
   if (session) {
-    const idToken: string | null = await getIdToken();
-
     // this will log out the user on Keycloak side
     const url:
       | string
-      | null = `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/logout?id_token_hint=${idToken}&post_logout_redirect_uri=${encodedUrl}`;
+      | null = `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/logout?id_token_hint=${session.id_token}&post_logout_redirect_uri=${encodedUrl}`;
 
     try {
       const resp: Response = await fetch(url, { method: 'GET' });

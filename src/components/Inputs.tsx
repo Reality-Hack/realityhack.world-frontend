@@ -1,6 +1,5 @@
 'use client';
-import { form_data } from '@/application_form_types';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export enum FocusState {
   Focused,

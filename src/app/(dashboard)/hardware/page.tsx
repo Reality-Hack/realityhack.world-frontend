@@ -1,8 +1,8 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../../api/auth/[...nextauth]/route';
-import { redirect } from 'next/navigation';
-import { SetDynamicRoute } from '../../utils/setDynamicRoute';
 import { getAllHardware } from '@/app/api/hardware';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { authOptions } from '../../api/auth/[...nextauth]/route';
+import { SetDynamicRoute } from '../../utils/setDynamicRoute';
 
 export default async function Hardware() {
   const session: any = await getServerSession(authOptions);

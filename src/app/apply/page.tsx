@@ -3,27 +3,25 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import AnyApp from '@/components/applications/applicationAny';
-import type { NextPage } from 'next';
-import Link from 'next/link';
-import PersonalInformationForm from '@/components/applications/PersonalInformationForm';
+import { CheckboxInput, validateField } from '@/components/Inputs';
+import ClosingForm from '@/components/applications/ClosingForm';
 import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
 import ExperienceInterestForm from '@/components/applications/ExperienceInterestForm';
+import PersonalInformationForm from '@/components/applications/PersonalInformationForm';
 import ThematicForm from '@/components/applications/ThematicForm';
-import ClosingForm from '@/components/applications/ClosingForm';
+import AnyApp from '@/components/applications/applicationAny';
 import {
-  form_data,
-  participation_role,
-  participation_capacity,
-  Enums,
-  exemptFields,
   digital_designer_skills,
-  gender_identity,
-  race_ethnic_group,
   disabilities,
-  disability_identity
-} from '../../application_form_types';
-import { CheckboxInput, validateField } from '@/components/Inputs';
+  disability_identity,
+  form_data,
+  gender_identity,
+  participation_capacity,
+  participation_role,
+  race_ethnic_group
+} from '@/types/application_form_types';
+import type { NextPage } from 'next';
+import Link from 'next/link';
 import { getSkills } from '../api/skills';
 import { applicationOptions } from '../api/application';
 import ReviewPage from '@/components/admin/ReviewPage';

@@ -1,7 +1,7 @@
 'use client';
 
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { useEffect, ReactElement } from 'react';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { ReactElement, useEffect } from 'react';
 
 async function keycloakSessionLogOut(): Promise<void> {
   try {
