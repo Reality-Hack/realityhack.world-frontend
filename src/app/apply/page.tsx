@@ -22,8 +22,8 @@ import {
   participation_role,
   race_ethnic_group
 } from '../../application_form_types';
-import { applicationOptions } from '../api/application';
-import { getSkills } from '../api/skills';
+import { applicationOptions } from '@/app/api/application';
+import { getSkills } from "@/app/api/skills";
 import ReviewPage from '@/components/admin/ReviewPage';
 
 const Application: NextPage = ({}: any) => {

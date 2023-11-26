@@ -142,7 +142,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
             })}
           </div>
 
-          <div className="flex justify-start mb-4 ml-6 space-x-4">
+          <div className="flex justify-start mb-4 ml-6 space-x-4 mt-auto">
             <button
               onClick={handlePreviousTab}
               className="cursor-pointer text-white bg-[#493B8A] px-4 py-2 rounded-lg disabled:opacity-50 transition-all"
