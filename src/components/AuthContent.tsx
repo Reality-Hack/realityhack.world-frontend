@@ -3,6 +3,7 @@
 import Nav from '@/components/Nav';
 import { useSession } from 'next-auth/react';
 import { ReactNode, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Loader from './Loader';
 
 interface RootLayoutProps {
@@ -11,11 +12,19 @@ interface RootLayoutProps {
 
 const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    console.log('status', status);
-    console.log('session', session);
-  }, [status]);
+    if (!session && pathname !== '/apply' && pathname !== '/signin') {
+      router.replace('/apply');
+      return;
+    }
+
+    if (session) {
+      router.replace('/');
+    }
+  }, []);
 
   return (
     <>
