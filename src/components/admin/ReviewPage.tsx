@@ -78,15 +78,15 @@ export default function ReviewPage({
                 const otherValue = allInfo[otherValueKey];
                 if (otherValue) {
                   otherValues.push(
-                    <div key={`other-${index}`}>• Other: {otherValue}</div>
+                    <div key={`other-${index}`}>Other: {otherValue}</div>
                   );
                   return null;
                 }
               }
-              return <div key={index}>• {item}</div>;
+              return <div key={index}> {item}</div>;
             })
             .filter(Boolean)
-        : [<div key="single-value">• {val}</div>];
+        : [<div key="single-value">{val}</div>];
 
       return (
         <>
@@ -99,7 +99,9 @@ export default function ReviewPage({
     return (
       <div>
         <div className="text-md">{label}</div>
-        <div className="text-sm text-gray-500">{renderValue(value)}</div>
+        <div className="text-sm text-gray-500 break-words">
+          {renderValue(value)}
+        </div>
       </div>
     );
   };
@@ -531,7 +533,7 @@ export default function ReviewPage({
         <div className="mb-8 text-sm">
           Before submitting your application, please review your responses.
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="relative flex flex-col gap-4">
           {sections.map(section => (
             <div
               key={section.label}

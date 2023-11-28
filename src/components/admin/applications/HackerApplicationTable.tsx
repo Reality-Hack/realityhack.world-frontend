@@ -1,21 +1,18 @@
 'use client';
 import {
-  updateApplicationStatus
+  getAllHackerApplications,
+  updateApplication
 } from '@/app/api/application';
 import CustomSelect from '@/components/CustomSelect';
 import Table from '@/components/Table';
 import { Application, status } from '@/types/types';
 import Box from '@mui/material/Box';
-import { SelectChangeEvent } from '@mui/material/Select';
 import { ColumnDef, Row, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
 import { useSession } from 'next-auth/react';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../Modal';
 import ReviewPage from '../ReviewPage';
-type Props = {
-  applications: Application[];
-};
 
 const ApplicationStatusOptions: {
   label: string;
@@ -43,29 +40,61 @@ const ApplicationStatusOptions: {
   }
 ];
 
-export default function HackerApplicationTable({ applications }: Props) {
+export default function HackerApplicationTable() {
   const [dialogRow, setDialogRow] = useState<any | void>(undefined);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const { data: session } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
+
+  useEffect(() => {
+    if (session?.access_token && isAdmin) {
+      setLoading(true);
+      getAllHackerApplications(session.access_token)
+        .then(apps => {
+          setApplications(apps);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, []);
 
   const [isOverlayVisible, setOverlayVisible] = useState(false);
   const toggleOverlay = () => {
     setOverlayVisible(prev => !prev);
   };
-  const toggleOverlayAndPassData = (row: any) => {
+  const toggleOverlayAndPassData = useCallback((row: any) => {
     toggleOverlay();
     setDialogRow(row);
-  };
+  }, []);
 
-  const onStatusChange = (app: Application) => (event: SelectChangeEvent) => {
-    let status: status | null = event.target.value as status;
-    if (status.length === 0) {
-      status = null;
-    }
-    if (isAdmin) {
-      updateApplicationStatus(app.id, status, session?.access_token);
-    }
-  };
+  const onStatusChange = useCallback(
+    (app: Application) => (value: string) => {
+      let status: status | null = value as status;
+      if (status.length === 0) {
+        status = null;
+      }
+      let appId = applications.findIndex((a: Application) => a.id === app.id);
+
+      if (appId >= 0 && session?.access_token && isAdmin) {
+        setLoading(true);
+        updateApplication(app.id, { status }, session.access_token)
+          .then(response => {
+            if (!response) {
+              throw Error('application not saved');
+            }
+            let newApps = applications.slice();
+            newApps[appId] = response;
+            setApplications(newApps);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
+    },
+    [applications, isAdmin, session]
+  );
 
   const columnHelper = createColumnHelper<Application>();
   const columns = useMemo<ColumnDef<Application, any>[]>(
@@ -78,6 +107,29 @@ export default function HackerApplicationTable({ applications }: Props) {
         header: () => 'Last Name',
         cell: info => info.getValue()
       }),
+      columnHelper.display({
+        id: 'view',
+        header: () => 'View Full App',
+        cell: props => (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 40
+            }}
+          >
+            <button
+              className="bg-gray-300 dark:bg-gray-700 rounded-[6px] leading-5 text-xs py-0.5 px-2"
+              onClick={() => {
+                toggleOverlayAndPassData(props.row);
+              }}
+            >
+              Open App
+            </button>
+          </div>
+        )
+      }),
       columnHelper.accessor('email', {
         header: () => 'Email',
         cell: info => info.getValue()
@@ -87,7 +139,6 @@ export default function HackerApplicationTable({ applications }: Props) {
         cell: info => (
           <Box sx={{ minWidth: 120 }}>
             <CustomSelect
-              id={info.row.original.id}
               label="Select a status"
               options={ApplicationStatusOptions}
               value={info.getValue()}
@@ -136,29 +187,6 @@ export default function HackerApplicationTable({ applications }: Props) {
         header: () => 'Age',
         cell: info => info.getValue()
       }),
-      columnHelper.display({
-        id: 'view',
-        header: () => 'View Full App',
-        cell: props => (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: 40
-            }}
-          >
-            <button
-              className="bg-gray-300 dark:bg-gray-700 rounded-[6px] leading-5 text-xs py-0.5 px-2"
-              onClick={() => {
-                toggleOverlayAndPassData(props.row);
-              }}
-            >
-              Open App
-            </button>
-          </div>
-        )
-      }),
       columnHelper.accessor('submitted_at', {
         header: () => 'Submitted On',
         cell: info =>
@@ -174,17 +202,18 @@ export default function HackerApplicationTable({ applications }: Props) {
           )
       })
     ],
-    [columnHelper]
+    [columnHelper, onStatusChange, toggleOverlayAndPassData]
   );
 
   return (
     <div>
-      <div className="overflow-y-auto max-h-[600px] max-w-screen">
+      <div className="overflow-y-auto max-h-[800px] mr-[240px]">
         <Table
           data={applications}
           columns={columns}
           search={true}
           pagination={true}
+          loading={loading}
         />
       </div>
       {isOverlayVisible && (

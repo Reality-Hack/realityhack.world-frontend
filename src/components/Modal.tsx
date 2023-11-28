@@ -46,12 +46,12 @@ export default function Modal({ toggleOverlay, children }: ModalProps) {
         <div className="absolute top-2 right-2">
           <div
             onClick={closeModal}
-            className="border border-2 border-gray-200 p-2 mr-4 hover:bg-gray-700 hover:text-white hover:cursor-pointer rounded-full"
+            className="border-2 border-gray-200 p-2 mr-4 hover:bg-gray-700 hover:text-white hover:cursor-pointer rounded-full"
           >
             X
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto pr-4">{children}</div>
+        <div className="flex-1 overflow-y-auto pr-4 w-full">{children}</div>
       </div>
     </div>
   );

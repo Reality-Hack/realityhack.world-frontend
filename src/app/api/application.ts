@@ -1,4 +1,4 @@
-import { status } from '@/types/types';
+import { Application } from '@/types/types';
 
 export async function getAllHackerApplications(accessToken: string) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/`;
@@ -12,27 +12,6 @@ export async function getAllHackerApplications(accessToken: string) {
   if (resp.ok) {
     return await resp.json();
   }
-  throw new Error('Failed to fetch data. Status: ' + resp.status);
-}
-
-export async function updateApplicationStatus(
-  appID: string,
-  status: status | null,
-  accessToken: string
-) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/${appID}`;
-  const resp = await fetch(url, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
-    },
-    body: JSON.stringify({ status })
-  });
-  if (resp.ok) {
-    return await resp.json();
-  }
-
   throw new Error('Failed to fetch data. Status: ' + resp.status);
 }
 
@@ -139,22 +118,25 @@ export async function patchFileUpload(fileId: string) {
   }
 }
 
-export async function updateApplication(id: string, data: string) {
-  const url = `${process.env.BACKEND_URL}/applications/${id}`;
+export async function updateApplication(
+  appID: string,
+  data: object,
+  accessToken: string
+): Promise<Application | void> {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/${appID}/`;
   const resp = await fetch(url, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
+      Authorization: 'JWT ' + accessToken
     },
     body: JSON.stringify(data)
   });
-
   if (resp.ok) {
     return await resp.json();
   }
 
-  throw new Error('Failed to update data. Status: ' + resp.status);
+  throw new Error('Failed to fetch data. Status: ' + resp.status);
 }
 
 export async function deleteApplication(id: string) {

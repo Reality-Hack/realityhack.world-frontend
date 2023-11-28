@@ -1,5 +1,6 @@
 'use client';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
+import LinearProgress from '@mui/material/LinearProgress';
 import {
   ColumnDef,
   SortingState,
@@ -18,6 +19,7 @@ interface TableProps<T> {
   columns: ColumnDef<T>[];
   search?: boolean;
   pagination?: boolean;
+  loading?: boolean;
 }
 
 /**
@@ -31,13 +33,15 @@ interface TableProps<T> {
  * @props columns column definitions built using createColumnHelper<T>, see react-table docs for more info
  * @props search boolean to render search input, only searches local data
  * @props pagination boolean to render pagination menu, paginates local data
+ * @props loading boolean to determine if a loading indicator should be shown
  * @returns a table rendered with tailwind css using react-table
  */
 export default function Table<T>({
   data,
   columns,
   search,
-  pagination
+  pagination,
+  loading
 }: TableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -55,7 +59,8 @@ export default function Table<T>({
     getFilteredRowModel: getFilteredRowModel(),
     ...(pagination && { getPaginationRowModel: getPaginationRowModel() }),
     onGlobalFilterChange: setGlobalFilter,
-    debugTable: true
+    debugTable: true,
+    autoResetPageIndex: false
   });
 
   return (
@@ -78,6 +83,7 @@ export default function Table<T>({
               </button>
             )}
           </div>
+          {loading && <LinearProgress />}
         </>
       )}
       <table className="h-[48px] overflow-scroll table-auto dark:bg-contentDark dark:bg-border-borderDark">
