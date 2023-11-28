@@ -20,7 +20,7 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   return (
     <>
       {session ? (
-        <div className="flex flex-row h-screen">
+        <div className="flex flex-row h-screen overflow-hidden">
           <div className="h-screen">
             <Nav />
           </div>
