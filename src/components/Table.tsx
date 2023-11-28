@@ -59,14 +59,14 @@ export default function Table<T>({
   });
 
   return (
-    <>
+    <div className="w-full">
       {search && (
         <>
-          <div className="p-2 text-gray-600 dark:text-gray-400 dark:border-borderDark bg-slate-100 dark:bg-backgroundDark">
+          <div className="w-full p-2 text-gray-600 dark:text-gray-400 dark:border-borderDark bg-[#FAFAFA] dark:bg-backgroundDark">
             <DebouncedInput
               value={globalFilter ?? ''}
               onChange={value => setGlobalFilter(String(value))}
-              className="p-2 text-sm border border-block w-[328px] h-2 rounded"
+              className="p-2 text-sm border border-block w-[436px] h-2 rounded"
               placeholder="Search..."
             />
             {globalFilter && (
@@ -80,8 +80,8 @@ export default function Table<T>({
           </div>
         </>
       )}
-      <table className="h-[58px] overflow-scroll table-auto dark:bg-contentDark dark:bg-border-borderDark">
-        <thead className="text-sm text-gray-600 dark:text-gray-400 font-interMedium h-11 bg-slate-100 dark:bg-backgroundDark">
+      <table className="h-[48px] overflow-scroll table-auto dark:bg-contentDark dark:bg-border-borderDark">
+        <thead className="text-sm text-gray-600 dark:text-gray-400 font-interMedium h-11 bg-[#FAFAFA] dark:bg-backgroundDark">
           <>
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
@@ -128,11 +128,11 @@ export default function Table<T>({
           {table.getRowModel().rows.map(row => (
             <tr
               key={row.id}
-              className="bg-white dark:bg-contentDark hover:bg-[#FAFCFF] h-[58px] hover:bg-opacity-70 dark:hover:bg-[#242424]"
+              className="bg-white dark:bg-contentDark hover:bg-[#FAFCFF] h-[48px] hover:bg-opacity-70 dark:hover:bg-[#242424]"
             >
               {row.getVisibleCells().map(cell => (
                 <td
-                  className="pl-8 first:pl-5 py-[6px] h-[58px] border-b-[1px] dark:border-borderDark"
+                  className="pl-8 first:pl-5 py-[6px] max-h-[48px] border-b-[1px] dark:border-borderDark"
                   key={cell.id}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -143,7 +143,7 @@ export default function Table<T>({
         </tbody>
       </table>
       {pagination && (
-        <div className="flex flex-row items-center justify-start w-auto gap-2 px-4 py-4 overflow-x-auto text-sm text-gray-600 dark:border-borderDark dark:text-gray-400 font-interMedium bg-slate-100 dark:bg-backgroundDark">
+        <div className="flex flex-row items-center justify-start w-auto gap-2 px-4 py-4 overflow-x-auto text-sm text-gray-600 dark:border-borderDark dark:text-gray-400 font-interMedium bg-[#FAFAFA] dark:bg-backgroundDark">
           <div className="flex gap-[6px]">
             <span className="flex flex-row items-center gap-1">
               <select
@@ -204,6 +204,6 @@ export default function Table<T>({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

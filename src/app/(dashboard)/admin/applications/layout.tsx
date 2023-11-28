@@ -9,8 +9,8 @@ export default function ApplicationLayout({
 }) {
   const pathname = usePathname();
   return (
-    <main className="pl-2">
-      <h1 className="text-4xl">Applications</h1>
+    <main className="pl-2 pt-8">
+      <h1 className="text-3xl">Applications</h1>
       <div className="py-4">
         <div className="pb-2">
           <Tab

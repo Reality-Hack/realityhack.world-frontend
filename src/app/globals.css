@@ -24,6 +24,8 @@
 
 body {
   background-color: white;
+  overflow: hidden;
+  position: relative;
 }
 
 div, p, input {

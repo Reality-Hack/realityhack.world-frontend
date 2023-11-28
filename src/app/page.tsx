@@ -21,5 +21,13 @@ export default function Dashboard() {
     }
   }, []);
 
-  return <div className="h-screen p-6"></div>;
+  return (
+    <div className="h-screen p-6">
+      {status === 'authenticated' && (
+        <>
+          <h1>Dashboard</h1>
+        </>
+      )}
+    </div>
+  );
 }

@@ -2,8 +2,7 @@
 
 import Nav from '@/components/Nav';
 import { useSession } from 'next-auth/react';
-import { ReactNode } from 'react';
-import AuthStatus from './AuthStatus';
+import { ReactNode, useEffect } from 'react';
 import Loader from './Loader';
 
 interface RootLayoutProps {
@@ -12,17 +11,20 @@ interface RootLayoutProps {
 
 const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   const { data: session, status } = useSession();
+
+  useEffect(() => {
+    console.log('status', status);
+    console.log('session', session);
+  }, [status]);
+
   return (
     <>
       {session ? (
-        <div className="flex flex-row">
-          <div className="min-w-[288px] h-screen p-3 bg-[#ffffff]">
-            <h2 className="text-3xl">RH2024</h2>
-            <AuthStatus />
-            <hr />
+        <div className="flex flex-row h-screen">
+          <div className="h-screen">
             <Nav />
           </div>
-          <div className="w-full h-full p-3 bg-[#ffffff]">{children}</div>
+          <div className="w-full h-full p-3">{children}</div>
         </div>
       ) : (
         <main>{status === 'loading' ? <Loader /> : children}</main>

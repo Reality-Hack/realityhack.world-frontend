@@ -1,5 +1,7 @@
 'use client';
-import { updateApplicationStatus } from '@/app/api/application';
+import {
+  updateApplicationStatus
+} from '@/app/api/application';
 import CustomSelect from '@/components/CustomSelect';
 import Table from '@/components/Table';
 import { Application, status } from '@/types/types';
@@ -68,32 +70,17 @@ export default function HackerApplicationTable({ applications }: Props) {
   const columnHelper = createColumnHelper<Application>();
   const columns = useMemo<ColumnDef<Application, any>[]>(
     () => [
-      columnHelper.accessor('id', {
-        header: () => 'ID',
+      columnHelper.accessor('first_name', {
+        header: () => 'First Name',
         cell: info => info.getValue()
       }),
-      columnHelper.display({
-        id: 'view',
-        header: () => 'View Full App',
-        cell: props => (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: 40
-            }}
-          >
-            <button
-              className="bg-gray-300 dark:bg-gray-700 rounded-[6px] leading-5 text-xs py-0.5 px-2"
-              onClick={() => {
-                toggleOverlayAndPassData(props.row);
-              }}
-            >
-              Open App
-            </button>
-          </div>
-        )
+      columnHelper.accessor('last_name', {
+        header: () => 'Last Name',
+        cell: info => info.getValue()
+      }),
+      columnHelper.accessor('email', {
+        header: () => 'Email',
+        cell: info => info.getValue()
       }),
       columnHelper.accessor('status', {
         header: () => 'Status',
@@ -108,12 +95,6 @@ export default function HackerApplicationTable({ applications }: Props) {
             />
           </Box>
         )
-      }),
-      columnHelper.display({
-        id: 'full_name',
-        header: () => 'Full Name',
-        cell: props =>
-          `${props.row.original.first_name} ${props.row.original.last_name}`
       }),
       columnHelper.accessor('portfolio', {
         header: () => 'Portfolio Link',
@@ -139,11 +120,11 @@ export default function HackerApplicationTable({ applications }: Props) {
           </a>
         )
       }),
-      columnHelper.accessor('city', {
+      columnHelper.accessor('current_city', {
         header: () => 'City',
         cell: info => info.getValue()
       }),
-      columnHelper.accessor('country', {
+      columnHelper.accessor('current_country', {
         header: () => 'Country',
         cell: info => info.getValue()
       }),
@@ -154,6 +135,29 @@ export default function HackerApplicationTable({ applications }: Props) {
       columnHelper.accessor('age_group', {
         header: () => 'Age',
         cell: info => info.getValue()
+      }),
+      columnHelper.display({
+        id: 'view',
+        header: () => 'View Full App',
+        cell: props => (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 40
+            }}
+          >
+            <button
+              className="bg-gray-300 dark:bg-gray-700 rounded-[6px] leading-5 text-xs py-0.5 px-2"
+              onClick={() => {
+                toggleOverlayAndPassData(props.row);
+              }}
+            >
+              Open App
+            </button>
+          </div>
+        )
       }),
       columnHelper.accessor('submitted_at', {
         header: () => 'Submitted On',
@@ -175,7 +179,7 @@ export default function HackerApplicationTable({ applications }: Props) {
 
   return (
     <div>
-      <div className="overflow-y-auto max-h-[480px] max-w-screen">
+      <div className="overflow-y-auto max-h-[600px] max-w-screen">
         <Table
           data={applications}
           columns={columns}

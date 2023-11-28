@@ -21,11 +21,11 @@ export default function SignIn(): ReactElement {
   }, [session, router, status]);
 
   return (
-    <div
-      className="fixed w-full h-full bg-center bg-cover "
-      style={{ backgroundImage: `url('/images/starfield-grad.jpg')` }}
-    >
-      <Loader />
-    </div>
+    // <div
+    //   className="fixed w-full h-full bg-center bg-cover "
+    //   style={{ backgroundImage: `url('/images/starfield-grad.jpg')` }}
+    // >
+    <Loader />
+    // </div>
   );
 }
