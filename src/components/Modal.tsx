@@ -38,7 +38,7 @@ export default function Modal({ toggleOverlay, children }: ModalProps) {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-20">
+    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-20 z-[100]">
       <div
         ref={modalContainerRef}
         className="relative flex flex-col items-center bg-white rounded-lg h-3/4 w-1/2"

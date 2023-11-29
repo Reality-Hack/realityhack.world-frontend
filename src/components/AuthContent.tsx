@@ -5,7 +5,6 @@ import { useSession } from 'next-auth/react';
 import { ReactNode, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Loader from './Loader';
-
 interface RootLayoutProps {
   children: ReactNode;
 }

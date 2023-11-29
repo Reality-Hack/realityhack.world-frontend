@@ -3,6 +3,7 @@ import {
   getAllHackerApplications,
   updateApplication
 } from '@/app/api/application';
+import { getUploadedFile } from '@/app/api/uploaded_files';
 import CustomSelect from '@/components/CustomSelect';
 import Table from '@/components/Table';
 import { Application, status } from '@/types/types';
@@ -96,6 +97,20 @@ export default function HackerApplicationTable() {
     [applications, isAdmin, session]
   );
 
+  const getResume = useCallback(
+    (resumeId: string) => () => {
+      if (session?.access_token && isAdmin) {
+        getUploadedFile(resumeId, session.access_token).then(response => {
+          if (!response) {
+            throw Error('failed to get file');
+          }
+          window.open(response.file, '_blank')?.focus();
+        });
+      }
+    },
+    [isAdmin, session]
+  );
+
   const columnHelper = createColumnHelper<Application>();
   const columns = useMemo<ColumnDef<Application, any>[]>(
     () => [
@@ -163,9 +178,8 @@ export default function HackerApplicationTable() {
         header: () => 'Resume',
         cell: info => (
           <a
-            target="_blank"
-            href={info.getValue()}
-            className="text-blue-600 visited:text-purple-600"
+            onClick={getResume(info.getValue())}
+            className="text-blue-600 visited:text-purple-600 cursor-pointer"
           >
             Resume
           </a>
@@ -206,16 +220,14 @@ export default function HackerApplicationTable() {
   );
 
   return (
-    <div>
-      <div className="overflow-y-auto max-h-[800px] mr-[240px]">
-        <Table
-          data={applications}
-          columns={columns}
-          search={true}
-          pagination={true}
-          loading={loading}
-        />
-      </div>
+    <>
+      <Table
+        data={applications}
+        columns={columns}
+        search={true}
+        pagination={true}
+        loading={loading}
+      />
       {isOverlayVisible && (
         <ReviewModal
           toggleOverlay={toggleOverlay}
@@ -223,7 +235,7 @@ export default function HackerApplicationTable() {
           data={applications}
         />
       )}
-    </div>
+    </>
   );
 }
 
