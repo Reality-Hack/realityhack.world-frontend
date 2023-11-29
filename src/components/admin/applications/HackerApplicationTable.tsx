@@ -206,16 +206,14 @@ export default function HackerApplicationTable() {
   );
 
   return (
-    <div>
-      <div className="overflow-y-auto max-h-[800px] mr-[240px]">
-        <Table
-          data={applications}
-          columns={columns}
-          search={true}
-          pagination={true}
-          loading={loading}
-        />
-      </div>
+    <>
+      <Table
+        data={applications}
+        columns={columns}
+        search={true}
+        pagination={true}
+        loading={loading}
+      />
       {isOverlayVisible && (
         <ReviewModal
           toggleOverlay={toggleOverlay}
@@ -223,7 +221,7 @@ export default function HackerApplicationTable() {
           data={applications}
         />
       )}
-    </div>
+    </>
   );
 }
 
