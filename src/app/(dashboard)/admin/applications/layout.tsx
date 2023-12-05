@@ -9,7 +9,7 @@ export default function ApplicationLayout({
 }) {
   const pathname = usePathname();
   return (
-    <main className="pl-2 pt-8">
+    <div className="h-screen p-6 pt-8 pl-2">
       <h1 className="text-3xl">Applications</h1>
       <div className="py-4">
         <div className="pb-2">
@@ -37,6 +37,6 @@ export default function ApplicationLayout({
         <hr className="dark:border-borderDark" />
       </div>
       {children}
-    </main>
+    </div>
   );
 }

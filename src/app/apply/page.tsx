@@ -25,6 +25,9 @@ import Link from 'next/link';
 import { getSkills } from '../api/skills';
 import { applicationOptions } from '../api/application';
 import ReviewPage from '@/components/admin/ReviewPage';
+import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
+import Loader from '@/components/Loader';
 
 const Application: NextPage = ({}: any) => {
   const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
@@ -66,6 +69,9 @@ const Application: NextPage = ({}: any) => {
     CLOSING: [''],
     'REVIEW & SUBMIT': ['']
   });
+
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
   const [formData, setFormData] = useState<Partial<form_data>>({
     disclaimer_groups: null,
@@ -164,6 +170,12 @@ const Application: NextPage = ({}: any) => {
 
     setFormData(updatedFormData);
   }, [formData.participation_capacity]);
+
+  useEffect(() => {
+    if (session) {
+      router.replace('/');
+    }
+  }, []);
 
   useEffect(() => {
     const getData = async () => {
@@ -565,15 +577,21 @@ const Application: NextPage = ({}: any) => {
   ];
 
   return (
-    <AnyApp
-      key="1"
-      tabs={tabs}
-      tabNames={tabNames}
-      AppType="Hacker"
-      formData={formData}
-      isTabValid={isTabValid}
-      acceptedFiles={acceptedFiles}
-    />
+    <>
+      {status === 'loading' ? (
+        <Loader />
+      ) : (
+        <AnyApp
+          key="1"
+          tabs={tabs}
+          tabNames={tabNames}
+          AppType="Hacker"
+          formData={formData}
+          isTabValid={isTabValid}
+          acceptedFiles={acceptedFiles}
+        />
+      )}
+    </>
   );
 };
 

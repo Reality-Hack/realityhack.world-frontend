@@ -64,14 +64,14 @@ export default function Table<T>({
   });
 
   return (
-    <>
+    <div className="">
       {search && (
         <>
-          <div className="p-2 text-gray-600 dark:text-gray-400 dark:border-borderDark bg-[#FAFAFA] dark:bg-backgroundDark max-w-[900px]">
+          <div className="p-2 text-gray-600 dark:text-gray-400 dark:border-borderDark bg-[#FDFDFD] dark:bg-backgroundDark w-full">
             <DebouncedInput
               value={globalFilter ?? ''}
               onChange={value => setGlobalFilter(String(value))}
-              className="p-2 text-sm border border-block w-[436px] h-2 rounded"
+              className="p-2 text-sm border border-block w-[340px] h-2 rounded"
               placeholder="Search..."
             />
             {globalFilter && (
@@ -86,21 +86,21 @@ export default function Table<T>({
         </>
       )}
       {loading && <LinearProgress />}
-      <div className="h-[500px] max-w-[900px] overflow-y-scroll">
-        <table className="table-auto dark:bg-contentDark dark:bg-border-borderDark">
-          <thead className="text-sm text-gray-600 dark:text-gray-400 font-interMedium h-11 bg-[#FAFAFA] dark:bg-backgroundDark sticky top-0 z-10">
+      <div className="relative overflow-x-auto">
+        <table className="relative overflow-x-auto dark:bg-contentDark dark:bg-border-borderDark">
+          <thead className="text-sm text-gray-600 dark:text-gray-400 font-interMedium h-11 bg-[#FDFDFD] dark:bg-backgroundDark sticky top-[-1px] z-10 border-[#EEEEEE]">
             <>
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map(header => (
                     <th
-                      className="my-auto p-2 whitespace-nowrap border-y-[1px] dark:border-borderDark"
+                      className="first:border-l-0 my-auto border border-[#EEEEEE] bg-[#FDFDFD] whitespace-nowrap dark:border-borderDark"
                       key={header.id}
                       colSpan={header.colSpan}
                     >
                       {header.isPlaceholder ? null : (
-                        <div
-                          className="flex flex-row pl-6 text-left cursor-pointer"
+                        <span
+                          className="flex flex-row px-4 text-left cursor-pointer"
                           {...{
                             onClick: header.column.getToggleSortingHandler()
                           }}
@@ -123,7 +123,7 @@ export default function Table<T>({
                               />
                             )
                           }[header.column.getIsSorted() as string] ?? null}
-                        </div>
+                        </span>
                       )}
                     </th>
                   ))}
@@ -135,11 +135,11 @@ export default function Table<T>({
             {table.getRowModel().rows.map(row => (
               <tr
                 key={row.id}
-                className="bg-white dark:bg-contentDark hover:bg-[#FAFCFF] h-[48px] hover:bg-opacity-70 dark:hover:bg-[#242424]"
+                className="last:border-b-0 bg-white dark:bg-contentDark hover:bg-[#FAFCFF] min-w-[200px] hover:bg-opacity-70 dark:hover:bg-[#242424] "
               >
                 {row.getVisibleCells().map(cell => (
                   <td
-                    className="pl-8 first:pl-5 py-[6px] max-h-[48px] border-b-[1px] dark:border-borderDark"
+                    className="first:border-l-0 px-4 py-1 border border-[#EEEEEE] dark:border-borderDark w-auto whitespace-nowrap"
                     key={cell.id}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -149,69 +149,69 @@ export default function Table<T>({
             ))}
           </tbody>
         </table>
-        {pagination && (
-          <div className="flex flex-row items-center justify-start w-auto gap-2 px-4 py-4 overflow-x-auto text-sm text-gray-600 dark:border-borderDark dark:text-gray-400 font-interMedium bg-[#FAFAFA] dark:bg-backgroundDark">
-            <div className="flex gap-[6px]">
-              <span className="flex flex-row items-center gap-1">
-                <select
-                  className="dark:bg-[#242424] py-1 rounded border dark:border-borderDark text-sm"
-                  value={table.getState().pagination.pageSize}
-                  onChange={e => {
-                    table.setPageSize(Number(e.target.value));
-                  }}
-                >
-                  {[10, 25, 50, 75, 100].map(pageSize => (
-                    <option
-                      key={pageSize}
-                      value={pageSize}
-                      className="text-sm dark:bg-[#242424]"
-                    >
-                      Show {pageSize}
-                    </option>
-                  ))}
-                </select>
-              </span>
-            </div>
-            <div className="ml-4 flex gap-[6px]">
-              <button
-                className="p-1 border rounded content shadow-none hover:bg-[#FAFCFF] hover:bg-opacity-70 dark:hover:bg-[#242424]"
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-              >
-                {'<<'}
-              </button>
-              <button
-                className="p-1 border rounded content shadow-none hover:bg-[#FAFCFF] hover:bg-opacity-70 dark:hover:bg-[#242424]"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                {'<'}
-              </button>
-              <button
-                className="p-1 border rounded content shadow-none hover:bg-[#FAFCFF] hover:bg-opacity-70 dark:hover:bg-[#242424]"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                {'>'}
-              </button>
-              <button
-                className="p-1 border rounded content shadow-none hover:bg-[#FAFCFF] hover:bg-opacity-70 dark:hover:bg-[#242424]"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-              >
-                {'>>'}
-              </button>
-              <span className="flex items-center gap-1 text-sm">
-                <div className="text-sm">Page</div>
-                <strong className="text-sm">
-                  {table.getState().pagination.pageIndex + 1} of{' '}
-                  {table.getPageCount()}
-                </strong>
-              </span>
-            </div>
-          </div>
-        )}
       </div>
-    </>
+      {pagination && (
+        <div className="z-50 border-t-[0.5px] border-[#EEEEEE] sticky bottom-0 left-0 w-full h-11 flex flex-row items-center justify-start gap-2 px-4 py-4 text-sm text-gray-600 dark:border-borderDark dark:text-gray-400 font-interMedium bg-[#FDFDFD] dark:bg-backgroundDark">
+          <div className="flex gap-[6px]">
+            <span className="flex flex-row items-center gap-1">
+              <select
+                className="dark:bg-[#242424] py-1 rounded border dark:border-borderDark text-sm"
+                value={table.getState().pagination.pageSize}
+                onChange={e => {
+                  table.setPageSize(Number(e.target.value));
+                }}
+              >
+                {[10, 25, 50, 75, 100].map(pageSize => (
+                  <option
+                    key={pageSize}
+                    value={pageSize}
+                    className="text-sm dark:bg-[#242424]"
+                  >
+                    Show {pageSize}
+                  </option>
+                ))}
+              </select>
+            </span>
+          </div>
+          <div className="ml-4 flex gap-[6px]">
+            <button
+              className="p-1 border rounded content shadow-none hover:bg-[#FAFCFF] hover:bg-opacity-70 dark:hover:bg-[#242424]"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+            >
+              {'<<'}
+            </button>
+            <button
+              className="p-1 border rounded content shadow-none hover:bg-[#FAFCFF] hover:bg-opacity-70 dark:hover:bg-[#242424]"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              {'<'}
+            </button>
+            <button
+              className="p-1 border rounded content shadow-none hover:bg-[#FAFCFF] hover:bg-opacity-70 dark:hover:bg-[#242424]"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              {'>'}
+            </button>
+            <button
+              className="p-1 border rounded content shadow-none hover:bg-[#FAFCFF] hover:bg-opacity-70 dark:hover:bg-[#242424]"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+            >
+              {'>>'}
+            </button>
+            <span className="flex items-center gap-1 text-sm">
+              <div className="text-sm">Page</div>
+              <strong className="text-sm">
+                {table.getState().pagination.pageIndex + 1} of{' '}
+                {table.getPageCount()}
+              </strong>
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

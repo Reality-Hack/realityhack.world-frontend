@@ -129,7 +129,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   return (
     <Layout>
       <div
-        className="fixed w-full h-full bg-center bg-cover "
+        className="fixed w-full h-full overflow-y-scroll bg-center bg-cover"
         style={{ backgroundImage: `url('/images/starfield-grad.jpg')` }}
       />
       <div className="flex flex-col items-center justify-center py-8 pb-32 mx-4">

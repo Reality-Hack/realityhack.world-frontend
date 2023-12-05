@@ -21,6 +21,7 @@
     "antd": "^5.10.0",
     "autoprefixer": "10.4.14",
     "axios": "^1.6.0",
+    "json2csv": "^6.0.0-alpha.2",
     "jwt-decode": "^3.1.2",
     "luxon": "^3.4.3",
     "next": "^13.4.19",
@@ -32,6 +33,7 @@
     "tailwindcss": "3.3.3"
   },
   "devDependencies": {
+    "@types/json2csv": "^5.0.7",
     "@types/luxon": "^3.3.2",
     "@types/node": "20.4.2",
     "@types/react": "18.2.15",

@@ -42,8 +42,8 @@ export default function DebouncedInput({
     <input
       {...props}
       value={value}
-      className="h-8 py-2 pl-2 text-sm border rounded dark:border-borderDark text dark:bg-inputDark"
+      className="w-[436px] h-8 py-2 pl-2 text-sm border rounded-md dark:border-borderDark text dark:bg-inputDark"
       onChange={e => setValue(e.target.value)}
-    />
+    ></input>
   );
 }

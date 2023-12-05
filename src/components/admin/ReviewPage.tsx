@@ -207,11 +207,11 @@ export default function ReviewPage({
       <div className="flex flex-col gap-4">
         <LabelAndValue
           label={'What is your nationality?'}
-          value={allInfo.nationality_option}
+          value={allInfo.nationality_option || allInfo.nationality}
         />
         <LabelAndValue
           label={'Which country do you reside in?'}
-          value={allInfo.current_country_option}
+          value={allInfo.current_country_option || allInfo.current_country}
         />
         <LabelAndValue
           label={'What city are you based in?'}
@@ -239,7 +239,7 @@ export default function ReviewPage({
         <LabelAndValue
           label={'How would you describe your gender identity?'}
           value={
-            allInfo.gender_identity && allInfo.gender_identity.length > 0
+            Array.isArray(allInfo.gender_identity)
               ? allInfo.gender_identity.map((enumValue: string) =>
                   getLabelFromEnumValue(
                     enumValue,
@@ -247,14 +247,14 @@ export default function ReviewPage({
                     genderIdentityLabels
                   )
                 )
-              : []
+              : allInfo.gender_identity
           }
         />
 
         <LabelAndValue
           label={'What race or ethnic group(s) do you identify with?'}
           value={
-            allInfo.race_ethnic_group && allInfo.race_ethnic_group.length > 0
+            Array.isArray(allInfo.race_ethnic_group)
               ? allInfo.race_ethnic_group.map((enumValue: string) =>
                   getLabelFromEnumValue(
                     enumValue,
@@ -262,14 +262,14 @@ export default function ReviewPage({
                     raceEthnicGroupLabels
                   )
                 )
-              : []
+              : allInfo.gender_identity
           }
         />
 
         <LabelAndValue
           label={'Disability Status'}
           value={
-            allInfo.disabilities && allInfo.disabilities.length > 0
+            Array.isArray(allInfo.disabilities)
               ? allInfo.disabilities.map((enumValue: string) =>
                   getLabelFromEnumValue(
                     enumValue,
@@ -277,7 +277,7 @@ export default function ReviewPage({
                     disabilitiesLabels
                   )
                 )
-              : []
+              : allInfo.gender_identity
           }
         />
       </div>
@@ -290,7 +290,10 @@ export default function ReviewPage({
         {/* Experience and Interest content */}
         <LabelAndValue
           label={'Which of the following best describes you?'}
-          value={formatParticipation(allInfo.participation_capacity) as string}
+          value={
+            (formatParticipation(allInfo.participation_capacity) as string) ||
+            allInfo.participation_capacity
+          }
         />
 
         <div>
@@ -432,7 +435,7 @@ export default function ReviewPage({
         <LabelAndValue
           label={'How did you hear about Reality Hack?'}
           value={
-            allInfo.heard_about_us && allInfo.heard_about_us.length > 0
+            Array.isArray(allInfo.heard_about_us)
               ? allInfo.heard_about_us.map((enumValue: string) =>
                   getLabelFromEnumValue(
                     enumValue,
@@ -440,7 +443,7 @@ export default function ReviewPage({
                     heardAboutUsLabels
                   )
                 )
-              : []
+              : allInfo.heard_about_us
           }
         />
 

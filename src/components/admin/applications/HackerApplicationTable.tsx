@@ -1,5 +1,6 @@
 'use client';
 import {
+  applicationOptions,
   getAllHackerApplications,
   updateApplication
 } from '@/app/api/application';
@@ -14,6 +15,7 @@ import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../Modal';
 import ReviewPage from '../ReviewPage';
+import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 
 const ApplicationStatusOptions: {
   label: string;
@@ -44,22 +46,37 @@ const ApplicationStatusOptions: {
 export default function HackerApplicationTable() {
   const [dialogRow, setDialogRow] = useState<any | void>(undefined);
   const [applications, setApplications] = useState<Application[]>([]);
+  const [options, setOptions] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
   const { data: session } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
+
+  useEffect(() => {
+    const getData = async () => {
+      const options = await applicationOptions(applications);
+      setOptions(options);
+    };
+    getData();
+  }, []);
 
   useEffect(() => {
     if (session?.access_token && isAdmin) {
       setLoading(true);
       getAllHackerApplications(session.access_token)
         .then(apps => {
-          setApplications(apps);
+          const transformedApps = transformApplications(apps, options);
+          setApplications(transformedApps);
         })
         .finally(() => {
           setLoading(false);
         });
     }
-  }, []);
+  }, [session, options]);
+
+  useEffect(() => {
+    console.log('options: ', options);
+    console.log('applications: ', applications);
+  }, [options, applications]);
 
   const [isOverlayVisible, setOverlayVisible] = useState(false);
   const toggleOverlay = () => {
@@ -69,6 +86,28 @@ export default function HackerApplicationTable() {
     toggleOverlay();
     setDialogRow(row);
   }, []);
+
+  function transformApplications(apps: any, options: any) {
+    return apps.map((app: any) => {
+      const transformedApp = { ...app };
+
+      Object.keys(transformedApp).forEach(key => {
+        if (key === 'status') {
+          return;
+        }
+
+        if (options.actions?.POST[key]?.choices) {
+          const currentValue = transformedApp[key]?.[0];
+          const choice = options.actions.POST[key].choices.find(
+            (c: any) => c.value === currentValue
+          );
+          transformedApp[key] = choice ? choice.display_name : null;
+        }
+      });
+
+      return transformedApp;
+    });
+  }
 
   const onStatusChange = useCallback(
     (app: Application) => (value: string) => {
@@ -86,6 +125,7 @@ export default function HackerApplicationTable() {
               throw Error('application not saved');
             }
             let newApps = applications.slice();
+            console.log('newApps: ', newApps);
             newApps[appId] = response;
             setApplications(newApps);
           })
@@ -179,7 +219,7 @@ export default function HackerApplicationTable() {
         cell: info => (
           <a
             onClick={getResume(info.getValue())}
-            className="text-blue-600 visited:text-purple-600 cursor-pointer"
+            className="text-blue-600 cursor-pointer visited:text-purple-600"
           >
             Resume
           </a>
@@ -214,6 +254,10 @@ export default function HackerApplicationTable() {
           DateTime.fromISO(info.getValue()).toLocaleString(
             DateTime.DATETIME_SHORT
           )
+      }),
+      columnHelper.accessor('id', {
+        header: () => 'id',
+        cell: info => info.getValue()
       })
     ],
     [columnHelper, onStatusChange, toggleOverlayAndPassData]
@@ -221,13 +265,90 @@ export default function HackerApplicationTable() {
 
   return (
     <>
-      <Table
-        data={applications}
-        columns={columns}
-        search={true}
-        pagination={true}
-        loading={loading}
-      />
+      <div className="flex flex-row flex-wrap justify-center gap-2 mb-4">
+        <div className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
+          <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
+            Total applications
+          </span>
+          <span className="text-2xl font-semibold text-black text-opacity-90">
+            {applications.length}
+          </span>
+        </div>
+
+        <div className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
+          <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
+            Accepted
+          </span>
+          <span className="text-2xl font-semibold text-black text-opacity-90">
+            {
+              applications.filter(app => {
+                if (app?.status) console.log(app.status);
+                return app?.status === 'AO' || app?.status === 'AI';
+              }).length
+            }
+          </span>
+        </div>
+
+        <div className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
+          <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
+            Waitlisted
+          </span>
+          <span className="text-2xl font-semibold text-black text-opacity-90">
+            {
+              applications.filter(app => {
+                return app?.status === 'WO' || app?.status === 'WI';
+              }).length
+            }
+          </span>
+        </div>
+
+        <div className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
+          <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
+            Rejected
+          </span>
+          <span className="text-2xl font-semibold text-black text-opacity-90">
+            {
+              applications.filter(app => {
+                return app?.status === 'D';
+              }).length
+            }
+          </span>
+        </div>
+
+        <div className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
+          <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
+            Accepted rate
+          </span>
+          <span className="text-2xl font-semibold text-black text-opacity-90">
+            {(() => {
+              const acceptedCount = applications.filter(
+                app => app?.status === 'AO' || app?.status === 'AI'
+              ).length;
+              const totalCount = applications.length;
+              const percentage =
+                totalCount > 0 ? (acceptedCount / totalCount) * 100 : 0;
+              return `${percentage.toFixed(1)}%`;
+            })()}
+          </span>
+        </div>
+      </div>
+
+      <ExportButton
+        onExport={() => exportToCsv(applications, 'applications.csv')}
+      >
+        Export CSV
+      </ExportButton>
+      <div className="z-50 px-6 py-6 overflow-y-scroll bg-[#FCFCFC] border-gray-300 rounded-2xl">
+        <div className="h-[629px] overflow-y-scroll z-50 rounded-l border border-[#EEEEEE]">
+          <Table
+            data={applications}
+            columns={columns}
+            search={true}
+            pagination={true}
+            loading={loading}
+          />
+        </div>
+      </div>
       {isOverlayVisible && (
         <ReviewModal
           toggleOverlay={toggleOverlay}
