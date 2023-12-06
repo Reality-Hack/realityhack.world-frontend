@@ -24,6 +24,7 @@ import {
 } from '../applications/ExperienceInterestForm';
 import { ageGroupLabels } from '../applications/PersonalInformationForm';
 import { hardwareHackLabels } from '../applications/ThematicForm';
+import { useSession } from 'next-auth/react';
 
 export default function ReviewPage({
   allInfo,
@@ -32,6 +33,8 @@ export default function ReviewPage({
   allInfo: any;
   acceptedFiles?: File[];
 }) {
+  const { data: session, status } = useSession();
+
   const formatParticipation = (participationType: string) => {
     switch (participationType) {
       case participation_capacity.professional:
@@ -297,23 +300,26 @@ export default function ReviewPage({
         />
 
         <div>
-          {allInfo.participation_capacity == participation_capacity.student && (
-            <div className="flex flex-col gap-4">
-              <LabelAndValue
-                label={'What is the name of your school?'}
-                value={allInfo.student_school}
-              />
-              <LabelAndValue
-                label={
-                  'If you are attending a higher education institution, what is your field of study?'
-                }
-                value={allInfo.student_field_of_study}
-              />
-            </div>
-          )}
+          {allInfo.participation_capacity == participation_capacity.student ||
+            (allInfo.participation_capacity == 'Student' && (
+              <div className="flex flex-col gap-4">
+                <LabelAndValue
+                  label={'What is the name of your school?'}
+                  value={allInfo.student_school}
+                />
+                <LabelAndValue
+                  label={
+                    'If you are attending a higher education institution, what is your field of study?'
+                  }
+                  value={allInfo.student_field_of_study}
+                />
+              </div>
+            ))}
           {allInfo.participation_capacity == participation_capacity.hobbyist ||
-            (allInfo.participation_capacity ==
-              participation_capacity.professional && (
+            allInfo.participation_capacity ==
+              participation_capacity.professional ||
+            ((allInfo.participation_capacity == 'Hobbist' ||
+              allInfo.participation_capacity == 'Professional') && (
               <div className="flex flex-col gap-4">
                 <LabelAndValue
                   label={'What is your current occupation?'}
@@ -325,7 +331,7 @@ export default function ReviewPage({
                 />
                 <LabelAndValue
                   label={'What industry represents your expertise?'}
-                  value={allInfo.industry_option}
+                  value={allInfo.industry}
                 />
               </div>
             ))}
@@ -528,12 +534,18 @@ export default function ReviewPage({
   return (
     <div>
       <div className="flex flex-col gap-2 p-4">
-        <div className="text-3xl font-bold text-purple-900">
-          Review & Submit
-        </div>
-        <div className="mb-8 text-sm">
-          Before submitting your application, please review your responses.
-        </div>
+        {session ? (
+          <div className="mb-4 text-2xl">Review Application</div>
+        ) : (
+          <>
+            <div className="text-3xl font-bold text-purple-900">
+              Review & Submit
+            </div>
+            <div className="mb-8 text-sm">
+              Before submitting your application, please review your responses.
+            </div>
+          </>
+        )}
         <div className="relative flex flex-col gap-4">
           {sections.map(section => (
             <div

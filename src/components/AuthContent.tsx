@@ -43,22 +43,22 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
     if (status != 'loading') {
       setTimeout(() => {
         setLoaded(true);
-      }, 2000);
+      }, 3000);
       return;
     }
   }, [status]);
 
   useEffect(() => {
-    if (!session && pathname !== '/apply' && pathname !== '/signin') {
-      router.replace('/apply');
-      return;
-    }
+    if (status === 'loading') return;
 
     if (session && (pathname === '/apply' || pathname === '/signin')) {
       router.replace('/');
     }
 
-    if (status === 'loading') return;
+    if (!session && pathname !== '/apply' && pathname !== '/signin') {
+      router.replace('/apply');
+      return;
+    }
   }, [session, status]);
 
   useEffect(() => {
