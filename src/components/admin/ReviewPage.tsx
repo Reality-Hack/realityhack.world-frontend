@@ -262,7 +262,7 @@ export default function ReviewPage({
                     raceEthnicGroupLabels
                   )
                 )
-              : allInfo.gender_identity
+              : allInfo.race_ethnic_group
           }
         />
 
@@ -277,7 +277,7 @@ export default function ReviewPage({
                     disabilitiesLabels
                   )
                 )
-              : allInfo.gender_identity
+              : allInfo.disabilities
           }
         />
       </div>
@@ -341,8 +341,7 @@ export default function ReviewPage({
               <LabelAndValue
                 label={'What years did you previously participate?'}
                 value={
-                  allInfo.previous_participation &&
-                  allInfo.previous_participation.length > 0
+                  Array.isArray(allInfo.previous_participation)
                     ? allInfo.previous_participation.map((enumValue: string) =>
                         getLabelFromEnumValue(
                           enumValue,
@@ -350,7 +349,7 @@ export default function ReviewPage({
                           previousParticipationLabels
                         )
                       )
-                    : []
+                    : allInfo.previous_participation
                 }
               />
             </>
@@ -361,8 +360,7 @@ export default function ReviewPage({
             <LabelAndValue
               label={'What design skills are you proficient in?'}
               value={
-                allInfo.digital_designer_skills &&
-                allInfo.digital_designer_skills.length > 0
+                Array.isArray(allInfo.digital_designer_skills)
                   ? allInfo.digital_designer_skills.map((enumValue: string) =>
                       getLabelFromEnumValue(
                         enumValue,
@@ -370,7 +368,7 @@ export default function ReviewPage({
                         DesignSkillsLabels
                       )
                     )
-                  : []
+                  : allInfo.digital_designer_skills
               }
             />
           )}

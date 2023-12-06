@@ -73,11 +73,6 @@ export default function HackerApplicationTable() {
     }
   }, [session, options]);
 
-  useEffect(() => {
-    console.log('options: ', options);
-    console.log('applications: ', applications);
-  }, [options, applications]);
-
   const [isOverlayVisible, setOverlayVisible] = useState(false);
   const toggleOverlay = () => {
     setOverlayVisible(prev => !prev);
@@ -282,7 +277,6 @@ export default function HackerApplicationTable() {
           <span className="text-2xl font-semibold text-black text-opacity-90">
             {
               applications.filter(app => {
-                if (app?.status) console.log(app.status);
                 return app?.status === 'AO' || app?.status === 'AI';
               }).length
             }
