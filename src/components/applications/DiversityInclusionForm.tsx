@@ -21,13 +21,19 @@ interface FormProps {
     >
   ) => void;
   errors: Record<string, string>;
+  showQuestion1: boolean;
+  showQuestion2: boolean;
+  showQuestion3: boolean;
 }
 
 const DiversityInclusionForm: React.FC<FormProps> = ({
   formData,
   handleChange,
   handleBlur,
-  errors
+  errors,
+  showQuestion1,
+  showQuestion2,
+  showQuestion3
 }) => {
   const genderIdentityLabels = {
     cisgender_female: 'Cisgender female',
@@ -85,7 +91,7 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
         Diversity and Inclusion
       </p>
 
-      <div className="mb-8">
+      {showQuestion1 && <div className="mb-8">
         <p className="mb-4">
           How would you describe your gender identity? Select all that apply.{' '}
           <span className="font-bold text-themeSecondary">*</span>
@@ -123,9 +129,9 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
             required={true}
           />
         )}
-      </div>
+      </div>}
 
-      <div className="mb-8">
+      {showQuestion2 && <div className="mb-8">
         <p className="mb-4">
           What race or ethnic group do you belong to? Select all that apply.{' '}
           <span className="font-bold text-themeSecondary">*</span>
@@ -161,9 +167,9 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
             required={true}
           />
         )}
-      </div>
+      </div>}
 
-      <div className="mb-8">
+      {showQuestion3 && <div className="mb-8">
         <p className="mb-4">
           Do you identify as a person with disability?{' '}
           <span className="font-bold text-themeSecondary">*</span>
@@ -178,7 +184,7 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
             onChange={handleChange}
           />
         ))}
-      </div>
+      </div>}
       {formData.disability_identity === disability_identity.yes && (
         <>
           <div className="mb-8">

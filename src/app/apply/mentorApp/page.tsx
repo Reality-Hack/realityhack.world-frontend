@@ -1,15 +1,16 @@
+/* eslint-disable no-console */
 'use client';
+
+import { CheckboxInput, validateField, RadioInput } from '@/components/Inputs';
+import ClosingForm from '@/components/applications/ClosingForm';
+import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
+import MentorSkillsExpertiseForm from '@/components/applications/MentorSkillsExpertiseForm';
+import MentorPersonalInformationForm from '@/components/applications/MentorPersonalInformationForm';
+import ThematicForm from '@/components/applications/ThematicForm';
 import AnyApp from '@/components/applications/applicationAny';
-import { CheckboxInput, validateField } from '@/components/Inputs';
-import PersonalInformationForm from '@/components/applications/PersonalInformationForm';
-import React, { useState, useCallback, useEffect } from 'react';
 import type { NextPage } from 'next';
-import { getSkills } from "@/app/api/skills";
-import { applicationOptions } from '@/app/api/application';
-
-
-
 import Link from 'next/link';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Enums,
   digital_designer_skills,
@@ -20,13 +21,16 @@ import {
   participation_capacity,
   participation_role,
   race_ethnic_group
-} from '@/application_form_types';
+} from '../../../application_form_types';
+import { applicationOptions } from '@/app/api/application';
+import { getSkills } from "@/app/api/skills";
 import ReviewPage from '@/components/admin/ReviewPage';
 
-const MentorApp: NextPage = ({}: any) => {
+const MentorApp: NextPage = ({ }: any) => {
   const [formData, setFormData] = useState<Partial<form_data>>({
-    disclaimer_groups: null,
-    disclaimer_open_source: null,
+    disclaimer_schedule: null,
+    disclaimer_mindset: null,
+    disclaimer_passion: null,
     first_name: '',
     middle_name: null,
     last_name: '',
@@ -34,6 +38,7 @@ const MentorApp: NextPage = ({}: any) => {
     email: '',
     communications_platform_username: '',
     portfolio: '',
+    phone_number: '',
     nationality: '',
     current_country: '',
     current_city: '',
@@ -41,18 +46,20 @@ const MentorApp: NextPage = ({}: any) => {
     resume: null,
     gender_identity: [],
     race_ethnic_group: [],
-    disability_identity: null,
-    disabilities: [],
-    disability_accommodations: '',
     participation_capacity: null,
+    participation_class: 'M',
     student_school: null,
     student_field_of_study: null,
     digital_designer_skills: [],
     specialized_expertise: null,
     occupation: null,
+    qualification: null,
+    expertise: null,
+    walkthrough: null,
     employer: null,
     industry: null,
     previously_participated: null,
+    previously_mentored: null,
     previous_participation: [],
     participation_role: null,
     proficient_languages: '',
@@ -126,23 +133,19 @@ const MentorApp: NextPage = ({}: any) => {
     Record<string, string[]>
   >({
     WELCOME: [''],
-    DISCLAIMERS: ['disclaimer_groups', 'disclaimer_open_source'],
+    DISCLAIMERS: ['disclaimer_schedule', 'disclaimer_mindset', 'disclaimer_passion'],
     'PERSONAL INFO': [
       'first_name',
       'last_name',
       'email',
       'pronouns',
-      'communications_platfgsorm_username',
+      'communications_platform_username',
       'portfolio',
-      'current_city',
-      'current_country',
-      'nationality',
-      'age_group'
+      'phone_number'
     ],
     'DIVERSITY & INCLUSION': [
       'gender_identity',
-      'race_ethnic_group',
-      'disability_identity'
+      'race_ethnic_group'
     ],
     EXPERIENCE: [
       'participation_capacity',
@@ -272,7 +275,7 @@ const MentorApp: NextPage = ({}: any) => {
 
     return true;
   };
-  
+
 
   // TABS
   const MentorWelcomeTab = () => (
@@ -317,8 +320,8 @@ const MentorApp: NextPage = ({}: any) => {
       <div className="text-xl font-bold text-purple-900">Disclaimers</div>
       <div className="flex flex-col gap-4">
         <div className="pt-8">
-          We encourage all participants to form new connections with cool
-          creative people that they&apos;ve never worked with before.
+          We&apos;d like to make sure you understand our expectations for mentors.
+          We are looking for someone who:
         </div>
         <div>
           Please do not apply as a representative for a group, or plan to attend
@@ -332,35 +335,38 @@ const MentorApp: NextPage = ({}: any) => {
 
         <div className="pt-4">
           <CheckboxInput
-            name="disclaimer_groups"
-            value={formData.disclaimer_groups?.toString() || ''}
-            checked={!!formData.disclaimer_groups}
-            label="I understand and accept the above disclaimer."
+            name="disclaimer_schedule"
+            value={formData.disclaimer_schedule?.toString() || ''}
+            checked={!!formData.disclaimer_schedule}
+            label="Is willing to work on a hackers schedule. Our participants are so committed XR
+            innovation, that they often work well into the night. We'd love mentors to be with
+            them on that journey - especially the evening before the deadline."
             onChange={handleChange}
             onBlur={handleBlur}
-            error={errors.disclaimer_groups}
+            error={errors.disclaimer_schedule}
           />
         </div>
-        <div className="border border-gray-200 border-1"></div>
-        <div>
-          Our participants are literally building the future by making their
-          work available for further development.
-        </div>
-
-        <div>
-          Therefore, all projects built during the hackathon will be released
-          under an open source license (see opensource.org).
-        </div>
-
-        <div className="pt-4 pb-6">
+        <div className="pt-4">
           <CheckboxInput
-            name="disclaimer_open_source"
-            value={formData.disclaimer_open_source?.toString() || ''}
-            checked={!!formData.disclaimer_open_source}
-            label="I understand and accept the above disclaimer."
+            name="disclaimer_mindset"
+            value={formData.disclaimer_mindset?.toString() || ''}
+            checked={!!formData.disclaimer_mindset}
+            label="Has a solutions-driven mindset. Our participants are literally building the future
+            in 5 days. They need all the help they can get."
             onChange={handleChange}
             onBlur={handleBlur}
-            error={errors.disclaimer_open_source}
+            error={errors.disclaimer_mindset}
+          />
+        </div>
+        <div className="pt-4">
+          <CheckboxInput
+            name="disclaimer_passion"
+            value={formData.disclaimer_passion?.toString() || ''}
+            checked={!!formData.disclaimer_passion}
+            label="Has a contagious passion for spatial computing."
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={errors.disclaimer_passion}
           />
         </div>
       </div>
@@ -368,24 +374,36 @@ const MentorApp: NextPage = ({}: any) => {
   );
 
   const MentorExperienceTab = () => (
-    <div>Have you mentored a hackathon before? Please note that this is not a requirement to become a mentor.</div>
-  )
-
-  const Closing = () => (
-    <div>
-      <div>How did you hear about Reality Hack? Select all that apply. (Optional)</div>
-      <div>Help us reach more communities that matter! What are your favorite online groups (LinkedIn, Discord, etc.) 
-        related to XR, creative technology, or social justice and accessibility? All languages welcome! 
-        [Optional, Long answer box]</div>
+    <div className="px-4 overflow-y-auto min-h-[496px]">
+      <div className="text-xl font-bold text-purple-900">Mentor Experience</div>
+      <div className="flex flex-col gap-4">
+        <p className="py-4">
+          Have you mentored a hackathon before? Please note that this is not a requirement
+          to become a mentor.
+          <span className="font-bold text-themeSecondary">*</span>
+        </p>
+        <RadioInput
+          name="previously_mentored"
+          value="true"
+          checked={formData.previously_mentored === 'true'}
+          onChange={handleChange}
+          label="Yes"
+        />
+        <RadioInput
+          name="previously_mentored"
+          value="false"
+          checked={formData.previously_mentored === 'false'}
+          onChange={handleChange}
+          label="No"
+        />
+      </div>
     </div>
-  )
-
-  
+  );
 
   const tabs = [
     <MentorWelcomeTab key={0} />,
     <DisclaimerTab key={1} />,
-    <PersonalInformationForm
+    <MentorPersonalInformationForm
       key={2}
       formData={formData}
       setFormData={setFormData}
@@ -399,16 +417,42 @@ const MentorApp: NextPage = ({}: any) => {
       countries={countries}
       nationalities={nationalities}
     />,
-    <MentorExperienceTab />,
-    <Closing />,
-    <ReviewPage allInfo={formData} acceptedFiles={acceptedFiles}/>,
+    <DiversityInclusionForm
+      key={3}
+      formData={formData}
+      handleBlur={handleBlur}
+      handleChange={handleChange}
+      errors={errors}
+      showQuestion1={true}
+      showQuestion2={true}
+      showQuestion3={false}
+    />,
+    <MentorSkillsExpertiseForm
+      key={4}
+      formData={formData}
+      setFormData={setFormData}
+      handleChange={handleChange}
+      handleBlur={handleBlur}
+      errors={errors}
+      industries={industries}
+    />,
+    <MentorExperienceTab key={5} />,
+    <ClosingForm
+      key={6}
+      formData={formData}
+      handleBlur={handleBlur}
+      handleChange={handleChange}
+      errors={errors}
+    />,
+    <ReviewPage allInfo={formData} acceptedFiles={acceptedFiles} />,
   ];
   const tabNames = [
     'WELCOME',
     'DISCLAIMERS',
     'PERSONAL INFO',
     'DIVERSITY & INCLUSION',
-    'EXPERIENCE',
+    'SKILLS & EXPERTISE',
+    'MENTOR EXPERIENCE',
     'CLOSING',
     'REVIEW & SUBMIT'
   ];
