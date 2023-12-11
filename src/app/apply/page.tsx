@@ -7,7 +7,7 @@ import { CheckboxInput, validateField } from '@/components/Inputs';
 import ClosingForm from '@/components/applications/ClosingForm';
 import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
 import ExperienceInterestForm from '@/components/applications/ExperienceInterestForm';
-import HackerPersonalInformationForm from '@/components/applications/HackerPersonalInformationForm';
+import PersonalInformationForm from '@/components/applications/PersonalInformationForm';
 import ThematicForm from '@/components/applications/ThematicForm';
 import AnyApp from '@/components/applications/applicationAny';
 import {
@@ -55,7 +55,11 @@ const Application: NextPage = ({}: any) => {
       'nationality',
       'age_group'
     ],
-    'DIVERSITY & INCLUSION': ['gender_identity', 'race_ethnic_group'],
+    'DIVERSITY & INCLUSION': [
+      'gender_identity',
+      'race_ethnic_group',
+      'disability_identity'
+    ],
     EXPERIENCE: [
       'participation_capacity',
       'participation_role',
@@ -70,6 +74,7 @@ const Application: NextPage = ({}: any) => {
   const router = useRouter();
 
   const [formData, setFormData] = useState<Partial<form_data>>({
+    participation_class: 'P',
     disclaimer_groups: null,
     disclaimer_open_source: null,
     first_name: '',
@@ -178,6 +183,7 @@ const Application: NextPage = ({}: any) => {
       const data = await getSkills();
       const options = await applicationOptions(formData);
       setOptions(options);
+      console.log('options: ', options);
       setCountries(options.actions.POST.current_country.choices);
       setNationalities(options.actions.POST.nationality.choices);
       setIndustries(options.actions.POST.industry.choices);
@@ -451,6 +457,7 @@ const Application: NextPage = ({}: any) => {
           We encourage all participants to form new connections with cool
           creative people that they&apos;ve never worked with before.
         </div>
+        <div className="border border-gray-200 border-1"></div>
         <div>
           Please do not apply as a representative for a group, or plan to attend
           with the condition that your friends or co-workers are accepted.
@@ -514,7 +521,7 @@ const Application: NextPage = ({}: any) => {
   const tabs = [
     <WelcomeTab key={0} />,
     <DisclaimerTab key={1} />,
-    <HackerPersonalInformationForm
+    <PersonalInformationForm
       key={2}
       formData={formData}
       setFormData={setFormData}

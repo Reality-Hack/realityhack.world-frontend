@@ -5,7 +5,7 @@ import { CheckboxInput, validateField, RadioInput } from '@/components/Inputs';
 import ClosingForm from '@/components/applications/ClosingForm';
 import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
 import MentorSkillsExpertiseForm from '@/components/applications/MentorSkillsExpertiseForm';
-import MentorPersonalInformationForm from '@/components/applications/MentorPersonalInformationForm';
+import AdditionalPersonalInformationForm from '@/components/applications/AdditionalPersonalInformationForm';
 import ThematicForm from '@/components/applications/ThematicForm';
 import AnyApp from '@/components/applications/applicationAny';
 import type { NextPage } from 'next';
@@ -21,16 +21,21 @@ import {
   participation_capacity,
   participation_role,
   race_ethnic_group
-} from '../../../application_form_types';
+} from '../../../types/application_form_types';
 import { applicationOptions } from '@/app/api/application';
 import { getSkills } from '@/app/api/skills';
 import ReviewPage from '@/components/admin/ReviewPage';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
-const MentorApp: NextPage = ({}: any) => {
+const JudgeApp: NextPage = ({}: any) => {
   const [formData, setFormData] = useState<Partial<form_data>>({
     disclaimer_schedule: null,
     disclaimer_mindset: null,
     disclaimer_passion: null,
+    judge_invited_by: null,
+    judge_judging_steps: null,
+    judge_previously_judged: null,
     first_name: '',
     middle_name: null,
     last_name: '',
@@ -38,7 +43,6 @@ const MentorApp: NextPage = ({}: any) => {
     email: '',
     communications_platform_username: '',
     portfolio: '',
-    phone_number: '',
     nationality: '',
     current_country: '',
     current_city: '',
@@ -47,7 +51,6 @@ const MentorApp: NextPage = ({}: any) => {
     gender_identity: [],
     race_ethnic_group: [],
     participation_capacity: null,
-    participation_class: 'M',
     student_school: null,
     student_field_of_study: null,
     digital_designer_skills: [],
@@ -57,13 +60,11 @@ const MentorApp: NextPage = ({}: any) => {
     expertise: null,
     walkthrough: null,
     employer: null,
-    industry: null,
+    industry: [],
     previously_participated: null,
-    previously_mentored: null,
     previous_participation: [],
     participation_role: null,
     proficient_languages: '',
-    xr_familiarity_tools: '',
     additional_skills: '',
     theme_essay: '',
     theme_essay_follow_up: '',
@@ -77,6 +78,76 @@ const MentorApp: NextPage = ({}: any) => {
     nationality_option: null,
     industry_option: null
   });
+  const [requiredFields, setRequiredFields] = useState<
+    Record<string, string[]>
+  >({
+    WELCOME: [''],
+    DISCLAIMERS: ['disclaimer_schedule', 'disclaimer_mindset'],
+    'PERSONAL INFO': [
+      'first_name',
+      'last_name',
+      'email',
+      'pronouns',
+      'communications_platfgsorm_username',
+      'portfolio',
+      'current_city',
+      'current_country',
+      'nationality',
+      'age_group'
+    ],
+    'DIVERSITY & INCLUSION': ['gender_identity', 'race_ethnic_group'],
+    EXPERIENCE: [
+      'participation_capacity',
+      'participation_role',
+      'previously_participated'
+    ],
+    THEMATIC: ['theme_essay', 'theme_essay_follow_up'],
+    CLOSING: ['heard_about_us'],
+    'REVIEW & SUBMIT': ['']
+  });
+
+  const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
+  const [rejectedFiles, setRejectedFiles] = useState<any>(null);
+  const [countries, setCountries] = useState<any>(null);
+  const [nationalities, setNationalities] = useState<any>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [skills, setSkills] = useState<any>(null);
+  const [industries, setIndustries] = useState<any>(null);
+  const [options, setOptions] = useState<any>(null);
+
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (session) {
+      router.replace('/');
+    }
+  }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      const options = await applicationOptions(formData);
+      setOptions(options);
+      console.log('options: ', options);
+      setIndustries(options.actions.POST.industry.choices);
+    };
+    getData();
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue =
+        'You have unsaved changes. Are you sure you want to leave?';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  });
+
   const handleChange = useCallback(
     (
       e: React.ChangeEvent<
@@ -129,55 +200,6 @@ const MentorApp: NextPage = ({}: any) => {
     },
     [setFormData]
   );
-  const [requiredFields, setRequiredFields] = useState<
-    Record<string, string[]>
-  >({
-    WELCOME: [''],
-    DISCLAIMERS: [
-      'disclaimer_schedule',
-      'disclaimer_mindset',
-      'disclaimer_passion'
-    ],
-    'PERSONAL INFO': [
-      'first_name',
-      'last_name',
-      'email',
-      'pronouns',
-      'communications_platform_username',
-      'portfolio',
-      'phone_number'
-    ],
-    'DIVERSITY & INCLUSION': ['gender_identity', 'race_ethnic_group'],
-    EXPERIENCE: [
-      'participation_capacity',
-      'participation_role',
-      'previously_participated'
-    ],
-    THEMATIC: ['theme_essay', 'theme_essay_follow_up'],
-    CLOSING: ['heard_about_us'],
-    'REVIEW & SUBMIT': ['']
-  });
-
-  const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
-  const [rejectedFiles, setRejectedFiles] = useState<any>(null);
-  const [countries, setCountries] = useState<any>(null);
-  const [nationalities, setNationalities] = useState<any>(null);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [skills, setSkills] = useState<any>(null);
-  const [industries, setIndustries] = useState<any>(null);
-
-  useEffect(() => {
-    const getData = async () => {
-      const data = await getSkills();
-      const options = await applicationOptions(formData);
-      console.log('options: ', options);
-      setCountries(options.actions.POST.current_country.choices);
-      setNationalities(options.actions.POST.nationality.choices);
-      setIndustries(options.actions.POST.industry.choices);
-      setSkills(data);
-    };
-    getData();
-  }, []);
 
   const handleBlur = useCallback(
     (
@@ -185,43 +207,44 @@ const MentorApp: NextPage = ({}: any) => {
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
       >
     ) => {
-      let fieldType = e.target.tagName.toLowerCase();
-      if (fieldType === 'textarea') {
-        fieldType = 'text';
-      } else {
-        fieldType = e.target.type;
-      }
+      let fieldType = e.target.type.toLowerCase();
 
-      console.log('validate field type:', fieldType);
-
+      const fieldName = e.target.name;
       const fieldTab = Object.entries(requiredFields).find(([_, fields]) =>
-        fields.includes(e.target.name)
+        fields.includes(fieldName)
       )?.[0];
 
-      if (!fieldTab) return;
+      let isFieldRequired = false;
 
-      const isFieldRequired = requiredFields[fieldTab].includes(e.target.name);
-      console.log(isFieldRequired);
+      if (fieldTab !== undefined) {
+        isFieldRequired = requiredFields[fieldTab].includes(fieldName);
+      }
+
+      const fieldOptions = options?.actions?.POST[fieldName];
+      const maxLength = fieldOptions?.max_length;
+
       const validationError = validateField(
         fieldType,
         e.target.value,
-        isFieldRequired
+        isFieldRequired,
+        false,
+        maxLength
       );
 
       if (validationError) {
         setErrors(prevErrors => ({
           ...prevErrors,
-          [e.target.name]: validationError
+          [fieldName]: validationError
         }));
       } else {
         setErrors(prevErrors => {
           const newErrors = { ...prevErrors };
-          delete newErrors[e.target.name];
+          delete newErrors[fieldName];
           return newErrors;
         });
       }
     },
-    [requiredFields]
+    [requiredFields, options]
   );
 
   const isTabValid = (tabName: string): boolean => {
@@ -233,42 +256,35 @@ const MentorApp: NextPage = ({}: any) => {
       return true;
     }
 
-    if (tabName === `PERSONAL INFO` && !acceptedFiles) {
-      console.log(`file upload is invalid: `, acceptedFiles);
-      return false;
-    }
-
     for (let field of required_fields) {
       const fieldValue = formData[field as keyof typeof formData];
+      const fieldOptions = options?.actions?.POST[field];
+      const maxLength = fieldOptions?.max_length || 0;
 
-      if (
-        typeof fieldValue === 'string' &&
-        !(fieldValue in Enums) &&
-        !exemptFields.includes(field) &&
-        fieldValue.trim().length < 3
-      ) {
-        console.log(`field ${field} is invalid (string): `, fieldValue);
+      const fieldType = fieldOptions?.type || 'text';
+      const validationError = validateField(
+        fieldType,
+        fieldValue,
+        true,
+        false,
+        maxLength
+      );
+
+      if (validationError) {
         return false;
       }
 
-      if (typeof fieldValue === 'boolean' && fieldValue === null) {
-        console.log(`field ${field} is invalid (boolean): `, fieldValue);
-        return false;
-      }
-
-      if (!fieldValue) {
-        return false;
-      } else if (typeof fieldValue === 'string' && !fieldValue.trim()) {
-        console.log(`field ${field} is invalid (empty string): `, fieldValue);
+      if (typeof fieldValue === 'string' && fieldValue.trim().length < 1) {
+        console.log('fieldValue: ', fieldValue);
         return false;
       } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
-        console.log(`field ${field} is invalid (empty array): `, fieldValue);
+        console.log('fieldValue: ', fieldValue);
         return false;
-      }
-
-      const validationError = validateField(field, fieldValue, true);
-      if (validationError) {
-        console.log(`validationError for field ${field}: `, validationError);
+      } else if (typeof fieldValue === 'boolean' && fieldValue === null) {
+        console.log('fieldValue: ', fieldValue);
+        return false;
+      } else if (!fieldValue) {
+        console.log('fieldValue: ', fieldValue);
         return false;
       }
     }
@@ -277,13 +293,13 @@ const MentorApp: NextPage = ({}: any) => {
   };
 
   // TABS
-  const MentorWelcomeTab = () => (
+  const JudgeWelcomeTab = () => (
     <div className="px-4 overflow-y-auto min-h-[496px]">
       <div className="text-xl font-bold text-purple-900">Welcome</div>
       <div className="flex flex-col gap-4">
         <div className="pt-8">
-          Welcome to the Reality Hack 2024 participant application form. Please
-          fill out this form to apply for a spot at Reality Hack 2024. For all
+          Welcome to the Reality Hack 2024 judge application form. Please fill
+          out this form to apply for a spot at Reality Hack 2024. For all
           applications-related questions, contact{' '}
           <Link href="mailto:apply@mitrealityhack.com">
             <span className="text-themePrimary">apply@mitrealityhack.com</span>
@@ -372,49 +388,14 @@ const MentorApp: NextPage = ({}: any) => {
     </div>
   );
 
-  const MentorExperienceTab = () => (
-    <div className="px-4 overflow-y-auto min-h-[496px]">
-      <div className="text-xl font-bold text-purple-900">Mentor Experience</div>
-      <div className="flex flex-col gap-4">
-        <p className="py-4">
-          Have you mentored a hackathon before? Please note that this is not a
-          requirement to become a mentor.
-          <span className="font-bold text-themeSecondary">*</span>
-        </p>
-        <RadioInput
-          name="previously_mentored"
-          value="true"
-          checked={formData.previously_mentored === 'true'}
-          onChange={handleChange}
-          label="Yes"
-        />
-        <RadioInput
-          name="previously_mentored"
-          value="false"
-          checked={formData.previously_mentored === 'false'}
-          onChange={handleChange}
-          label="No"
-        />
-      </div>
-    </div>
-  );
-
   const tabs = [
-    <MentorWelcomeTab key={0} />,
-    <DisclaimerTab key={1} />,
-    <MentorPersonalInformationForm
+    <JudgeWelcomeTab key={0} />,
+    <AdditionalPersonalInformationForm
       key={2}
       formData={formData}
-      setFormData={setFormData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
-      acceptedFiles={acceptedFiles}
-      setAcceptedFiles={setAcceptedFiles}
-      rejectedFiles={rejectedFiles}
-      setRejectedFiles={setRejectedFiles}
-      countries={countries}
-      nationalities={nationalities}
     />,
     <DiversityInclusionForm
       key={3}
@@ -422,9 +403,6 @@ const MentorApp: NextPage = ({}: any) => {
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
-      showQuestion1={true}
-      showQuestion2={true}
-      showQuestion3={false}
     />,
     <MentorSkillsExpertiseForm
       key={4}
@@ -435,7 +413,6 @@ const MentorApp: NextPage = ({}: any) => {
       errors={errors}
       industries={industries}
     />,
-    <MentorExperienceTab key={5} />,
     <ClosingForm
       key={6}
       formData={formData}
@@ -461,7 +438,7 @@ const MentorApp: NextPage = ({}: any) => {
       key="1"
       tabs={tabs}
       tabNames={tabNames}
-      AppType="Mentor"
+      AppType="Judge"
       formData={formData}
       isTabValid={isTabValid}
       acceptedFiles={acceptedFiles}
@@ -469,4 +446,4 @@ const MentorApp: NextPage = ({}: any) => {
   );
 };
 
-export default MentorApp;
+export default JudgeApp;

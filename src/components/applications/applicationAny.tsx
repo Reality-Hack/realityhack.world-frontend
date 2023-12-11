@@ -5,6 +5,7 @@ import type { NextPage } from 'next';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Layout from '@/components/HotkeyLayout';
+import { form_data, disabilities } from '../../types/application_form_types';
 import {
   createApplication,
   fileUpload,
@@ -16,7 +17,7 @@ interface AnyAppProps {
   AppType: string;
   formData: any;
   isTabValid: (tabName: string) => boolean;
-  acceptedFiles: File[];
+  acceptedFiles?: File[];
   tabNames: string[];
 }
 
@@ -28,7 +29,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   acceptedFiles,
   ...formData
 }) {
-  const DEBUG = false;
+  const DEBUG = true;
   const [selectedTab, setSelectedTab] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -43,8 +44,11 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
 
     let updatedPayload = formData.formData || formData;
     let fileUploadResponse;
-
-    if (acceptedFiles?.length > 0) {
+    if (
+      updatedPayload.participation_class === 'P' &&
+      acceptedFiles &&
+      acceptedFiles?.length > 0
+    ) {
       try {
         fileUploadResponse = await fileUpload(acceptedFiles[0]);
         updatedPayload.resume = fileUploadResponse.id;
@@ -94,6 +98,11 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
       }
     });
 
+    // Test for mentor application
+    // updatedPayload.current_country = ['US'];
+    // updatedPayload.disabilities = ['G'];
+    // updatedPayload.nationality = ['US'];
+
     try {
       await createApplication(updatedPayload);
       // Move to next tab with user confirmation
@@ -123,9 +132,11 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   };
 
   const isOnFirstTab = selectedTab === 0;
+
   const isOnSubmitTab = selectedTab === tabs.length - 2;
   const isOnLastTab = selectedTab === tabs.length - 1;
 
+  console.log('tabs.length: ', tabs.length);
   return (
     <Layout>
       <div

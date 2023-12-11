@@ -1,13 +1,9 @@
 import React from 'react';
-import { TextInput, RadioInput, SelectInput } from '../Inputs';
-import {
-  form_data,
-  option_value
-} from '../../application_form_types';
+import { TextInput } from '../Inputs';
+import { form_data } from '../../types/application_form_types';
 
 interface FormProps {
   formData: Partial<form_data>;
-  setFormData: React.Dispatch<React.SetStateAction<Partial<form_data>>>;
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
@@ -15,38 +11,16 @@ interface FormProps {
     e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
   errors: Record<string, string>;
-  acceptedFiles: File[];
-  setAcceptedFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  rejectedFiles: File[];
-  setRejectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  countries: option_value[];
-  nationalities: option_value[];
 }
 
-const MentorPersonalInformationForm: React.FC<FormProps> = ({
+const AdditionalPersonalInformationForm: React.FC<FormProps> = ({
   formData,
-  setFormData,
   handleChange,
   handleBlur,
   errors
 }) => {
-  const handleSelectChange = (
-    value: string[],
-    name: string,
-    options: { value: string; display_name: string }[]
-  ) => {
-    const selectedOption = options.find(option => option.value === value[0]);
-    const displayName = selectedOption ? selectedOption.display_name : null;
-    alert(displayName)
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-      [`${name}_option`]: displayName
-    }));
-  };
-
   return (
-    <div className="px-6">
+    <div className="px-6 mb-8">
       <p className="mb-4 text-xl font-bold text-purple-900">
         Basic Info and Demographics
       </p>
@@ -60,7 +34,8 @@ const MentorPersonalInformationForm: React.FC<FormProps> = ({
         error={errors.first_name}
         valid={!errors.first_name}
       >
-        First Name or Preferred Name<span className="font-bold text-themeSecondary">*</span>
+        First Name or Preferred Name
+        <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
       <TextInput
         name="middle_name"
@@ -137,21 +112,8 @@ const MentorPersonalInformationForm: React.FC<FormProps> = ({
         Link to your portfolio or an example of your past work{' '}
         <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
-      <TextInput
-        name="phone_number"
-        placeholder="e.g. 123-456-7890"
-        type="text"
-        value={formData.phone_number || ''}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        error={errors.phone_number}
-        valid={!errors.phone_number}
-      >
-        Do you have a mobile phone number that we could reach you with during the hackathon?{' '}
-        <span className="font-bold text-themeSecondary">*</span>
-      </TextInput>
     </div>
   );
 };
 
-export default MentorPersonalInformationForm;
+export default AdditionalPersonalInformationForm;

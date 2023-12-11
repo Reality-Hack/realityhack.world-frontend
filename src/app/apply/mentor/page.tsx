@@ -5,32 +5,26 @@ import { CheckboxInput, validateField, RadioInput } from '@/components/Inputs';
 import ClosingForm from '@/components/applications/ClosingForm';
 import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
 import MentorSkillsExpertiseForm from '@/components/applications/MentorSkillsExpertiseForm';
-import MentorPersonalInformationForm from '@/components/applications/MentorPersonalInformationForm';
-import ThematicForm from '@/components/applications/ThematicForm';
+import AdditionalPersonalInformationForm from '@/components/applications/AdditionalPersonalInformationForm';
 import AnyApp from '@/components/applications/applicationAny';
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  Enums,
-  digital_designer_skills,
-  exemptFields,
-  form_data,
-  gender_identity,
-  heard_about_us,
-  participation_capacity,
-  participation_role,
-  race_ethnic_group
-} from '../../../application_form_types';
+import { form_data } from '@/types/application_form_types';
 import { applicationOptions } from '@/app/api/application';
-import { getSkills } from '@/app/api/skills';
 import ReviewPage from '@/components/admin/ReviewPage';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
-const JudgeApp: NextPage = ({}: any) => {
+const MentorApp: NextPage = ({}: any) => {
   const [formData, setFormData] = useState<Partial<form_data>>({
+    participation_class: 'M',
     disclaimer_schedule: null,
     disclaimer_mindset: null,
     disclaimer_passion: null,
+    mentor_mentoring_steps: null,
+    mentor_previously_mentored: null,
+    mentor_qualified_fields: null,
     first_name: '',
     middle_name: null,
     last_name: '',
@@ -38,10 +32,9 @@ const JudgeApp: NextPage = ({}: any) => {
     email: '',
     communications_platform_username: '',
     portfolio: '',
-    phone_number: '',
-    nationality: '',
-    current_country: '',
-    current_city: '',
+    nationality: [],
+    current_country: [],
+    current_city: null,
     age_group: null,
     resume: null,
     gender_identity: [],
@@ -56,26 +49,94 @@ const JudgeApp: NextPage = ({}: any) => {
     expertise: null,
     walkthrough: null,
     employer: null,
-    industry: null,
+    industry: [],
     previously_participated: null,
-    previously_mentored: null,
     previous_participation: [],
     participation_role: null,
     proficient_languages: '',
-    xr_familiarity_tools: '',
     additional_skills: '',
     theme_essay: '',
     theme_essay_follow_up: '',
-    hardware_hack_interest: [],
+    hardware_hack_interest: null,
     heard_about_us: [],
     outreach_groups: null,
     gender_identity_other: null,
+    race_ethnic_group_other: null,
     digital_designer_skills_other: null,
     heard_about_us_other: null,
     current_country_option: null,
     nationality_option: null,
-    industry_option: null
+    industry_option: null,
+    disabilities: []
   });
+
+  const [options, setOptions] = useState<any>(null);
+  const [requiredFields, setRequiredFields] = useState<
+    Record<string, string[]>
+  >({
+    WELCOME: [''],
+    DISCLAIMERS: [
+      'disclaimer_schedule',
+      'disclaimer_mindset',
+      'disclaimer_passion'
+    ],
+    'PERSONAL INFO': [
+      'first_name',
+      'last_name',
+      'email',
+      'pronouns',
+      'communications_platform_username',
+      'portfolio'
+    ],
+    'DIVERSITY & INCLUSION': ['gender_identity', 'race_ethnic_group'],
+    'SKILLS & EXPERTISE': [
+      'occupation',
+      'employer',
+      'industry',
+      'mentor_qualified_fields',
+      'mentor_mentoring_steps',
+      'mentor_previously_mentored'
+    ],
+    CLOSING: ['heard_about_us'],
+    'REVIEW & SUBMIT': ['']
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [industries, setIndustries] = useState<any>(null);
+
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (session) {
+      router.replace('/');
+    }
+  }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      const options = await applicationOptions(formData);
+      setOptions(options);
+      console.log('options: ', options);
+      setIndustries(options.actions.POST.industry.choices);
+    };
+    getData();
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue =
+        'You have unsaved changes. Are you sure you want to leave?';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  });
+
   const handleChange = useCallback(
     (
       e: React.ChangeEvent<
@@ -128,54 +189,6 @@ const JudgeApp: NextPage = ({}: any) => {
     },
     [setFormData]
   );
-  const [requiredFields, setRequiredFields] = useState<
-    Record<string, string[]>
-  >({
-    WELCOME: [''],
-    DISCLAIMERS: ['disclaimer_schedule', 'disclaimer_mindset'],
-    'PERSONAL INFO': [
-      'first_name',
-      'last_name',
-      'email',
-      'pronouns',
-      'communications_platfgsorm_username',
-      'portfolio',
-      'current_city',
-      'current_country',
-      'nationality',
-      'age_group'
-    ],
-    'DIVERSITY & INCLUSION': ['gender_identity', 'race_ethnic_group'],
-    EXPERIENCE: [
-      'participation_capacity',
-      'participation_role',
-      'previously_participated'
-    ],
-    THEMATIC: ['theme_essay', 'theme_essay_follow_up'],
-    CLOSING: ['heard_about_us'],
-    'REVIEW & SUBMIT': ['']
-  });
-
-  const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
-  const [rejectedFiles, setRejectedFiles] = useState<any>(null);
-  const [countries, setCountries] = useState<any>(null);
-  const [nationalities, setNationalities] = useState<any>(null);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [skills, setSkills] = useState<any>(null);
-  const [industries, setIndustries] = useState<any>(null);
-
-  useEffect(() => {
-    const getData = async () => {
-      const data = await getSkills();
-      const options = await applicationOptions(formData);
-      console.log('options: ', options);
-      setCountries(options.actions.POST.current_country.choices);
-      setNationalities(options.actions.POST.nationality.choices);
-      setIndustries(options.actions.POST.industry.choices);
-      setSkills(data);
-    };
-    getData();
-  }, []);
 
   const handleBlur = useCallback(
     (
@@ -183,43 +196,44 @@ const JudgeApp: NextPage = ({}: any) => {
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
       >
     ) => {
-      let fieldType = e.target.tagName.toLowerCase();
-      if (fieldType === 'textarea') {
-        fieldType = 'text';
-      } else {
-        fieldType = e.target.type;
-      }
+      let fieldType = e.target.type.toLowerCase();
 
-      console.log('validate field type:', fieldType);
-
+      const fieldName = e.target.name;
       const fieldTab = Object.entries(requiredFields).find(([_, fields]) =>
-        fields.includes(e.target.name)
+        fields.includes(fieldName)
       )?.[0];
 
-      if (!fieldTab) return;
+      let isFieldRequired = false;
 
-      const isFieldRequired = requiredFields[fieldTab].includes(e.target.name);
-      console.log(isFieldRequired);
+      if (fieldTab !== undefined) {
+        isFieldRequired = requiredFields[fieldTab].includes(fieldName);
+      }
+
+      const fieldOptions = options?.actions?.POST[fieldName];
+      const maxLength = fieldOptions?.max_length;
+
       const validationError = validateField(
         fieldType,
         e.target.value,
-        isFieldRequired
+        isFieldRequired,
+        false,
+        maxLength
       );
 
       if (validationError) {
         setErrors(prevErrors => ({
           ...prevErrors,
-          [e.target.name]: validationError
+          [fieldName]: validationError
         }));
       } else {
         setErrors(prevErrors => {
           const newErrors = { ...prevErrors };
-          delete newErrors[e.target.name];
+          delete newErrors[fieldName];
           return newErrors;
         });
       }
     },
-    [requiredFields]
+    [requiredFields, options]
   );
 
   const isTabValid = (tabName: string): boolean => {
@@ -231,42 +245,35 @@ const JudgeApp: NextPage = ({}: any) => {
       return true;
     }
 
-    if (tabName === `PERSONAL INFO` && !acceptedFiles) {
-      console.log(`file upload is invalid: `, acceptedFiles);
-      return false;
-    }
-
     for (let field of required_fields) {
       const fieldValue = formData[field as keyof typeof formData];
+      const fieldOptions = options?.actions?.POST[field];
+      const maxLength = fieldOptions?.max_length || 0;
 
-      if (
-        typeof fieldValue === 'string' &&
-        !(fieldValue in Enums) &&
-        !exemptFields.includes(field) &&
-        fieldValue.trim().length < 3
-      ) {
-        console.log(`field ${field} is invalid (string): `, fieldValue);
+      const fieldType = fieldOptions?.type || 'text';
+      const validationError = validateField(
+        fieldType,
+        fieldValue,
+        true,
+        false,
+        maxLength
+      );
+
+      if (validationError) {
         return false;
       }
 
-      if (typeof fieldValue === 'boolean' && fieldValue === null) {
-        console.log(`field ${field} is invalid (boolean): `, fieldValue);
-        return false;
-      }
-
-      if (!fieldValue) {
-        return false;
-      } else if (typeof fieldValue === 'string' && !fieldValue.trim()) {
-        console.log(`field ${field} is invalid (empty string): `, fieldValue);
+      if (typeof fieldValue === 'string' && fieldValue.trim().length < 1) {
+        console.log('fieldValue: ', fieldValue);
         return false;
       } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
-        console.log(`field ${field} is invalid (empty array): `, fieldValue);
+        console.log('fieldValue: ', fieldValue);
         return false;
-      }
-
-      const validationError = validateField(field, fieldValue, true);
-      if (validationError) {
-        console.log(`validationError for field ${field}: `, validationError);
+      } else if (typeof fieldValue === 'boolean' && fieldValue === null) {
+        console.log('fieldValue: ', fieldValue);
+        return false;
+      } else if (!fieldValue) {
+        console.log('fieldValue: ', fieldValue);
         return false;
       }
     }
@@ -280,8 +287,8 @@ const JudgeApp: NextPage = ({}: any) => {
       <div className="text-xl font-bold text-purple-900">Welcome</div>
       <div className="flex flex-col gap-4">
         <div className="pt-8">
-          Welcome to the Reality Hack 2024 participant application form. Please
-          fill out this form to apply for a spot at Reality Hack 2024. For all
+          Welcome to the Reality Hack 2024 mentor application form. Please fill
+          out this form to apply for a spot at Reality Hack 2024. For all
           applications-related questions, contact{' '}
           <Link href="mailto:apply@mitrealityhack.com">
             <span className="text-themePrimary">apply@mitrealityhack.com</span>
@@ -320,47 +327,48 @@ const JudgeApp: NextPage = ({}: any) => {
           We&apos;d like to make sure you understand our expectations for
           mentors. We are looking for someone who:
         </div>
+        <div className="border border-gray-200 border-1"></div>
         <div>
-          Please do not apply as a representative for a group, or plan to attend
-          with the condition that your friends or co-workers are accepted.
+          Is willing to work on a hackers schedule. Our participants are so
+          committed XR innovation, that they often work well into the night.
+          We'd love mentors to be with them on that journey - especially the
+          evening before the deadline.
         </div>
-
-        <div>
-          More information will be announced in the Rules as we get closer to
-          the event.
-        </div>
-
         <div className="pt-4">
           <CheckboxInput
             name="disclaimer_schedule"
             value={formData.disclaimer_schedule?.toString() || ''}
             checked={!!formData.disclaimer_schedule}
-            label="Is willing to work on a hackers schedule. Our participants are so committed XR
-            innovation, that they often work well into the night. We'd love mentors to be with
-            them on that journey - especially the evening before the deadline."
+            label="I understand and accept the above disclaimer."
             onChange={handleChange}
             onBlur={handleBlur}
             error={errors.disclaimer_schedule}
           />
+        </div>
+        <div className="border border-gray-200 border-1"></div>
+        <div>
+          Has a solutions-driven mindset. Our participants are literally
+          building the future in 5 days. They need all the help they can get.
         </div>
         <div className="pt-4">
           <CheckboxInput
             name="disclaimer_mindset"
             value={formData.disclaimer_mindset?.toString() || ''}
             checked={!!formData.disclaimer_mindset}
-            label="Has a solutions-driven mindset. Our participants are literally building the future
-            in 5 days. They need all the help they can get."
+            label="I understand and accept the above disclaimer."
             onChange={handleChange}
             onBlur={handleBlur}
             error={errors.disclaimer_mindset}
           />
         </div>
-        <div className="pt-4">
+        <div className="border border-gray-200 border-1"></div>
+        <div>Has a contagious passion for spatial computing</div>
+        <div className="pt-4 mb-8">
           <CheckboxInput
             name="disclaimer_passion"
             value={formData.disclaimer_passion?.toString() || ''}
             checked={!!formData.disclaimer_passion}
-            label="Has a contagious passion for spatial computing."
+            label="I understand and accept the above disclaimer."
             onChange={handleChange}
             onBlur={handleBlur}
             error={errors.disclaimer_passion}
@@ -370,49 +378,21 @@ const JudgeApp: NextPage = ({}: any) => {
     </div>
   );
 
-  const MentorExperienceTab = () => (
-    <div className="px-4 overflow-y-auto min-h-[496px]">
-      <div className="text-xl font-bold text-purple-900">Mentor Experience</div>
-      <div className="flex flex-col gap-4">
-        <p className="py-4">
-          Have you mentored a hackathon before? Please note that this is not a
-          requirement to become a mentor.
-          <span className="font-bold text-themeSecondary">*</span>
-        </p>
-        <RadioInput
-          name="previously_mentored"
-          value="true"
-          checked={formData.previously_mentored === 'true'}
-          onChange={handleChange}
-          label="Yes"
-        />
-        <RadioInput
-          name="previously_mentored"
-          value="false"
-          checked={formData.previously_mentored === 'false'}
-          onChange={handleChange}
-          label="No"
-        />
-      </div>
+  const ConfirmationTab = () => (
+    <div className="px-6 h-[256px]">
+      <p>{`Thank you for applying to MIT Reality Hack 2024, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 
   const tabs = [
     <MentorWelcomeTab key={0} />,
     <DisclaimerTab key={1} />,
-    <MentorPersonalInformationForm
+    <AdditionalPersonalInformationForm
       key={2}
       formData={formData}
-      setFormData={setFormData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
-      acceptedFiles={acceptedFiles}
-      setAcceptedFiles={setAcceptedFiles}
-      rejectedFiles={rejectedFiles}
-      setRejectedFiles={setRejectedFiles}
-      countries={countries}
-      nationalities={nationalities}
     />,
     <DiversityInclusionForm
       key={3}
@@ -420,9 +400,6 @@ const JudgeApp: NextPage = ({}: any) => {
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
-      showQuestion1={true}
-      showQuestion2={true}
-      showQuestion3={false}
     />,
     <MentorSkillsExpertiseForm
       key={4}
@@ -433,15 +410,15 @@ const JudgeApp: NextPage = ({}: any) => {
       errors={errors}
       industries={industries}
     />,
-    <MentorExperienceTab key={5} />,
     <ClosingForm
-      key={6}
+      key={5}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
     />,
-    <ReviewPage allInfo={formData} acceptedFiles={acceptedFiles} />
+    <ReviewPage key={6} allInfo={formData} />,
+    <ConfirmationTab key={7} />
   ];
   const tabNames = [
     'WELCOME',
@@ -449,7 +426,6 @@ const JudgeApp: NextPage = ({}: any) => {
     'PERSONAL INFO',
     'DIVERSITY & INCLUSION',
     'SKILLS & EXPERTISE',
-    'MENTOR EXPERIENCE',
     'CLOSING',
     'REVIEW & SUBMIT'
   ];
@@ -462,9 +438,8 @@ const JudgeApp: NextPage = ({}: any) => {
       AppType="Mentor"
       formData={formData}
       isTabValid={isTabValid}
-      acceptedFiles={acceptedFiles}
     />
   );
 };
 
-export default JudgeApp;
+export default MentorApp;

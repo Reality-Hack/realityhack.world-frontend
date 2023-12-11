@@ -28,11 +28,6 @@ export default function ApplicationLayout({
             isSelected={pathname === '/admin/applications/judges'}
             title="Judges"
           />
-          <Tab
-            href="/admin/applications/volunteers"
-            isSelected={pathname === '/admin/applications/volunteers'}
-            title="Volunteers"
-          />
         </div>
         <hr className="dark:border-borderDark" />
       </div>

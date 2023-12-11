@@ -19,7 +19,7 @@ interface FormProps {
   industries: option_value[];
 }
 
-const MentorSkillsExpertiseForm: React.FC<FormProps> = ({
+const JudgeSkillsExpertiseForm: React.FC<FormProps> = ({
   formData,
   setFormData,
   handleChange,
@@ -95,27 +95,26 @@ const MentorSkillsExpertiseForm: React.FC<FormProps> = ({
       </div>
       <div className="mb-8">
         <TextAreaInput
-          name="mentor_qualified_fields"
-          placeholder="List the areas you are most qualified"
-          value={formData.mentor_qualified_fields || ''}
+          name="Judge_qualified_fields"
+          placeholder="Discuss your qualifications"
+          value={formData.Judge_qualified_fields || ''}
           onChange={handleChange}
-          error={errors.mentor_qualified_fields}
-          valid={!errors.mentor_qualified_fields}
+          error={errors.Judge_qualified_fields}
+          valid={!errors.Judge_qualified_fields}
           onBlur={handleBlur}
         >
-          List the areas you are most qualified to mentor in and describe your
-          expertise in those areas.{' '}
+          List the areas you are most qualified to Judge in.{' '}
           <span className="font-bold text-themeSecondary">*</span>
         </TextAreaInput>
       </div>
       <div className="mb-8">
         <TextAreaInput
-          name="mentor_mentoring_steps"
+          name="Judge_Judgeing_steps"
           placeholder="Discuss your debug process"
-          value={formData.mentor_mentoring_steps || ''}
+          value={formData.Judge_Judgeing_steps || ''}
           onChange={handleChange}
-          error={errors.mentor_mentoring_steps}
-          valid={!errors.mentor_mentoring_steps}
+          error={errors.Judge_Judgeing_steps}
+          valid={!errors.Judge_Judgeing_steps}
           onBlur={handleBlur}
         >
           Walk us through the steps you would take to help someone debug an
@@ -125,21 +124,21 @@ const MentorSkillsExpertiseForm: React.FC<FormProps> = ({
 
       <div className="mb-8">
         <p className="py-4">
-          Have you mentored a hackathon before? Please note that this is not a
-          requirement to become a mentor.
+          Have you Judgeed a hackathon before? Please note that this is not a
+          requirement to become a Judge.
           <span className="font-bold text-themeSecondary">*</span>
         </p>
         <RadioInput
-          name="mentor_previously_mentored"
+          name="Judge_previously_Judgeed"
           value="true"
-          checked={formData.mentor_previously_mentored === 'true'}
+          checked={formData.Judge_previously_Judgeed === 'true'}
           onChange={handleChange}
           label="Yes"
         />
         <RadioInput
-          name="mentor_previously_mentored"
+          name="Judge_previously_Judgeed"
           value="false"
-          checked={formData.mentor_previously_mentored === 'false'}
+          checked={formData.Judge_previously_Judgeed === 'false'}
           onChange={handleChange}
           label="No"
         />
@@ -148,4 +147,4 @@ const MentorSkillsExpertiseForm: React.FC<FormProps> = ({
   );
 };
 
-export default MentorSkillsExpertiseForm;
+export default JudgeSkillsExpertiseForm;

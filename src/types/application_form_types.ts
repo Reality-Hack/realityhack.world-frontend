@@ -65,7 +65,7 @@ export enum participation_capacity {
 }
 
 export enum participation_class {
-  hacker = 'H',
+  participant = 'P',
   mentor = 'M',
   judge = 'J'
 }
@@ -148,6 +148,12 @@ export interface form_data {
   disclaimer_schedule: boolean | null;
   disclaimer_mindset: boolean | null;
   disclaimer_passion: boolean | null;
+  mentor_mentoring_steps: string | null;
+  mentor_previously_mentored?: string | null;
+  mentor_qualified_fields: string | null;
+  judge_invited_by: string | null;
+  judge_judging_steps: string | null;
+  judge_previously_judged: boolean | null;
   id: string;
   first_name: string;
   middle_name?: string | null;
@@ -156,10 +162,9 @@ export interface form_data {
   email: string;
   communications_platform_username?: string | null;
   portfolio: string;
-  phone_number: string;
-  current_city: string;
-  current_country: string;
-  nationality: string;
+  current_city: string | null;
+  current_country: string | null | [];
+  nationality: string | null | [];
   age_group: age_group | null;
   resume?: string | null;
   bio?: string | null;
@@ -172,7 +177,7 @@ export interface form_data {
   disabilities?: disabilities[] | null;
   disability_accommodations?: string | null;
   participation_capacity: participation_capacity | null;
-  participation_class: participation_class | null;
+  participation_class: string | null;
   student_school?: string | null;
   student_field_of_study?: string | null;
   occupation?: string | null;
@@ -184,7 +189,6 @@ export interface form_data {
   experience_with_xr?: string | null;
   additional_skills: string | null;
   previously_participated?: string | null;
-  previously_mentored?: string | null;
   previous_participation: previous_participation[] | null;
   proficient_languages: string | null;
   participation_role?: participation_role | null;

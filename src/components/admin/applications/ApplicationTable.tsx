@@ -17,6 +17,10 @@ import Modal from '../../Modal';
 import ReviewPage from '../ReviewPage';
 import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 
+interface ApplicationTableProps {
+  type: string;
+}
+
 const ApplicationStatusOptions: {
   label: string;
   value: status;
@@ -43,7 +47,7 @@ const ApplicationStatusOptions: {
   }
 ];
 
-export default function HackerApplicationTable() {
+export default function ApplicationTable({ type }: ApplicationTableProps) {
   const [dialogRow, setDialogRow] = useState<any | void>(undefined);
   const [applications, setApplications] = useState<Application[]>([]);
   const [options, setOptions] = useState<any>({});
@@ -64,7 +68,18 @@ export default function HackerApplicationTable() {
       setLoading(true);
       getAllHackerApplications(session.access_token)
         .then(apps => {
-          const transformedApps = transformApplications(apps, options);
+          const filteredApps = apps.filter((app: any) => {
+            if (type === 'P') {
+              return (
+                app.participation_class === 'P' ||
+                typeof app.participation_class === 'undefined'
+              );
+            } else {
+              return app.participation_class === type;
+            }
+          });
+
+          const transformedApps = transformApplications(filteredApps, options);
           setApplications(transformedApps);
         })
         .finally(() => {
@@ -220,22 +235,26 @@ export default function HackerApplicationTable() {
           </a>
         )
       }),
-      columnHelper.accessor('current_city', {
-        header: () => 'City',
-        cell: info => info.getValue()
-      }),
-      columnHelper.accessor('current_country', {
-        header: () => 'Country',
-        cell: info => info.getValue()
-      }),
-      columnHelper.accessor('nationality', {
-        header: () => 'Nationality',
-        cell: info => info.getValue()
-      }),
-      columnHelper.accessor('age_group', {
-        header: () => 'Age',
-        cell: info => info.getValue()
-      }),
+      ...(type === 'P'
+        ? [
+            columnHelper.accessor('current_city', {
+              header: () => 'City',
+              cell: info => info.getValue()
+            }),
+            columnHelper.accessor('current_country', {
+              header: () => 'Country',
+              cell: info => info.getValue()
+            }),
+            columnHelper.accessor('nationality', {
+              header: () => 'Nationality',
+              cell: info => info.getValue()
+            }),
+            columnHelper.accessor('age_group', {
+              header: () => 'Age',
+              cell: info => info.getValue()
+            })
+          ]
+        : []),
       columnHelper.accessor('submitted_at', {
         header: () => 'Submitted On',
         cell: info =>
@@ -255,7 +274,7 @@ export default function HackerApplicationTable() {
         cell: info => info.getValue()
       })
     ],
-    [columnHelper, onStatusChange, toggleOverlayAndPassData]
+    [columnHelper, onStatusChange, toggleOverlayAndPassData, type] // type is included in the dependency array
   );
 
   return (
