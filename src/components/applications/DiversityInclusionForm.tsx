@@ -163,73 +163,79 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
           />
         )}
       </div>
-
-      <div className="mb-8">
-        <p className="mb-4">
-          Do you identify as a person with disability?{' '}
-          <span className="font-bold text-themeSecondary">*</span>
-        </p>
-        {Object.entries(disabilityIdentityLabels).map(([key, label], index) => (
-          <RadioInput
-            key={key}
-            name="disability_identity"
-            value={key}
-            checked={formData.disability_identity === key}
-            label={label}
-            onChange={handleChange}
-          />
-        ))}
-      </div>
-      {formData.disability_identity === disability_identity.yes && (
+      {formData.participation_class === 'P' && (
         <>
           <div className="mb-8">
             <p className="mb-4">
-              What kind of disability do you experience? Select all that apply.{' '}
+              Do you identify as a person with disability?{' '}
               <span className="font-bold text-themeSecondary">*</span>
             </p>
-            {Object.keys(disabilities).map(key => (
-              <CheckboxInput
-                key={key}
-                name="disabilities"
-                value={disabilities[key as keyof typeof disabilities]}
-                checked={
-                  formData.disabilities?.includes(
-                    disabilities[key as keyof typeof disabilities]
-                  ) || false
-                }
-                onChange={handleChange}
-                label={
-                  disabilitiesLabels[key as keyof typeof disabilitiesLabels]
-                }
-                error={errors.disabilities}
-              />
-            ))}
-            {formData.disabilities?.includes(disabilities.other) && (
-              <TextInput
-                name="disabilities_other"
-                placeholder="Please specify"
-                type="text"
-                value={formData.disabilities_other || ''}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={errors.disabilities_other}
-                valid={!errors.disabilities_other}
-                other={true}
-                required={true}
-              />
+            {Object.entries(disabilityIdentityLabels).map(
+              ([key, label], index) => (
+                <RadioInput
+                  key={key}
+                  name="disability_identity"
+                  value={key}
+                  checked={formData.disability_identity === key}
+                  label={label}
+                  onChange={handleChange}
+                />
+              )
             )}
           </div>
-          <TextAreaInput
-            name="disability_accommodations"
-            placeholder="Enter any accommodations required..."
-            value={formData.disability_accommodations || ''}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={errors.disability_accommodations}
-          >
-            If you are accepted, what disability accommodations would enable you
-            to attend the event? (Optional)
-          </TextAreaInput>
+          {formData.disability_identity === disability_identity.yes && (
+            <>
+              <div className="mb-8">
+                <p className="mb-4">
+                  What kind of disability do you experience? Select all that
+                  apply.{' '}
+                  <span className="font-bold text-themeSecondary">*</span>
+                </p>
+                {Object.keys(disabilities).map(key => (
+                  <CheckboxInput
+                    key={key}
+                    name="disabilities"
+                    value={disabilities[key as keyof typeof disabilities]}
+                    checked={
+                      formData.disabilities?.includes(
+                        disabilities[key as keyof typeof disabilities]
+                      ) || false
+                    }
+                    onChange={handleChange}
+                    label={
+                      disabilitiesLabels[key as keyof typeof disabilitiesLabels]
+                    }
+                    error={errors.disabilities}
+                  />
+                ))}
+                {formData.disabilities?.includes(disabilities.other) && (
+                  <TextInput
+                    name="disabilities_other"
+                    placeholder="Please specify"
+                    type="text"
+                    value={formData.disabilities_other || ''}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={errors.disabilities_other}
+                    valid={!errors.disabilities_other}
+                    other={true}
+                    required={true}
+                  />
+                )}
+              </div>
+              <TextAreaInput
+                name="disability_accommodations"
+                placeholder="Enter any accommodations required..."
+                value={formData.disability_accommodations || ''}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={errors.disability_accommodations}
+              >
+                If you are accepted, what disability accommodations would enable
+                you to attend the event? (Optional)
+              </TextAreaInput>
+            </>
+          )}
         </>
       )}
     </div>

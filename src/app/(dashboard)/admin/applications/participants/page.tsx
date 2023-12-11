@@ -1,9 +1,9 @@
-import HackerApplicationTable from '@/components/admin/applications/HackerApplicationTable';
+import ApplicationTable from '@/components/admin/applications/ApplicationTable';
 
 export default async function Participants() {
   return (
     <div className="pb-8 ">
-      <HackerApplicationTable />
+      <ApplicationTable type="P" />
     </div>
   );
 }

@@ -35,6 +35,8 @@ export default function ReviewPage({
 }) {
   const { data: session, status } = useSession();
 
+  console.log('allInfo', allInfo);
+
   const formatParticipation = (participationType: string) => {
     switch (participationType) {
       case participation_capacity.professional:
@@ -121,47 +123,28 @@ export default function ReviewPage({
   };
 
   const Disclaimers = () => {
-    return (
-      <div className="flex flex-col gap-4 mb-4">
-        <div>
-          We encourage all participants to form new connections with cool
-          creative people that they&apos;ve never worked with before.
-        </div>
-        <div>
-          Please do not apply as a representative for a group, or plan to attend
-          with the condition that your friends or co-workers are accepted.
-        </div>
-        <div>
-          More information will be announced in the Rules as we get closers to
-          the event.
-        </div>
-
-        <div className="flex flex-row items-center gap-4 p-1 bg-blue-50 w-fit">
-          <CheckboxInput
-            checked={true}
-            name={'name'}
-            value=""
-            onChange={() => {}}
-            label={'I understand and accept the above disclaimer'}
-          />
-        </div>
-
-        <div className="flex flex-col gap-4 py-2 border-t-2 border-gray-200">
+    if (
+      allInfo.participation_class === 'P' ||
+      allInfo.participation_class === 'Participant' ||
+      typeof allInfo.participation_class === 'undefined'
+    ) {
+      return (
+        <div className="flex flex-col gap-4 mb-4">
           <div>
-            Our participants are literally building the future by making their
-            work available for further development.
+            We encourage all participants to form new connections with cool
+            creative people that they&apos;ve never worked with before.
           </div>
           <div>
-            Therefore, all projects build during the hackathon will be released
-            under an open source license (see{' '}
-            <span className="text-blue-500 hover:cursor-pointer hover:underline">
-              <a href="https://opensource.org" target="_blank">
-                opensource.org
-              </a>
-            </span>
-            )
+            Please do not apply as a representative for a group, or plan to
+            attend with the condition that your friends or co-workers are
+            accepted.
           </div>
-          <div className="flex flex-row items-center gap-2 p-1 bg-blue-50 w-fit">
+          <div>
+            More information will be announced in the Rules as we get closers to
+            the event.
+          </div>
+
+          <div className="flex flex-row items-center gap-4 p-1 bg-blue-50 w-fit">
             <CheckboxInput
               checked={true}
               name={'name'}
@@ -170,9 +153,82 @@ export default function ReviewPage({
               label={'I understand and accept the above disclaimer'}
             />
           </div>
+
+          <div className="flex flex-col gap-4 py-2 border-t-2 border-gray-200">
+            <div>
+              Our participants are literally building the future by making their
+              work available for further development.
+            </div>
+            <div>
+              Therefore, all projects build during the hackathon will be
+              released under an open source license (see{' '}
+              <span className="text-blue-500 hover:cursor-pointer hover:underline">
+                <a href="https://opensource.org" target="_blank">
+                  opensource.org
+                </a>
+              </span>
+              )
+            </div>
+            <div className="flex flex-row items-center gap-2 p-1 bg-blue-50 w-fit">
+              <CheckboxInput
+                checked={true}
+                name={'name'}
+                value=""
+                onChange={() => {}}
+                label={'I understand and accept the above disclaimer'}
+              />
+            </div>
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else if (
+      allInfo.participation_class === 'M' ||
+      allInfo.participation_class === 'Mentor'
+    ) {
+      return (
+        <div className="flex flex-col gap-4 mb-4">
+          <div>
+            We&apos;d like to make sure you understand our expectations for
+            mentors. We are looking for someone who:
+          </div>
+
+          <div className="border border-gray-200 border-1"></div>
+          <div className="flex flex-row items-center gap-4 p-1">
+            <CheckboxInput
+              checked={true}
+              name={'name'}
+              value=""
+              onChange={() => {}}
+              label="Is willing to work on a hackers schedule. Our participants are so
+              committed XR innovation, that they often work well into the night.
+              We'd love mentors to be with them on that journey - especially the
+              evening before the deadline."
+            />
+          </div>
+          <div className="border border-gray-200 border-1"></div>
+          <div className="flex flex-row items-center gap-2 p-1">
+            <CheckboxInput
+              checked={true}
+              name={'name'}
+              value=""
+              onChange={() => {}}
+              label="Has a solutions-driven mindset. Our participants are literally
+                building the future in 5 days. They need all the help they can get."
+            />
+          </div>
+          <div className="border border-gray-200 border-1"></div>
+          <div className="flex flex-row items-center gap-2 p-1">
+            <CheckboxInput
+              checked={true}
+              name={'name'}
+              value=""
+              onChange={() => {}}
+              label="Has a contagious passion for spatial computing"
+            />
+          </div>
+        </div>
+      );
+    }
   };
 
   const BasicInfoAndDem = () => {
@@ -194,13 +250,16 @@ export default function ReviewPage({
           label="Link to your porfolio"
           value={allInfo.portfolio}
         />
-        <div>
-          <div>Resume</div>
-          <div className="flex flex-row items-center ml-2">
-            <AttachFileIcon className="w-4 text-gray-400" />
-            <div>{acceptedFiles && acceptedFiles[0].name}</div>
-          </div>
-        </div>
+        {allInfo.participation_class === 'P' ||
+          (typeof allInfo.participation_class === 'undefined' && (
+            <div>
+              <div>Resume</div>
+              <div className="flex flex-row items-center ml-2">
+                <AttachFileIcon className="w-4 text-gray-400" />
+                <div>{acceptedFiles && acceptedFiles[0].name}</div>
+              </div>
+            </div>
+          ))}
       </div>
     );
   };
@@ -268,136 +327,193 @@ export default function ReviewPage({
               : allInfo.race_ethnic_group
           }
         />
-
-        <LabelAndValue
-          label={'Disability Status'}
-          value={
-            Array.isArray(allInfo.disabilities)
-              ? allInfo.disabilities.map((enumValue: string) =>
-                  getLabelFromEnumValue(
-                    enumValue,
-                    disabilities,
-                    disabilitiesLabels
-                  )
-                )
-              : allInfo.disabilities
-          }
-        />
+        {allInfo.participation_class === 'P' ||
+          (typeof allInfo.participation_class === 'undefined' && (
+            <LabelAndValue
+              label={'Disability Status'}
+              value={
+                Array.isArray(allInfo.disabilities)
+                  ? allInfo.disabilities.map((enumValue: string) =>
+                      getLabelFromEnumValue(
+                        enumValue,
+                        disabilities,
+                        disabilitiesLabels
+                      )
+                    )
+                  : allInfo.disabilities
+              }
+            />
+          ))}
       </div>
     );
   };
 
   const ExperienceAndInterestSection = () => {
-    return (
-      <div className="flex flex-col gap-4">
-        {/* Experience and Interest content */}
-        <LabelAndValue
-          label={'Which of the following best describes you?'}
-          value={
-            (formatParticipation(allInfo.participation_capacity) as string) ||
-            allInfo.participation_capacity
-          }
-        />
-
-        <div>
-          {allInfo.participation_capacity == participation_capacity.student ||
-            (allInfo.participation_capacity == 'Student' && (
-              <div className="flex flex-col gap-4">
-                <LabelAndValue
-                  label={'What is the name of your school?'}
-                  value={allInfo.student_school}
-                />
-                <LabelAndValue
-                  label={
-                    'If you are attending a higher education institution, what is your field of study?'
-                  }
-                  value={allInfo.student_field_of_study}
-                />
-              </div>
-            ))}
-          {allInfo.participation_capacity == participation_capacity.hobbyist ||
-            allInfo.participation_capacity ==
-              participation_capacity.professional ||
-            ((allInfo.participation_capacity == 'Hobbist' ||
-              allInfo.participation_capacity == 'Professional') && (
-              <div className="flex flex-col gap-4">
-                <LabelAndValue
-                  label={'What is your current occupation?'}
-                  value={allInfo.occupation}
-                />
-                <LabelAndValue
-                  label={'What company do you currently work for?'}
-                  value={allInfo.employer}
-                />
-                <LabelAndValue
-                  label={'What industry represents your expertise?'}
-                  value={allInfo.industry}
-                />
-              </div>
-            ))}
-        </div>
-        <div>
+    if (
+      allInfo.participation_class === 'P' ||
+      typeof allInfo.participation_class === 'undefined'
+    ) {
+      return (
+        <div className="flex flex-col gap-4">
+          {/* Experience and Interest content */}
           <LabelAndValue
-            label={'Have you participated in the MIT RH Hack before?'}
-            value={allInfo.previously_participated === 'true' ? 'Yes' : 'No'}
+            label={'Which of the following best describes you?'}
+            value={
+              (formatParticipation(allInfo.participation_capacity) as string) ||
+              allInfo.participation_capacity
+            }
           />
-          {allInfo.previously_participated && (
-            <>
-              <br />
+
+          <div>
+            {allInfo.participation_capacity == participation_capacity.student ||
+              (allInfo.participation_capacity == 'Student' && (
+                <div className="flex flex-col gap-4">
+                  <LabelAndValue
+                    label={'What is the name of your school?'}
+                    value={allInfo.student_school}
+                  />
+                  <LabelAndValue
+                    label={
+                      'If you are attending a higher education institution, what is your field of study?'
+                    }
+                    value={allInfo.student_field_of_study}
+                  />
+                </div>
+              ))}
+            {allInfo.participation_capacity ==
+              participation_capacity.hobbyist ||
+              allInfo.participation_capacity ==
+                participation_capacity.professional ||
+              ((allInfo.participation_capacity == 'Hobbist' ||
+                allInfo.participation_capacity == 'Professional') && (
+                <div className="flex flex-col gap-4">
+                  <LabelAndValue
+                    label={'What is your current occupation?'}
+                    value={allInfo.occupation}
+                  />
+                  <LabelAndValue
+                    label={'What company do you currently work for?'}
+                    value={allInfo.employer}
+                  />
+                  <LabelAndValue
+                    label={'What industry represents your expertise?'}
+                    value={allInfo.industry}
+                  />
+                </div>
+              ))}
+          </div>
+          <div>
+            <LabelAndValue
+              label={'Have you participated in the MIT RH Hack before?'}
+              value={allInfo.previously_participated === 'true' ? 'Yes' : 'No'}
+            />
+            {allInfo.previously_participated && (
+              <>
+                <br />
+                <LabelAndValue
+                  label={'What years did you previously participate?'}
+                  value={
+                    Array.isArray(allInfo.previous_participation)
+                      ? allInfo.previous_participation.map(
+                          (enumValue: string) =>
+                            getLabelFromEnumValue(
+                              enumValue,
+                              previous_participation,
+                              previousParticipationLabels
+                            )
+                        )
+                      : allInfo.previous_participation
+                  }
+                />
+              </>
+            )}
+          </div>
+          <div>
+            {allInfo.participation_role === participation_role.designer && (
               <LabelAndValue
-                label={'What years did you previously participate?'}
+                label={'What design skills are you proficient in?'}
                 value={
-                  Array.isArray(allInfo.previous_participation)
-                    ? allInfo.previous_participation.map((enumValue: string) =>
+                  Array.isArray(allInfo.digital_designer_skills)
+                    ? allInfo.digital_designer_skills.map((enumValue: string) =>
                         getLabelFromEnumValue(
                           enumValue,
-                          previous_participation,
-                          previousParticipationLabels
+                          digital_designer_skills,
+                          DesignSkillsLabels
                         )
                       )
-                    : allInfo.previous_participation
+                    : allInfo.digital_designer_skills
                 }
               />
-            </>
-          )}
-        </div>
-        <div>
-          {allInfo.participation_role === participation_role.designer && (
-            <LabelAndValue
-              label={'What design skills are you proficient in?'}
-              value={
-                Array.isArray(allInfo.digital_designer_skills)
-                  ? allInfo.digital_designer_skills.map((enumValue: string) =>
-                      getLabelFromEnumValue(
-                        enumValue,
-                        digital_designer_skills,
-                        DesignSkillsLabels
-                      )
-                    )
-                  : allInfo.digital_designer_skills
-              }
-            />
-          )}
-          <br />
-          {allInfo.participation_role === participation_role.specialist && (
-            <LabelAndValue
-              label={'What are your areas or skills of expertise?'}
-              value={allInfo.specialized_expertise}
-            />
-          )}
-          <div className="flex flex-col gap-2">
-            <LabelAndValue
-              label={
-                'Can you demonstrate familiarity with any tools related to design or development for XR? If so, please list.'
-              }
-              value={allInfo.experience_with_xr}
-            />
+            )}
             <br />
-            <br />
+            {allInfo.participation_role === participation_role.specialist && (
+              <LabelAndValue
+                label={'What are your areas or skills of expertise?'}
+                value={allInfo.specialized_expertise}
+              />
+            )}
+            <div className="flex flex-col gap-2">
+              <LabelAndValue
+                label={
+                  'Can you demonstrate familiarity with any tools related to design or development for XR? If so, please list.'
+                }
+                value={allInfo.experience_with_xr}
+              />
+              <br />
+              <br />
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    } else if (
+      allInfo.participation_class === 'M' ||
+      allInfo.participation_class === 'Mentor'
+    ) {
+      return (
+        <div className="flex flex-col gap-4">
+          <div>
+            <div className="flex flex-col gap-4">
+              <LabelAndValue
+                label={'What is your current occupation?'}
+                value={allInfo.occupation}
+              />
+              <LabelAndValue
+                label={'What company do you currently work for?'}
+                value={allInfo.employer}
+              />
+              <LabelAndValue
+                label={'What industry represents your expertise?'}
+                value={allInfo.industry}
+              />
+            </div>
+          </div>
+          <div>
+            <LabelAndValue
+              label={'List the areas you are most qualified to mentor in.'}
+              value={allInfo.mentor_qualified_fields}
+            />
+          </div>
+          <div>
+            <LabelAndValue
+              label={
+                'Walk us through the steps you would take to help someone debug an issue.'
+              }
+              value={allInfo.mentor_mentoring_steps}
+            />
+          </div>
+          <div>
+            <LabelAndValue
+              label={
+                'Have you mentored a hackathon before? Please note that this is not a requirement to become a mentor.'
+              }
+              value={
+                allInfo.mentor_previously_mentored === 'true' ? 'Yes' : 'No'
+              }
+            />
+          </div>
+        </div>
+      );
+    }
   };
 
   const ThematicSection = () => {
@@ -547,15 +663,26 @@ export default function ReviewPage({
           </>
         )}
         <div className="relative flex flex-col gap-4">
-          {sections.map(section => (
-            <div
-              key={section.label}
-              className="flex flex-col gap-2 pb-4 border-b-2 border-gray-400"
-            >
-              <div className="text-xl font-bold">{section.label}</div>
-              {section.component}
-            </div>
-          ))}
+          {sections.map(section => {
+            if (
+              (section.label === 'Thematic' ||
+                section.label === 'Demographics') &&
+              (allInfo.participation_class !== 'P' ||
+                typeof allInfo.participation_class === 'undefined')
+            ) {
+              return null;
+            }
+
+            return (
+              <div
+                key={section.label}
+                className="flex flex-col gap-2 pb-4 border-b-2 border-gray-400"
+              >
+                <div className="text-xl font-bold">{section.label}</div>
+                {section.component}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

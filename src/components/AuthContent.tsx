@@ -55,7 +55,13 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
       router.replace('/');
     }
 
-    if (!session && pathname !== '/apply' && pathname !== '/signin') {
+    if (
+      !session &&
+      pathname !== '/apply' &&
+      pathname !== '/apply/mentor' &&
+      // pathname !== '/apply/judge' &&
+      pathname !== '/signin'
+    ) {
       router.replace('/apply');
       return;
     }
