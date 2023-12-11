@@ -36,7 +36,7 @@ export const ageGroupLabels = {
   prefer_not_to_say: 'I prefer not to say'
 };
 
-const PersonalInformationForm: React.FC<FormProps> = ({
+const HackerPersonalInformationForm: React.FC<FormProps> = ({
   formData,
   setFormData,
   handleChange,
@@ -275,4 +275,4 @@ const PersonalInformationForm: React.FC<FormProps> = ({
   );
 };
 
-export default PersonalInformationForm;
+export default HackerPersonalInformationForm;

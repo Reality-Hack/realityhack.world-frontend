@@ -64,6 +64,12 @@ export enum participation_capacity {
   hobbyist = 'H'
 }
 
+export enum participation_class {
+  hacker = 'H',
+  mentor = 'M',
+  judge = 'J'
+}
+
 export enum previous_participation {
   _2016 = 'A',
   _2017 = 'B',
@@ -139,6 +145,9 @@ export type option_value = {
 export interface form_data {
   disclaimer_groups: boolean | null;
   disclaimer_open_source: boolean | null;
+  disclaimer_schedule: boolean | null;
+  disclaimer_mindset: boolean | null;
+  disclaimer_passion: boolean | null;
   id: string;
   first_name: string;
   middle_name?: string | null;
@@ -147,6 +156,7 @@ export interface form_data {
   email: string;
   communications_platform_username?: string | null;
   portfolio: string;
+  phone_number: string;
   current_city: string;
   current_country: string;
   nationality: string;
@@ -162,14 +172,19 @@ export interface form_data {
   disabilities?: disabilities[] | null;
   disability_accommodations?: string | null;
   participation_capacity: participation_capacity | null;
+  participation_class: participation_class | null;
   student_school?: string | null;
   student_field_of_study?: string | null;
   occupation?: string | null;
+  qualification?: string | null;
+  expertise?: string | null;
+  walkthrough?: string | null;
   employer?: string | null;
   status?: status | null;
   experience_with_xr?: string | null;
   additional_skills: string | null;
   previously_participated?: string | null;
+  previously_mentored?: string | null;
   previous_participation: previous_participation[] | null;
   proficient_languages: string | null;
   participation_role?: participation_role | null;

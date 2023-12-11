@@ -7,7 +7,7 @@ import { CheckboxInput, validateField } from '@/components/Inputs';
 import ClosingForm from '@/components/applications/ClosingForm';
 import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
 import ExperienceInterestForm from '@/components/applications/ExperienceInterestForm';
-import PersonalInformationForm from '@/components/applications/PersonalInformationForm';
+import HackerPersonalInformationForm from '@/components/applications/HackerPersonalInformationForm';
 import ThematicForm from '@/components/applications/ThematicForm';
 import AnyApp from '@/components/applications/applicationAny';
 import {
@@ -55,11 +55,7 @@ const Application: NextPage = ({}: any) => {
       'nationality',
       'age_group'
     ],
-    'DIVERSITY & INCLUSION': [
-      'gender_identity',
-      'race_ethnic_group',
-      'disability_identity'
-    ],
+    'DIVERSITY & INCLUSION': ['gender_identity', 'race_ethnic_group'],
     EXPERIENCE: [
       'participation_capacity',
       'participation_role',
@@ -518,7 +514,7 @@ const Application: NextPage = ({}: any) => {
   const tabs = [
     <WelcomeTab key={0} />,
     <DisclaimerTab key={1} />,
-    <PersonalInformationForm
+    <HackerPersonalInformationForm
       key={2}
       formData={formData}
       setFormData={setFormData}
