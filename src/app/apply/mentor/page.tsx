@@ -331,8 +331,8 @@ const MentorApp: NextPage = ({}: any) => {
         <div>
           Is willing to work on a hackers schedule. Our participants are so
           committed XR innovation, that they often work well into the night.
-          We'd love mentors to be with them on that journey - especially the
-          evening before the deadline.
+          We&apos;d love mentors to be with them on that journey - especially
+          the evening before the deadline.
         </div>
         <div className="pt-4">
           <CheckboxInput
