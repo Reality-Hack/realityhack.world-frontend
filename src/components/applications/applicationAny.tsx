@@ -98,11 +98,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
       }
     });
 
-    // Test for mentor application
-    // updatedPayload.current_country = ['US'];
-    // updatedPayload.disabilities = ['G'];
-    // updatedPayload.nationality = ['US'];
-
     try {
       await createApplication(updatedPayload);
       // Move to next tab with user confirmation
@@ -136,7 +131,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   const isOnSubmitTab = selectedTab === tabs.length - 2;
   const isOnLastTab = selectedTab === tabs.length - 1;
 
-  console.log('tabs.length: ', tabs.length);
   return (
     <Layout>
       <div

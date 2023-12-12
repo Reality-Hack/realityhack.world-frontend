@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 'use client';
 
-import { CheckboxInput, validateField, RadioInput } from '@/components/Inputs';
+import { CheckboxInput, validateField } from '@/components/Inputs';
 import ClosingForm from '@/components/applications/ClosingForm';
 import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
-import MentorSkillsExpertiseForm from '@/components/applications/MentorSkillsExpertiseForm';
+import SkillsExpertiseForm from '@/components/applications/SkillsExpertiseForm';
 import AdditionalPersonalInformationForm from '@/components/applications/AdditionalPersonalInformationForm';
 import AnyApp from '@/components/applications/applicationAny';
 import type { NextPage } from 'next';
@@ -32,22 +32,13 @@ const MentorApp: NextPage = ({}: any) => {
     email: '',
     communications_platform_username: '',
     portfolio: '',
-    nationality: [],
-    current_country: [],
-    current_city: null,
-    age_group: null,
-    resume: null,
     gender_identity: [],
     race_ethnic_group: [],
     participation_capacity: null,
-    student_school: null,
-    student_field_of_study: null,
-    digital_designer_skills: [],
     specialized_expertise: null,
     occupation: null,
     qualification: null,
     expertise: null,
-    walkthrough: null,
     employer: null,
     industry: [],
     previously_participated: null,
@@ -55,23 +46,21 @@ const MentorApp: NextPage = ({}: any) => {
     participation_role: null,
     proficient_languages: '',
     additional_skills: '',
-    theme_essay: '',
-    theme_essay_follow_up: '',
     hardware_hack_interest: null,
     heard_about_us: [],
     outreach_groups: null,
     gender_identity_other: null,
     race_ethnic_group_other: null,
-    digital_designer_skills_other: null,
     heard_about_us_other: null,
-    current_country_option: null,
-    nationality_option: null,
     industry_option: null,
+    current_country: [],
+    nationality: [],
+    digital_designer_skills: [],
     disabilities: []
   });
 
   const [options, setOptions] = useState<any>(null);
-  const [requiredFields, setRequiredFields] = useState<
+  const [requiredFields, _setRequiredFields] = useState<
     Record<string, string[]>
   >({
     WELCOME: [''],
@@ -331,15 +320,15 @@ const MentorApp: NextPage = ({}: any) => {
         <div>
           Is willing to work on a hackers schedule. Our participants are so
           committed XR innovation, that they often work well into the night.
-          We'd love mentors to be with them on that journey - especially the
-          evening before the deadline.
+          We&apos;d love mentors to be with them on that journey - especially
+          the evening before the deadline.
         </div>
         <div className="pt-4">
           <CheckboxInput
             name="disclaimer_schedule"
             value={formData.disclaimer_schedule?.toString() || ''}
             checked={!!formData.disclaimer_schedule}
-            label="I understand and accept the above disclaimer."
+            label="Yes, I can do that."
             onChange={handleChange}
             onBlur={handleBlur}
             error={errors.disclaimer_schedule}
@@ -355,7 +344,7 @@ const MentorApp: NextPage = ({}: any) => {
             name="disclaimer_mindset"
             value={formData.disclaimer_mindset?.toString() || ''}
             checked={!!formData.disclaimer_mindset}
-            label="I understand and accept the above disclaimer."
+            label="Yes, I can do that."
             onChange={handleChange}
             onBlur={handleBlur}
             error={errors.disclaimer_mindset}
@@ -368,7 +357,7 @@ const MentorApp: NextPage = ({}: any) => {
             name="disclaimer_passion"
             value={formData.disclaimer_passion?.toString() || ''}
             checked={!!formData.disclaimer_passion}
-            label="I understand and accept the above disclaimer."
+            label="Yes, I can do that."
             onChange={handleChange}
             onBlur={handleBlur}
             error={errors.disclaimer_passion}
@@ -401,7 +390,7 @@ const MentorApp: NextPage = ({}: any) => {
       handleChange={handleChange}
       errors={errors}
     />,
-    <MentorSkillsExpertiseForm
+    <SkillsExpertiseForm
       key={4}
       formData={formData}
       setFormData={setFormData}

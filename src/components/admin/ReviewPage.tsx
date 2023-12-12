@@ -33,9 +33,7 @@ export default function ReviewPage({
   allInfo: any;
   acceptedFiles?: File[];
 }) {
-  const { data: session, status } = useSession();
-
-  console.log('allInfo', allInfo);
+  const { data: session } = useSession();
 
   const formatParticipation = (participationType: string) => {
     switch (participationType) {
@@ -509,6 +507,52 @@ export default function ReviewPage({
               value={
                 allInfo.mentor_previously_mentored === 'true' ? 'Yes' : 'No'
               }
+            />
+          </div>
+        </div>
+      );
+    } else if (
+      allInfo.participation_class === 'J' ||
+      allInfo.participation_class === 'Judge'
+    ) {
+      return (
+        <div className="flex flex-col gap-4">
+          <div>
+            <div className="flex flex-col gap-4">
+              <LabelAndValue
+                label={'What is your current occupation?'}
+                value={allInfo.occupation}
+              />
+              <LabelAndValue
+                label={'What company do you currently work for?'}
+                value={allInfo.employer}
+              />
+              <LabelAndValue
+                label={'What industry represents your expertise?'}
+                value={allInfo.industry}
+              />
+            </div>
+          </div>
+          <div>
+            <LabelAndValue
+              label={'Walk us through how you would judge a hackathon project.'}
+              value={allInfo.judge_judging_steps}
+            />
+          </div>
+          <div>
+            <LabelAndValue
+              label={
+                'If you were invited to be a judge by someone from MIT Reality Hack, please enter their name:'
+              }
+              value={allInfo.judge_invited_by}
+            />
+          </div>
+          <div>
+            <LabelAndValue
+              label={
+                'Have you judged a hackathon before? Please note that this is not a requirement to become a judge.'
+              }
+              value={allInfo.judge_previously_judged === 'true' ? 'Yes' : 'No'}
             />
           </div>
         </div>

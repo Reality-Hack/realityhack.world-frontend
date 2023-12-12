@@ -1,38 +1,24 @@
 /* eslint-disable no-console */
 'use client';
 
-import { CheckboxInput, validateField, RadioInput } from '@/components/Inputs';
+import { validateField } from '@/components/Inputs';
 import ClosingForm from '@/components/applications/ClosingForm';
 import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
-import MentorSkillsExpertiseForm from '@/components/applications/MentorSkillsExpertiseForm';
+import SkillsExpertiseForm from '@/components/applications/SkillsExpertiseForm';
 import AdditionalPersonalInformationForm from '@/components/applications/AdditionalPersonalInformationForm';
-import ThematicForm from '@/components/applications/ThematicForm';
 import AnyApp from '@/components/applications/applicationAny';
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  Enums,
-  digital_designer_skills,
-  exemptFields,
-  form_data,
-  gender_identity,
-  heard_about_us,
-  participation_capacity,
-  participation_role,
-  race_ethnic_group
-} from '../../../types/application_form_types';
+import { form_data } from '../../../types/application_form_types';
 import { applicationOptions } from '@/app/api/application';
-import { getSkills } from '@/app/api/skills';
 import ReviewPage from '@/components/admin/ReviewPage';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 const JudgeApp: NextPage = ({}: any) => {
   const [formData, setFormData] = useState<Partial<form_data>>({
-    disclaimer_schedule: null,
-    disclaimer_mindset: null,
-    disclaimer_passion: null,
+    participation_class: 'J',
     judge_invited_by: null,
     judge_judging_steps: null,
     judge_previously_judged: null,
@@ -43,22 +29,13 @@ const JudgeApp: NextPage = ({}: any) => {
     email: '',
     communications_platform_username: '',
     portfolio: '',
-    nationality: '',
-    current_country: '',
-    current_city: '',
-    age_group: null,
-    resume: null,
     gender_identity: [],
     race_ethnic_group: [],
     participation_capacity: null,
-    student_school: null,
-    student_field_of_study: null,
-    digital_designer_skills: [],
     specialized_expertise: null,
     occupation: null,
     qualification: null,
     expertise: null,
-    walkthrough: null,
     employer: null,
     industry: [],
     previously_participated: null,
@@ -66,52 +43,41 @@ const JudgeApp: NextPage = ({}: any) => {
     participation_role: null,
     proficient_languages: '',
     additional_skills: '',
-    theme_essay: '',
-    theme_essay_follow_up: '',
-    hardware_hack_interest: [],
     heard_about_us: [],
     outreach_groups: null,
     gender_identity_other: null,
     digital_designer_skills_other: null,
     heard_about_us_other: null,
-    current_country_option: null,
-    nationality_option: null,
-    industry_option: null
+    industry_option: null,
+    hardware_hack_interest: null,
+    current_country: [],
+    nationality: [],
+    digital_designer_skills: [],
+    disabilities: []
   });
-  const [requiredFields, setRequiredFields] = useState<
+  const [requiredFields, _setRequiredFields] = useState<
     Record<string, string[]>
   >({
     WELCOME: [''],
-    DISCLAIMERS: ['disclaimer_schedule', 'disclaimer_mindset'],
     'PERSONAL INFO': [
       'first_name',
       'last_name',
       'email',
       'pronouns',
-      'communications_platfgsorm_username',
-      'portfolio',
-      'current_city',
-      'current_country',
-      'nationality',
-      'age_group'
+      'communications_platform_username',
+      'portfolio'
     ],
     'DIVERSITY & INCLUSION': ['gender_identity', 'race_ethnic_group'],
-    EXPERIENCE: [
-      'participation_capacity',
-      'participation_role',
-      'previously_participated'
+    'SKILLS & EXPERTISE': [
+      'judge_invited_by',
+      'judge_judging_steps',
+      'judge_previously_judged'
     ],
-    THEMATIC: ['theme_essay', 'theme_essay_follow_up'],
     CLOSING: ['heard_about_us'],
     'REVIEW & SUBMIT': ['']
   });
 
-  const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
-  const [rejectedFiles, setRejectedFiles] = useState<any>(null);
-  const [countries, setCountries] = useState<any>(null);
-  const [nationalities, setNationalities] = useState<any>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [skills, setSkills] = useState<any>(null);
   const [industries, setIndustries] = useState<any>(null);
   const [options, setOptions] = useState<any>(null);
 
@@ -330,82 +296,30 @@ const JudgeApp: NextPage = ({}: any) => {
     </div>
   );
 
-  const DisclaimerTab = () => (
-    <div className="px-4 overflow-y-auto min-h-[496px]">
-      <div className="text-xl font-bold text-purple-900">Disclaimers</div>
-      <div className="flex flex-col gap-4">
-        <div className="pt-8">
-          We&apos;d like to make sure you understand our expectations for
-          mentors. We are looking for someone who:
-        </div>
-        <div>
-          Please do not apply as a representative for a group, or plan to attend
-          with the condition that your friends or co-workers are accepted.
-        </div>
-
-        <div>
-          More information will be announced in the Rules as we get closer to
-          the event.
-        </div>
-
-        <div className="pt-4">
-          <CheckboxInput
-            name="disclaimer_schedule"
-            value={formData.disclaimer_schedule?.toString() || ''}
-            checked={!!formData.disclaimer_schedule}
-            label="Is willing to work on a hackers schedule. Our participants are so committed XR
-            innovation, that they often work well into the night. We'd love mentors to be with
-            them on that journey - especially the evening before the deadline."
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={errors.disclaimer_schedule}
-          />
-        </div>
-        <div className="pt-4">
-          <CheckboxInput
-            name="disclaimer_mindset"
-            value={formData.disclaimer_mindset?.toString() || ''}
-            checked={!!formData.disclaimer_mindset}
-            label="Has a solutions-driven mindset. Our participants are literally building the future
-            in 5 days. They need all the help they can get."
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={errors.disclaimer_mindset}
-          />
-        </div>
-        <div className="pt-4">
-          <CheckboxInput
-            name="disclaimer_passion"
-            value={formData.disclaimer_passion?.toString() || ''}
-            checked={!!formData.disclaimer_passion}
-            label="Has a contagious passion for spatial computing."
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={errors.disclaimer_passion}
-          />
-        </div>
-      </div>
+  const ConfirmationTab = () => (
+    <div className="px-6 h-[256px]">
+      <p>{`Thank you for applying to MIT Reality Hack 2024, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 
   const tabs = [
     <JudgeWelcomeTab key={0} />,
     <AdditionalPersonalInformationForm
-      key={2}
+      key={1}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
     />,
     <DiversityInclusionForm
-      key={3}
+      key={2}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
     />,
-    <MentorSkillsExpertiseForm
-      key={4}
+    <SkillsExpertiseForm
+      key={3}
       formData={formData}
       setFormData={setFormData}
       handleChange={handleChange}
@@ -414,21 +328,20 @@ const JudgeApp: NextPage = ({}: any) => {
       industries={industries}
     />,
     <ClosingForm
-      key={6}
+      key={4}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}
       errors={errors}
     />,
-    <ReviewPage allInfo={formData} acceptedFiles={acceptedFiles} />
+    <ReviewPage key={5} allInfo={formData} />,
+    <ConfirmationTab key={6} />
   ];
   const tabNames = [
     'WELCOME',
-    'DISCLAIMERS',
     'PERSONAL INFO',
     'DIVERSITY & INCLUSION',
     'SKILLS & EXPERTISE',
-    'MENTOR EXPERIENCE',
     'CLOSING',
     'REVIEW & SUBMIT'
   ];
@@ -441,7 +354,6 @@ const JudgeApp: NextPage = ({}: any) => {
       AppType="Judge"
       formData={formData}
       isTabValid={isTabValid}
-      acceptedFiles={acceptedFiles}
     />
   );
 };

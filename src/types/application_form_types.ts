@@ -153,7 +153,7 @@ export interface form_data {
   mentor_qualified_fields: string | null;
   judge_invited_by: string | null;
   judge_judging_steps: string | null;
-  judge_previously_judged: boolean | null;
+  judge_previously_judged: string | null;
   id: string;
   first_name: string;
   middle_name?: string | null;
