@@ -22,17 +22,15 @@ import {
 } from '@/types/application_form_types';
 import type { NextPage } from 'next';
 import Link from 'next/link';
-import { getSkills } from '../api/skills';
 import { applicationOptions } from '../api/application';
 import ReviewPage from '@/components/admin/ReviewPage';
 import { useSession } from 'next-auth/react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
 
 const Application: NextPage = ({}: any) => {
   const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
   const [rejectedFiles, setRejectedFiles] = useState<any>(null);
-  const [skills, setSkills] = useState<any>(null);
   const [countries, setCountries] = useState<any>(null);
   const [nationalities, setNationalities] = useState<any>(null);
   const [industries, setIndustries] = useState<any>(null);
@@ -180,14 +178,12 @@ const Application: NextPage = ({}: any) => {
 
   useEffect(() => {
     const getData = async () => {
-      const data = await getSkills();
       const options = await applicationOptions(formData);
       setOptions(options);
       console.log('options: ', options);
       setCountries(options.actions.POST.current_country.choices);
       setNationalities(options.actions.POST.nationality.choices);
       setIndustries(options.actions.POST.industry.choices);
-      setSkills(data);
     };
     getData();
   }, []);

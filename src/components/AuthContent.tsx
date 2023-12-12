@@ -59,7 +59,7 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
       !session &&
       pathname !== '/apply' &&
       pathname !== '/apply/mentor' &&
-      // pathname !== '/apply/judge' &&
+      pathname !== '/apply/judge' &&
       pathname !== '/signin'
     ) {
       router.replace('/apply');

@@ -1,4 +1,4 @@
-import ApplicationTable from '../../../../../components/admin/applications/ApplicationTable';
+import ApplicationTable from '@/components/admin/applications/ApplicationTable';
 
 export default async function Participants() {
   return (
