@@ -702,7 +702,7 @@ export default function ReviewPage({
               Review & Submit
             </div>
             <div className="mb-8 text-sm">
-              Before submitting
+              Before submitting{' '}
               {allInfo.participation_class === 'P'
                 ? 'your application, '
                 : 'the form, '}

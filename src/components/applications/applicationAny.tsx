@@ -126,7 +126,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   const isOnSubmitTab = selectedTab === tabs.length - 2;
   const isOnLastTab = selectedTab === tabs.length - 1;
 
-  console.log('tabs.length: ', tabs.length);
   return (
     <Layout>
       <div
