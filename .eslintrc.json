@@ -1,6 +1,7 @@
 {
   "extends": ["next", "next/core-web-vitals", "prettier"],
   "plugins": ["prettier"],
+  "ignorePatterns": ["src/types/schema.d.ts"],
   "rules": {
     "prettier/prettier": "warn",
     "no-console": "warn",
