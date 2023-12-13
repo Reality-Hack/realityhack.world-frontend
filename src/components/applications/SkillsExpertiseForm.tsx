@@ -167,7 +167,7 @@ const SkillsExpertiseForm: React.FC<FormProps> = ({
           <div className="mb-8">
             <TextInput
               name="judge_invited_by"
-              placeholder="add name"
+              placeholder="Enter name"
               value={formData.judge_invited_by || ''}
               onChange={handleChange}
               error={errors.judge_invited_by}
@@ -176,7 +176,6 @@ const SkillsExpertiseForm: React.FC<FormProps> = ({
             >
               If you were invited to be a judge by someone from MIT Reality
               Hack, please enter their name:{' '}
-              <span className="font-bold text-themeSecondary">*</span>
             </TextInput>
           </div>
           <div className="mb-8">

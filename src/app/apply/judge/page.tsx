@@ -69,11 +69,13 @@ const JudgeApp: NextPage = ({}: any) => {
     ],
     'DIVERSITY & INCLUSION': ['gender_identity', 'race_ethnic_group'],
     'SKILLS & EXPERTISE': [
-      'judge_invited_by',
+      'occupation',
+      'employer',
+      'industry',
       'judge_judging_steps',
       'judge_previously_judged'
     ],
-    CLOSING: ['heard_about_us'],
+    CLOSING: [''],
     'REVIEW & SUBMIT': ['']
   });
 
@@ -298,7 +300,7 @@ const JudgeApp: NextPage = ({}: any) => {
 
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
-      <p>{`Thank you for applying to MIT Reality Hack 2024, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+      <p>{`Thank you for submitting your interest to be a Judge at MIT Reality Hack 2024, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 

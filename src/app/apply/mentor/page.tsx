@@ -86,7 +86,7 @@ const MentorApp: NextPage = ({}: any) => {
       'mentor_mentoring_steps',
       'mentor_previously_mentored'
     ],
-    CLOSING: ['heard_about_us'],
+    CLOSING: [''],
     'REVIEW & SUBMIT': ['']
   });
 
@@ -369,7 +369,7 @@ const MentorApp: NextPage = ({}: any) => {
 
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
-      <p>{`Thank you for applying to MIT Reality Hack 2024, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+      <p>{`Thank you for submitting your interest to be a Mentor at MIT Reality Hack 2024, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 

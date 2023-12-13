@@ -5,12 +5,7 @@ import type { NextPage } from 'next';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Layout from '@/components/HotkeyLayout';
-import { form_data, disabilities } from '../../types/application_form_types';
-import {
-  createApplication,
-  fileUpload,
-  patchFileUpload
-} from '@/app/api/application';
+import { createApplication, fileUpload } from '@/app/api/application';
 
 interface AnyAppProps {
   tabs: React.ReactNode[];
@@ -98,11 +93,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
       }
     });
 
-    // Test for mentor application
-    // updatedPayload.current_country = ['US'];
-    // updatedPayload.disabilities = ['G'];
-    // updatedPayload.nationality = ['US'];
-
     try {
       await createApplication(updatedPayload);
       // Move to next tab with user confirmation
@@ -152,7 +142,10 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
             </h1>
             <h2 className="text-2xl font-bold leading-8 text-center text-themeYellow drop-shadow-md">
               {' '}
-              {AppType} Application
+              {AppType}{' '}
+              {formData && formData.formData.participation_class === 'P'
+                ? 'Application'
+                : 'Interest Form'}
             </h2>
           </div>
         </div>
