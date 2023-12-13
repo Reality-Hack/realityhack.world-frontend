@@ -124,7 +124,7 @@ export default function ReviewPage({
     if (
       allInfo.participation_class === 'P' ||
       allInfo.participation_class === 'Participant' ||
-      typeof allInfo.participation_class === 'undefined'
+      typeof allInfo.participation_class === undefined
     ) {
       return (
         <div className="flex flex-col gap-4 mb-4">
@@ -249,7 +249,7 @@ export default function ReviewPage({
           value={allInfo.portfolio}
         />
         {allInfo.participation_class === 'P' ||
-          (typeof allInfo.participation_class === 'undefined' && (
+          (typeof allInfo.participation_class === undefined && (
             <div>
               <div>Resume</div>
               <div className="flex flex-row items-center ml-2">
@@ -326,7 +326,7 @@ export default function ReviewPage({
           }
         />
         {allInfo.participation_class === 'P' ||
-          (typeof allInfo.participation_class === 'undefined' && (
+          (typeof allInfo.participation_class === undefined && (
             <LabelAndValue
               label={'Disability Status'}
               value={
@@ -349,7 +349,7 @@ export default function ReviewPage({
   const ExperienceAndInterestSection = () => {
     if (
       allInfo.participation_class === 'P' ||
-      typeof allInfo.participation_class === 'undefined'
+      typeof allInfo.participation_class === undefined
     ) {
       return (
         <div className="flex flex-col gap-4">
@@ -674,6 +674,8 @@ export default function ReviewPage({
     );
   };
 
+  console.log(allInfo);
+
   const sections = [
     { label: 'Disclaimers', component: <Disclaimers /> },
     { label: 'Contact and Personal Info ', component: <BasicInfoAndDem /> },
@@ -716,7 +718,7 @@ export default function ReviewPage({
               (section.label === 'Thematic' ||
                 section.label === 'Demographics') &&
               (allInfo.participation_class !== 'P' ||
-                typeof allInfo.participation_class === 'undefined')
+                typeof allInfo.participation_class === undefined)
             ) {
               return null;
             }
