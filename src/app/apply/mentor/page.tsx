@@ -288,7 +288,7 @@ const MentorApp: NextPage = ({}: any) => {
         <div className="py-4">
           For general inquiries, contact{' '}
           <Link href="team@mitrealityhack.com">
-            <span className="text-themePrimary">team@mitrealityhack.com</span>
+            <span className="text-themePrimary">jared@mitrealityhack.com</span>
           </Link>
           .
         </div>
