@@ -1,32 +1,20 @@
 /* eslint-disable no-console */
 'use client';
 
-import { CheckboxInput, validateField, RadioInput } from '@/components/Inputs';
+import { applicationOptions } from '@/app/api/application';
+import { CheckboxInput, validateField } from '@/components/Inputs';
+import ReviewPage from '@/components/admin/ReviewPage';
+import AdditionalPersonalInformationForm from '@/components/applications/AdditionalPersonalInformationForm';
 import ClosingForm from '@/components/applications/ClosingForm';
 import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
 import MentorSkillsExpertiseForm from '@/components/applications/MentorSkillsExpertiseForm';
-import AdditionalPersonalInformationForm from '@/components/applications/AdditionalPersonalInformationForm';
-import ThematicForm from '@/components/applications/ThematicForm';
 import AnyApp from '@/components/applications/applicationAny';
 import type { NextPage } from 'next';
-import Link from 'next/link';
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  Enums,
-  digital_designer_skills,
-  exemptFields,
-  form_data,
-  gender_identity,
-  heard_about_us,
-  participation_capacity,
-  participation_role,
-  race_ethnic_group
-} from '../../../types/application_form_types';
-import { applicationOptions } from '@/app/api/application';
-import { getSkills } from '@/app/api/skills';
-import ReviewPage from '@/components/admin/ReviewPage';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import React, { useCallback, useEffect, useState } from 'react';
+import { form_data } from '../../../types/application_form_types';
 
 const JudgeApp: NextPage = ({}: any) => {
   const [formData, setFormData] = useState<Partial<form_data>>({
