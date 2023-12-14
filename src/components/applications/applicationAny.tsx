@@ -1,16 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import type { NextPage } from 'next';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+import { createApplication, fileUpload } from '@/app/api/application';
 import Layout from '@/components/HotkeyLayout';
-import { form_data, disabilities } from '../../types/application_form_types';
-import {
-  createApplication,
-  fileUpload,
-  patchFileUpload
-} from '@/app/api/application';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import type { NextPage } from 'next';
+import React, { useState } from 'react';
 
 interface AnyAppProps {
   tabs: React.ReactNode[];
@@ -38,7 +33,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   };
 
   const callRequest = async () => {
-    console.log('Submitting application...');
     if (isUploading) return;
     setIsUploading(true);
 
@@ -53,7 +47,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
         fileUploadResponse = await fileUpload(acceptedFiles[0]);
         updatedPayload.resume = fileUploadResponse.id;
       } catch (error) {
-        console.error('Error in file upload:', error);
         setIsUploading(false);
         alert('File upload failed.');
         return;
@@ -108,10 +101,8 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
       // Move to next tab with user confirmation
       setSelectedTab(prevTab => (prevTab + 1) % tabs.length);
     } catch (error: any) {
-      console.error('Error in creating application:', error);
-      alert(
-        `Application submission failed: ${error.message}. Please try again later.`
-      );
+      console.error(error);
+      alert(error.message);
     } finally {
       setIsUploading(false);
     }
@@ -136,7 +127,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   const isOnSubmitTab = selectedTab === tabs.length - 2;
   const isOnLastTab = selectedTab === tabs.length - 1;
 
-  console.log('tabs.length: ', tabs.length);
   return (
     <Layout>
       <div

@@ -8,22 +8,16 @@ const UseLocalStorage = (key: any, initialValue: any) => {
         return item ? JSON.parse(item) : initialValue;
       }
     } catch (error) {
-      console.log(error);
       return initialValue;
     }
   });
 
   const setValue = (value: any) => {
-    try {
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
+    const valueToStore = value instanceof Function ? value(storedValue) : value;
 
-      setStoredValue(valueToStore);
+    setStoredValue(valueToStore);
 
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.log(error);
-    }
+    window.localStorage.setItem(key, JSON.stringify(valueToStore));
   };
   return [storedValue, setValue];
 };

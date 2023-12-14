@@ -11,6 +11,7 @@ import {
 } from '@/types/application_form_types';
 import { participation_role } from '@/types/types';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import { useSession } from 'next-auth/react';
 import { CheckboxInput } from '../Inputs';
 import { heardAboutUsLabels } from '../applications/ClosingForm';
 import {
@@ -24,7 +25,6 @@ import {
 } from '../applications/ExperienceInterestForm';
 import { ageGroupLabels } from '../applications/PersonalInformationForm';
 import { hardwareHackLabels } from '../applications/ThematicForm';
-import { useSession } from 'next-auth/react';
 
 export default function ReviewPage({
   allInfo,
@@ -33,9 +33,7 @@ export default function ReviewPage({
   allInfo: any;
   acceptedFiles?: File[];
 }) {
-  const { data: session, status } = useSession();
-
-  console.log('allInfo', allInfo);
+  const { data: session } = useSession();
 
   const formatParticipation = (participationType: string) => {
     switch (participationType) {

@@ -180,7 +180,6 @@ const Application: NextPage = ({}: any) => {
     const getData = async () => {
       const options = await applicationOptions(formData);
       setOptions(options);
-      console.log('options: ', options);
       setCountries(options.actions.POST.current_country.choices);
       setNationalities(options.actions.POST.nationality.choices);
       setIndustries(options.actions.POST.industry.choices);

@@ -116,7 +116,6 @@ const JudgeApp: NextPage = ({}: any) => {
     const getData = async () => {
       const options = await applicationOptions(formData);
       setOptions(options);
-      console.log('options: ', options);
       setIndustries(options.actions.POST.industry.choices);
     };
     getData();
@@ -263,16 +262,12 @@ const JudgeApp: NextPage = ({}: any) => {
       }
 
       if (typeof fieldValue === 'string' && fieldValue.trim().length < 1) {
-        console.log('fieldValue: ', fieldValue);
         return false;
       } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
-        console.log('fieldValue: ', fieldValue);
         return false;
       } else if (typeof fieldValue === 'boolean' && fieldValue === null) {
-        console.log('fieldValue: ', fieldValue);
         return false;
       } else if (!fieldValue) {
-        console.log('fieldValue: ', fieldValue);
         return false;
       }
     }
