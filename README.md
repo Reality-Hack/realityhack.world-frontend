@@ -62,3 +62,11 @@ TLDR: You will want to add the following to your `.vscode/settings.json`:
 Refer to https://prettier.io/docs/en/editors and https://eslint.org/docs/latest/use/integrations if using another editor.
 
 Before committing changes, run `npm run lint:fix` to fix any lint errors and format files.
+
+## Debugging with Visual Studio Code
+
+Debugging with the standard NodeJS debugger does not allow for `await` or other types of `async` patterns to be used.
+
+1. In your VS Code editor, click "Run and Debug" in your left toolbar.
+2. In the top-left of your editor window, select `Next.js: debug full stack` from the drop-down next to the green "play" icon.
+3. Click the green "play" icon.

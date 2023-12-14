@@ -1,20 +1,20 @@
 /* eslint-disable no-console */
 'use client';
 
-import { validateField } from '@/components/Inputs';
+import { applicationOptions } from '@/app/api/application';
+import { CheckboxInput, validateField } from '@/components/Inputs';
+import ReviewPage from '@/components/admin/ReviewPage';
+import AdditionalPersonalInformationForm from '@/components/applications/AdditionalPersonalInformationForm';
 import ClosingForm from '@/components/applications/ClosingForm';
 import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
-import SkillsExpertiseForm from '@/components/applications/SkillsExpertiseForm';
-import AdditionalPersonalInformationForm from '@/components/applications/AdditionalPersonalInformationForm';
+import MentorSkillsExpertiseForm from '@/components/applications/MentorSkillsExpertiseForm';
 import AnyApp from '@/components/applications/applicationAny';
 import type { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import { form_data } from '../../../types/application_form_types';
-import { applicationOptions } from '@/app/api/application';
-import ReviewPage from '@/components/admin/ReviewPage';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 
 const JudgeApp: NextPage = ({}: any) => {
   const [formData, setFormData] = useState<Partial<form_data>>({
@@ -96,7 +96,6 @@ const JudgeApp: NextPage = ({}: any) => {
     const getData = async () => {
       const options = await applicationOptions(formData);
       setOptions(options);
-      console.log('options: ', options);
       setIndustries(options.actions.POST.industry.choices);
     };
     getData();

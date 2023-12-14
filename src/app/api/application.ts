@@ -54,23 +54,24 @@ export async function applicationOptions(data: any) {
 
 export async function createApplication(data: any) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/`;
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  const result = await response.json();
 
-    if (!response.ok) {
-      throw new Error(`Failed to create data. Status: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error: any) {
-    throw new Error('Failed to create data. ' + error.message);
+  if (!response.ok) {
+    throw new Error(
+      `Failed to create data. Status: ${
+        response.status
+      } Result: ${JSON.stringify(result)}`
+    );
   }
+
+  return result;
 }
 
 export async function fileUpload(file: File) {
