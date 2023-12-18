@@ -253,16 +253,12 @@ const MentorApp: NextPage = ({}: any) => {
       }
 
       if (typeof fieldValue === 'string' && fieldValue.trim().length < 1) {
-        console.log('fieldValue: ', fieldValue);
         return false;
       } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
-        console.log('fieldValue: ', fieldValue);
         return false;
       } else if (typeof fieldValue === 'boolean' && fieldValue === null) {
-        console.log('fieldValue: ', fieldValue);
         return false;
       } else if (!fieldValue) {
-        console.log('fieldValue: ', fieldValue);
         return false;
       }
     }
@@ -276,29 +272,22 @@ const MentorApp: NextPage = ({}: any) => {
       <div className="text-xl font-bold text-purple-900">Welcome</div>
       <div className="flex flex-col gap-4">
         <div className="pt-8">
-          Welcome to the Reality Hack 2024 mentor application form. Please fill
-          out this form to apply for a spot at Reality Hack 2024. For all
-          applications-related questions, contact{' '}
-          <Link href="mailto:apply@mitrealityhack.com">
-            <span className="text-themePrimary">apply@mitrealityhack.com</span>
-          </Link>
-          .
-        </div>
-
-        <div className="py-4">
-          For general inquiries, contact{' '}
-          <Link href="team@mitrealityhack.com">
+          Thank you for your interest to be a Mentor at MIT Reality Hack 2024.
+          For all mentor-related questions, contact{' '}
+          <Link href="mailto:jared@mitrealityhack.com">
             <span className="text-themePrimary">jared@mitrealityhack.com</span>
           </Link>
           .
         </div>
+
         <div className="pb-4">
-          Please note that this form is not a commitment to attend Reality Hack
-          2024. You will be notified of your acceptance status by email.
+          Please note that this form is not a commitment to attend MIT Reality
+          Hack 2024 as a mentor. Our team will reach out to you about your
+          interest to confirm your participation.
         </div>
         <div>
-          You will receive a confirmation email when you complete the
-          application submission.
+          You will receive a confirmation email when you complete the Interest
+          Form submission.
         </div>
 
         <div className="py-4">

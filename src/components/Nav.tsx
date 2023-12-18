@@ -1,9 +1,10 @@
 'use client';
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { useEffect, Dispatch, SetStateAction } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { menuItems } from '@/app/utils/menuItems';
 import Loader from './Loader';
+import useFeatureFlags from '../hooks/useFeaureFlags';
 
 async function keycloakSessionLogOut(): Promise<void> {
   try {
@@ -28,6 +29,7 @@ export default function Nav({
 }: NavProps) {
   const { data: session, status } = useSession();
   const isAdmin = session && (session as any).roles?.includes('admin');
+  const { isFeatureEnabled, areFeatureFlagsDefined } = useFeatureFlags();
 
   useEffect(() => {
     if (
@@ -86,55 +88,66 @@ export default function Nav({
           )}
         </div>
         <ul className="bg-gradient-to-b h-screen from-white to-neutral-50 border-r-[1px]">
-          {menuItems.map(
-            (item, index) =>
-              (item.href !== '/admin' || isAdmin) && (
+          {menuItems.map((item, index) => {
+            const shouldRenderItem =
+              (item.href !== '/admin' || isAdmin) &&
+              isFeatureEnabled(item.href);
+
+            if (shouldRenderItem) {
+              return (
                 <li
                   key={item.href}
-                  className={`transition-all text-sm ${
+                  className={`transition-all w-[156px] ${
                     collapsed ? 'ml-6' : 'ml-6'
                   } h-11`}
                 >
-                  <Link
-                    href={item.href}
-                    className={`h-14 flex flex-row items-center justify-start pr-4 ${
-                      index === 0 ? 'py-2' : 'py-2'
-                    } transition-all duration-200 rounded-md hover:text-blue-600`}
-                    onClick={() => setNavOpen(false)}
-                  >
-                    <img
-                      src={item.icon}
-                      alt={`${item.title} icon`}
-                      className="mr-3 hover:filter hover:brightness-0 hover:invert hover:hue-rotate-[202deg] hover:saturate-[1.8]"
-                    />
-                    <span
-                      className={`whitespace-nowrap transition-all ${
-                        collapsed ? 'opacity-100' : 'opacity-0'
-                      }`}
+                  <div className="filter-svg">
+                    <Link
+                      href={item.href}
+                      className={`h-14 flex flex-row items-center justify-start pr-4 ${
+                        index === 0 ? 'py-2' : 'py-2'
+                      } transition-all duration-200 rounded-md`}
+                      onClick={() => setNavOpen(false)}
                     >
-                      {item.title}
-                    </span>
-                  </Link>
+                      <img
+                        src={item.icon}
+                        alt={`${item.title}`}
+                        className="mr-3"
+                      />
+                      <span
+                        className={`text-sm whitespace-nowrap transition-all ${
+                          collapsed ? 'opacity-100' : 'opacity-0'
+                        }`}
+                      >
+                        {item.title}
+                      </span>
+                    </Link>
+                  </div>
                 </li>
-              )
-          )}
+              );
+            }
+            return null;
+          })}
+
           {!navOpen && (
-            <li
-              className={`mt-8 transition-all my-4 ${
-                collapsed ? 'ml-3' : 'ml-2'
-              } h-11`}
-              onClick={() => setCollapsed(!collapsed)}
-            >
-              <img
-                src={`${
-                  collapsed
-                    ? `/icons/dashboard/chevron-left.svg`
-                    : `/icons/dashboard/chevron-right.svg`
-                }`}
-                alt="arrow left icon"
-                className="ml-4"
-              />
-            </li>
+            <div className="filter-svg">
+              <li
+                className={`cursor-pointer w-14 transition-all my-8 ${
+                  collapsed ? 'ml-3' : 'ml-2'
+                } h-11`}
+                onClick={() => setCollapsed(!collapsed)}
+              >
+                <img
+                  src={`${
+                    collapsed
+                      ? `/icons/dashboard/chevron-left.svg`
+                      : `/icons/dashboard/chevron-right.svg`
+                  }`}
+                  alt="arrow left icon"
+                  className="ml-4"
+                />
+              </li>
+            </div>
           )}
         </ul>
       </div>

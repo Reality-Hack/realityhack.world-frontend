@@ -11,6 +11,7 @@ import {
 } from '@/types/application_form_types';
 import { participation_role } from '@/types/types';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import { useSession } from 'next-auth/react';
 import { CheckboxInput } from '../Inputs';
 import { heardAboutUsLabels } from '../applications/ClosingForm';
 import {
@@ -24,7 +25,6 @@ import {
 } from '../applications/ExperienceInterestForm';
 import { ageGroupLabels } from '../applications/PersonalInformationForm';
 import { hardwareHackLabels } from '../applications/ThematicForm';
-import { useSession } from 'next-auth/react';
 
 export default function ReviewPage({
   allInfo,
@@ -124,7 +124,7 @@ export default function ReviewPage({
     if (
       allInfo.participation_class === 'P' ||
       allInfo.participation_class === 'Participant' ||
-      typeof allInfo.participation_class === 'undefined'
+      !allInfo.participation_class
     ) {
       return (
         <div className="flex flex-col gap-4 mb-4">
@@ -249,7 +249,8 @@ export default function ReviewPage({
           value={allInfo.portfolio}
         />
         {allInfo.participation_class === 'P' ||
-          (typeof allInfo.participation_class === 'undefined' && (
+          allInfo.participation_class === 'Participant' ||
+          (!allInfo.participation_class && (
             <div>
               <div>Resume</div>
               <div className="flex flex-row items-center ml-2">
@@ -325,23 +326,24 @@ export default function ReviewPage({
               : allInfo.race_ethnic_group
           }
         />
-        {allInfo.participation_class === 'P' ||
-          (typeof allInfo.participation_class === 'undefined' && (
-            <LabelAndValue
-              label={'Disability Status'}
-              value={
-                Array.isArray(allInfo.disabilities)
-                  ? allInfo.disabilities.map((enumValue: string) =>
-                      getLabelFromEnumValue(
-                        enumValue,
-                        disabilities,
-                        disabilitiesLabels
-                      )
+        {(allInfo.participation_class === 'P' ||
+          allInfo.participation_class === 'Participant' ||
+          !allInfo.participation_class) && (
+          <LabelAndValue
+            label={'Disability Status'}
+            value={
+              Array.isArray(allInfo.disabilities)
+                ? allInfo.disabilities.map((enumValue: string) =>
+                    getLabelFromEnumValue(
+                      enumValue,
+                      disabilities,
+                      disabilitiesLabels
                     )
-                  : allInfo.disabilities
-              }
-            />
-          ))}
+                  )
+                : allInfo.disabilities
+            }
+          />
+        )}
       </div>
     );
   };
@@ -349,7 +351,8 @@ export default function ReviewPage({
   const ExperienceAndInterestSection = () => {
     if (
       allInfo.participation_class === 'P' ||
-      typeof allInfo.participation_class === 'undefined'
+      allInfo.participation_class === 'Participant' ||
+      !allInfo.participation_class
     ) {
       return (
         <div className="flex flex-col gap-4">
@@ -674,6 +677,10 @@ export default function ReviewPage({
     );
   };
 
+  console.log(allInfo);
+
+  console.log('participation_class', allInfo.participation_class);
+
   const sections = [
     { label: 'Disclaimers', component: <Disclaimers /> },
     { label: 'Contact and Personal Info ', component: <BasicInfoAndDem /> },
@@ -702,7 +709,7 @@ export default function ReviewPage({
               Review & Submit
             </div>
             <div className="mb-8 text-sm">
-              Before submitting
+              Before submitting{' '}
               {allInfo.participation_class === 'P'
                 ? 'your application, '
                 : 'the form, '}
@@ -712,15 +719,34 @@ export default function ReviewPage({
         )}
         <div className="relative flex flex-col gap-4">
           {sections.map(section => {
+            // Check if the section is either 'Thematic' or 'Demographics'
             if (
-              (section.label === 'Thematic' ||
-                section.label === 'Demographics') &&
-              (allInfo.participation_class !== 'P' ||
-                typeof allInfo.participation_class === 'undefined')
+              section.label === 'Thematic' ||
+              section.label === 'Demographics'
             ) {
-              return null;
+              // Check if 'participation_class' is 'P', 'Participant', or undefined
+              if (
+                allInfo.participation_class === 'P' ||
+                allInfo.participation_class === 'Participant' ||
+                typeof allInfo.participation_class === 'undefined'
+              ) {
+                // Render the section if the condition is met
+                return (
+                  <div
+                    key={section.label}
+                    className="flex flex-col gap-2 pb-4 border-b-2 border-gray-400"
+                  >
+                    <div className="text-xl font-bold">{section.label}</div>
+                    {section.component}
+                  </div>
+                );
+              } else {
+                // Skip rendering if the condition is not met
+                return null;
+              }
             }
 
+            // Render other sections as usual
             return (
               <div
                 key={section.label}

@@ -2,8 +2,9 @@
 /* eslint-disable no-console */
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
 import { CheckboxInput, validateField } from '@/components/Inputs';
+import Loader from '@/components/Loader';
+import ReviewPage from '@/components/admin/ReviewPage';
 import ClosingForm from '@/components/applications/ClosingForm';
 import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
 import ExperienceInterestForm from '@/components/applications/ExperienceInterestForm';
@@ -21,12 +22,11 @@ import {
   race_ethnic_group
 } from '@/types/application_form_types';
 import type { NextPage } from 'next';
-import Link from 'next/link';
-import { applicationOptions } from '../api/application';
-import ReviewPage from '@/components/admin/ReviewPage';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Loader from '@/components/Loader';
+import React, { useCallback, useEffect, useState } from 'react';
+import { applicationOptions } from '../api/application';
 
 const Application: NextPage = ({}: any) => {
   const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
@@ -180,7 +180,6 @@ const Application: NextPage = ({}: any) => {
     const getData = async () => {
       const options = await applicationOptions(formData);
       setOptions(options);
-      console.log('options: ', options);
       setCountries(options.actions.POST.current_country.choices);
       setNationalities(options.actions.POST.nationality.choices);
       setIndustries(options.actions.POST.industry.choices);
