@@ -2,7 +2,7 @@
 import { useSession } from 'next-auth/react';
 import React from "react";
 import ReactDOM from "react-dom";
-import QRCodeGenerator from "@/components/dashboard/QRCodeGenerator";
+import QRCodeReader from '@/components/admin/QRCodeReader';
 
 
 export default function Dashboard() {
@@ -12,9 +12,9 @@ export default function Dashboard() {
     <div className="h-screen p-6">
       {status === 'authenticated' && (
         <>
-          <h1>Dashboard</h1>
+          <h1>User Checkin</h1>
           <br></br>
-          <QRCodeGenerator value="DUMMY-ID" />
+          <QRCodeReader/>
         </>
       )}
     </div>
