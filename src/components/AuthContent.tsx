@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { ReactNode, useEffect, useState, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Loader from './Loader';
+import useFeatureFlags from '../hooks/useFeaureFlags';
 interface RootLayoutProps {
   children: ReactNode;
 }
@@ -18,6 +19,8 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   const pathname = usePathname();
 
   const navRef = useRef<HTMLDivElement>(null);
+
+  const { areFeatureFlagsDefined } = useFeatureFlags();
 
   const checkScreenSize = () => {
     if (window.innerWidth > 640) {
@@ -40,29 +43,38 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (status != 'loading') {
+    if (!areFeatureFlagsDefined) {
       setTimeout(() => {
         setLoaded(true);
-      }, 3000);
+      }, 200);
       return;
     }
-  }, [status]);
 
-  useEffect(() => {
     if (status === 'loading') return;
 
-    if (session && (pathname === '/apply' || pathname === '/signin')) {
-      router.replace('/');
-    }
+    setTimeout(() => {
+      if (
+        (session && status === 'authenticated') ||
+        (!session && status === 'unauthenticated')
+      ) {
+        setLoaded(true);
+      }
+    }, 400);
 
     if (
-      !session &&
-      pathname !== '/apply' &&
-      pathname !== '/apply/mentor' &&
-      pathname !== '/apply/judge' &&
-      pathname !== '/signin'
+      session &&
+      (pathname === '/apply' ||
+        pathname.startsWith('/apply/') ||
+        pathname === '/signin')
     ) {
+      console.log('redirecting');
+      router.replace('/');
+      setTimeout(() => setLoaded(true), 200);
+    }
+
+    if (!session && !pathname.startsWith('/apply/') && pathname !== '/signin') {
       router.replace('/apply');
+      setTimeout(() => setLoaded(true), 200);
       return;
     }
   }, [session, status]);
@@ -74,51 +86,57 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
         document.body.style.overflow = 'unset';
       };
     }
-  }, [session]);
+  }, [session, status, areFeatureFlagsDefined]);
 
   return (
     <>
-      {session ? (
-        <div className="flex flex-row h-screen overflow-hidden">
-          <div
-            ref={navRef}
-            className={`${collapsed ? 'w-[250px]' : 'w-[80px]'} sm:left-0 ${
-              !navOpen ? 'left-[-250px]' : 'left-0'
-            } absolute sm:relative transition-all z-[1000]`}
-          >
-            <Nav
-              navOpen={navOpen}
-              setNavOpen={setNavOpen}
-              collapsed={collapsed}
-              setCollapsed={setCollapsed}
-            />
-          </div>
-          <div className="w-full h-screen p-3 pb-8 overflow-auto transition-all">
-            <div className="px-4 items-center flex flex-row justify-between visible sm:hidden opacity-100 sm:opacity-0 h-[86px] w-full">
-              <button
-                className="w-8 h-8"
-                onClick={() => {
-                  setCollapsed(true);
-                  setNavOpen(!navOpen);
-                }}
+      {loaded ? (
+        <>
+          {session ? (
+            <div className="flex flex-row h-screen overflow-hidden">
+              <div
+                ref={navRef}
+                className={`${collapsed ? 'w-[250px]' : 'w-[80px]'} sm:left-0 ${
+                  !navOpen ? 'left-[-250px]' : 'left-0'
+                } absolute sm:relative transition-all z-[1000]`}
               >
-                <img
-                  src="/icons/dashboard/hamburger-menu.svg"
-                  alt="burga"
-                  className="w-8 h-8"
+                <Nav
+                  navOpen={navOpen}
+                  setNavOpen={setNavOpen}
+                  collapsed={collapsed}
+                  setCollapsed={setCollapsed}
                 />
-              </button>
-              <img
-                src="/icons/dashboard/logo.svg"
-                alt="burga"
-                className="w-10 h-10"
-              />
+              </div>
+              <div className="w-full h-screen p-3 pb-8 overflow-auto transition-all">
+                <div className="px-4 items-center flex flex-row justify-between visible sm:hidden opacity-100 sm:opacity-0 h-[86px] w-full">
+                  <button
+                    className="w-8 h-8"
+                    onClick={() => {
+                      setCollapsed(true);
+                      setNavOpen(!navOpen);
+                    }}
+                  >
+                    <img
+                      src="/icons/dashboard/hamburger-menu.svg"
+                      alt="burga"
+                      className="w-8 h-8"
+                    />
+                  </button>
+                  <img
+                    src="/icons/dashboard/logo.svg"
+                    alt="burga"
+                    className="w-10 h-10"
+                  />
+                </div>
+                {children}
+              </div>
             </div>
-            {children}
-          </div>
-        </div>
+          ) : (
+            <main>{!loaded ? <Loader /> : children}</main>
+          )}
+        </>
       ) : (
-        <main>{!loaded ? <Loader /> : children}</main>
+        <Loader />
       )}
     </>
   );

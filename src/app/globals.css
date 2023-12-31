@@ -30,3 +30,11 @@ body {
 div, p, input {
   font-size: 15px;
 }
+
+.filter-svg {
+  display: initial; filter: invert(37%) sepia(9%) saturate(8%) hue-rotate(336deg) brightness(92%) contrast(88%);
+}
+
+.filter-svg:hover {
+  filter: invert(39%) sepia(32%) saturate(6813%) hue-rotate(194deg) brightness(102%) contrast(108%);
+}
