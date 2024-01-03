@@ -85,7 +85,12 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
       setTimeout(() => setLoaded(true), 200);
     }
 
-    if (!session && !pathname.startsWith('/apply/') && pathname !== '/signin') {
+    if (
+      !session &&
+      !pathname.startsWith('/apply/') &&
+      pathname !== '/signin' &&
+      !pathname.startsWith('/rsvp/')
+    ) {
       router.replace('/apply');
       setTimeout(() => setLoaded(true), 200);
       return;
