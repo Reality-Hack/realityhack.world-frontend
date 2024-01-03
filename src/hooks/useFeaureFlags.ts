@@ -10,8 +10,6 @@ const useFeatureFlags = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log('router', router);
-
   const areFeatureFlagsDefined = !!process.env.NEXT_PUBLIC_FEATURE_FLAGS;
 
   const featureFlags: FeatureFlags = process.env.NEXT_PUBLIC_FEATURE_FLAGS

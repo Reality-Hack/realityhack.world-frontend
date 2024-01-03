@@ -211,3 +211,81 @@ export interface form_data {
   nationality_option: null;
   industry_option: null;
 }
+
+export interface rsvp_data {
+  application: string;
+  id: string;
+  bio: string | null;
+  shirt_size: shirt_size | null;
+  communications_platform_username: string | null;
+  dietary_restrictions?: dietary_restrictions[] | null;
+  dietary_restrictions_other?: string | null;
+  dietary_allergies: dietary_allergies[] | null;
+  allergies_other?: string | null;
+  additional_accommodations?: string | null;
+  us_visa_support_is_required: boolean | null;
+  us_visa_support_full_name?: string | null;
+  us_visa_letter_of_invitation_required: boolean | null;
+  us_visa_support_national_identification_document_type:
+    | us_visa_support_national_identification_document_type
+    | null
+    | string;
+  us_visa_support_document_number?: string | null;
+  us_visa_support_citizenship?: string | null;
+  us_visa_support_address?: string | null;
+  under_18_by_date: boolean | null;
+  parential_consent_form_signed?: boolean | null;
+  under_eighteen_rules_conduct?: boolean | null;
+  agree_to_media_release: boolean | null;
+  agree_to_liability_realease: boolean;
+  agree_to_rules_code_of_conduct: boolean;
+  emergency_contact_name: string;
+  personal_phone_number: string;
+  emergency_contact_phone_number: string;
+  emergency_contact_email: string;
+  emergency_contact_relationship: string;
+  special_track_snapdragon_spaces_interest?: string | null;
+  special_track_future_constructors_interest: string | null;
+  app_in_store: string | null;
+  currently_build_for_xr: string | null;
+  currently_use_xr: string | null;
+  non_xr_talents: string | null;
+  ar_vr_app_in_store: string | null;
+  reality_hack_project_to_product: boolean;
+  identify_as_native_american: boolean;
+  participation_class: string | null;
+  sponsor_company: string | null;
+  us_visa_support_citizenship_option?: null;
+}
+
+export enum shirt_size {
+  XS = '1',
+  S = '2',
+  M = '3',
+  L = '4',
+  XL = '5',
+  XXL = '6'
+}
+
+export enum dietary_restrictions {
+  vegetarian = '1',
+  vegan = '2',
+  gluten_free = '3',
+  halal = '4',
+  lactose_intolerant = '5',
+  kosher = '6',
+  other = '7'
+}
+
+export enum dietary_allergies {
+  nut_allergy = '1',
+  shellfish_allergy = '2',
+  soy_allergy = '3',
+  dairy_allergy = '4',
+  other_allergy = '5'
+}
+
+export enum us_visa_support_national_identification_document_type {
+  passport_number = 'P',
+  identification_number = 'N'
+}

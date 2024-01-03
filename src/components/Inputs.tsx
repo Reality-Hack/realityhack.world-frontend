@@ -51,12 +51,6 @@ export const validateField = (
         return 'Invalid URL.';
       }
       break;
-    case 'checkbox':
-      if (isRequired && !checked) {
-        return 'This checkbox must be checked.';
-      }
-      break;
-    // Add more cases as necessary for other types of inputs
     default:
       break;
   }
@@ -124,7 +118,7 @@ export const TextInput: React.FC<{
   }
 
   return (
-    <div className="relative mb-6">
+    <div className="relative w-full mb-6">
       <p>{children}</p>
       <input
         type={type}

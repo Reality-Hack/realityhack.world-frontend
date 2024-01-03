@@ -31,6 +31,16 @@ div, p, input {
   font-size: 15px;
 }
 
+@media (max-width: 768px) {
+  .border-reset-tl {
+    border-left: none;
+    border-top: 1px solid #E1E3E8 !important;
+  }
+
+  .border-reset-bl {
+    border-left: none;
+  }
+}
 /* QR Code Checkin Page */
 #qr-reader__scan_region video:nth-child(2) {
   display: none!important;

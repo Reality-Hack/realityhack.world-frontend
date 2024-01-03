@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { ReactNode, useEffect, useState, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Loader from './Loader';
+import { AuthProvider } from '@/hooks/AuthContext';
 import useFeatureFlags from '../hooks/useFeaureFlags';
 interface RootLayoutProps {
   children: ReactNode;
@@ -65,7 +66,19 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
       session &&
       (pathname === '/apply' ||
         pathname.startsWith('/apply/') ||
+        pathname.startsWith('/rsvp/') ||
         pathname === '/signin')
+    ) {
+      console.log('redirecting');
+      router.replace('/');
+      setTimeout(() => setLoaded(true), 200);
+    }
+
+    if (
+      !session &&
+      !pathname.startsWith('/apply/') &&
+      !pathname.startsWith('/rsvp/') &&
+      pathname !== '/signin'
     ) {
       console.log('redirecting');
       router.replace('/');
@@ -86,10 +99,10 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
         document.body.style.overflow = 'unset';
       };
     }
-  }, [session, status, areFeatureFlagsDefined]);
+  }, [session, status]);
 
   return (
-    <>
+    <AuthProvider>
       {loaded ? (
         <>
           {session ? (
@@ -138,7 +151,7 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
       ) : (
         <Loader />
       )}
-    </>
+    </AuthProvider>
   );
 };
 

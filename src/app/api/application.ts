@@ -2,6 +2,9 @@ import { Application } from '@/types/types';
 
 export async function getAllHackerApplications(accessToken: string) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/`;
+
+  console.log('accessToken', accessToken);
+
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',

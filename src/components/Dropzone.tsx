@@ -10,7 +10,7 @@ type AcceptedFile = {
 };
 
 interface FormProps {
-  setFormData: React.Dispatch<React.SetStateAction<Partial<form_data>>>;
+  setFormData?: React.Dispatch<React.SetStateAction<Partial<form_data>>>;
   acceptedFiles: File[];
   setAcceptedFiles: React.Dispatch<React.SetStateAction<File[]>>;
   rejectedFiles: File[];
@@ -26,7 +26,7 @@ const Dropzone: React.FC<FormProps> = ({
 }) => {
   function handleUpload(data: File[]) {
     const file = data[0];
-    if (file) {
+    if (file && setFormData) {
       setFormData(prevFormData => ({
         ...prevFormData
       }));
@@ -42,10 +42,7 @@ const Dropzone: React.FC<FormProps> = ({
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: {
-      'application/pdf': [],
-      'application/msword': [],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-        []
+      'image/*': []
     }
   });
 
@@ -107,7 +104,7 @@ const Dropzone: React.FC<FormProps> = ({
           </span>
           <span>or drag and drop</span>
           <br />
-          <span>.doc, .docx, .pdf</span>
+          <span>.png, .jpeg, .gif</span>
         </div>
       </div>
       <div className="mb-4 ">

@@ -4,6 +4,7 @@ import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { menuItems } from '@/app/utils/menuItems';
 import Loader from './Loader';
+import { useAuthContext } from '@/hooks/AuthContext';
 import useFeatureFlags from '../hooks/useFeaureFlags';
 
 async function keycloakSessionLogOut(): Promise<void> {
@@ -31,6 +32,8 @@ export default function Nav({
   const isAdmin = session && (session as any).roles?.includes('admin');
   const { isFeatureEnabled } = useFeatureFlags();
 
+  const { user } = useAuthContext();
+
   useEffect(() => {
     if (
       status !== 'loading' &&
@@ -40,6 +43,28 @@ export default function Nav({
       signOut({ callbackUrl: '/' });
     }
   }, [session, status]);
+
+  const renderProfile = () => {
+    if (user?.profile_image) {
+      return (
+        <img
+          src={process.env.NEXT_PUBLIC_BACKEND_URL + user?.profile_image.file}
+          alt=""
+          className="object-cover object-center w-10 h-10 rounded-full"
+        />
+      );
+    } else {
+      const initials = `${user?.first_name?.charAt(0)?.toUpperCase() ?? ''}${
+        user?.last_name?.charAt(0)?.toUpperCase() ?? ''
+      }`;
+
+      return (
+        <div className="flex items-center justify-center w-10 h-10 bg-gray-300 rounded-full">
+          <span className="">{initials}</span>
+        </div>
+      );
+    }
+  };
 
   return (
     <>
@@ -63,8 +88,15 @@ export default function Nav({
                     collapsed ? 'opacity-100' : 'opacity-0'
                   }`}
                 >
-                  Logged in as <br />
-                  {session?.user?.email}
+                  <div className="flex items-center gap-2">
+                    {renderProfile()}
+                    <div className="flex flex-col">
+                      <span className="text-white">
+                        {user?.first_name} {user?.last_name}
+                      </span>
+                      <span className="text-xs">No team joined</span>
+                    </div>
+                  </div>
                 </span>{' '}
                 <br />
                 <button
@@ -76,7 +108,7 @@ export default function Nav({
                   }}
                 >
                   <span
-                    className={`whitespace-nowrap transition-all ${
+                    className={`font-normal whitespace-nowrap transition-all ${
                       collapsed ? 'opacity-100' : 'opacity-0'
                     }`}
                   >
