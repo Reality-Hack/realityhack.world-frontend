@@ -85,7 +85,6 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
     ar_vr_app_in_store: null,
     reality_hack_project_to_product: false,
     identify_as_native_american: false,
-    participation_class: null,
     sponsor_company: null,
     us_visa_support_citizenship_option: null
   });
@@ -153,7 +152,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
       return updatedFields;
     });
   }, [isParticipant, slug]);
-
+  
   useEffect(() => {
     const visaRelatedFields = [
       'us_visa_support_full_name',
@@ -176,6 +175,14 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
         updatedFields = updatedFields.filter(
           field => !visaRelatedFields.includes(field)
         );
+
+        setFormData(prevFormData => {
+          const updatedFormData: any = { ...prevFormData };
+          visaRelatedFields.forEach(field => {
+            updatedFormData[field] = null;
+          });
+          return updatedFormData;
+        });
       }
 
       if (formData.under_18_by_date) {
@@ -393,7 +400,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
 
     setFormData(prev => ({
       ...prev,
-      [name]: value,
+      [name]: value[0],
       [`${name}_option`]: displayName
     }));
   };
@@ -414,6 +421,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
           value === '' ||
           (value === false &&
             field !== 'us_visa_support_is_required' &&
+            field !== 'us_visa_letter_of_invitation_required' &&
             field !== 'under_18_by_date')
         ) {
           validationError = 'This field is required.';
@@ -424,7 +432,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
           newErrors = { ...newErrors, [field]: validationError };
         }
       } else {
-        if (discordValidationResult !== 'success') {
+        if (discordValidationResult === 'error') {
           newErrors['communications_platform_username'] =
             'Invalid Discord username.';
           isValid = false;

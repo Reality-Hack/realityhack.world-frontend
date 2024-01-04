@@ -20,7 +20,7 @@ export const validateField = (
   // Field-specific validations
   switch (type) {
     case 'email':
-      const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+      const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6}$/i;
       if (!emailPattern.test(value)) {
         return 'Invalid email format.';
       }

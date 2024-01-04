@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { updateAttendee } from './api/attendee';
 import { fileUpload } from './api/application';
 import QRCodeGenerator from '@/components/dashboard/QRCodeGenerator';
+import { participation_class } from '../types/application_form_types';
 
 type SetupModalProps = {
   toggleOverlay: () => void;
@@ -45,7 +46,7 @@ export default function Dashboard() {
 
       if (session) {
         const data = {
-          id: user.id,
+          id: user?.id,
           first_name: firstName,
           last_name: lastName,
           initial_setup: 'True',
@@ -151,9 +152,14 @@ export default function Dashboard() {
           Discord!
         </div>
         <div className="flex justify-center">
-          <button className="mx-auto mt-4 bg-[#4D97E8] px-7 py-2 rounded-full text-white">
+          <a
+            href="https://discord.gg/tc7tUstQxn"
+            className="mx-auto mt-4 bg-[#4D97E8] px-7 py-2 rounded-full text-white"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Join our Discord
-          </button>
+          </a>
         </div>
       </div>
 
@@ -166,9 +172,9 @@ export default function Dashboard() {
                 <span>{user?.first_name}</span> <span>{user?.last_name}</span>
               </div>
               <div className="w-32 h-9 bg-neutral-800 rounded-[5px] flex justify-center items-center text-white">
-                {user.participation_class === 'P'
+                {user?.participation_class === 'P'
                   ? 'Hacker'
-                  : user.participation_class === 'M'
+                  : user?.participation_class === 'M'
                   ? 'Mentor'
                   : 'Judge'}
               </div>
@@ -186,17 +192,17 @@ export default function Dashboard() {
         )}
       </div>
 
-      <div className="w-full pb-6 mb-6 rounded-lg shadow-md">
-        <div className="h-2 w-full bg-[#4D97E8] rounded-t-lg" />
-        <div className="flex items-center pt-6 pl-6">
-          <img src="icons/dashboard/forms.svg" alt="congrats!" />
-          <div className="ml-2 text-xl">FORMS</div>
-        </div>
-        <div className="grid grid-cols-1 px-4 divide-x divide-y md:grid-cols-2">
+      {user?.participation_class === 'P' && (
+        <div className="w-full pb-6 mb-6 rounded-lg shadow-md">
+          <div className="h-2 w-full bg-[#4D97E8] rounded-t-lg" />
+          <div className="flex items-center pt-6 pl-6">
+            <img src="icons/dashboard/forms.svg" alt="congrats!" />
+            <div className="ml-2 text-xl">FORMS</div>
+          </div>
           <div className="flex flex-col items-center justify-center p-6">
             Travel Scholarship
             <br />
-            Deadline - 01 / 10
+            Deadline - Jan 10
             <a
               className="mx-auto mt-4 bg-[#4D97E8] px-8 py-2 rounded-full text-white"
               href="https://forms.gle/3iGGycnv3bQc8sbCA"
@@ -206,35 +212,50 @@ export default function Dashboard() {
               Apply
             </a>
           </div>
-          <div className="flex flex-col items-center justify-center p-6 !border-t-0 border-reset-tl">
-            Scholarship Form
-            <button
-              disabled={true}
-              className="mx-auto mt-4 bg-[#ececec] border-[#c1c1c1] border px-8 py-2 rounded-full text-[#969696]"
-            >
-              Coming soon
-            </button>
-          </div>
-          <div className="flex flex-col items-center justify-center p-6 !border-l-0">
-            Hardware Hack Form
-            <button
-              disabled={true}
-              className="mx-auto mt-4 bg-[#ececec] border-[#c1c1c1] border px-8 py-2 rounded-full text-[#969696]"
-            >
-              Coming soon
-            </button>
-          </div>
-          <div className="flex flex-col items-center justify-center p-6 border-reset-bl">
-            Future Constructors Form
-            <button
-              disabled={true}
-              className="mx-auto mt-4 bg-[#ececec] border-[#c1c1c1] border px-8 py-2 rounded-full text-[#969696]"
-            >
-              Coming soon
-            </button>
-          </div>
+          {/* <div className="grid grid-cols-1 px-4 divide-x divide-y md:grid-cols-2">
+            <div className="flex flex-col items-center justify-center p-6">
+              Travel Scholarship
+              <br />
+              Deadline - 01 / 10
+              <a
+                className="mx-auto mt-4 bg-[#4D97E8] px-8 py-2 rounded-full text-white"
+                href="https://forms.gle/3iGGycnv3bQc8sbCA"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Apply
+              </a>
+            </div>
+            <div className="flex flex-col items-center justify-center p-6 !border-t-0 border-reset-tl">
+              Scholarship Form
+              <button
+                disabled={true}
+                className="mx-auto mt-4 bg-[#ececec] border-[#c1c1c1] border px-8 py-2 rounded-full text-[#969696]"
+              >
+                Coming soon
+              </button>
+            </div>
+            <div className="flex flex-col items-center justify-center p-6 !border-l-0">
+              Hardware Hack Form
+              <button
+                disabled={true}
+                className="mx-auto mt-4 bg-[#ececec] border-[#c1c1c1] border px-8 py-2 rounded-full text-[#969696]"
+              >
+                Coming soon
+              </button>
+            </div>
+            <div className="flex flex-col items-center justify-center p-6 border-reset-bl">
+              Future Constructors Form
+              <button
+                disabled={true}
+                className="mx-auto mt-4 bg-[#ececec] border-[#c1c1c1] border px-8 py-2 rounded-full text-[#969696]"
+              >
+                Coming soon
+              </button>
+            </div>
+          </div> */}
         </div>
-      </div>
+      )}
 
       <div className="w-full pb-6 mb-12 rounded-lg shadow-md">
         <div className="h-2 w-full bg-[#4D97E8] rounded-t-lg" />
@@ -248,9 +269,14 @@ export default function Dashboard() {
           the organizers on Discord in the #questions-to-organizers channel!
         </div>
         <div className="flex justify-center">
-          <button className="mx-auto mt-4 bg-[#4D97E8] px-7 py-2 rounded-full text-white">
+          <a
+            href="https://discord.gg/tc7tUstQxn"
+            className="mx-auto mt-4 bg-[#4D97E8] px-7 py-2 rounded-full text-white"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Join our Discord
-          </button>
+          </a>
         </div>
       </div>
 
