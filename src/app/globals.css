@@ -30,3 +30,61 @@ body {
 div, p, input {
   font-size: 15px;
 }
+
+@media (max-width: 768px) {
+  .border-reset-tl {
+    border-left: none;
+    border-top: 1px solid #E1E3E8 !important;
+  }
+
+  .border-reset-bl {
+    border-left: none;
+  }
+}
+/* QR Code Checkin Page */
+#qr-reader__scan_region video:nth-child(2) {
+  display: none!important;
+}
+
+#qr-reader__scan_region img{
+  display: none;
+}
+#qr-reader__dashboard_section_csr {
+  position: relative;
+}
+
+#html5-qrcode-button-camera-start,
+#html5-qrcode-button-camera-stop {
+  display: block!important;
+  position: absolute;
+  border: 2px solid black;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+#html5-qrcode-anchor-scan-type-change {
+  margin-top: 15%;
+}
+
+#html5-qrcode-button-camera-start {
+  left: 20px;
+}
+#html5-qrcode-button-camera-stop {
+  right: 20px;
+}
+#qr-reader {
+  border: none!important;
+}
+
+.checkin-text {
+  text-align: center;
+  margin-top: 10%;
+}
+
+.filter-svg {
+  display: initial; filter: invert(37%) sepia(9%) saturate(8%) hue-rotate(336deg) brightness(92%) contrast(88%);
+}
+
+.filter-svg:hover {
+  filter: invert(39%) sepia(32%) saturate(6813%) hue-rotate(194deg) brightness(102%) contrast(108%);
+}
