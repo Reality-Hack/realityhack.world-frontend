@@ -345,7 +345,8 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
           try {
             const resp = await fetch(url, {
               headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                authorization: `${process.env.NEXT_PUBLIC_DISCORD_API_KEY}`
               }
             });
 
@@ -423,15 +424,11 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
           newErrors = { ...newErrors, [field]: validationError };
         }
       } else {
-        // const communicationsPlatformUsernameError = errors[
-        //   'communications_platform_username'
-        // ]
-        //   ? errors['communications_platform_username']
-        //   : 'This field is required.';
-        // if (communicationsPlatformUsernameError) {
-        //   newErrors['communications_platform_username'] =
-        //     communicationsPlatformUsernameError;
-        // }
+        if (discordValidationResult !== 'success') {
+          newErrors['communications_platform_username'] =
+            'Invalid Discord username.';
+          isValid = false;
+        }
       }
     });
 
@@ -516,6 +513,9 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
               MIT Reality Hack 2024
             </h1>
             <h2 className="text-2xl font-bold leading-8 text-center text-themeYellow drop-shadow-md">
+              {isParticipant
+                ? 'Hacker'
+                : slug[0].charAt(0).toUpperCase() + slug[0].slice(1)}{' '}
               RSVP Form
             </h2>
           </div>
@@ -608,21 +608,15 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                   >
                     Discord will be our primary communications platform leading
                     up to and during the event. <br /> What is your Discord
-                    username?
-                    {/* <br /> */}
-                    {/* <span className="text-xs"> */} You may need to migrate
-                    your username. For more information on Discord’s new
-                    usernames, go to:{' '}
+                    username?<span className="text-red-700">*</span>{' '}
                     <a
-                      className="underline cursor-pointer text-themePrimary"
+                      className="inline-block pb-2 text-xs underline cursor-pointer text- text-themePrimary"
                       href="https://drive.google.com/file/d/1B9zAg7V2W2U1YsVcCQNxg1kW2sHf5lF1/view?usp=sharing"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       How to find your username.
                     </a>{' '}
-                    <span className="text-red-700">*</span>
-                    {/* </span> */}
                   </TextInput>
                   {renderDiscordError && (
                     <p className="absolute ml-1 text-xs text-themeSecondary bottom-2">

@@ -22,8 +22,6 @@ export default function Dashboard() {
     setOverlayVisible(prev => !prev);
   };
 
-  if (session) console.log(session.access_token);
-
   function SetupModal({ toggleOverlay }: SetupModalProps) {
     const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
     const [rejectedFiles, setRejectedFiles] = useState<any>(null);
