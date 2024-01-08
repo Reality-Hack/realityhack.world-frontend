@@ -77,21 +77,11 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
     if (
       !session &&
       !pathname.startsWith('/apply/') &&
-      !pathname.startsWith('/rsvp/') &&
-      pathname !== '/signin'
-    ) {
-      console.log('redirecting');
-      router.replace('/');
-      setTimeout(() => setLoaded(true), 200);
-    }
-
-    if (
-      !session &&
-      !pathname.startsWith('/apply/') &&
+      pathname !== '/apply' &&
       pathname !== '/signin' &&
       !pathname.startsWith('/rsvp/')
     ) {
-      router.replace('/apply');
+      router.replace('/signin');
       setTimeout(() => setLoaded(true), 200);
       return;
     }
