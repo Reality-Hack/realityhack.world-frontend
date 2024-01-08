@@ -9,7 +9,7 @@ export default function ApplicationLayout({
 }) {
   const pathname = usePathname();
   return (
-    <div className="h-screen p-6 pt-8 pl-2">
+    <div className="p-6 pt-8 pl-2">
       <h1 className="text-3xl">Applications</h1>
       <div className="py-4">
         <div className="pb-2">
