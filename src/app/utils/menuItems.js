@@ -55,6 +55,11 @@ export const menuItems = [
     icon: "/icons/dashboard/guide.svg"
   },
   {
+    href: '/help',
+    title: 'Help',
+    icon: "/icons/dashboard/settings.svg"
+  },
+  {
     href: '/settings',
     title: 'Settings',
     icon: "/icons/dashboard/settings.svg"
