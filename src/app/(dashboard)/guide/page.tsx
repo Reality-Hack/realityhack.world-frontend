@@ -24,7 +24,7 @@ export default function Help() {
   };
 
   return (
-    <div className="h-screen w-screen bg-white">
+    <div>
       <div className="text-4xl p-4"> Help Queue</div>
       <div className="flex flex-col gap-8 m-4 p-4 rounded-md bg-gray-200">
         <div className="flex gap-4">
