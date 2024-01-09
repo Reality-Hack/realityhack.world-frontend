@@ -7,7 +7,7 @@ export default function Workshops() {
   return (
     <div className="h-screen p-6">
       <>
-        <h1>Workshops</h1>
+        <h1>Schedule</h1>
       </>
     </div>
   );
