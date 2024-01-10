@@ -1,5 +1,7 @@
-"use client"
-import React, { useState, MouseEvent } from "react";
+'use client';
+import { useSession } from 'next-auth/react';
+import React, { useEffect, useState, MouseEvent } from 'react';
+import { getAllWorkshops } from '@/app/api/workshops';
 
 interface Workshop {
   id: number;
@@ -12,6 +14,20 @@ interface Workshop {
   level: string;
   workshopGiver: string;
   workshopDescription: string;
+}
+interface WorkshopPropsss {
+  id: string;
+  recommended_for: string[];
+  name: string;
+  datetime: string;
+  duration: number;
+  description: string;
+  course_materials: string;
+  created_at: string;
+  updated_at: string;
+  location: string;
+  skills: string[];
+  hardware: string[];
 }
 
 interface WorkshopProps extends Workshop {
@@ -28,8 +44,10 @@ function Workshop({
   level,
   workshopGiver,
   workshopDescription,
-  onSelect,
-}: WorkshopProps) {
+  onSelect
+}: WorkshopProps) 
+{
+  const { data: session, status } = useSession();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleSeeMoreClick = (e: MouseEvent) => {
@@ -37,13 +55,35 @@ function Workshop({
     setDialogOpen(true);
   };
 
+  const isAdmin = session && session.roles?.includes('admin');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [workshops, setWorkshops] = useState<WorkshopPropsss[]>([]);
+
+  useEffect(() => {
+    if (session?.access_token && isAdmin) {
+      setLoading(true);
+      getAllWorkshops(session.access_token)
+        .then(data => {
+          setWorkshops(data)
+
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [session]);
+
   return (
     <div
       className={`bg-white ${
-        selected ? "border-blue-300 border-4" : "border-black border-2"
+        selected ? 'border-blue-300 border-4' : 'border-black border-2'
       } w-fit p-2 rounded-xl flex flex-col gap-2`}
       onClick={() => onSelect(id)}
     >
+      <div onClick={()=>console.log(workshops.length)}>{JSON.stringify(Object.keys(workshops[0]))} pokpokp</div>
+      <div onClick={()=>console.log(workshops.length)}>{workshops[0].recommended_for} </div>
+      <div onClick={()=>console.log(workshops.length)}>{workshops[0].course_materials} </div>
+      <div onClick={()=>console.log(workshops.length)}>{new Intl.DateTimeFormat('en-US', {hour: 'numeric',  minute: '2-digit',  hour12: true,}).format(new Date(workshops[0].datetime))}</div>
       <div>
         <div className="font-semibold text-xl">{workshopTitle}</div>
         <div>
@@ -88,7 +128,7 @@ function SelectedWorkshops({ selectedWorkshops }: SelectedWorkshopsProps) {
       <ul>
         {selectedWorkshops.map((workshop, index) => (
           <li key={index}>
-            Index: {index}, ID: {workshop.id}, Imaginary Event:{" "}
+            Index: {index}, ID: {workshop.id}, Imaginary Event:{' '}
             {workshop.workshopTitle}
           </li>
         ))}
@@ -106,18 +146,14 @@ interface WorkshopRoomProps {
 const WorkshopRoom: React.FC<WorkshopRoomProps> = ({
   room,
   workshops,
-  onSelect,
+  onSelect
 }) => {
   return (
     <div>
       <div className="text-4xl">{room}</div>
       <div className="flex flex-col gap-2">
-        {workshops.map((workshop) => (
-          <Workshop
-            key={workshop.id}
-            {...workshop}
-            onSelect={onSelect}
-          />
+        {workshops.map(workshop => (
+          <Workshop key={workshop.id} {...workshop} onSelect={onSelect} />
         ))}
       </div>
     </div>
@@ -130,78 +166,90 @@ const Page: React.FC<PageProps> = () => {
   const [workshops, setWorkshops] = useState<Workshop[]>([
     {
       id: 1,
-      workshopTitle: "React Workshop",
-      startTime: "10:00 AM",
-      endTime: "1:00 PM",
-      major: "Developer",
-      level: "Beginner",
-      workshopGiver: "React Expert",
-      workshopDescription: "Learn the basics of React.",
+      workshopTitle: 'React Workshop',
+      startTime: '10:00 AM',
+      endTime: '1:00 PM',
+      major: 'Developer',
+      level: 'Beginner',
+      workshopGiver: 'React Expert',
+      workshopDescription: 'Learn the basics of React.',
       selected: false,
-      room: "Room A",
+      room: 'Room A'
     },
     {
       id: 2,
-      workshopTitle: "Node.js Masterclass",
-      startTime: "2:00 PM",
-      endTime: "5:00 PM",
-      major: "Designer",
-      level: "Advanced",
-      workshopGiver: "Node.js Guru",
-      workshopDescription: "Deep dive into Node.js.",
+      workshopTitle: 'Node.js Masterclass',
+      startTime: '2:00 PM',
+      endTime: '5:00 PM',
+      major: 'Designer',
+      level: 'Advanced',
+      workshopGiver: 'Node.js Guru',
+      workshopDescription: 'Deep dive into Node.js.',
       selected: false,
-      room: "Room B",
+      room: 'Room B'
     },
     {
       id: 3,
-      workshopTitle: "CSS Styling Secrets",
-      startTime: "3:00 PM",
-      endTime: "6:00 PM",
-      major: "Designer",
-      level: "Intermediate",
-      workshopGiver: "CSS Wizard",
-      workshopDescription: "Unlock the secrets of CSS styling.",
+      workshopTitle: 'CSS Styling Secrets',
+      startTime: '3:00 PM',
+      endTime: '6:00 PM',
+      major: 'Designer',
+      level: 'Intermediate',
+      workshopGiver: 'CSS Wizard',
+      workshopDescription: 'Unlock the secrets of CSS styling.',
       selected: false,
-      room: "Room A",
+      room: 'Room A'
     },
     {
       id: 4,
-      workshopTitle: "CSS Styling Secrets",
-      startTime: "3:00 PM",
-      endTime: "6:00 PM",
-      major: "Designer",
-      level: "Intermediate",
-      workshopGiver: "CSS Wizard",
-      workshopDescription: "Unlock the secrets of CSS styling.",
+      workshopTitle: 'CSS Styling Secrets',
+      startTime: '3:00 PM',
+      endTime: '6:00 PM',
+      major: 'Designer',
+      level: 'Intermediate',
+      workshopGiver: 'CSS Wizard',
+      workshopDescription: 'Unlock the secrets of CSS styling.',
       selected: false,
-      room: "Room C",
-    },
+      room: 'Room C'
+    }
   ]);
 
   const [selectedWorkshops, setSelectedWorkshops] = useState<Workshop[]>([]);
 
   const handleWorkshopSelect = (id: number) => {
-    setWorkshops((prevWorkshops) =>
-      prevWorkshops.map((workshop) =>
-        workshop.id === id ? { ...workshop, selected: !workshop.selected } : workshop
+    setWorkshops(prevWorkshops =>
+      prevWorkshops.map(workshop =>
+        workshop.id === id
+          ? { ...workshop, selected: !workshop.selected }
+          : workshop
       )
     );
 
-    setSelectedWorkshops(workshops.filter((workshop) => workshop.selected));
+    setSelectedWorkshops(workshops.filter(workshop => workshop.selected));
   };
 
-  const workshopsByRoom: Record<string, Workshop[]> = workshops.reduce((acc: Record<string, Workshop[]>, workshop) => {
-	acc[workshop.room] = acc[workshop.room] || [];
-	acc[workshop.room].push(workshop);
-	return acc;
-  }, {});
+  const workshopsByRoom: Record<string, Workshop[]> = workshops.reduce(
+    (acc: Record<string, Workshop[]>, workshop) => {
+      acc[workshop.room] = acc[workshop.room] || [];
+      acc[workshop.room].push(workshop);
+      return acc;
+    },
+    {}
+  );
 
   return (
     <div className="h-screen w-screen bg-white">
       <div className="flex gap-2">
-        {Object.entries(workshopsByRoom).map(([room, roomWorkshops]: [string, Workshop[]]) => (
-          <WorkshopRoom key={room} room={room} workshops={roomWorkshops} onSelect={handleWorkshopSelect} />
-        ))}
+        {Object.entries(workshopsByRoom).map(
+          ([room, roomWorkshops]: [string, Workshop[]]) => (
+            <WorkshopRoom
+              key={room}
+              room={room}
+              workshops={roomWorkshops}
+              onSelect={handleWorkshopSelect}
+            />
+          )
+        )}
         <SelectedWorkshops selectedWorkshops={selectedWorkshops} />
       </div>
     </div>
@@ -228,7 +276,10 @@ const Dialog: React.FC<DialogProps> = ({ isOpen, onClose, children }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center" onClick={handleDialogClick}>
+    <div
+      className="fixed inset-0 flex items-center justify-center"
+      onClick={handleDialogClick}
+    >
       <div className="bg-gray-300 w-1/2 h-1/2 p-4 rounded-md shadow-md">
         <div className="flex">
           <button className=" ml-auto" onClick={onClose}>
