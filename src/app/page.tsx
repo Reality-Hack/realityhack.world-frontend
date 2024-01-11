@@ -8,6 +8,7 @@ import { updateAttendee } from './api/attendee';
 import { fileUpload } from './api/application';
 import QRCodeGenerator from '@/components/dashboard/QRCodeGenerator';
 import { participation_class } from '../types/application_form_types';
+import Loader from '@/components/Loader';
 
 type SetupModalProps = {
   toggleOverlay: () => void;
@@ -140,7 +141,7 @@ export default function Dashboard() {
 
   return (
     <div className="p-6">
-      {status === 'authenticated' && (
+      {status === 'authenticated' ? (
         <>
           {!user?.initial_setup && <SetupModal toggleOverlay={toggleOverlay} />}
           <h1 className="text-2xl">Welcome, {user?.first_name}!</h1>
@@ -400,6 +401,8 @@ export default function Dashboard() {
             </div>
           </div>
         </>
+      ) : (
+        <Loader />
       )}
     </div>
   );
