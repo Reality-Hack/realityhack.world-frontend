@@ -164,17 +164,21 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
         ? [
             columnHelper.accessor('special_track_snapdragon_spaces_interest', {
               header: () => 'Snapdragon Spaces Interest',
-              cell: info => info.getValue()
+              cell: info => (info.getValue() === true ? 'Yes' : 'No')
             }),
             columnHelper.accessor(
               'special_track_future_constructors_interest',
               {
                 header: () => 'Future Constructors Interest',
-                cell: info => info.getValue()
+                cell: info => (info.getValue() === true ? 'Yes' : 'No')
               }
             )
           ]
         : []),
+      columnHelper.accessor('under_18_by_date', {
+        header: () => 'Under 18 By Date',
+        cell: info => (info.getValue() === true ? 'Yes' : 'No')
+      }),
       columnHelper.accessor('id', {
         header: () => 'id',
         cell: info => info.getValue()
@@ -291,7 +295,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
         </div>
       </div>
 
-      <ExportButton onExport={() => exportToCsv(setRSVP, 'applications.csv')}>
+      <ExportButton onExport={() => exportToCsv(RSVP, 'rsvps.csv')}>
         Export CSV
       </ExportButton>
       <div className="z-50 px-6 py-6 overflow-y-scroll bg-[#FCFCFC] border-gray-300 rounded-2xl">
