@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   async headers() {
     return [
       {
@@ -23,7 +22,4 @@ const nextConfig = {
   }
 };
 
-const withMDX = require('@next/mdx')()
-  
-module.exports = withMDX(nextConfig)
-
+module.exports = nextConfig;

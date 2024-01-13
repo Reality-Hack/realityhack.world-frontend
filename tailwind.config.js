@@ -2,9 +2,9 @@
 module.exports = {
   mode: 'jit',
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}'
+    './src/pages/**/*.{js,ts,jsx,tsx}',
+    './src/components/**/*.{js,ts,jsx,tsx}',
+    './src/app/**/*.{js,ts,jsx,tsx}'
   ],
   darkMode: 'class',
   theme: {
@@ -91,7 +91,5 @@ module.exports = {
       futuraCondensed: ['futura-pt-condensed', 'sans-serif']
     }
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-  ]
+  plugins: [require('@tailwindcss/typography')]
 };
