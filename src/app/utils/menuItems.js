@@ -15,6 +15,11 @@ export const menuItems = [
     icon: "/icons/dashboard/schedule.svg"
   },
   {
+    href: '/workshops/workshopSchedule',
+    title: 'Workshops',
+    icon: "/icons/dashboard/workshops.svg"
+  },
+  {
     href: '/team',
     title: 'My Team',
     icon: "/icons/dashboard/team.svg"
@@ -38,11 +43,6 @@ export const menuItems = [
     href: '/tracks',
     title: 'Prizes / Tracks',
     icon: "/icons/dashboard/tracks.svg"
-  },
-  {
-    href: '/workshops',
-    title: 'Workshops',
-    icon: "/icons/dashboard/workshops.svg"
   },
   {
     href: '/resources',
