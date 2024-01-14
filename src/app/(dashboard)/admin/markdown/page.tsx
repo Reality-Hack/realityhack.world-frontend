@@ -1,10 +1,9 @@
-import { Remarkable } from 'remarkable';
+import Markdown from 'react-markdown'
 
-export default async function Markdown() {
+export default async function MarkdownPreview() {
   try {
-    var md = new Remarkable({quotes: '“”‘’'});
-    var renderedMarkdownAsHtml = md.render(
-`\`\`\`python
+    const markdown = `
+\`\`\`python
 class Project(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50)
@@ -17,11 +16,10 @@ class Project(models.Model):
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.name}"
 \`\`\`
-`
-    );
-    console.log(renderedMarkdownAsHtml);
+`;
+    console.log(markdown);
     return (
-      <div dangerouslySetInnerHTML={{__html:renderedMarkdownAsHtml}} />
+      <Markdown>{markdown}</Markdown>
     );
   } catch (err) {
     console.error(err);
