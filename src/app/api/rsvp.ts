@@ -16,6 +16,24 @@ export async function createRsvpForm(data: any) {
   return result;
 }
 
+export async function getAllRSVPs(accessToken: string) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/rsvps/`;
+
+  console.log('accessToken', accessToken);
+
+  const resp = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    }
+  });
+
+  if (resp.ok) {
+    return await resp.json();
+  }
+  throw new Error('Failed to fetch data. Status: ' + resp.status);
+}
+
 export async function rsvpOptions(data: any) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/rsvps/`;
   try {

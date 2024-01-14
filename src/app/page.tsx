@@ -8,10 +8,18 @@ import { updateAttendee } from './api/attendee';
 import { fileUpload } from './api/application';
 import QRCodeGenerator from '@/components/dashboard/QRCodeGenerator';
 import { participation_class } from '../types/application_form_types';
+import Loader from '@/components/Loader';
 
 type SetupModalProps = {
   toggleOverlay: () => void;
 };
+
+interface AttendeeData {
+  first_name: string;
+  last_name: string;
+  initial_setup: boolean;
+  profile_image?: string;
+}
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -45,18 +53,16 @@ export default function Dashboard() {
       let profileImageUpload;
 
       if (session) {
-        const data = {
-          id: user?.id,
+        let data: AttendeeData = {
           first_name: firstName,
           last_name: lastName,
-          initial_setup: 'True',
-          profile_image: null
+          initial_setup: true
         };
 
         if (acceptedFiles && acceptedFiles.length > 0) {
           try {
             profileImageUpload = await fileUpload(acceptedFiles[0]);
-            data.profile_image = profileImageUpload.id;
+            data = { ...data, profile_image: profileImageUpload.id };
           } catch (error) {
             console.error('Error in file upload:', error);
             setIsUploading(false);
@@ -135,7 +141,7 @@ export default function Dashboard() {
 
   return (
     <div className="p-6">
-      {status === 'authenticated' && (
+      {status === 'authenticated' ? (
         <>
           {!user?.initial_setup && <SetupModal toggleOverlay={toggleOverlay} />}
           <h1 className="text-2xl">Welcome, {user?.first_name}!</h1>
@@ -395,6 +401,8 @@ export default function Dashboard() {
             </div>
           </div>
         </>
+      ) : (
+        <Loader />
       )}
     </div>
   );
