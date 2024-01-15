@@ -3,6 +3,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
 import LinearProgress from '@mui/material/LinearProgress';
 import {
   ColumnDef,
+  Row,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -17,6 +18,7 @@ import DebouncedInput from './DebouncedInput';
 interface TableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
+  onRowClick?: (row: Row<T>) => void;
   search?: boolean;
   pagination?: boolean;
   loading?: boolean;
@@ -31,6 +33,7 @@ interface TableProps<T> {
  * Used https://tailwindcomponents.com/component/customers-table for table styling
  * @props data input data of type T
  * @props columns column definitions built using createColumnHelper<T>, see react-table docs for more info
+ * @props onRowClick perform an action on row click, passes in the row that was selected
  * @props search boolean to render search input, only searches local data
  * @props pagination boolean to render pagination menu, paginates local data
  * @props loading boolean to determine if a loading indicator should be shown
@@ -39,6 +42,7 @@ interface TableProps<T> {
 export default function Table<T>({
   data,
   columns,
+  onRowClick,
   search,
   pagination,
   loading
@@ -59,7 +63,7 @@ export default function Table<T>({
     getFilteredRowModel: getFilteredRowModel(),
     ...(pagination && { getPaginationRowModel: getPaginationRowModel() }),
     onGlobalFilterChange: setGlobalFilter,
-    debugTable: true,
+    debugTable: false,
     autoResetPageIndex: false
   });
 
@@ -135,7 +139,15 @@ export default function Table<T>({
             {table.getRowModel().rows.map(row => (
               <tr
                 key={row.id}
-                className="last:border-b-0 bg-white dark:bg-contentDark hover:bg-[#FAFCFF] min-w-[200px] hover:bg-opacity-70 dark:hover:bg-[#242424] "
+                className={
+                  'last:border-b-0 bg-white dark:bg-contentDark hover:bg-[#FAFCFF] min-w-[200px] hover:bg-opacity-70 dark:hover:bg-[#242424]' +
+                  (!!onRowClick ? ' hover:cursor-pointer' : '')
+                }
+                onClick={() => {
+                  if (!!onRowClick) {
+                    onRowClick(row);
+                  }
+                }}
               >
                 {row.getVisibleCells().map(cell => (
                   <td

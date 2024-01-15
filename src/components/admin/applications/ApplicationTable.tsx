@@ -5,6 +5,7 @@ import {
   updateApplication
 } from '@/app/api/application';
 import { getUploadedFile } from '@/app/api/uploaded_files';
+import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 import CustomSelect from '@/components/CustomSelect';
 import Table from '@/components/Table';
 import { Application, status } from '@/types/types';
@@ -15,7 +16,6 @@ import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../Modal';
 import ReviewPage from '../ReviewPage';
-import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 
 interface ApplicationTableProps {
   type: string;
@@ -351,7 +351,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
         Export CSV
       </ExportButton>
       <div className="z-50 px-6 py-6 overflow-y-scroll bg-[#FCFCFC] border-gray-300 rounded-2xl">
-        <div className="h-[629px] overflow-y-scroll z-50 rounded-l border border-[#EEEEEE]">
+        <div className="h-[430px] overflow-y-scroll z-50 rounded-l border border-[#EEEEEE]">
           <Table
             data={applications}
             columns={columns}
