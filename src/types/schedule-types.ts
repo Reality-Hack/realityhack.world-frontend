@@ -15,6 +15,15 @@ export interface ScheduleRoomProps {
   duration: number;
   workshopName: string;
   description: string;
+  skills: [string];
+  recommended: ExperienceLevel[];
+}
+
+export enum ExperienceLevel {
+  A = 'Atendee',
+  P = 'Professional',
+  D = 'Designer',
+  S = 'Student'
 }
 
 export interface DialogProps {

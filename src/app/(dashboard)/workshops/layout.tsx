@@ -14,13 +14,13 @@ export default function ApplicationLayout({
       <div className="py-4">
         <div className="pb-2">
           <Tab
-            href="/schedule/MasterSchedule"
-            isSelected={pathname === '/schedule/MasterSchedule'}
+            href="/workshops/workshopSchedule"
+            isSelected={pathname === '/workshops/workshopSchedule'}
             title="Schedule"
           />
           <Tab
-            href="/schedule/MySchedule"
-            isSelected={pathname === '/schedule/MySchedule'}
+            href="/workshops/mySchedule"
+            isSelected={pathname === '/workshops/mySchedule'}
             title="My Schedule"
           />
           

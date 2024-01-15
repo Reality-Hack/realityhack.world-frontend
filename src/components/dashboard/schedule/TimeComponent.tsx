@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 
 interface TimeComponentProps {
   time: number;
+  location: string;
 }
 
 export default function TimeComponent({ time }: TimeComponentProps) {
