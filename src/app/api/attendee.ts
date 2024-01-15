@@ -1,3 +1,7 @@
+import { components } from '@/types/schema';
+
+export type Attendee = components['schemas']['Attendee'];
+
 export async function getMe(accessToken: string) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/me/`;
 
