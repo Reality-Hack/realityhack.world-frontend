@@ -19,8 +19,6 @@ export async function createRsvpForm(data: any) {
 export async function getAllRSVPs(accessToken: string) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/rsvps/`;
 
-  console.log('accessToken', accessToken);
-
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',

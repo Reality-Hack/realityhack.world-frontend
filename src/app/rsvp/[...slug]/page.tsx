@@ -152,7 +152,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
       return updatedFields;
     });
   }, [isParticipant, slug]);
-  
+
   useEffect(() => {
     const visaRelatedFields = [
       'us_visa_support_full_name',
@@ -453,7 +453,6 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
     if (isValid) {
       try {
         await createRsvpForm(formData);
-        console.log('Form submitted successfully');
         setCompleted(true);
       } catch (error: any) {
         console.error('Error in creating application:', error);

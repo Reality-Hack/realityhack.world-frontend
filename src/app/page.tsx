@@ -72,7 +72,6 @@ export default function Dashboard() {
 
         try {
           await updateAttendee(session.access_token, data);
-          console.log('Attendee updated successfully!');
           window.location.reload();
         } catch (error) {
           console.error('Error updating attendee:', error);

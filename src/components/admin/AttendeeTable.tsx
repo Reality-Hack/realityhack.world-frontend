@@ -134,7 +134,6 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
               throw Error('application not saved');
             }
             let newApps = applications.slice();
-            console.log('newApps: ', newApps);
             newApps[appId] = response;
             setApplications(newApps);
           })
