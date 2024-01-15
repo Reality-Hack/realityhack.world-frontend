@@ -9,8 +9,20 @@ export async function getAllWorkshops(accessToken:string) {
 }
 
 //GET USER'S SPECIFIC WORKSHOP SCHEDULE
-export async function getMyWorkshops() {
-    
+export async function getMyWorkshops(accessToken:string, userId:string) {
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendee/${userId}`;
+
+  const resp = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + accessToken
+    }
+  });
+
+  if (resp.ok) {
+    return await resp.json();
+  }
+  throw new Error('Failed to fetch data. Status: ' + resp.status);
 }
 
 //UPDATE A USER'S SPECIFIC WORKSHOP SCHEDULE

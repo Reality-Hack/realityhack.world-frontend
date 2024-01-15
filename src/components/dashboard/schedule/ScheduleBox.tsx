@@ -2,10 +2,11 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { getAttendee } from '@/app/api/attendee';
-import { getUserWorkshops } from '@/app/api/workshops';
+import { getMyWorkshops } from '@/app/api/workshops';
 import ScheduleRoom from './ScheduleItem';
 import TimeComponent from './TimeComponent';
 import { useAuthContext } from '@/hooks/AuthContext';
+import { useSession } from 'next-auth/react';
 
 export default function ScheduleBox() {
   //fetch the users added semiars/workshops
@@ -13,15 +14,16 @@ export default function ScheduleBox() {
   //render them out using a map function
   const { user } = useAuthContext();
   const [userEvents, setUserEvents] = useState();
+  const { data: session, status } = useSession();
+  console.log(session)
   let timeSlots = [];
   for(let i=0;i<14;i++){
     timeSlots.push(i);
   }
 
   async function fetchUserWorkshops() {
-    console.log(user)
-    const userWorkshops = await getUserWorkshops(user.id);
-    console.log(userWorkshops)
+    const userWorkshops = await getMyWorkshops(session?.token, user.id);
+    console.log(userWorkshops);
   }
 
   const dummyData = [
