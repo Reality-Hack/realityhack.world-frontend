@@ -1,5 +1,5 @@
+import { useSession } from 'next-auth/react';
 import { useEffect, useRef } from 'react';
-import { useSession, signOut } from 'next-auth/react';
 type ModalProps = {
   toggleOverlay: () => void;
   children: React.ReactNode;

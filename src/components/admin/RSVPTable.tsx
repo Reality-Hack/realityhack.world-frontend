@@ -109,7 +109,6 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
               throw Error('application not saved');
             }
             let newApps = RSVP.slice();
-            console.log('newApps: ', newApps);
             newApps[appId] = response;
             setRSVP(newApps);
           })

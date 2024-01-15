@@ -677,10 +677,6 @@ export default function ReviewPage({
     );
   };
 
-  console.log(allInfo);
-
-  console.log('participation_class', allInfo.participation_class);
-
   const sections = [
     { label: 'Disclaimers', component: <Disclaimers /> },
     { label: 'Contact and Personal Info ', component: <BasicInfoAndDem /> },
