@@ -15,7 +15,7 @@ export async function getMe(accessToken: string) {
 }
 
 export async function updateAttendee(accessToken: string, data: any) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/me/`;
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/attendees/${data.id}/`;
 
   try {
     const response = await fetch(url, {
