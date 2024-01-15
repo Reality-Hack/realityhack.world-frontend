@@ -23,7 +23,7 @@ export default function Page() {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 bg-gray-200 h-[800px] w-full overflow-y-auto p-2 rounded-lg">
       <div className="text-3xl">Help Queue</div>
       <div className="flex gap-4">
         <StatBox
@@ -69,15 +69,25 @@ export default function Page() {
         value={selectedSkill}
         onChange={handleSkillSelection}
       />
-      {tabNames[selectedTab] == "Open Requests" && <div>
-        <Posting 
-          requestTitle="Fip Title"
-          description="Description"
-          skillList={["a","b"]}
-        />  
-      </div>}
-      {tabNames[selectedTab] == "Accepted By Others" && <div>B</div>}
-      {tabNames[selectedTab] == "Completed" && <div>C</div>}
+      <div>
+        <div className='p-4'>
+
+          {tabNames[selectedTab] == "Open Requests" && <div className='flex flex-wrap gap-2'>
+            <Posting 
+              requestTitle="Fip Title"
+              description="Description"
+              skillList={["a","b"]}
+            />  
+            <Posting 
+              requestTitle="Fip Title"
+              description="Description"
+              skillList={["a","b"]}
+            />  
+          </div>}
+          {tabNames[selectedTab] == "Accepted By Others" && <div>B</div>}
+          {tabNames[selectedTab] == "Completed" && <div>C</div>}
+        </div>
+      </div>
     </div>
   );
 }

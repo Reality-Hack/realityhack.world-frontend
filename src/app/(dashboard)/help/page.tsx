@@ -35,8 +35,8 @@ export default function Help() {
       <div className="text-4xl p-4"> Help Queue</div>
       <div className="flex flex-col gap-8 m-4 p-4 rounded-md bg-gray-200">
         <div className="flex gap-4">
-          <StatBox src="/mentee_1.png" label="Active Requests" stat="9" />
-          <StatBox src="/help.png" label="Mentors Available" stat="9" />
+          <StatBox src="/icons/dashboard/mentee_1.png" label="Active Requests" stat="9" />
+          <StatBox src="/icons/dashboard/help.png" label="Mentors Available" stat="9" />
         </div>
         <div className="flex ">
           <div className="text-4xl font-semibold"> Your Help Requests</div>
