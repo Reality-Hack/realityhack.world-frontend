@@ -31,6 +31,29 @@ export default function Dashboard() {
     setOverlayVisible(prev => !prev);
   };
 
+  const getParticipationClassName = (code: string) => {
+    switch (code) {
+      case 'P':
+        return 'Hacker';
+      case 'M':
+        return 'Mentor';
+      case 'J':
+        return 'Judge';
+      case 'S':
+        return 'Sponsor';
+      case 'V':
+        return 'Volunteer';
+      case 'O':
+        return 'Organizer';
+      case 'G':
+        return 'Guardian';
+      case 'E':
+        return 'Media';
+      default:
+        return '';
+    }
+  };
+
   function SetupModal({ toggleOverlay }: SetupModalProps) {
     const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
     const [rejectedFiles, setRejectedFiles] = useState<any>(null);
@@ -180,11 +203,7 @@ export default function Dashboard() {
                     <span>{user?.last_name}</span>
                   </div>
                   <div className="w-32 h-9 bg-neutral-800 rounded-[5px] flex justify-center items-center text-white">
-                    {user?.participation_class === 'P'
-                      ? 'Hacker'
-                      : user?.participation_class === 'M'
-                      ? 'Mentor'
-                      : 'Judge'}
+                    {getParticipationClassName(user?.participation_class)}
                   </div>
                   <div className="pt-6 pb-4 text-white">
                     Show QR code to check in
