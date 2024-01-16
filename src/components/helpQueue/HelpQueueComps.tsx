@@ -21,11 +21,13 @@ interface StatBoxProps {
     requestTitle: string;
     skillList: string[];
     description: string;
+    created:string;
   }
   export function CompletedPosting({
     requestTitle,
     skillList,
-    description
+    description,
+    created
   }: CompletedPostingProps) {
     return (
       <Posting
@@ -33,6 +35,7 @@ interface StatBoxProps {
         requestTitle={requestTitle}
         skillList={skillList}
         description={description}
+        created={created}
       />
     );
   }
@@ -45,6 +48,8 @@ interface StatBoxProps {
     placeInQueue?: number;
     skillList: string[];
     description: string;
+    created?:string;
+    team?:string
   }
   
   export function Posting({
@@ -54,10 +59,13 @@ interface StatBoxProps {
     requestTitle,
     placeInQueue,
     skillList,
-    description
+    description,
+    created,
+    team
   }: PostingProps) {
     return (
       <div className="flex flex-col bg-white border-black border-2  w-fit rounded-lg">
+        {team}
         {mentorFirstName && (
           <div className="bg-[#8FC382] w-full p-0 text-white flex flex-row justify-center">
             {mentorFirstName} {mentorLastName && mentorLastName[0]}. is on their way
@@ -72,11 +80,18 @@ interface StatBoxProps {
           <div className="font-semibold">{requestTitle}</div>
           {placeInQueue && (
             <div>
-              Place in Queue: <span className="font-bold">{placeInQueue}</span>
+              {placeInQueue == 1 && <span className="font-bold">NEXT</span>}
+              {placeInQueue !== 1 &&  <span className="font-bold">Place in Queue: {placeInQueue}</span>}
             </div>
           )}
         </div>
         <div className="flex flex-col gap-2">
+          <div className="ml-4">
+            {created && `Submitted at ${formatTime(created)}`}
+            </div>
+          <div className="ml-4">
+            {created && calculateTimeDifference(created)}
+          </div>
           <div className="flex px-4 gap-2">
             {skillList.map((skill, index) => (
               <Skill key={index} skill={skill} />
@@ -302,5 +317,32 @@ interface StatBoxProps {
         </div>
       </div>
     );
+  }
+  
+  function formatTime(datetimeString: string): string {
+    const timeWithMilliseconds: string = datetimeString.split('T')[1]; // "02:09:56.806940Z"
+    const timePart: string = timeWithMilliseconds.split('.')[0]; // "02:09:56"
+  
+    const [hours, minutes]: number[] = timePart.split(':').map(Number);
+    const ampm: string = hours >= 12 ? 'PM' : 'AM';
+    const formattedTime: string = `${hours % 12 || 12}:${minutes} ${ampm}`;
+  
+    return formattedTime;
+  }
+  
+  function calculateTimeDifference(dateTimeString: string): string 
+      {
+    const currentDate = new Date();
+    const targetDate = new Date(dateTimeString);
+  
+    // Calculate the time difference in milliseconds
+    const timeDifference = targetDate.getTime() - currentDate.getTime();
+  
+    // Convert milliseconds to hours, minutes, and seconds
+    const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+  
+    return `${hours}: ${minutes}: ${seconds}`;
   }
   

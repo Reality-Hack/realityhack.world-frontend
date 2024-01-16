@@ -9,9 +9,9 @@ import {
   getAllHelpRequestsFromHistory,
   getAllTeams,
   getAllTables
-} from '@/app/api/lighthouse';
+} from '@/app/api/helpqueue';
 import TableComponent from '@/components/Table';
-import { HelpRequestHistory, HelpRequest } from '@/app/api/lighthouse';
+import { HelpRequestHistory, HelpRequest } from '@/app/api/helpqueue';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { useSession } from 'next-auth/react';
 import { HTMLProps, useEffect, useMemo, useRef, useState } from 'react';

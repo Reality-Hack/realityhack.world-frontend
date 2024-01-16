@@ -1,5 +1,6 @@
 'use client';
 import { useSession } from 'next-auth/react';
+import Help2 from './helpTwo';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import LighthouseTable from "./websocket"
@@ -29,7 +30,8 @@ export default function Help() {
   return (
     <>
       <div>Help</div>
-      <LighthouseTable />
+      <Help2 />
+      {/* <LighthouseTable /> */}
     </>
     // <div className="h-screen w-screen bg-white">
     //   <div className="text-4xl p-4"> Help Queue</div>

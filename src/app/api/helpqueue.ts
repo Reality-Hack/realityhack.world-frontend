@@ -62,11 +62,71 @@ export type Team = {
 export async function getAllHelpRequests(
   accessToken: string
 ): Promise<HelpRequest[]> {
+  // console.log(accessToken)
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/`;
+  
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: 'JWT ' + accessToken
+    }
+  });
+  const result = await resp.json();
+  if (resp.ok) {
+    return result;
+  }
+  throw new Error(
+    `Failed to get all tables Status: ${resp.status}\n Result: ${JSON.stringify(
+      result
+    )}`
+  );
+}
+/**
+ * BROKEN
+ * getAllMyHelpRequests: makes api call to fetch the team's help req object
+ * @param accessToken session token to make connection
+ * @param teamId teamId to filter helpRequests
+ * @returns list of helpRequests objects
+ */
+export async function getAllMyTeamsHelpRequests(
+  accessToken: string,
+  teamId: string
+): Promise<HelpRequest[]> {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests?team=${teamId}`;
+  const resp = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken,
+      teamId: teamId
+    }
+  });
+  const result = await resp.json();
+  if (resp.ok) {
+    return result;
+  }
+  throw new Error(
+    `Failed to get all tables Status: ${resp.status}\n Result: ${JSON.stringify(
+      result
+    )}`
+  );
+}
+/**
+ * BROKEN
+ * getAllMyHelpRequests: makes api call to fetch the team's help req object
+ * @param accessToken session token to make connection
+ * @param teamId teamId to filter helpRequests
+ * @returns list of helpRequests objects
+ */
+export async function getAllMyTeamsHistoricalHelpRequests(
+  accessToken: string,
+  teamId: string
+): Promise<HelpRequestHistory[]> {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequestshistory/?team=${teamId}`;
+  const resp = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken,
+      teamId: teamId
     }
   });
   const result = await resp.json();
@@ -86,8 +146,8 @@ export async function getAllHelpRequests(
  */
 export async function getAllHelpRequestsFromHistory(
   accessToken: string
-): Promise<Table[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequestsHistory/`;
+): Promise<HelpRequestHistory[]> {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequestshistory/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -125,6 +185,29 @@ export async function getAllLocations(): Promise<Location[]> {
 
 export async function getAllTeams(): Promise<Team> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams/`;
+  const resp = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  const result = await resp.json();
+  if (resp.ok) {
+    return result;
+  }
+  throw new Error(
+    `Failed to get all tables Status: ${resp.status}\n Result: ${JSON.stringify(
+      result
+    )}`
+  );
+}
+
+/**
+ * 
+ * @param attendeeId the attendee id sting
+ * @returns teamId string
+ */
+export async function getTeamIdFromAttendeeId(attendeeId:string): Promise<Team[]> {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams?attendees=${attendeeId}`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json'
@@ -231,3 +314,4 @@ export async function addMentorHelpRequest(
     );
   }
 }
+
