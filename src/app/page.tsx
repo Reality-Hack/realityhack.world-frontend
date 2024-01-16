@@ -4,10 +4,9 @@ import Modal from '@/components/Modal';
 import { useAuthContext } from '@/hooks/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { updateAttendee } from './api/attendee';
+import { patchMe } from './api/attendee';
 import { fileUpload } from './api/application';
 import QRCodeGenerator from '@/components/dashboard/QRCodeGenerator';
-import { participation_class } from '../types/application_form_types';
 import Loader from '@/components/Loader';
 
 type SetupModalProps = {
@@ -94,7 +93,7 @@ export default function Dashboard() {
         }
 
         try {
-          await updateAttendee(session.access_token, data);
+          await patchMe(session.access_token, data);
           window.location.reload();
         } catch (error) {
           console.error('Error updating attendee:', error);
