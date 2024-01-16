@@ -11,6 +11,8 @@ export interface CustomSelectProps {
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
+  search?: boolean;
+  onSearch?: (value: string) => void;
 }
 
 export default function CustomSelect({
@@ -18,17 +20,38 @@ export default function CustomSelect({
   options,
   value,
   onChange,
-  disabled
+  disabled,
+  search,
+  onSearch
 }: CustomSelectProps) {
   return (
-    <Select
-      value={value}
-      style={{ width: 180 }}
-      size="small"
-      disabled={disabled}
-      placeholder={label}
-      onChange={onChange}
-      options={options}
-    />
+    <div>
+      {search ? (
+        <Select
+          showSearch
+          value={value}
+          style={{ width: 250 }}
+          size="small"
+          disabled={disabled}
+          placeholder={label}
+          onChange={onChange}
+          onSearch={onSearch}
+          filterOption={(input, option: any) =>
+            option?.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }
+          options={options}
+        />
+      ) : (
+        <Select
+          value={value}
+          style={{ width: 180 }}
+          size="small"
+          disabled={disabled}
+          placeholder={label}
+          onChange={onChange}
+          options={options}
+        />
+      )}
+    </div>
   );
 }
