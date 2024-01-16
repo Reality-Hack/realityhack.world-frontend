@@ -88,8 +88,11 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
       style={{
         backgroundColor: color,
         gridColumnStart: startTime,
-        gridColumnEnd: `span ${duration}`,
-        gridRowStart: floorNumber + 1
+        gridColumnEnd: `span ${duration/10}`,
+        position: 'absolute', // Use absolute positioning
+
+        // gridRowStart: floorNumber + 1
+        gridRowStart: 2
       }}
       className={`h-11 rounded-[10px] shadow p-1 hover:cursor-pointer`}
     >
@@ -98,7 +101,7 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
           <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{workshopName}</div>
         <div className="text-indigo-200 text-[10px] font-medium font-['Inter'] leading-[10px] ml-2 whitespace-nowrap">
         <div style={{ fontSize:"10px" ,whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          {location} | {formatTime(datetime)} - {addHoursToTimeWithAMPM(formatTime(datetime),1)}
+          {location.slice(0,5)} | {formatTime(datetime)} - {addHoursToTime(formatTime(datetime),1)}
           </div>
         </div>
         </div>
@@ -131,7 +134,7 @@ function formatTime(datetimeString: string): string {
 
   return formattedTime;
 }
-function addHoursToTimeWithAMPM(time:string, hoursToAdd:number) {
+function addHoursToTime(time:string, hoursToAdd:number) {
   // Extract hour, minute, and AM/PM information from the time string
   const match = time.match(/(\d+):(\d+)\s*([apAP][mM])?/);
   
