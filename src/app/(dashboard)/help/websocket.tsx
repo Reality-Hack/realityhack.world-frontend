@@ -18,9 +18,6 @@ import { HTMLProps, useEffect, useMemo, useRef, useState } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 const LighthousesSocketURL = `${process.env.NEXT_PUBLIC_BACKEND_WS_URL}/ws/lighthouses/`;
-// help reqs - team
-// team - table (which is a table location)
-// tables - numbers
 
 type LighthouseInfo = {
   location?: Location;
@@ -39,6 +36,10 @@ export default function LighthouseTable() {
   const { sendMessage, lastMessage, readyState } =
     useWebSocket(LighthousesSocketURL);
 
+  //get help requests, teams, and locations
+  // help reqs - team
+  // team - table (which is a table location)
+  // tables - numbers
   useEffect(() => {
     if (session?.access_token) {
       console.log('use effect 0');
@@ -48,6 +49,11 @@ export default function LighthouseTable() {
         setHelpRequests(helpReqs);
         // console.log("tables: " , tables)
       });
+
+      getAllTeams().then((teamsss: Team | Team[]) => {
+        setTeams(Array.isArray(teamsss) ? teamsss : [teamsss]);
+      });
+
       getAllLocations().then(locations => {
         setLocations(locations);
         console.log('locations: ', locations);
@@ -64,8 +70,8 @@ export default function LighthouseTable() {
       if (Array.isArray(payload)) {
         console.log(
           'lighthouse messages: ',
-          JSON.parse(lastMessage.data).filter(el => el.mentor_requested)
-        );
+          JSON.parse(lastMessage.data).filter((el: LightHouseMessage) => el.mentor_requested)
+          );
         let lighthouseInfos = payload.map(lhMessage => {
           const table = tables.find(t => t.number === lhMessage.table);
           const location = locations.find(l => l.id === table?.location);
@@ -96,14 +102,6 @@ export default function LighthouseTable() {
     setLoading(false);
   }, [lastMessage, locations, tables]);
 
-  useEffect(() => {
-    if (session?.access_token) {
-      getAllTeams().then((teamsss: Team | Team[]) => {
-        setTeams(Array.isArray(teamsss) ? teamsss : [teamsss]);
-      });
-    }
-  }, []);
-
   const connectionStatus = {
     [ReadyState.CONNECTING]: 'Connecting',
     [ReadyState.OPEN]: 'Open',
@@ -127,18 +125,22 @@ export default function LighthouseTable() {
           <div className="flex flex-col">
             <div>
               {'help request team: '} {JSON.stringify(allHelpRequests[0]?.team)}
-              {"QUEUE POSITION"} {allHelpRequests.findIndex(obj => obj.team =="45d57bec-a242-497f-b17c-203fa38e80ae")}
+              {'QUEUE POSITION'}{' '}
+              {allHelpRequests.findIndex(
+                obj => obj.team == '45d57bec-a242-497f-b17c-203fa38e80ae'
+              )}
             </div>
             <div>
               {'team table location: '}
-              {JSON.stringify(teams[0]?.table)} {"table number: "} {locations.findIndex(obj => obj.id == teams[0]?.table)}
+              {JSON.stringify(teams[0]?.table)} {'table number: '}{' '}
+              {locations.findIndex(obj => obj.id == teams[0]?.table)}
             </div>
-            <div className='flex gap-4'>
+            <div className="flex gap-4">
               {'table ID'}
               <div>
-              {JSON.stringify((locations[0]?.id))}
-              {"table number: "}
-              {JSON.stringify((locations[0]?.number))}
+                {JSON.stringify(locations[0]?.id)}
+                {'table number: '}
+                {JSON.stringify(locations[0]?.number)}
               </div>
             </div>
             {/* {teams.filter((el) => elJSON.stringify(allHelpRequests[0].team))} */}
@@ -148,8 +150,12 @@ export default function LighthouseTable() {
     </>
   );
 }
-
-function Box({ helpReqId, tableId }) {
+type Box = {
+    helpReqId?: string;
+    tableId:string;
+} 
+  
+function Box({ helpReqId, tableId }:Box) {
   return (
     <div className="flex flex-row gap-4 border-2 rounded-md mx-2">
       <div>{tableId}</div>
