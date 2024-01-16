@@ -78,7 +78,7 @@ function Workshop({
       } w-fit p-2 rounded-xl flex flex-col gap-2`}
       onClick={() => onSelect(id)}
     >
-      <div onClick={() => console.log(workshops.length)}>
+      {/* <div onClick={() => console.log(workshops.length)}>
         {JSON.stringify(Object.keys(workshops[0]))} pokpokp
       </div>
       <div onClick={() => console.log(workshops.length)}>
@@ -93,7 +93,7 @@ function Workshop({
           minute: '2-digit',
           hour12: true
         }).format(new Date(workshops[0].datetime))}
-      </div>
+      </div> */}
       <div>
         <div className="font-semibold text-xl">{workshopTitle}</div>
         <div>

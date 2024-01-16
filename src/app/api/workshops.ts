@@ -5,9 +5,6 @@
 
 export async function getAllWorkshops(accessToken: string) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshops/`;
-
-  console.log('accessToken', accessToken);
-
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -23,7 +20,9 @@ export async function getAllWorkshops(accessToken: string) {
 
 //GET USER'S SPECIFIC WORKSHOP SCHEDULE
 export async function getMyWorkshops(accessToken: string, userId: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendee/${userId}`;
+  const id = "6612aecb-4157-466f-8c51-ef1044af9964"
+  // const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/?attendee=${userId}`;
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/?attendee=${id}`;
 
   const resp = await fetch(url, {
     headers: {

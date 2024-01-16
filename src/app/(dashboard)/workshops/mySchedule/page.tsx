@@ -4,7 +4,8 @@ import {
   Room,
   LegendRoomProps,
   ScheduleRoomProps,
-  DialogProps
+  DialogProps,
+  WorkshopAttendeeListItem
 } from '@/types/schedule-types';
 import ScheduleRoom from '@/components/dashboard/schedule/ScheduleItem';
 import TimeComponent from '@/components/dashboard/schedule/TimeComponent';
@@ -37,13 +38,12 @@ const Page: React.FC = () => {
   };
   const [assignedColors, setAssignedColor] = useState();
 
-  const [userEvents, setUserEvents] = useState();
+  const [userEvents, setUserEvents] = useState<WorkshopAttendeeListItem[]>();
   const [allEvents, setAllEvents] = useState();
   const [loading, setLoading] = useState<boolean>(false);
-  let allData = {};
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
   let timeSlots = [];
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 12; i++) {
     timeSlots.push(i);
   }
 
@@ -75,49 +75,58 @@ const Page: React.FC = () => {
 
   return (
     <div>
+      {userEvents?.length}
       <div className="flex flex-col gap-2 w-full">
         <div className="bg-white border-2 border-gray-200 flex flex-col gap-2 w-fill p-2 rounded-lg">
-        <div>
-      <div className="">
-        <div className="w-[100%] h-[100%] bg-neutral-50 rounded-[10px] shadow overflow-x-scroll">
-          <span className="text-zinc-500 text-2xl font-normal font-['Inter'] leading-normal mt-6 ml-3 ">
-            Schedule
-          </span>
-          <div className="p-4 rounded-[10px] min-w-[1000px] overflow-x-auto">
-            <div
-              style={{
-                gridTemplateColumns: 'repeat(14, .25fr)',
-                gridTemplateRows: 'repeat(8, 1fr)',
-                rowGap: '15px'
-              }}
-              className="grid grid-rows-8 grid-cols-14"
-            >
-              {timeSlots.map(slot => (
-                <TimeComponent time={slot} />
-              ))}
-              {dummyData.map(data => (
-                <ScheduleRoom
-                  color={data.color}
-                  location={data.location}
-                  duration={data.duration}
-                  workshopName={data.name}
-                  description={data.description}
-                  time={data.time}
-                  skills={data.skills}
-                />
-              ))}
+          <div>
+            <div className="">
+              <div className="w-[100%] h-[100%] bg-neutral-50 rounded-[10px] shadow overflow-x-scroll">
+                <span className="text-zinc-500 text-2xl font-normal font-['Inter'] leading-normal mt-6 ml-3 ">
+                  Schedule
+                </span>
+                <div className="p-4 rounded-[10px] min-w-[1000px] overflow-x-auto">
+                  <div
+                    style={{
+                      gridTemplateColumns: 'repeat(14, .25fr)',
+                      gridTemplateRows: 'repeat(8, 1fr)',
+                      rowGap: '15px'
+                    }}
+                    className="grid grid-rows-8 grid-cols-14"
+                  >
+                    {timeSlots.map(slot => (
+                      <TimeComponent time={slot} location={'o'} />
+                    ))}
+
+                    {allEvents?.filter((workshop: ScheduleRoomProps) =>
+                          userEvents?.some(
+                            (userEvent: WorkshopAttendeeListItem) =>
+                              userEvent.workshop === workshop.id
+                          )
+                      ).map((data: ScheduleRoomProps) => (
+                        <ScheduleRoom
+                          color={roomColors[1] || 'defaultColor'}
+                          location={data.location || 'Room'}
+                          duration={data.duration || 2}
+                          workshopName={data.workshopName || 'defaultWorkshopName'}
+                          description={data.description || 'defaultDescription'}
+                          datetime={data.datetime || '2024-01-13T02:09:00.806940Z'}
+                          skills={data.skills || []}
+                          key={data.id}
+                          id={data.id}
+                        />
+                      ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="origin-top-left -rotate-90 translate-y-[-500%] text-zinc-500 text-base font-light font-['Inter'] leading-normal tracking-[2.88px]">
+              Monday January 25
             </div>
           </div>
-        </div>
-      </div>
-      <div className="origin-top-left -rotate-90 translate-y-[-500%] text-zinc-500 text-base font-light font-['Inter'] leading-normal tracking-[2.88px]">
-        Monday January 25
-      </div>
-    </div>
           <div className="text-zinc-500 text-2xl font-normal font-['Inter'] leading-normal bg-white border-2 border-gray-200 flex flex-col gap-2 w-fit p-2 rounded-lg bg-neutral-50 rounded-[10px] shadow">
             Location Key
-            {roomColors.map(el => (
-              <LegendRoom color={roomColors.} name={el.name} key={el.name} />
+            {Object.entries(roomColors).map(([roomId, color]) => (
+              <LegendRoom color={color} name={`Room ${roomId}`} key={roomId} />
             ))}
           </div>
         </div>

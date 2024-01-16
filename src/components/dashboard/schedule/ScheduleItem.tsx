@@ -33,19 +33,20 @@ const Dialog: React.FC<DialogProps> = ({ isOpen, onClose, children }) => {
 };
 
 const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
-  time,
+  datetime,
   location,
   duration,
   workshopName,
   color,
   description,
-  skills
+  skills,
+  id
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [startTime, setStartTime] = useState<number>(0);
   const [floorNumber, setFloorNumber] = useState<number>(0);
   const [randomColor, setRandomColor] = useState<string>('');
-
+  
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const roomColors: { [key: string]: string } = {
     1: '#65A5EB',
@@ -59,20 +60,22 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
   };
 
   useEffect(() => {
-    let [timeConv, period] = time.split(/(am|pm)/i);
-    let floorLocation = location.split(/(\d+)/);
+    let [timeConv, period] = formatTime(datetime).split(/(am|pm)/i);
     let startHour = parseInt(timeConv);
-    if (period === 'pm' && startHour !== 12) {
-      startHour += 5;
+    if (period.toLowerCase() === 'pm' && startHour !== 12) {
+      startHour += 6;
     } else if (period === 'am') {
       startHour -= 7;
     }
     setStartTime(startHour);
+      //set the time and color of the schedule box
+    let floorLocation = location.split(/(\d+)/);
+    setStartTime(2);
     setFloorNumber(parseInt(floorLocation[1]));
     const colorKeys = Object.keys(roomColors);
     const randomKey = colorKeys[Math.floor(Math.random() * colorKeys.length)];
     setRandomColor(roomColors[randomKey]);
-  }, [time, location, roomColors]);
+  }, [datetime, location, roomColors]);
 
   const handleSeeMoreClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -83,19 +86,21 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
     <div
       onClick={handleSeeMoreClick}
       style={{
-        backgroundColor: randomColor,
+        backgroundColor: color,
         gridColumnStart: startTime,
         gridColumnEnd: `span ${duration}`,
         gridRowStart: floorNumber + 1
       }}
-      className={`h-11 rounded-[10px] shadow`}
+      className={`h-11 rounded-[10px] shadow p-1 hover:cursor-pointer`}
     >
-      <div className="bg-stone-300">
+      <div className="">
+        <div className="text-white text-base font-medium font-['Inter'] overflow-x-hidden">
+          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{workshopName}</div>
         <div className="text-indigo-200 text-[10px] font-medium font-['Inter'] leading-[10px] ml-2 whitespace-nowrap">
-          {location} - {time}
+        <div style={{ fontSize:"10px" ,whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {location} | {formatTime(datetime)} - {addHoursToTimeWithAMPM(formatTime(datetime),1)}
+          </div>
         </div>
-        <div className="text-white text-base font-medium font-['Inter'] overflow-x-scroll">
-          {workshopName}
         </div>
       </div>
       {dialogOpen && (
@@ -111,3 +116,47 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
 };
 
 export default ScheduleRoom;
+
+function formatTime(datetimeString: string): string {
+  const timeWithMilliseconds: string = datetimeString.split("T")[1];  // "02:09:56.806940Z"
+  const timePart: string = timeWithMilliseconds.split(".")[0];  // "02:09:56"
+
+  const [hours, minutes]: number[] = timePart.split(":").map(Number);
+  const ampm: string = hours >= 12 ? "PM" : "AM";
+
+  // Ensure minutes are represented as two digits
+  const formattedMinutes: string = String(minutes).padStart(2, "0");
+
+  const formattedTime: string = `${(hours % 12) || 12}:${formattedMinutes} ${ampm}`;
+
+  return formattedTime;
+}
+function addHoursToTimeWithAMPM(time:string, hoursToAdd:number) {
+  // Extract hour, minute, and AM/PM information from the time string
+  const match = time.match(/(\d+):(\d+)\s*([apAP][mM])?/);
+  
+  if (!match) {
+    // Handle invalid time format
+    throw new Error('Invalid time format');
+  }
+
+  const [, hourStr, minuteStr, ampm] = match;
+  const hour = parseInt(hourStr, 10);
+  const minute = parseInt(minuteStr, 10);
+  const isPM = ampm && ampm.toLowerCase() === 'pm';
+
+  // Convert time to 24-hour format
+  let totalHours = hour + (isPM && hour !== 12 ? 12 : 0);
+
+  // Add hours
+  totalHours += hoursToAdd;
+
+  // Calculate new hour and AMPM
+  const newHour = (totalHours % 12) || 12;
+  const newAMPM = totalHours >= 12 ? 'PM' : 'AM';
+
+  // Format the result
+  const formattedTime = `${newHour}:${minute.toString().padStart(2, '0')} ${newAMPM}`;
+
+  return formattedTime;
+}
