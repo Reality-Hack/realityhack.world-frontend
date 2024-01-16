@@ -4,6 +4,7 @@ import {
   Room,
   LegendRoomProps,
   ScheduleRoomProps,
+  Workshop,
   DialogProps,
   WorkshopAttendeeListItem
 } from '@/types/schedule-types';
@@ -97,22 +98,23 @@ const Page: React.FC = () => {
                       <TimeComponent time={slot} location={'o'} />
                     ))}
 
-                    {allEvents?.filter((workshop: ScheduleRoomProps) =>
+                    {allEvents?.filter((workshop: Workshop) =>
                           userEvents?.some(
                             (userEvent: WorkshopAttendeeListItem) =>
                               userEvent.workshop === workshop.id
                           )
-                      ).map((data: ScheduleRoomProps) => (
+                      ).map((data: Workshop) => (
                         <ScheduleRoom
                           color={roomColors[1] || 'defaultColor'}
                           location={data.location || 'Room'}
                           duration={data.duration || 2}
-                          workshopName={data.workshopName || 'defaultWorkshopName'}
+                          workshopName={data.name || 'defaultWorkshopName'}
                           description={data.description || 'defaultDescription'}
                           datetime={data.datetime || '2024-01-13T02:09:00.806940Z'}
                           skills={data.skills || []}
                           key={data.id}
                           id={data.id}
+                          recommended_for={data.recommended_for}
                         />
                       ))}
                   </div>

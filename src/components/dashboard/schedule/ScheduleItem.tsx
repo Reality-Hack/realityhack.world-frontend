@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { ScheduleRoomProps, DialogProps } from '@/types/schedule-types';
+import { ScheduleRoomProps, DialogProps, ExperienceLevel } from '@/types/schedule-types';
 
 const Dialog: React.FC<DialogProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) {
@@ -17,16 +17,15 @@ const Dialog: React.FC<DialogProps> = ({ isOpen, onClose, children }) => {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center"
+      className="fixed inset-0 flex items-center justify-center z-10"
       onClick={handleDialogClick}
     >
-      <div className="bg-gray-300 w-1/2 h-1/2 p-4 rounded-md shadow-md">
+      <div className="bg-white w-1/2 h-1/2 p-4 rounded-md shadow-md">
         <div className="flex">
           <button className="ml-auto" onClick={onClose}>
             Close
           </button>
-        </div>
-        <div>{children}</div>
+        </div>{children}
       </div>
     </div>
   );
@@ -40,13 +39,14 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
   color,
   description,
   skills,
-  id
+  id,
+  recommended_for
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [startTime, setStartTime] = useState<number>(0);
   const [floorNumber, setFloorNumber] = useState<number>(0);
   const [randomColor, setRandomColor] = useState<string>('');
-  
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const roomColors: { [key: string]: string } = {
     1: '#65A5EB',
@@ -68,7 +68,7 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
       startHour -= 7;
     }
     setStartTime(startHour);
-      //set the time and color of the schedule box
+    //set the time and color of the schedule box
     let floorLocation = location.split(/(\d+)/);
     setStartTime(2);
     setFloorNumber(parseInt(floorLocation[1]));
@@ -87,31 +87,64 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
       onClick={handleSeeMoreClick}
       style={{
         backgroundColor: color,
-        gridColumnStart: startTime,
-        gridColumnEnd: `span ${duration/10}`,
-        position: 'absolute', // Use absolute positioning
+        gridColumnStart: Math.floor(Math.random() * 7),
+        // gridColumnStart: startTime,
+        gridColumnEnd: `span ${duration / 10}`,
 
         // gridRowStart: floorNumber + 1
-        gridRowStart: 2
+        gridRowStart: Math.floor(Math.random() * 7) + 1
       }}
       className={`h-11 rounded-[10px] shadow p-1 hover:cursor-pointer`}
     >
       <div className="">
         <div className="text-white text-base font-medium font-['Inter'] overflow-x-hidden">
-          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{workshopName}</div>
-        <div className="text-indigo-200 text-[10px] font-medium font-['Inter'] leading-[10px] ml-2 whitespace-nowrap">
-        <div style={{ fontSize:"10px" ,whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          {location.slice(0,5)} | {formatTime(datetime)} - {addHoursToTime(formatTime(datetime),1)}
+          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {workshopName}
           </div>
-        </div>
+          <div className="text-indigo-200 text-[10px] font-medium font-['Inter'] leading-[10px] ml-2 whitespace-nowrap">
+            <div
+              style={{
+                fontSize: '10px',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
+            >
+              {location.slice(0, 5)} | {formatTime(datetime)} -{' '}
+              {addHoursToTime(formatTime(datetime), 1)}
+            </div>
+          </div>
         </div>
       </div>
       {dialogOpen && (
         <Dialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)}>
-          <div className="text-white text-base font-medium font-['Inter']">
-            {workshopName}
+          <div className="flex flex-col items-center h-full flex-shrink-0 overflow-y-auto gap-8">
+            <div className='flex flex-col gap-2 items-center'>
+              <div className="text-blue-400 text-3xl font-medium font-['Inter'] ">
+                {workshopName}
+              </div>
+              <div className=''>
+                {location.slice(0, 5)} | {formatTime(datetime)} -{' '}
+                  {addHoursToTime(formatTime(datetime), 1)}
+
+              </div>
+
+            </div>
+            <div className="overflow-hidden overflow-ellipsis">
+              <div className="whitespace-normal break-words flex-grow">{description}</div>
+            </div>{' '}
+            <div className="flex flex-col items-center gap-2">
+              <div className='flex flex-row gap-2'>
+                {recommended_for.map(attendeeType => 
+                  <div className="bg-blue-200 w-fit rounded-lg p-1">{(ExperienceLevel as Record<string, string>)[attendeeType]}</div>
+                  )}
+              </div>
+              <div className="bg-gray-200 w-fit rounded-lg p-1">
+                Sponsor Led
+              </div>
+            </div>
+            <div className="mt-auto text-white bg-purple-900 rounded-2xl p-1 mb-8">Add to My Schedule</div>
           </div>
-          <div>{description}</div>
         </Dialog>
       )}
     </div>
@@ -121,23 +154,25 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
 export default ScheduleRoom;
 
 function formatTime(datetimeString: string): string {
-  const timeWithMilliseconds: string = datetimeString.split("T")[1];  // "02:09:56.806940Z"
-  const timePart: string = timeWithMilliseconds.split(".")[0];  // "02:09:56"
+  const timeWithMilliseconds: string = datetimeString.split('T')[1]; // "02:09:56.806940Z"
+  const timePart: string = timeWithMilliseconds.split('.')[0]; // "02:09:56"
 
-  const [hours, minutes]: number[] = timePart.split(":").map(Number);
-  const ampm: string = hours >= 12 ? "PM" : "AM";
+  const [hours, minutes]: number[] = timePart.split(':').map(Number);
+  const ampm: string = hours >= 12 ? 'PM' : 'AM';
 
   // Ensure minutes are represented as two digits
-  const formattedMinutes: string = String(minutes).padStart(2, "0");
+  const formattedMinutes: string = String(minutes).padStart(2, '0');
 
-  const formattedTime: string = `${(hours % 12) || 12}:${formattedMinutes} ${ampm}`;
+  const formattedTime: string = `${
+    hours % 12 || 12
+  }:${formattedMinutes} ${ampm}`;
 
   return formattedTime;
 }
-function addHoursToTime(time:string, hoursToAdd:number) {
+function addHoursToTime(time: string, hoursToAdd: number) {
   // Extract hour, minute, and AM/PM information from the time string
   const match = time.match(/(\d+):(\d+)\s*([apAP][mM])?/);
-  
+
   if (!match) {
     // Handle invalid time format
     throw new Error('Invalid time format');
@@ -155,11 +190,13 @@ function addHoursToTime(time:string, hoursToAdd:number) {
   totalHours += hoursToAdd;
 
   // Calculate new hour and AMPM
-  const newHour = (totalHours % 12) || 12;
+  const newHour = totalHours % 12 || 12;
   const newAMPM = totalHours >= 12 ? 'PM' : 'AM';
 
   // Format the result
-  const formattedTime = `${newHour}:${minute.toString().padStart(2, '0')} ${newAMPM}`;
+  const formattedTime = `${newHour}:${minute
+    .toString()
+    .padStart(2, '0')} ${newAMPM}`;
 
   return formattedTime;
 }

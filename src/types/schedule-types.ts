@@ -17,7 +17,18 @@ export interface ScheduleRoomProps {
   workshopName: string;
   description: string;
   skills: [string];
-  // recommended: ExperienceLevel[];
+  recommended_for: ExperienceLevel[];
+}
+export interface Workshop {
+  id:string;
+  color: string;
+  location: string;
+  datetime: string;
+  duration: number;
+  name: string;
+  description: string;
+  skills: [string];
+  recommended_for: ExperienceLevel[];
 }
 
 export interface WorkshopAttendeeListItem {
@@ -30,7 +41,7 @@ export interface WorkshopAttendeeListItem {
 }
 
 export enum ExperienceLevel {
-  A = 'Atendee',
+  A = 'Attendee',
   P = 'Professional',
   D = 'Designer',
   S = 'Student'
