@@ -29,6 +29,12 @@ type LighthouseInfo = {
   location?: Location;
 } & LightHouseMessage;
 
+export declare enum HelpStatus {
+  RESOLVED = "Resolved",
+  UNRESOLVED = "Unresolved",
+  ACKNOWLEDGED = "In Progress",
+  EN_ROUTE = "En Route"
+}
 
 export default function Help2() {
   const { data: session } = useSession();
