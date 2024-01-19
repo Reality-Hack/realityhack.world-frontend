@@ -18,6 +18,19 @@ export type HelpRequest = {
   title: string;
   updated_at: string;
 };
+export type CreateHelpRequest = {
+  team: string;
+  topics: string[];
+  description?: string;
+  mentor?: string;
+  reporter?: string;
+  status?: string;
+  title?: string;
+  category?: string;
+  category_specialty?: string;
+  topic_other?: string;
+};
+
 export type HelpRequestHistory = {
   created_at: string;
   description: string;
@@ -76,7 +89,7 @@ export async function getAllHelpRequests(
     return result;
   }
   throw new Error(
-    `Failed to get all tables Status: ${resp.status}\n Result: ${JSON.stringify(
+    `Failed to get all help requests. Status: ${resp.status}\n Result: ${JSON.stringify(
       result
     )}`
   );
@@ -105,7 +118,7 @@ export async function getAllMyTeamsHelpRequests(
     return result;
   }
   throw new Error(
-    `Failed to get all tables Status: ${resp.status}\n Result: ${JSON.stringify(
+    `Failed to get all team help requests. Status: ${resp.status}\n Result: ${JSON.stringify(
       result
     )}`
   );
@@ -134,7 +147,7 @@ export async function getAllMyTeamsHistoricalHelpRequests(
     return result;
   }
   throw new Error(
-    `Failed to get all tables Status: ${resp.status}\n Result: ${JSON.stringify(
+    `Failed to get all personal team historical help requests. Status: ${resp.status}\n Result: ${JSON.stringify(
       result
     )}`
   );
@@ -159,7 +172,7 @@ export async function getAllHelpRequestsFromHistory(
     return result;
   }
   throw new Error(
-    `Failed to get all tables Status: ${resp.status}\n Result: ${JSON.stringify(
+    `Failed to get all historical help requests. Status: ${resp.status}\n Result: ${JSON.stringify(
       result
     )}`
   );
@@ -177,7 +190,7 @@ export async function getAllLocations(): Promise<Location[]> {
     return result;
   }
   throw new Error(
-    `Failed to get all tables Status: ${resp.status}\n Result: ${JSON.stringify(
+    `Failed to get all tables. Status: ${resp.status}\n Result: ${JSON.stringify(
       result
     )}`
   );
@@ -195,7 +208,7 @@ export async function getAllTeams(): Promise<Team> {
     return result;
   }
   throw new Error(
-    `Failed to get all tables Status: ${resp.status}\n Result: ${JSON.stringify(
+    `Failed to get all teams' information Status: ${resp.status}\n Result: ${JSON.stringify(
       result
     )}`
   );
@@ -218,7 +231,7 @@ export async function getTeamIdFromAttendeeId(attendeeId:string): Promise<Team[]
     return result;
   }
   throw new Error(
-    `Failed to get all tables Status: ${resp.status}\n Result: ${JSON.stringify(
+    `Failed to get team info. Status: ${resp.status}\n Result: ${JSON.stringify(
       result
     )}`
   );
@@ -243,6 +256,29 @@ export async function getAllTables(accessToken: string): Promise<Table[]> {
   }
   throw new Error(
     `Failed to get all tables Status: ${resp.status}\n Result: ${JSON.stringify(
+      result
+    )}`
+  );
+}
+/**
+ * getTable: makes api call to fetch all tables 
+ * @param accessToken session token to make connection
+ * @returns list of table objects
+ */
+export async function getTable(accessToken: string,id:string): Promise<Table> {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/tables/${id}/`;
+  const resp = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    }
+  });
+  const result = await resp.json();
+  if (resp.ok) {
+    return result;
+  }
+  throw new Error(
+    `Failed to get specific table Status: ${resp.status}\n Result: ${JSON.stringify(
       result
     )}`
   );
@@ -284,8 +320,12 @@ export async function editMentorHelpRequest(
   }
 }
 
+
+
 export async function addMentorHelpRequest(
-  newRequest: HelpRequest
+  accessToken: string,
+  newRequest: CreateHelpRequest
+
 ): Promise<HelpRequest> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequest/`;
 
