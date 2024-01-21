@@ -1,6 +1,10 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { ScheduleRoomProps, DialogProps, ExperienceLevel } from '@/types/schedule-types';
+import {
+  ScheduleRoomProps,
+  DialogProps,
+  ExperienceLevel
+} from '@/types/schedule-types';
 
 const Dialog: React.FC<DialogProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) {
@@ -17,15 +21,16 @@ const Dialog: React.FC<DialogProps> = ({ isOpen, onClose, children }) => {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-10"
+      className="fixed inset-0 z-10 flex items-center justify-center"
       onClick={handleDialogClick}
     >
-      <div className="bg-white w-1/2 h-1/2 p-4 rounded-md shadow-md">
+      <div className="w-1/2 p-4 bg-white rounded-md shadow-md h-1/2">
         <div className="flex">
           <button className="ml-auto" onClick={onClose}>
             Close
           </button>
-        </div>{children}
+        </div>
+        {children}
       </div>
     </div>
   );
@@ -75,11 +80,21 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
     const colorKeys = Object.keys(roomColors);
     const randomKey = colorKeys[Math.floor(Math.random() * colorKeys.length)];
     setRandomColor(roomColors[randomKey]);
-  }, [datetime, location, roomColors]);
+  }, []);
 
   const handleSeeMoreClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     setDialogOpen(true);
+  };
+
+  const getMappedTimeFormat = (hour: any) => {
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12;
+    hour = hour ? hour : 12;
+
+    hour = (hour + 3) % 12 || 12;
+
+    return `${hour} ${ampm}`;
   };
 
   return (
@@ -87,21 +102,18 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
       onClick={handleSeeMoreClick}
       style={{
         backgroundColor: color,
-        gridColumnStart: Math.floor(Math.random() * 7),
-        // gridColumnStart: startTime,
+        gridColumnStart: getMappedTimeFormat(
+          new Date(datetime).getUTCHours()
+        ).split(' ')[0],
+        gridRowStart: 3,
         gridColumnEnd: `span ${duration / 10}`,
-
-        // gridRowStart: floorNumber + 1
-        gridRowStart: Math.floor(Math.random() * 7) + 1
+        width: '208px'
       }}
       className={`h-11 rounded-[10px] shadow p-1 hover:cursor-pointer`}
     >
-      <div className="">
+      <div>
         <div className="text-white text-base font-medium font-['Inter'] overflow-x-hidden">
-          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {workshopName}
-          </div>
-          <div className="text-indigo-200 text-[10px] font-medium font-['Inter'] leading-[10px] ml-2 whitespace-nowrap">
+          <div className="w-[146px] text-indigo-200 text-[10px] font-medium font-['Inter'] leading-[10px] ml-2 whitespace-nowrap">
             <div
               style={{
                 fontSize: '10px',
@@ -114,36 +126,43 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
               {addHoursToTime(formatTime(datetime), 1)}
             </div>
           </div>
+          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <p className="ml-2 text-sm">{workshopName}</p>
+          </div>
         </div>
       </div>
       {dialogOpen && (
         <Dialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)}>
-          <div className="flex flex-col items-center h-full flex-shrink-0 overflow-y-auto gap-8">
-            <div className='flex flex-col gap-2 items-center'>
-              <div className="text-blue-400 text-3xl font-medium font-['Inter'] ">
+          <div className="flex flex-col items-center flex-shrink-0 h-full gap-8 overflow-y-auto w-96">
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-blue-400 text-3xl font-medium font-['Inter'] ">
                 {workshopName}
-              </div>
-              <div className=''>
+              </p>
+              <div>
                 {location.slice(0, 5)} | {formatTime(datetime)} -{' '}
-                  {addHoursToTime(formatTime(datetime), 1)}
-
+                {addHoursToTime(formatTime(datetime), 1)}
               </div>
-
             </div>
             <div className="overflow-hidden overflow-ellipsis">
-              <div className="whitespace-normal break-words flex-grow">{description}</div>
+              <div className="flex-grow break-words whitespace-normal">
+                {description}
+              </div>
             </div>{' '}
             <div className="flex flex-col items-center gap-2">
-              <div className='flex flex-row gap-2'>
-                {recommended_for.map(attendeeType => 
-                  <div className="bg-blue-200 w-fit rounded-lg p-1">{(ExperienceLevel as Record<string, string>)[attendeeType]}</div>
-                  )}
+              <div className="flex flex-row gap-2">
+                {recommended_for.map(attendeeType => (
+                  <div className="p-1 bg-blue-200 rounded-lg w-fit">
+                    {(ExperienceLevel as Record<string, string>)[attendeeType]}
+                  </div>
+                ))}
               </div>
-              <div className="bg-gray-200 w-fit rounded-lg p-1">
+              <div className="p-1 bg-gray-200 rounded-lg w-fit">
                 Sponsor Led
               </div>
             </div>
-            <div className="mt-auto text-white bg-purple-900 rounded-2xl p-1 mb-8">Add to My Schedule</div>
+            <div className="p-1 mt-auto mb-8 text-white bg-purple-900 rounded-2xl">
+              Add to My Schedule
+            </div>
           </div>
         </Dialog>
       )}

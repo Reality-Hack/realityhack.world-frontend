@@ -15,7 +15,7 @@ import { getAllWorkshops, getMyWorkshops } from '@/app/api/workshops';
 
 const LegendRoom: React.FC<LegendRoomProps> = ({ color, name }) => {
   return (
-    <div className="flex flex-row gap-2 ml-2 content-center">
+    <div className="flex flex-row content-center gap-2 ml-2">
       <div
         style={{ backgroundColor: color }}
         className={`h-4 w-4 rounded`}
@@ -27,6 +27,7 @@ const LegendRoom: React.FC<LegendRoomProps> = ({ color, name }) => {
 
 const Page: React.FC = () => {
   const { data: session, status } = useSession();
+
   const roomColors = {
     1: '#65A5EB',
     2: '#7584F3',
@@ -40,12 +41,19 @@ const Page: React.FC = () => {
   const [assignedColors, setAssignedColor] = useState();
 
   const [userEvents, setUserEvents] = useState<WorkshopAttendeeListItem[]>();
-  const [allEvents, setAllEvents] = useState();
+  const [allEvents, setAllEvents] = useState<[]>();
   const [loading, setLoading] = useState<boolean>(false);
-  // const { data: session, status } = useSession();
+
+  const START_HOUR = 10;
+  const END_HOUR = 17;
+
   let timeSlots = [];
-  for (let i = 0; i < 12; i++) {
-    timeSlots.push(i);
+  for (let hour = START_HOUR; hour <= END_HOUR; hour++) {
+    const isPM = hour >= 12;
+    const formattedHour = hour > 12 ? hour - 12 : hour;
+    const amPmSuffix = isPM ? 'PM' : 'AM';
+
+    timeSlots.push(`${formattedHour} ${amPmSuffix}`);
   }
 
   useEffect(() => {
@@ -77,10 +85,10 @@ const Page: React.FC = () => {
   return (
     <div>
       {userEvents?.length}
-      <div className="flex flex-col gap-2 w-full">
-        <div className="bg-white border-2 border-gray-200 flex flex-col gap-2 w-fill p-2 rounded-lg">
+      <div className="flex flex-col w-full gap-2">
+        <div className="flex flex-col gap-2 p-2 bg-white border-2 border-gray-200 rounded-lg w-fill">
           <div>
-            <div className="">
+            <div>
               <div className="w-[100%] h-[100%] bg-neutral-50 rounded-[10px] shadow overflow-x-scroll">
                 <span className="text-zinc-500 text-2xl font-normal font-['Inter'] leading-normal mt-6 ml-3 ">
                   Schedule
@@ -88,34 +96,43 @@ const Page: React.FC = () => {
                 <div className="p-4 rounded-[10px] min-w-[1000px] overflow-x-auto">
                   <div
                     style={{
-                      gridTemplateColumns: 'repeat(14, .25fr)',
-                      gridTemplateRows: 'repeat(8, 1fr)',
-                      rowGap: '15px'
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(8, 208px)',
+                      gridTemplateRows: 'repeat(6, 1fr)',
+                      alignItems: 'start',
+                      marginLeft: '16px'
                     }}
-                    className="grid grid-rows-8 grid-cols-14"
+                    className="grid gap-4 grid-rows-9 grid-cols-14"
                   >
-                    {timeSlots.map(slot => (
+                    {timeSlots.map((slot: any) => (
                       <TimeComponent time={slot} location={'o'} />
                     ))}
-
-                    {allEvents?.filter((workshop: Workshop) =>
-                          userEvents?.some(
-                            (userEvent: WorkshopAttendeeListItem) =>
-                              userEvent.workshop === workshop.id
-                          )
-                      ).map((data: Workshop) => (
-                        <ScheduleRoom
-                          color={roomColors[1] || 'defaultColor'}
-                          location={data.location || 'Room'}
-                          duration={data.duration || 2}
-                          workshopName={data.name || 'defaultWorkshopName'}
-                          description={data.description || 'defaultDescription'}
-                          datetime={data.datetime || '2024-01-13T02:09:00.806940Z'}
-                          skills={data.skills || []}
-                          key={data.id}
-                          id={data.id}
-                          recommended_for={data.recommended_for}
-                        />
+                    {allEvents
+                      ?.filter((workshop: Workshop) =>
+                        userEvents?.some(
+                          (userEvent: WorkshopAttendeeListItem) =>
+                            userEvent.workshop === workshop.id
+                        )
+                      )
+                      .map((data: Workshop) => (
+                        <>
+                          <ScheduleRoom
+                            color={roomColors[1] || 'defaultColor'}
+                            location={data.location || 'Room'}
+                            duration={data.duration || 2}
+                            workshopName={data.name || 'defaultWorkshopName'}
+                            description={
+                              data.description || 'defaultDescription'
+                            }
+                            datetime={
+                              data.datetime || '2024-01-13T02:09:00.806940Z'
+                            }
+                            skills={data.skills || []}
+                            key={data.id}
+                            id={data.id}
+                            recommended_for={data.recommended_for}
+                          />
+                        </>
                       ))}
                   </div>
                 </div>

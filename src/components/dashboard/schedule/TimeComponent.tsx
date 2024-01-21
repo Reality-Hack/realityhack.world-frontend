@@ -20,7 +20,7 @@ export default function TimeComponent({ time }: TimeComponentProps) {
       }
     } else {
       setAmOrPm('am');
-      setTimeSlot(`${time + 7}`);
+      setTimeSlot(`${time}`);
     }
   }),
     [];
@@ -29,7 +29,7 @@ export default function TimeComponent({ time }: TimeComponentProps) {
     <div
       className={`text-zinc-500 text-base font-light font-['Inter'] leading-normal grid-col-${timeSlot}`}
     >
-      {timeSlot + amOrPm}
+      {timeSlot}
     </div>
   );
 }
