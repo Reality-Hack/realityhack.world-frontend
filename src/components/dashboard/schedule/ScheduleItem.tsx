@@ -54,15 +54,25 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const roomColors: { [key: string]: string } = {
-    1: '#65A5EB',
-    2: '#7584F3',
-    3: '#EE7379',
-    4: '#9FD6A5',
-    5: '#F5B354',
-    6: '#056c43',
-    7: '#1ccce8',
-    9: '#b40b79'
+    1: '#7584F3',
+    2: '#EE7379',
+    3: '#9FD6A5',
+    4: '#F5B354',
+    5: '#65A5EB',
+    6: '#D6266E'
   };
+
+  const parseWorkshopName = (name: string) => {
+    const [firstPart, ...titleParts] = name.split(' - ');
+    const parts = firstPart.split('-');
+    const roomLocation = parts.slice(1).join('-');
+    const title = titleParts.join(' - ');
+    const curriculum = parseInt(parts[0].substring(1));
+
+    return { roomLocation, title, curriculum };
+  };
+
+  const { roomLocation, title, curriculum } = parseWorkshopName(workshopName);
 
   useEffect(() => {
     let [timeConv, period] = formatTime(datetime).split(/(am|pm)/i);
@@ -73,7 +83,6 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
       startHour -= 7;
     }
     setStartTime(startHour);
-    //set the time and color of the schedule box
     let floorLocation = location.split(/(\d+)/);
     setStartTime(2);
     setFloorNumber(parseInt(floorLocation[1]));
@@ -101,19 +110,22 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
     <div
       onClick={handleSeeMoreClick}
       style={{
-        backgroundColor: color,
+        backgroundColor: roomColors[curriculum],
         gridColumnStart: getMappedTimeFormat(
           new Date(datetime).getUTCHours()
         ).split(' ')[0],
-        gridRowStart: 3,
+        gridRowStart: curriculum + 1,
         gridColumnEnd: `span ${duration / 10}`,
-        width: '208px'
+        width: '208px',
+        height: '64px',
+        paddingLeft: '8px',
+        paddingRight: '16px'
       }}
       className={`h-11 rounded-[10px] shadow p-1 hover:cursor-pointer`}
     >
       <div>
         <div className="text-white text-base font-medium font-['Inter'] overflow-x-hidden">
-          <div className="w-[146px] text-indigo-200 text-[10px] font-medium font-['Inter'] leading-[10px] ml-2 whitespace-nowrap">
+          <div className="w-[146px] text-white opacity-60 text-[10px] font-medium font-['Inter'] leading-[10px] whitespace-nowrap">
             <div
               style={{
                 fontSize: '10px',
@@ -122,12 +134,12 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
                 textOverflow: 'ellipsis'
               }}
             >
-              {location.slice(0, 5)} | {formatTime(datetime)} -{' '}
+              {roomLocation} | {formatTime(datetime)} -{' '}
               {addHoursToTime(formatTime(datetime), 1)}
             </div>
           </div>
           <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            <p className="ml-2 text-sm">{workshopName}</p>
+            <span className="text-sm">{title}</span>
           </div>
         </div>
       </div>
@@ -135,10 +147,10 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
         <Dialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)}>
           <div className="flex flex-col items-center flex-shrink-0 h-full gap-8 overflow-y-auto w-96">
             <div className="flex flex-col items-center gap-2">
-              <p className="text-blue-400 text-3xl font-medium font-['Inter'] ">
+              <p className="text-white text-3xl font-medium font-['Inter'] ">
                 {workshopName}
               </p>
-              <div>
+              <div className="text-white opacity-60">
                 {location.slice(0, 5)} | {formatTime(datetime)} -{' '}
                 {addHoursToTime(formatTime(datetime), 1)}
               </div>
