@@ -34,6 +34,17 @@ interface WorkshopProps extends Workshop {
   onSelect: (id: number) => void;
 }
 
+type WorkshopKeywords = Record<string, { category: string; bg_color: string }>;
+const keywords: WorkshopKeywords = {
+  Beginner: { category: 'level', bg_color: '#59BC74' },
+  Intermediate: { category: 'level', bg_color: '#FFA20D' },
+  Advanced: { category: 'level', bg_color: '#623330' },
+  Developer: { category: 'major', bg_color: '#274566' },
+  Designer: { category: 'major', bg_color: '#3F2D60' },
+  Business: { category: 'major', bg_color: '#573B32' },
+  'Hardware Hack': { category: 'major', bg_color: '#7E6338' }
+};
+
 function Workshop({
   id,
   selected,
@@ -74,52 +85,87 @@ function Workshop({
   return (
     <div
       className={`bg-white ${
-        selected ? 'border-blue-300 border-4' : 'border-black border-2'
-      } w-fit p-2 rounded-xl flex flex-col gap-2`}
+        selected ? 'border-green-300 border-4' : 'border-blue-300 border-2'
+      } w-64 p-2 rounded-xl flex flex-col gap-2 shadow-md`}
       onClick={() => onSelect(id)}
     >
-      {/* <div onClick={() => console.log(workshops.length)}>
-        {JSON.stringify(Object.keys(workshops[0]))} pokpokp
-      </div>
-      <div onClick={() => console.log(workshops.length)}>
-        {workshops[0].recommended_for}{' '}
-      </div>
-      <div onClick={() => console.log(workshops.length)}>
-        {workshops[0].course_materials}{' '}
-      </div>
-      <div onClick={() => console.log(workshops.length)}>
-        {new Intl.DateTimeFormat('en-US', {
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true
-        }).format(new Date(workshops[0].datetime))}
-      </div> */}
       <div>
-        <div className="font-semibold text-xl">{workshopTitle}</div>
-        <div>
+        <div className="font-medium text-base ">{workshopTitle}</div>
+        <div className="text-gray-700 text-sm">
           {startTime} - {endTime} | Jan 25, 2024
         </div>
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap">
-          <div className="bg-black text-white px-1 rounded-md">{major}</div>
-        </div>
-        <div>
-          <div className="bg-blue-800 text-white px-1 rounded-md w-fit">
+          <div
+            style={{
+              backgroundColor: keywords[major]
+                ? keywords[major].bg_color
+                : '#000000'
+            }}
+            className={`text-white text-xs px-3 py-0.5 mr-2 mb-2 rounded-md`}
+          >
+            {major}
+          </div>
+          <div
+            style={{
+              backgroundColor: keywords[level]
+                ? keywords[level].bg_color
+                : '#000000'
+            }}
+            className={`text-white text-xs px-3 py-0.5 mr-2 mb-2 rounded-md`}
+          >
             {level}
           </div>
         </div>
-        <div>{workshopGiver}</div>
+        <div className="flex flex-wrap">
+          <div
+            className={`text-xs px-3 py-0.5 mr-2 mb-2 rounded-md bg-slate-300`}
+          >
+            {workshopGiver}
+          </div>
+        </div>
         <div
-          className="text-blue-400 ml-auto border-2 border-gray-400 hover:bg-blue-200 hover:text-white border-0 hover:cursor-pointer p-1 rounded-lg"
+          className="text-xs px-2 text-blue-400 ml-auto border-2 border-gray-400 hover:bg-blue-200 hover:text-white border-0 hover:cursor-pointer p-1 rounded-lg"
           onClick={handleSeeMoreClick}
         >
           See More
         </div>
         {dialogOpen && (
           <Dialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)}>
-            <div className="text-xl font-semibold mb-2">{workshopTitle}</div>
-            <div>{workshopDescription}</div>
+            <div className="title-container mb-0.5">
+              <div className="title text-2xl font-bold text-black">
+                {workshopTitle}
+              </div>
+            </div>
+            <div className="text-gray-700 text-sm mb-1">
+              By {workshopGiver} | {startTime} - {endTime} | Jan 25, 2024
+            </div>
+            <div className="flex flex-wrap mb-1">
+              <div
+                style={{
+                  backgroundColor: keywords[major]
+                    ? keywords[major].bg_color
+                    : '#000000'
+                }}
+                className={`text-white text-xs px-3 py-0.5 mr-2 mb-2 rounded-md`}
+              >
+                {major}
+              </div>
+              <div
+                style={{
+                  backgroundColor: keywords[level]
+                    ? keywords[level].bg_color
+                    : '#000000'
+                }}
+                className={`text-white text-xs px-3 py-0.5 mr-2 mb-2 rounded-md`}
+              >
+                {level}
+              </div>
+            </div>
+            <div className="description-container text-black p-4">
+              <div className="description">{workshopDescription}</div>
+            </div>
           </Dialog>
         )}
       </div>
@@ -158,9 +204,27 @@ const WorkshopRoom: React.FC<WorkshopRoomProps> = ({
   workshops,
   onSelect
 }) => {
+  const roomColors: { [key: string]: string } = {
+    'iHQ 3F | Southern Air Temple': '#A2E1A5',
+    'iHQ 4F | Western Air Temple': '#E26677',
+    'iHQ 7F | Northern Air Temple': '#777CE4',
+    'iHQ 6F | Turtle Island': '#EFB45A',
+    'iHQ 6F | Water Tribe': '#6DA9E5',
+    'Old ML| Ember Island': '#CA0C6C'
+  };
+
+  const bgColor = roomColors[room] || '#000000';
+
   return (
     <div>
-      <div className="text-4xl">{room}</div>
+      <div
+        style={{
+          backgroundColor: bgColor
+        }}
+        className="text-white text-base px-3 py-0.5 mr-2 mb-2 rounded-md"
+      >
+        {room}
+      </div>
       <div className="flex flex-col gap-2">
         {workshops.map(workshop => (
           <Workshop key={workshop.id} {...workshop} onSelect={onSelect} />
@@ -184,7 +248,7 @@ const Page: React.FC<PageProps> = () => {
       workshopGiver: 'React Expert',
       workshopDescription: 'Learn the basics of React.',
       selected: false,
-      room: 'Room A'
+      room: 'iHQ 3F | Southern Air Temple'
     },
     {
       id: 2,
@@ -196,7 +260,7 @@ const Page: React.FC<PageProps> = () => {
       workshopGiver: 'Node.js Guru',
       workshopDescription: 'Deep dive into Node.js.',
       selected: false,
-      room: 'Room B'
+      room: 'iHQ 4F | Western Air Temple'
     },
     {
       id: 3,
@@ -208,7 +272,7 @@ const Page: React.FC<PageProps> = () => {
       workshopGiver: 'CSS Wizard',
       workshopDescription: 'Unlock the secrets of CSS styling.',
       selected: false,
-      room: 'Room A'
+      room: 'iHQ 7F | Northern Air Temple'
     },
     {
       id: 4,
@@ -220,7 +284,7 @@ const Page: React.FC<PageProps> = () => {
       workshopGiver: 'CSS Wizard',
       workshopDescription: 'Unlock the secrets of CSS styling.',
       selected: false,
-      room: 'Room C'
+      room: 'iHQ 3F | Southern Air Temple'
     }
   ]);
 
