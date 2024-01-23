@@ -1,9 +1,9 @@
 import RSVPTable from '@/components/admin/RSVPTable';
 
-export default async function Volunteers() {
+export default async function organizers() {
   return (
     <div className="pb-8 ">
-      <RSVPTable type="V" />
+      <RSVPTable type="O" />
     </div>
   );
 }
