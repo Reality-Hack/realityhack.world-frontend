@@ -92,7 +92,7 @@ export default function Page() {
         onChange={handleSkillSelection}
       /> */}
       <SelectToolWithOther placeholder='Type Question Filter' selectedItems={selectedItems} setSelectedItems={setSelectedItems} mentorTopics={Object.keys(MentorTopics).map(key =>
-    key.replace(/_/g, ' ')
+    key.replace(/_/g, ' ') || []
   )} canSubmit={()=>true}/>
       <div>
         <div className='p-4'>
