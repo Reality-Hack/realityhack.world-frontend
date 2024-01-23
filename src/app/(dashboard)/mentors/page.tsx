@@ -4,6 +4,7 @@ import { Posting, StatBox } from '@/components/helpQueue/HelpQueueComps';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import React, { useState } from 'react';
+import SelectToolWithOther from './SelectToolWithOther';
 
 export default function Page() {
   const tabNames = ['Open Requests', 'Accepted By Others', 'Completed'];
@@ -26,11 +27,6 @@ export default function Page() {
     <div className="flex flex-col gap-4 bg-gray-200 h-[800px] w-full overflow-y-auto p-2 rounded-lg">
       <div className="text-3xl">Help Queue</div>
       <div className="flex gap-4">
-        <StatBox
-          src="/icons/dashboard/mentee_1.png"
-          label="Active Requests"
-          stat="9"
-        />
         <StatBox
           src="/icons/dashboard/help.png"
           label="Mentors Available"

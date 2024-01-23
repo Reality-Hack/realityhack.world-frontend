@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { HelpRequest, addMentorHelpRequest } from '@/app/api/helpqueue';
-import CustomSelect from '../CustomSelect';
 import {
-  Autocomplete,
-  TextField,
   ThemeProvider,
   createTheme
 } from '@mui/material';
-import { Select } from 'antd';
 import { MentorTopics } from '@/types/types';
-import CustomTagRenderer from '../CustomTagRenderer';
+import SelectToolWithOther from '@/app/(dashboard)/mentors/SelectToolWithOther';
 interface StatBoxProps {
   src: string;
   label: string;
@@ -176,7 +172,13 @@ export function Dialog({ isOpen, onClose, children }: DialogProps) {
 interface QuestionDialogProps {
   isNewRequestDialogOpen: boolean;
   closeNewRequestDialog: () => void;
-  onSubmit: () => void;
+  onSubmit: (
+    topics: string[],
+    description?: string,
+    reporter?: string,
+    category?: string,
+    category_specialty?: string
+  ) => void;
 }
 
 export function QuestionDialog({
@@ -184,15 +186,25 @@ export function QuestionDialog({
   closeNewRequestDialog,
   onSubmit
 }: QuestionDialogProps) {
+  const [textareaValue, setTextareaValue] = useState<string>('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  // const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  //this is to see if you can submit the question or not
+  const [canSubmit, setCanSubmit] = useState<boolean>(false);
 
   const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files || []).slice(0, 3); // Limit to three files
     const imageFiles = files.filter(file => file.type.startsWith('image/')); // Filter only image files
     setSelectedFiles(imageFiles);
+  };
+
+  const handleDeletePreview = (index: number) => {
+    const updatedFiles = [...selectedFiles];
+    updatedFiles.splice(index, 1);
+    setSelectedFiles(updatedFiles);
+    setPreviewImage(null); // Reset previewImage state
   };
 
   const handleFileClick = () => {
@@ -215,11 +227,6 @@ export function QuestionDialog({
     };
     reader.readAsDataURL(file);
   };
-
-  const handleSelectChange = (e: React.ChangeEvent<{ value: unknown }>) => {
-    setSelectedOption(e.target.value as string);
-  };
-
   const fileInputRef = React.createRef<HTMLInputElement>();
 
   const eraseImage = (index: number) => {
@@ -229,25 +236,24 @@ export function QuestionDialog({
     setPreviewImage(null); // Reset previewImage state
   };
 
-  const skillOptions = [
-    { value: 1, label: '1' },
-    { value: 2, label: '2' },
-    { value: 3, label: '3' }
-  ];
+  const formattedOptions = Object.keys(MentorTopics).map(key =>
+    key.replace(/_/g, ' ')
+  );
   const theme = createTheme({
     components: {
       MuiInputBase: {
         styleOverrides: {
-          root: {
-            backgroundColor: 'white' // Set the text color to white
-          },
-          focused: {
-            border: 'white'
+          "root": {
+            "&.Mui-focused": {
+              "border": "white"
+            }
           }
         }
       }
     }
   });
+
+    const [selectedItems, setSelectedItems] = useState<string[]>([]); // New state variable
 
   return (
     <ThemeProvider theme={theme}>
@@ -267,30 +273,13 @@ export function QuestionDialog({
             </div>
             <div className="w-full">
               {/* tag renderer with a custom dropdown */}
-              <CustomTagRenderer />
-              {/* <Select
-                showSearch
-                style={{ width: "100%", border:"black" }}
-                placeholder="Search to Select"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.label ?? '').includes(input)
-                }
-                filterSort={(optionA, optionB) =>
-                  (optionA?.label ?? '')
-                    .toLowerCase()
-                    .localeCompare((optionB?.label ?? '').toLowerCase())
-                }
-                
-                options={Object.keys(MentorTopics).map(key => ({ value: MentorTopics[key as keyof typeof MentorTopics], label: key.replace(/_/g, ' ') }))}
-                // options={skillOptions}
-              /> */}
-              {/* <CustomSelect
-                className="rounded-md p-2"
-                value={selectedOption ? selectedOption : ''}
-                onChange={handleSelectChange}
-                options={skillOptions}
-              ></CustomSelect> */}
+              <SelectToolWithOther
+                canSubmit={setCanSubmit}
+                mentorTopics={formattedOptions}
+                placeholder={'Select Your Skill'}
+                selectedItems={selectedItems}
+                setSelectedItems={setSelectedItems}
+              />
             </div>
             <div className="font-bold">
               Describe your request in detail
@@ -299,6 +288,8 @@ export function QuestionDialog({
             <textarea
               className="w-full h-20 p-4 rounded-md"
               placeholder="Type your description here"
+              value={textareaValue}
+              onChange={e => setTextareaValue(e.target.value)}
             />
             <div className="font-bold">Add up to three screenshots</div>
             <div
@@ -321,7 +312,11 @@ export function QuestionDialog({
                 <strong>Selected files:</strong>
                 <ul className="flex flex-wrap gap-2">
                   {selectedFiles.map((file, index) => (
-                    <li key={index} onClick={() => handleImageClick(file)}>
+                 
+                 <li className='flex flex-row gap-2' key={index} onClick={() => handleImageClick(file)}>
+                      <button className="bg-red-400 text-white rounded-lg p-2" onClick={() => handleDeletePreview(index)}>
+                X
+              </button>
                       <SelectedFile
                         fileTitle={file.name}
                         eraseImage={() => eraseImage(index)}
@@ -343,8 +338,16 @@ export function QuestionDialog({
             )}
           </div>
           <div
-            onClick={onSubmit}
-            className="mt-auto ml-auto py-1 px-2 rounded-xl bg-red-200"
+            onClick={() => {
+              if (textareaValue.trim() !== '' && canSubmit) {
+                onSubmit(selectedItems, textareaValue);
+              }
+            }}            
+          className={`mt-auto ml-auto py-1 px-2 rounded-xl ${
+              textareaValue.trim() !== '' && canSubmit
+                ? 'bg-green-200 cursor-pointer'
+                : 'bg-red-200 cursor-not-allowed'
+            }`}
           >
             Submit Help Request
           </div>

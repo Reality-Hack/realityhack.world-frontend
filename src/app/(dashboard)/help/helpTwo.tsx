@@ -24,7 +24,6 @@ import {
   QuestionDialog,
   StatBox
 } from '@/components/helpQueue/HelpQueueComps';
-import jwtDecode from 'jwt-decode';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { getMe } from '@/app/api/attendee';
 import { useAuthContext } from '@/hooks/AuthContext';
@@ -89,7 +88,6 @@ export default function Help2() {
   // get our help requests
   useEffect(() => {
     if (session?.access_token) {
-      console.log("ppokpokpokpopokpokpokpokpokpok")
       getAllHelpRequests(session.access_token).then(helpReqs => {
         // setTables(tables);
         setHelpRequests(helpReqs);
@@ -175,11 +173,11 @@ export default function Help2() {
   }[readyState];
 
 // mentorhelprequestpost endpoint
-  function onNewHelpRequest(team: string, topics: string[], description?: string, reporter?: string, category?: string, category_specialty?:string )  {
+  function onNewHelpRequest( topics: string[], description?: string, reporter?: string, category?: string, category_specialty?:string )  {
     const newHelpRequest : CreateHelpRequest = {
       description:description,
       topics:topics,
-      team:team,
+      team:user.team,
       category:category,
       category_specialty:category_specialty,
     }
@@ -209,11 +207,6 @@ export default function Help2() {
           label="Active Requests"
           stat="9"
         />
-        <StatBox
-          src="/icons/dashboard/help.png"
-          label="Mentors Available"
-          stat="9"
-        />
       </div>
       <div className="flex mb-2">
         <div className="text-4xl font-semibold"> Open Help Requests</div>
@@ -227,7 +220,7 @@ export default function Help2() {
 
       <div className="flex flex-wrap gap-2">
         {allHelpRequests
-          .filter(el => el.team == user.team.id)
+          .filter(el => el.team == user?.team.id)
           .map((req, idx) => (
             <Posting
               status={myLighthouse?.mentor_requested}

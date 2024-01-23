@@ -29,7 +29,6 @@ export default function Help() {
       <div className="flex flex-col gap-8 m-4 p-4 rounded-md bg-gray-200">
         <div className="flex gap-4">
           <StatBox src="/icons/dashboard/mentee_1.png" label="Active Requests" stat="9" />
-          <StatBox src="/icons/dashboard/help.png" label="Mentors Available" stat="9" />
         </div>
         <div className="flex ">
           <div className="text-4xl font-semibold"> Your Help Requests</div>
@@ -319,9 +318,9 @@ function QuestionDialog({
             <span className="text-red-400 text-2xl">*</span>:
           </div>
           <textarea
-            className="w-full h-20 p-4 rounded-md"
-            placeholder="Type your description here"
-          />
+              className="w-full h-20 p-4 rounded-md"
+              placeholder="Type your description here"
+            />
           <div className="font-bold">Add up to three screenshots</div>
           <div
             className="border-dashed border-2 p-4 cursor-pointer rounded-md"
@@ -364,7 +363,7 @@ function QuestionDialog({
             </div>
           )}
         </div>
-        <div className="mt-auto ml-auto py-1 px-2 rounded-xl bg-red-200">
+        <div className={`mt-auto ml-auto py-1 px-2 rounded-xl bg-red-200`}>
           Submit Help Request
         </div>
       </div>
