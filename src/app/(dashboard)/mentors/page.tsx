@@ -1,22 +1,47 @@
 'use client';
 import CustomSelect from '@/components/CustomSelect';
-import { Posting, StatBox } from '@/components/helpQueue/HelpQueueComps';
+import { Posting, Skill, StatBox } from '@/components/helpQueue/hackerView/NewRequestComps';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SelectToolWithOther from './SelectToolWithOther';
-
+import { MentorTopics } from '@/types/types';
+import FormattedTopicsAsList from '@/components/helpQueue/TopicFormatted';
+import { useSession } from 'next-auth/react';
+import { useAuthContext } from '@/hooks/AuthContext';
+import { HelpRequestHistory, getAllHelpRequestsFromHistory } from '@/app/api/helpqueue';
 export default function Page() {
+
+  const { data: session } = useSession();
+  const { user } = useAuthContext();
+  const [selectedItems, setSelectedItems] = useState<string[]>([]); // New state variable
+
   const tabNames = ['Open Requests', 'Accepted By Others', 'Completed'];
   const [selectedTab, setSelectedTab] = useState(0);
   const handleTabChange = (_event: any, newValue: number) => {
     setSelectedTab(newValue);
   };
 
+  const [allHistoricalHelpRequests, setHistoricalHelpRequests] = useState<HelpRequestHistory[]>([]);
+
+
   const [selectedSkill, setSelectedSkill] = useState<string>(''); // State to store the selected skill
   function handleSkillSelection(selectedValue:string) {
     setSelectedSkill(selectedValue)
   }
+
+    // //get all historical help requests
+    useEffect(() => {
+      console.log("making api call")
+      if (session?.access_token) {
+        getAllHelpRequestsFromHistory(session.access_token).then(
+          historicalHelpReqs => {
+            setHistoricalHelpRequests(historicalHelpReqs);
+          }
+        );
+      }
+    },[]);
+  
 
   const SkillOptions = [
     { value: '1', label: '1' },
@@ -33,7 +58,7 @@ export default function Page() {
           stat="9"
         />
       </div>
-
+      <div>{JSON.stringify(allHistoricalHelpRequests[0])}</div>
       <div className="text-2xl">Help Requests</div>
       <Tabs
         value={selectedTab}
@@ -59,15 +84,20 @@ export default function Page() {
           );
         })}
       </Tabs>
-      <CustomSelect
+      
+      {/* <CustomSelect
         label={selectedSkill || "Select a Skill"}
         options={SkillOptions}
         value={selectedSkill}
         onChange={handleSkillSelection}
-      />
+      /> */}
+      <SelectToolWithOther placeholder='Type Question Filter' selectedItems={selectedItems} setSelectedItems={setSelectedItems} mentorTopics={Object.keys(MentorTopics).map(key =>
+    key.replace(/_/g, ' ')
+  )} canSubmit={()=>true}/>
       <div>
         <div className='p-4'>
-
+          <div className='flex flex-wrap w-20'>
+          </div>
           {tabNames[selectedTab] == "Open Requests" && <div className='flex flex-wrap gap-2'>
             <Posting 
               requestTitle="Fip Title"

@@ -23,7 +23,7 @@ import {
   Posting,
   QuestionDialog,
   StatBox
-} from '@/components/helpQueue/HelpQueueComps';
+} from '@/components/helpQueue/hackerView/NewRequestComps';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { getMe } from '@/app/api/attendee';
 import { useAuthContext } from '@/hooks/AuthContext';
@@ -48,9 +48,7 @@ export default function Help2() {
   const [myTable, setMyTable] = useState<Table>();
   const [myId, setMyId] = useState<String>();
   const [allHelpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
-  const [allHistoricalHelpRequests, setHistoricalHelpRequests] = useState<
-    HelpRequestHistory[]
-  >([]);
+  const [allHistoricalHelpRequests, setHistoricalHelpRequests] = useState<HelpRequestHistory[]>([]);
   const exampleSkillList = ['React', 'JavaScript', 'CSS', 'Node.js'];
 
   //layout logic

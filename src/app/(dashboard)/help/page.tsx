@@ -4,8 +4,8 @@ import Help2 from './helpTwo';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import LighthouseTable from "./websocket"
-import { StatBox, CompletedPosting, Posting, Skill, Dialog, QuestionDialog, SelectedFile } from '@/components/helpQueue/HelpQueueComps';
-
+import { StatBox, Dialog, QuestionDialog, SelectedFile } from '@/components/helpQueue/hackerView/NewRequestComps';
+import { CompletedPosting, Posting,Skill } from '@/components/helpQueue/hackerView/PostingComps';
 export default function Help() {
   const { data: session, status } = useSession();
   const exampleSkillList = ['React', 'JavaScript', 'CSS', 'Node.js'];
