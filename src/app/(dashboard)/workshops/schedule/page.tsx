@@ -4,9 +4,11 @@ import React, { useEffect, useState, MouseEvent } from 'react';
 import {
   getAllWorkshops,
   getMyWorkshops,
-  showInterestInWorkshop
+  showInterestInWorkshop,
+  removeInterestInWorkshop
 } from '@/app/api/workshops';
 import { useAuthContext } from '@/hooks/AuthContext';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 interface Workshop {
   workshop: any;
@@ -34,7 +36,7 @@ interface WorkshopProps extends Workshop {
   speakers?: string;
   description?: string;
   myWorkshops?: any;
-  onSelect: (id: number) => void;
+  setRefreshTrigger: any;
 }
 
 type WorkshopKeywords = Record<
@@ -53,55 +55,80 @@ const keywords: WorkshopKeywords = {
 
 function Workshop({
   workshop,
-  id,
-  selected,
   level,
-  onSelect,
   title,
   roomLocation,
   curriculum,
   speakers,
   description,
-  myWorkshops
+  myWorkshops,
+  setRefreshTrigger
 }: WorkshopProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuthContext();
+
+  useEffect(() => {
+    const enrollmentStatus = myWorkshops?.some(
+      (myWorkshop: any) => myWorkshop.workshop === workshop.id
+    );
+    setIsEnrolled(enrollmentStatus);
+  }, [myWorkshops, workshop, loading]);
 
   const handleSeeMoreClick = (e: MouseEvent) => {
     e.stopPropagation();
     setDialogOpen(true);
   };
 
-  const handleSubmit = async () => {
-    showInterestInWorkshop(user.id, workshop.id);
+  const handleSubmit = async (e: MouseEvent) => {
+    e.preventDefault();
+    if (loading) return;
+
+    setLoading(true);
+
     try {
-      const promises: Promise<any>[] = []; // Declare the promises variable
-      const results = await Promise.all(promises);
-      console.log('Results:', results);
+      if (isEnrolled) {
+        const workshopToRemove = myWorkshops.find(
+          (myWorkshop: any) => myWorkshop.workshop === workshop.id
+        );
+        if (workshopToRemove) {
+          await removeInterestInWorkshop(workshopToRemove.id);
+        }
+      } else {
+        await showInterestInWorkshop(user.id, workshop.id);
+      }
     } catch (error) {
-      console.error('Error submitting workshops:', error);
+      console.error('Error in handling workshop interest:', error);
+    } finally {
+      setRefreshTrigger((prev: number) => prev + 1);
+      setLoading(false);
     }
   };
-
-  const isEnrolled = myWorkshops?.some(
-    (myWorkshop: any) => myWorkshop.workshop === workshop.id
-  );
-
-  console.log('isEnrolled: ', isEnrolled);
 
   return (
     <div
       className={`bg-white ${
-        isEnrolled ? 'border-green-300 border-2' : 'border-blue-300 border'
-      } w-64 p-2 rounded-xl flex flex-col gap-2 shadow-md`}
-      onClick={() => onSelect(id)}
+        isEnrolled ? 'border-green-300 border' : 'border-blue-300 border'
+      } w-64 p-2 rounded-xl flex flex-col gap-2 shadow-md transition-all p-4`}
     >
-      <div>
-        <div className="text-base font-medium ">{title}</div>
-        <div className="text-sm text-gray-700">
-          {roomLocation} | {formatTime(workshop?.datetime)} -{' '}
-          {addHoursToTime(formatTime(workshop?.datetime), 1)}
+      <div className="flex">
+        <div className="mr-auto">
+          <div className="mb-1 text-base font-medium">{title}</div>
+          <div className="mb-1 text-sm text-gray-700">
+            <span className="font-semibold">{roomLocation}</span> |{' '}
+            {formatTime(workshop?.datetime)} -{' '}
+            {addHoursToTime(formatTime(workshop?.datetime), 1)}
+          </div>
         </div>
+        {isEnrolled && (
+          <CheckCircleOutlineIcon
+            style={{
+              color: '#5be88f',
+              fontSize: '16px'
+            }}
+          />
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap">
@@ -118,15 +145,15 @@ function Workshop({
             {workshop.speakers}
           </div>
         </div>
-        <div className="flex">
+        <div className="flex items-center">
           <div
-            className="mx-auto mt-4 bg-[#4D97E8] px-4 py-[6px] rounded-full text-xs text-white cursor-pointer"
+            className={`${isEnrolled ? 'bg-white border border-[#4D97E8] text-[#4D97E8]' : `border-opacity-0 bg-[#4D97E8] text-white `} mx-auto mt-4 border px-4 py-[6px] rounded-full text-xs cursor-pointer transition-all whitespace-nowrap`}
             onClick={handleSubmit}
           >
-            Add to Schedule
+            {isEnrolled ? 'Remove' : 'Add to Schedule'}
           </div>
           <div
-            className="mx-auto mt-4 bg-[#4D97E8] px-4 py-[6px] rounded-full text-xs text-white cursor-pointer"
+            className="mx-auto mt-4 bg-[#4D97E8] px-4 py-[6px] rounded-full text-xs text-white cursor-pointer transition-all whitespace-nowrap"
             onClick={handleSeeMoreClick}
           >
             See More
@@ -167,54 +194,12 @@ function Workshop({
               <div className="">{description}</div>
             </div>
             <div
-              className="mx-auto mt-4 bg-[#4D97E8] px-7 py-[6px] w-fit rounded-full text-white cursor-pointer"
+              className={`${isEnrolled ? 'bg-white border border-[#4D97E8] text-[#4D97E8]' : `bg-[#4D97E8] text-white `} w-fit mx-auto mt-4  px-4 py-[6px] rounded-full text-xs cursor-pointer transition-all`}
               onClick={handleSubmit}
             >
-              Add to Schedule
+              {isEnrolled ? 'Remove' : 'Add to Schedule'}
             </div>
           </Dialog>
-        )}
-      </div>
-    </div>
-  );
-}
-
-interface SelectedWorkshopsProps {
-  selectedWorkshops: any;
-}
-
-function SelectedWorkshops({ selectedWorkshops }: SelectedWorkshopsProps) {
-  // const handleSubmit = async () => {
-  //   const promises = selectedWorkshops.map((workshop: any) =>
-  //     showInterestInWorkshop(user.id, workshop.id)
-  //   );
-
-  //   try {
-  //     const results = await Promise.all(promises);
-  //     console.log('Results:', results);
-  //   } catch (error) {
-  //     console.error('Error submitting workshops:', error);
-  //   }
-  // };
-
-  return (
-    <div className="pl-5">
-      <h2>Selected Workshops:</h2>
-      <div className="flex items-center gap-4">
-        <ul className="h-16 px-4 py-2 overflow-scroll bg-gray-100 rounded w-[500px]">
-          {selectedWorkshops.map((workshop: any, index: number) => (
-            <li key={index}>{workshop.name.split(/-(.+)/)[1]?.trim()}</li>
-          ))}
-        </ul>
-        {selectedWorkshops.length ? (
-          <button
-            // onClick={handleSubmit}
-            className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] transition-all"
-          >
-            Submit
-          </button>
-        ) : (
-          ''
         )}
       </div>
     </div>
@@ -226,17 +211,15 @@ interface WorkshopRoomProps {
   workshops?: Workshop[];
   workshop?: any;
   myWorkshops?: any;
-  onSelect: (id: number) => void;
+  setRefreshTrigger: any;
   curriculum?: number;
 }
 
 const WorkshopRoom: React.FC<WorkshopRoomProps> = ({
   room,
   workshops,
-  workshop,
-  onSelect,
-  curriculum,
-  myWorkshops
+  myWorkshops,
+  setRefreshTrigger
 }) => {
   const roomNames = [
     'Curr. 1 - Beginner Dev',
@@ -258,13 +241,6 @@ const WorkshopRoom: React.FC<WorkshopRoomProps> = ({
 
   const bgColor = roomColors[Number(room) - 1] || '#000000';
 
-  const sortedWorkshops = workshops
-    ? workshops.sort(
-        (a, b) =>
-          new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
-      )
-    : [];
-
   return (
     <div>
       <div
@@ -282,8 +258,8 @@ const WorkshopRoom: React.FC<WorkshopRoomProps> = ({
               key={workshop.id}
               {...workshop}
               workshop={workshop}
-              onSelect={onSelect}
               myWorkshops={myWorkshops}
+              setRefreshTrigger={setRefreshTrigger}
             />
           ))}
       </div>
@@ -298,8 +274,9 @@ const Page: React.FC<PageProps> = () => {
   const [myWorkshops, setMyWorkshops] = useState<any>(null);
   const [selectedWorkshops, setSelectedWorkshops] = useState<Workshop[]>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
   const { user } = useAuthContext();
 
@@ -320,6 +297,26 @@ const Page: React.FC<PageProps> = () => {
 
     return { speakers, description };
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        if (session?.access_token && user) {
+          const data = await getMyWorkshops(session.access_token, user.id);
+          setMyWorkshops(data);
+        }
+      } catch (error) {
+        console.error('Error fetching myWorkshops:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (session?.access_token && user) {
+      fetchData();
+    }
+  }, [session, user, refreshTrigger]);
 
   useEffect(() => {
     if (session?.access_token && isAdmin) {
@@ -351,32 +348,9 @@ const Page: React.FC<PageProps> = () => {
   }, [session]);
 
   useEffect(() => {
-    if (session?.access_token && user) {
-      setLoading(true);
-      getMyWorkshops(session.access_token, user.id)
-        .then(data => {
-          setMyWorkshops(data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [session]);
-
-  useEffect(() => {
     const selected = workshops.filter(workshop => workshop.selected);
     setSelectedWorkshops(selected);
   }, [workshops]);
-
-  const handleWorkshopSelect = (id: number) => {
-    setWorkshops(prevWorkshops =>
-      prevWorkshops.map(workshop =>
-        workshop.id === id
-          ? { ...workshop, selected: !workshop.selected }
-          : workshop
-      )
-    );
-  };
 
   const workshopsByRoom: Record<string, Workshop[]> = workshops.reduce(
     (acc: Record<string, Workshop[]>, workshop) => {
@@ -391,17 +365,18 @@ const Page: React.FC<PageProps> = () => {
   return (
     <div className="w-screen h-screen bg-white">
       <div className="flex flex-col">
-        {/* <SelectedWorkshops selectedWorkshops={selectedWorkshops} /> */}
         <div className="flex gap-2 p-4">
           {Object.entries(workshopsByRoom).map(
             ([room, roomWorkshops]: [string, Workshop[]]) => (
-              <WorkshopRoom
-                key={room}
-                room={room}
-                workshops={roomWorkshops}
-                myWorkshops={myWorkshops}
-                onSelect={handleWorkshopSelect}
-              />
+              <div className="w-full">
+                <WorkshopRoom
+                  key={room}
+                  room={room}
+                  workshops={roomWorkshops}
+                  myWorkshops={myWorkshops}
+                  setRefreshTrigger={setRefreshTrigger}
+                />
+              </div>
             )
           )}
         </div>

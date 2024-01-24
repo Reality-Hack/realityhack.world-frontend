@@ -87,6 +87,29 @@ export async function showInterestInWorkshop(id: string, workshopId: string) {
   return result;
 }
 
+export async function removeInterestInWorkshop(workshopId: string) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/${workshopId}`;
+
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to create data. Status: ${
+        response.status
+      } Result: ${JSON.stringify(result)}`
+    );
+  }
+
+  return result;
+}
+
 //UPDATE A USER'S SPECIFIC WORKSHOP SCHEDULE
 export async function updateMyWorkshops() {}
 

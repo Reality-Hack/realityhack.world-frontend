@@ -15,13 +15,22 @@ import { getAllWorkshops, getMyWorkshops } from '@/app/api/workshops';
 import { useAuthContext } from '@/hooks/AuthContext';
 
 const LegendRoom: React.FC<LegendRoomProps> = ({ color, name }) => {
+  const roomNames = [
+    'Curr. 1 - Beginner Dev',
+    'Curr. 2 - Advanced Dev',
+    'Curr. 3 - New Tech Dev',
+    'Curr. 4 - Beginner Designer',
+    'Curr. 5 - Advanced Designer',
+    'Curr. 6 - Hardware'
+  ];
+
   return (
     <div className="flex flex-row content-center gap-2 ml-2">
       <div
         style={{ backgroundColor: color }}
         className={`h-4 w-4 rounded`}
       ></div>
-      <div>{name}</div>
+      <div>{roomNames[name]}</div>
     </div>
   );
 };
@@ -30,15 +39,13 @@ const Page: React.FC = () => {
   const { data: session, status } = useSession();
 
   const roomColors = {
-    1: '#65A5EB',
-    2: '#7584F3',
-    3: '#EE7379',
-    4: '#9FD6A5',
-    5: '#F5B354',
-    6: '#056c43',
-    7: '#1ccce8',
-    9: '#b40b79'
+    1: '#A2E1A5',
+    2: '#E26677',
+    3: '#777CE4',
+    4: '#EFB45A',
+    5: '#CA0C6C'
   };
+
   const [assignedColors, setAssignedColor] = useState();
 
   const [userEvents, setUserEvents] = useState<WorkshopAttendeeListItem[]>();
@@ -87,7 +94,7 @@ const Page: React.FC = () => {
 
   return (
     <div>
-      {userEvents?.length}
+      <div className="pb-2">Scheduled Workshops: {userEvents?.length}</div>
       <div className="flex flex-col w-full gap-2">
         <div className="flex flex-col gap-2 p-2 bg-white border-2 border-gray-200 rounded-lg w-fill">
           <div>
@@ -146,9 +153,9 @@ const Page: React.FC = () => {
             </div>
           </div>
           <div className="text-zinc-500 text-2xl font-normal font-['Inter'] leading-normal bg-white border-2 border-gray-200 flex flex-col gap-2 w-fit p-2 rounded-lg bg-neutral-50 rounded-[10px] shadow">
-            Location Key
+            Legend
             {Object.entries(roomColors).map(([roomId, color]) => (
-              <LegendRoom color={color} name={`Room ${roomId}`} key={roomId} />
+              <LegendRoom color={color} name={roomId} key={roomId} />
             ))}
           </div>
         </div>
