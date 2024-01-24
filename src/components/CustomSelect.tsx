@@ -25,6 +25,22 @@ export default function CustomSelect({
   search,
   onSearch
 }: CustomSelectProps) {
+  const filterOptions = (input: any, option: any) => {
+    let labelContent;
+
+    if (
+      option.label &&
+      typeof option.label === 'object' &&
+      option.label.props
+    ) {
+      labelContent = option.label.props.children.join('');
+    } else {
+      labelContent = option.label;
+    }
+
+    return labelContent.toLowerCase().includes(input.toLowerCase());
+  };
+
   return (
     <div>
       {search ? (
@@ -37,11 +53,7 @@ export default function CustomSelect({
           placeholder={label}
           onChange={onChange}
           onSearch={onSearch}
-          filterOption={(input, option: any) =>
-            (option?.searchLabel || option?.label)
-              .toLowerCase()
-              .indexOf(input.toLowerCase()) >= 0
-          }
+          filterOption={filterOptions}
           options={options}
         />
       ) : (
