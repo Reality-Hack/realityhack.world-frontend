@@ -12,9 +12,8 @@ import {
   getAllMyTeamsHelpRequests,
   getAllMyTeamsHistoricalHelpRequests,
   getAllTables,
-  getAllTeams,
   getTable,
-  getTeamIdFromAttendeeId
+  // getTeamIdFromAttendeeId
 } from '@/app/api/helpqueue';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';

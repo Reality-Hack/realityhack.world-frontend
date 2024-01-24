@@ -17,17 +17,29 @@ export type HelpRequest = {
   team: string;
   title: string;
   updated_at: string;
+  topics: string[];
 };
 export type CreateHelpRequest = {
   team: string;
   topics: string[];
   description?: string;
   mentor?: string;
-  reporter?: string;
+  reporter: string; //an attendee
+  title?: string;
+  // category?: string; //dapms
+  // category_specialty?: string;
+  topic_other?: string;
+};
+export type EditHelpRequest = {
+  team: string;
+  topics: string[];
+  description?: string;
+  mentor?: string;
+  reporter: string; //an attendee
   status?: string;
   title?: string;
-  category?: string;
-  category_specialty?: string;
+  // category?: string; //dapms - not using this 
+  // category_specialty?: string; //deprecated - not using this
   topic_other?: string;
 };
 
@@ -178,64 +190,46 @@ export async function getAllHelpRequestsFromHistory(
   );
 }
 
-export async function getAllLocations(): Promise<Location[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/locations/`;
-  const resp = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-  const result = await resp.json();
-  if (resp.ok) {
-    return result;
-  }
-  throw new Error(
-    `Failed to get all tables. Status: ${resp.status}\n Result: ${JSON.stringify(
-      result
-    )}`
-  );
-}
-
-export async function getAllTeams(): Promise<Team> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams/`;
-  const resp = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-  const result = await resp.json();
-  if (resp.ok) {
-    return result;
-  }
-  throw new Error(
-    `Failed to get all teams' information Status: ${resp.status}\n Result: ${JSON.stringify(
-      result
-    )}`
-  );
-}
+// export async function getAllTeams(): Promise<Team> {
+//   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams/`;
+//   const resp = await fetch(url, {
+//     headers: {
+//       'Content-Type': 'application/json'
+//     }
+//   });
+//   const result = await resp.json();
+//   if (resp.ok) {
+//     return result;
+//   }
+//   throw new Error(
+//     `Failed to get all teams' information Status: ${resp.status}\n Result: ${JSON.stringify(
+//       result
+//     )}`
+//   );
+// }
 
 /**
  * 
  * @param attendeeId the attendee id sting
  * @returns teamId string
  */
-export async function getTeamIdFromAttendeeId(attendeeId:string): Promise<Team[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams?attendees=${attendeeId}`;
-  const resp = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-  const result = await resp.json();
-  if (resp.ok) {
-    return result;
-  }
-  throw new Error(
-    `Failed to get team info. Status: ${resp.status}\n Result: ${JSON.stringify(
-      result
-    )}`
-  );
-}
+// export async function getTeamIdFromAttendeeId(attendeeId:string): Promise<Team[]> {
+//   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams?attendees=${attendeeId}`;
+//   const resp = await fetch(url, {
+//     headers: {
+//       'Content-Type': 'application/json'
+//     }
+//   });
+//   const result = await resp.json();
+//   if (resp.ok) {
+//     return result;
+//   }
+//   throw new Error(
+//     `Failed to get team info. Status: ${resp.status}\n Result: ${JSON.stringify(
+//       result
+//     )}`
+//   );
+// }
 
 /**
  * getAllTables: makes api call to fetch all teams
@@ -288,10 +282,11 @@ export async function getTable(accessToken: string,id:string): Promise<Table> {
 //mentorHelpRequests(team) >> teams(id) >> table
 //lighthouse message has table number which has mentor_requested
 
+//attendee one
 export async function editMentorHelpRequest(
   requestId: string,
-  updatedData: Partial<HelpRequest>
-): Promise<HelpRequest> {
+  updatedData: Partial<EditHelpRequest>
+): Promise<EditHelpRequest> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequest/${requestId}`;
 
   const response = await fetch(url, {
@@ -320,8 +315,6 @@ export async function editMentorHelpRequest(
   }
 }
 
-
-
 export async function addMentorHelpRequest(
   accessToken: string,
   newRequest: CreateHelpRequest
@@ -332,8 +325,8 @@ export async function addMentorHelpRequest(
   const response = await fetch(url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
-      // Include any other headers if needed
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
     },
     body: JSON.stringify(newRequest)
   });
@@ -355,3 +348,38 @@ export async function addMentorHelpRequest(
   }
 }
 
+//mentor one
+export async function updateHelpRequestStatus(
+  accessToken: string,
+  requestId: string,
+  status: "R" | "A" | "E" | "F"
+) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequest/${requestId}/`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    },
+    body: JSON.stringify({
+      status
+    })
+  });
+
+  const data: HelpRequest | undefined = await response.json();
+
+  if (response.ok) {
+    if (data) {
+      return data;
+    } else {
+      throw new Error('Unexpected empty response.');
+    }
+  } else {
+    throw new Error(
+      `Failed to patch mentor help request. Status: ${
+        response.status
+      }\n Result: ${JSON.stringify(data)}`
+    );
+  }
+}
