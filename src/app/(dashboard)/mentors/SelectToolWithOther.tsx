@@ -169,16 +169,17 @@ const SkillTag: React.FC<SkillTagProps> = ({ skill, color, onDelete }) => {
 
   return (
     <div
-      className={`p-2 border-1 border-black rounded-lg hover:cursor-pointer flex gap-1 items-center`}
+      className={`p-2 border-1 border-black rounded-lg flex gap-1 items-center`}
       style={{ backgroundColor: `light${randomColor}`, color: randomColor }}
     >
+
+      <div>{skill}</div>
       <div
         onClick={onDelete}
-        className="bg-red-300 px-2 text-white rounded-lg text-red-500 font-bold"
+        className="bg-red-300 px-2 text-white rounded-lg text-red-500 hover:cursor-pointer font-bold"
       >
-        -
+        x
       </div>
-      <div>{skill}</div>
     </div>
   );
 };
