@@ -3,14 +3,11 @@ import { useSession } from 'next-auth/react';
 import React, { useState, useEffect } from 'react';
 import QRCodeReader from '@/components/admin/QRCodeReader';
 import CustomSelect from '@/components/CustomSelect';
-import { getAllAttendees, updateAttendee } from '@/app/api/attendee';
+import { getAllAttendees } from '@/app/api/attendee';
 import { Modal, Box, Alert } from '@mui/material';
 import {
   getAllWorkshops,
   getMyWorkshops,
-  showInterestInWorkshop,
-  removeInterestInWorkshop,
-  getWorkshop,
   signinToWorkshop
 } from '@/app/api/workshops';
 
@@ -84,7 +81,6 @@ export default function Checkin() {
   useEffect(() => {
     if (session?.access_token) {
       getAllWorkshops(session.access_token).then(data => {
-        // console.log(data);
         setWorkshops(data);
 
         const transformedOptions = data.map((workshop: any) => {
@@ -275,8 +271,6 @@ export default function Checkin() {
 
     return classCounts;
   };
-
-  // const selectedWorkshop = () => {};
 
   const handleWorkshopChange = (selectedOption: any) => {
     console.log('selectedOption: ', selectedOption);

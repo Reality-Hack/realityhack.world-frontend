@@ -18,13 +18,15 @@ export async function getAllWorkshops(accessToken: string) {
   throw new Error('Failed to fetch data. Status: ' + resp.status);
 }
 
-export async function getWorkshop(accessToken: string, id: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshops/${id}`;
+//GET USER'S SPECIFIC WORKSHOP SCHEDULE
+export async function getMyWorkshops(accessToken: string, userId: string) {
+  // const id = '6612aecb-4157-466f-8c51-ef1044af9964';
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/?attendee=${userId}`;
 
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'JWT' + accessToken
     }
   });
 
@@ -34,14 +36,13 @@ export async function getWorkshop(accessToken: string, id: string) {
   throw new Error('Failed to fetch data. Status: ' + resp.status);
 }
 
-//GET USER'S SPECIFIC WORKSHOP SCHEDULE
-export async function getMyWorkshops(accessToken: string, userId: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/?attendee=${userId}`;
+export async function getWorkshop(accessToken: string, id: string) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshops/${id}`;
 
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT' + accessToken
+      Authorization: 'JWT ' + accessToken
     }
   });
 
