@@ -18,6 +18,24 @@ export async function getMe(accessToken: string) {
   throw new Error('Failed to fetch data. Status: ' + resp.status);
 }
 
+export async function patchMe(accessToken: string, data: any) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/me/`;
+
+  const resp = await fetch(url, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + accessToken
+    },
+    body: JSON.stringify(data)
+  });
+
+  if (resp.ok) {
+    return await resp.json();
+  }
+  throw new Error('Failed to fetch data. Status: ' + resp.status);
+}
+
 export async function updateAttendee(accessToken: string, data: any) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/attendees/${data.id}/`;
 

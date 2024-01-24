@@ -4,10 +4,9 @@ import Modal from '@/components/Modal';
 import { useAuthContext } from '@/hooks/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { updateAttendee } from './api/attendee';
+import { patchMe } from './api/attendee';
 import { fileUpload } from './api/application';
 import QRCodeGenerator from '@/components/dashboard/QRCodeGenerator';
-import { participation_class } from '../types/application_form_types';
 import Loader from '@/components/Loader';
 
 type SetupModalProps = {
@@ -29,6 +28,29 @@ export default function Dashboard() {
 
   const toggleOverlay = () => {
     setOverlayVisible(prev => !prev);
+  };
+
+  const getParticipationClassName = (code: string) => {
+    switch (code) {
+      case 'P':
+        return 'Hacker';
+      case 'M':
+        return 'Mentor';
+      case 'J':
+        return 'Judge';
+      case 'S':
+        return 'Sponsor';
+      case 'V':
+        return 'Volunteer';
+      case 'O':
+        return 'Organizer';
+      case 'G':
+        return 'Guardian';
+      case 'E':
+        return 'Media';
+      default:
+        return '';
+    }
   };
 
   function SetupModal({ toggleOverlay }: SetupModalProps) {
@@ -71,7 +93,7 @@ export default function Dashboard() {
         }
 
         try {
-          await updateAttendee(session.access_token, data);
+          await patchMe(session.access_token, data);
           window.location.reload();
         } catch (error) {
           console.error('Error updating attendee:', error);
@@ -180,11 +202,7 @@ export default function Dashboard() {
                     <span>{user?.last_name}</span>
                   </div>
                   <div className="w-32 h-9 bg-neutral-800 rounded-[5px] flex justify-center items-center text-white">
-                    {user?.participation_class === 'P'
-                      ? 'Hacker'
-                      : user?.participation_class === 'M'
-                      ? 'Mentor'
-                      : 'Judge'}
+                    {getParticipationClassName(user?.participation_class)}
                   </div>
                   <div className="pt-6 pb-4 text-white">
                     Show QR code to check in
