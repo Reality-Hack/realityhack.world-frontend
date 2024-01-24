@@ -12,6 +12,7 @@ import ScheduleRoom from '@/components/dashboard/schedule/ScheduleItem';
 import TimeComponent from '@/components/dashboard/schedule/TimeComponent';
 import { useSession } from 'next-auth/react';
 import { getAllWorkshops, getMyWorkshops } from '@/app/api/workshops';
+import { useAuthContext } from '@/hooks/AuthContext';
 
 const LegendRoom: React.FC<LegendRoomProps> = ({ color, name }) => {
   return (
@@ -44,6 +45,8 @@ const Page: React.FC = () => {
   const [allEvents, setAllEvents] = useState<[]>();
   const [loading, setLoading] = useState<boolean>(false);
 
+  const { user } = useAuthContext();
+
   const START_HOUR = 10;
   const END_HOUR = 17;
 
@@ -57,9 +60,9 @@ const Page: React.FC = () => {
   }
 
   useEffect(() => {
-    if (session?.access_token) {
+    if (session?.access_token && user) {
       setLoading(true);
-      getMyWorkshops(session.access_token, session.id_token)
+      getMyWorkshops(session.access_token, user.id)
         .then(data => {
           setUserEvents(data);
         })
@@ -89,7 +92,7 @@ const Page: React.FC = () => {
         <div className="flex flex-col gap-2 p-2 bg-white border-2 border-gray-200 rounded-lg w-fill">
           <div>
             <div>
-              <div className="w-[100%] h-[100%] bg-neutral-50 rounded-[10px] shadow overflow-x-scroll">
+              <div className="w-[100%] bg-neutral-50 rounded-[10px] shadow overflow-x-scroll h-[576px]">
                 <span className="text-zinc-500 text-2xl font-normal font-['Inter'] leading-normal mt-6 ml-3 ">
                   Schedule
                 </span>

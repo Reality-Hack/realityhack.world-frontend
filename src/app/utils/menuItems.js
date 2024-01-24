@@ -15,7 +15,7 @@ export const menuItems = [
     icon: "/icons/dashboard/schedule.svg"
   },
   {
-    href: '/workshops/workshopSchedule',
+    href: '/workshops/schedule',
     title: 'Workshops',
     icon: "/icons/dashboard/workshops.svg"
   },

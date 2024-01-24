@@ -20,9 +20,8 @@ export async function getAllWorkshops(accessToken: string) {
 
 //GET USER'S SPECIFIC WORKSHOP SCHEDULE
 export async function getMyWorkshops(accessToken: string, userId: string) {
-  const id = '6612aecb-4157-466f-8c51-ef1044af9964';
-  // const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/?attendee=${userId}`;
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/?attendee=${id}`;
+  // const id = '6612aecb-4157-466f-8c51-ef1044af9964';
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/?attendee=${userId}`;
 
   const resp = await fetch(url, {
     headers: {
@@ -37,13 +36,59 @@ export async function getMyWorkshops(accessToken: string, userId: string) {
   throw new Error('Failed to fetch data. Status: ' + resp.status);
 }
 
+// take attendance for workshop (user signs in to a specific workshop)
+export async function signinToWorkshop(id: string, workshop: string) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      workshop,
+      attendee: id
+    })
+  });
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to create data. Status: ${
+        response.status
+      } Result: ${JSON.stringify(result)}`
+    );
+  }
+
+  return result;
+}
+
+export async function showInterestInWorkshop(id: string, workshopId: string) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      workshop: workshopId,
+      attendee: id
+    })
+  });
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to create data. Status: ${
+        response.status
+      } Result: ${JSON.stringify(result)}`
+    );
+  }
+
+  return result;
+}
+
 //UPDATE A USER'S SPECIFIC WORKSHOP SCHEDULE
 export async function updateMyWorkshops() {}
-
-// take attendance for workshop (user signs in to a specific workshop)
-export async function signinToWorkshop() {}
-
-//ADMIN SIDE
 
 //take in a list of workshops and adds to the work
 export async function updateWorkshopSchedule() {}

@@ -145,13 +145,14 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
       </div>
       {dialogOpen && (
         <Dialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)}>
-          <div className="flex flex-col items-center flex-shrink-0 h-full gap-8 overflow-y-auto w-96">
+          <div className="flex flex-col items-center flex-shrink-0 w-full h-full gap-8 overflow-y-auto">
             <div className="flex flex-col items-center gap-2">
-              <p className="text-white text-3xl font-medium font-['Inter'] ">
-                {workshopName}
+              <p className="text-black text-3xl font-medium font-['Inter'] ">
+                {title}
               </p>
-              <div className="text-white opacity-60">
-                {location.slice(0, 5)} | {formatTime(datetime)} -{' '}
+
+              <div className="text-black opacity-60">
+                {roomLocation} | {formatTime(datetime)} -{' '}
                 {addHoursToTime(formatTime(datetime), 1)}
               </div>
             </div>
@@ -200,6 +201,7 @@ function formatTime(datetimeString: string): string {
 
   return formattedTime;
 }
+
 function addHoursToTime(time: string, hoursToAdd: number) {
   // Extract hour, minute, and AM/PM information from the time string
   const match = time.match(/(\d+):(\d+)\s*([apAP][mM])?/);
