@@ -2,22 +2,19 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-1. Make a copy of the example `.env` file:
+1. Make a copy of the example `.env.example` file:
 
 ```shell
-cp .env.example .env.local
+cp .env.example .env.development.local
 ```
 
-- Replace any relevant values in your `.gitignore`d `.env.local` file. 
+- Replace any relevant values in your `.gitignore`d `.env.development.local` file. 
 
 2. Run the development server:
 
 ```shell
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -70,3 +67,41 @@ Debugging with the standard NodeJS debugger does not allow for `await` or other 
 1. In your VS Code editor, click "Run and Debug" in your left toolbar.
 2. In the top-left of your editor window, select `Next.js: debug full stack` from the drop-down next to the green "play" icon.
 3. Click the green "play" icon.
+
+## Testing
+
+We use [Playwright](https://playwright.dev) to run our end-to-end tests.
+
+To run tests, you will need to spin up an instance of the backend. Clone the [event-server repo](https://codeberg.org/reality-hack-inc/realityhack.world-backend/), and follow the instructions to spin up the docker instance. They are copied below for clarity.
+
+```shell
+./build-image.sh
+docker compose up
+```
+
+### Running Tests
+
+To run tests, use the following commands:
+
+First, run `npx playwright install` to setup playwright
+
+`npm run test` to run all tests headless
+
+`npm run test:debug` to debug writing tests
+
+Checkout out [Playwright's documentation](https://playwright.dev/docs/writing-tests) to get started writing tests.
+
+Currently we have a test admin user and a test participant (attendee) user, each with their own auth tokens stored for the duration of the tests. You can import the proper auth file for your tests as follows:
+
+```javascript
+import { test } from '@playwright/test';
+import { adminAuthFile } from '../auth.setup';
+
+test.describe(() => {
+  test.use({ storageState: adminAuthFile });
+
+  test('can see page as admin', async ({ page }) => {
+    // Signed in as admin in these tests
+  });
+});
+```

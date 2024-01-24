@@ -1,11 +1,18 @@
 /* eslint-disable no-console */
 import jwt_decode from 'jwt-decode';
+// import jwt_encode from 'jwt-encode';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 
 // this will refresh an expired access token, when needed
 async function refreshAccessToken(token: JWT): Promise<JWT> {
+  // if(process.env.KEYCLOAK_ISSUER_FAKE) {
+  //   const decoded = jwt_decode(token.refresh_token);
+  //   decoded.iss = process.env.KEYCLOAK_ISSUER_FAKE
+  //   decoded.aud = process.env.KEYCLOAK_ISSUER_FAKE
+  //   token.refresh_token = jwt_encode(decoded);
+  // }
   const resp = await fetch(
     `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
     {
@@ -21,13 +28,16 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
   );
   const refreshToken = await resp.json();
   if (!resp.ok) throw refreshToken;
+  const decoded: any = jwt_decode(refreshToken.access_token);
+  // if(process.env.KEYCLOAK_ISSUER_FAKE)
+  //   decoded.iss = process.env.KEYCLOAK_ISSUER_FAKE
 
   return {
     ...token,
     access_token: refreshToken.access_token,
-    decoded: jwt_decode(refreshToken.access_token),
+    decoded,
     id_token: refreshToken.id_token,
-    expires_at: refreshToken.expires_in,
+    expires_at: refreshToken.expires_in + Math.floor(Date.now() / 1000),
     refresh_token: refreshToken.refresh_token
   };
 }
@@ -37,7 +47,7 @@ export const authOptions: NextAuthOptions = {
     KeycloakProvider({
       clientId: `${process.env.KEYCLOAK_ID || ''}`,
       clientSecret: `${process.env.KEYCLOAK_SECRET || ''}`,
-      issuer: `${process.env.KEYCLOAK_ISSUER || ''}`
+      issuer: `${process.env.KEYCLOAK_ISSUER_FAKE || process.env.KEYCLOAK_ISSUER || ''}`
     })
   ],
   session: {
@@ -46,6 +56,9 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, account }) {
       const nowTimeStamp = Math.floor(Date.now() / 1000);
+      // console.log(token.expires_at - nowTimeStamp)
+      // if(token.access_token)
+      //   console.log(token.access_token.slice(token.access_token.length - 10))
 
       if (account) {
         token.decoded = jwt_decode(account.access_token);

@@ -46,11 +46,9 @@ const Dashboard: NextPage = ({}: any) => {
             <span className="text-xl text-center text-[#40337F]">Teams</span>
           </div>
         </Link>
-        <Link href="/admin/applications/participants">
+        <Link href="/admin/hardware">
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">
-              Hardware Requests
-            </span>
+            <span className="text-xl text-center text-[#40337F]">Hardware</span>
           </div>
         </Link>
         <Link href="/admin/applications/participants">

@@ -5,6 +5,7 @@ import Layout from '@/components/HotkeyLayout';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import type { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 
 interface AnyAppProps {
@@ -24,6 +25,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
   acceptedFiles,
   ...formData
 }) {
+  const { data: session } = useSession();
   const DEBUG = false;
   const [selectedTab, setSelectedTab] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
@@ -41,10 +43,14 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
     if (
       updatedPayload.participation_class === 'P' &&
       acceptedFiles &&
-      acceptedFiles?.length > 0
+      acceptedFiles?.length > 0 &&
+      !!session
     ) {
       try {
-        fileUploadResponse = await fileUpload(acceptedFiles[0]);
+        fileUploadResponse = await fileUpload(
+          session.access_token,
+          acceptedFiles[0]
+        );
         updatedPayload.resume = fileUploadResponse.id;
       } catch (error) {
         setIsUploading(false);

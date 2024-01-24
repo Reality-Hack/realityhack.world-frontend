@@ -19,6 +19,7 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
   const isAdmin = session && (session as any).roles?.includes('admin');
+  const isSponsor = session && (session as any).roles?.includes('sponsor');
 
   const navRef = useRef<HTMLDivElement>(null);
 
@@ -64,6 +65,12 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
     }, 400);
 
     if (!isAdmin && pathname.startsWith('/admin')) {
+      session ? router.replace('/') : router.replace('/signin');
+      setTimeout(() => setLoaded(true), 400);
+      return;
+    }
+
+    if (!isSponsor && pathname.startsWith('/sponsor')) {
       session ? router.replace('/') : router.replace('/signin');
       setTimeout(() => setLoaded(true), 400);
       return;

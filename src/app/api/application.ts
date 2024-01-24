@@ -75,7 +75,7 @@ export async function createApplication(data: any) {
   return result;
 }
 
-export async function fileUpload(file: File) {
+export async function fileUpload(accessToken: string, file: File) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploaded_files/`;
   const formData = new FormData();
   formData.append('file', file);
@@ -83,6 +83,9 @@ export async function fileUpload(file: File) {
   try {
     const response = await fetch(url, {
       method: 'POST',
+      headers: {
+        Authorization: 'JWT ' + accessToken
+      },
       body: formData
     });
 

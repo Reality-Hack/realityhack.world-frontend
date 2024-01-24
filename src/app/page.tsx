@@ -14,6 +14,7 @@ type SetupModalProps = {
 };
 
 interface AttendeeData {
+  id: string;
   first_name: string;
   last_name: string;
   initial_setup: boolean;
@@ -76,6 +77,7 @@ export default function Dashboard() {
 
       if (session) {
         let data: AttendeeData = {
+          id: user.id,
           first_name: firstName,
           last_name: lastName,
           initial_setup: true
@@ -83,7 +85,10 @@ export default function Dashboard() {
 
         if (acceptedFiles && acceptedFiles.length > 0) {
           try {
-            profileImageUpload = await fileUpload(acceptedFiles[0]);
+            profileImageUpload = await fileUpload(
+              session.access_token,
+              acceptedFiles[0]
+            );
             data = { ...data, profile_image: profileImageUpload.id };
           } catch (error) {
             console.error('Error in file upload:', error);
@@ -145,6 +150,9 @@ export default function Dashboard() {
                   setAcceptedFiles={setAcceptedFiles}
                   rejectedFiles={rejectedFiles}
                   setRejectedFiles={setRejectedFiles}
+                  extraInputProps={{
+                    "data-testid": "initial-setup-profile-image"
+                  }}
                 />
                 <button
                   className="transition-all mx-auto mb-auto mt-4 bg-[#4D97E8] hover:bg-[#4589d2] px-7 py-2 rounded-full text-white"

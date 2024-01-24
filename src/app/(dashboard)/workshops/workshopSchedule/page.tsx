@@ -45,8 +45,7 @@ function Workshop({
   workshopGiver,
   workshopDescription,
   onSelect
-}: WorkshopProps) 
-{
+}: WorkshopProps) {
   const { data: session, status } = useSession();
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -64,8 +63,7 @@ function Workshop({
       setLoading(true);
       getAllWorkshops(session.access_token)
         .then(data => {
-          setWorkshops(data)
-
+          setWorkshops(data);
         })
         .finally(() => {
           setLoading(false);
@@ -80,10 +78,22 @@ function Workshop({
       } w-fit p-2 rounded-xl flex flex-col gap-2`}
       onClick={() => onSelect(id)}
     >
-      <div onClick={()=>console.log(workshops.length)}>{JSON.stringify(Object.keys(workshops[0]))} pokpokp</div>
-      <div onClick={()=>console.log(workshops.length)}>{workshops[0].recommended_for} </div>
-      <div onClick={()=>console.log(workshops.length)}>{workshops[0].course_materials} </div>
-      <div onClick={()=>console.log(workshops.length)}>{new Intl.DateTimeFormat('en-US', {hour: 'numeric',  minute: '2-digit',  hour12: true,}).format(new Date(workshops[0].datetime))}</div>
+      <div onClick={() => console.log(workshops.length)}>
+        {JSON.stringify(Object.keys(workshops[0]))} pokpokp
+      </div>
+      <div onClick={() => console.log(workshops.length)}>
+        {workshops[0].recommended_for}{' '}
+      </div>
+      <div onClick={() => console.log(workshops.length)}>
+        {workshops[0].course_materials}{' '}
+      </div>
+      <div onClick={() => console.log(workshops.length)}>
+        {new Intl.DateTimeFormat('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        }).format(new Date(workshops[0].datetime))}
+      </div>
       <div>
         <div className="font-semibold text-xl">{workshopTitle}</div>
         <div>

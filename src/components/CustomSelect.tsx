@@ -2,7 +2,8 @@ import { Select } from 'antd';
 
 export interface Option {
   value: string;
-  label: string;
+  label: string | JSX.Element;
+  searchLabel?: string | null;
 }
 
 export interface CustomSelectProps {
@@ -37,7 +38,9 @@ export default function CustomSelect({
           onChange={onChange}
           onSearch={onSearch}
           filterOption={(input, option: any) =>
-            option?.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            (option?.searchLabel || option?.label)
+              .toLowerCase()
+              .indexOf(input.toLowerCase()) >= 0
           }
           options={options}
         />

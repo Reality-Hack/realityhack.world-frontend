@@ -23,7 +23,6 @@ export default function ApplicationLayout({
             isSelected={pathname === '/workshops/mySchedule'}
             title="My Schedule"
           />
-          
         </div>
         <hr className="dark:border-borderDark" />
       </div>
