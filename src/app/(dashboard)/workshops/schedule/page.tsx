@@ -1,7 +1,11 @@
 'use client';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState, MouseEvent } from 'react';
-import { getAllWorkshops, showInterestInWorkshop } from '@/app/api/workshops';
+import {
+  getAllWorkshops,
+  getMyWorkshops,
+  showInterestInWorkshop
+} from '@/app/api/workshops';
 import { useAuthContext } from '@/hooks/AuthContext';
 
 interface Workshop {
@@ -29,6 +33,7 @@ interface WorkshopProps extends Workshop {
   curriculum: number;
   speakers?: string;
   description?: string;
+  myWorkshops?: any;
   onSelect: (id: number) => void;
 }
 
@@ -56,19 +61,38 @@ function Workshop({
   roomLocation,
   curriculum,
   speakers,
-  description
+  description,
+  myWorkshops
 }: WorkshopProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { user } = useAuthContext();
 
   const handleSeeMoreClick = (e: MouseEvent) => {
     e.stopPropagation();
     setDialogOpen(true);
   };
 
+  const handleSubmit = async () => {
+    showInterestInWorkshop(user.id, workshop.id);
+    try {
+      const promises: Promise<any>[] = []; // Declare the promises variable
+      const results = await Promise.all(promises);
+      console.log('Results:', results);
+    } catch (error) {
+      console.error('Error submitting workshops:', error);
+    }
+  };
+
+  const isEnrolled = myWorkshops?.some(
+    (myWorkshop: any) => myWorkshop.workshop === workshop.id
+  );
+
+  console.log('isEnrolled: ', isEnrolled);
+
   return (
     <div
       className={`bg-white ${
-        selected ? 'border-green-300 border-4' : 'border-blue-300 border-2'
+        isEnrolled ? 'border-green-300 border-2' : 'border-blue-300 border'
       } w-64 p-2 rounded-xl flex flex-col gap-2 shadow-md`}
       onClick={() => onSelect(id)}
     >
@@ -82,22 +106,9 @@ function Workshop({
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap">
           <div
-            style={{
-              backgroundColor: keywords[curriculum]
-                ? keywords[curriculum].bg_color
-                : '#000000'
-            }}
-            className={`text-white text-xs px-3 py-0.5 mr-2 mb-2 rounded-md`}
+            className={`text-blue-700 text-xs px-3 py-0.5 mr-2 mb-2 rounded-md border border-blue-700`}
           >
             {keywords[curriculum]?.name || 'Unknown Curriculum'}
-          </div>
-          <div
-            style={{
-              backgroundColor: '#243C61'
-            }}
-            className={`text-white text-xs px-3 py-0.5 mr-2 mb-2 rounded-md`}
-          >
-            {keywords[curriculum]?.category || 'Unknown Room'}
           </div>
         </div>
         <div className="flex flex-wrap">
@@ -107,11 +118,19 @@ function Workshop({
             {workshop.speakers}
           </div>
         </div>
-        <div
-          className="p-1 px-2 ml-auto text-xs text-blue-400 border-0 border-2 border-gray-400 rounded-lg hover:bg-blue-200 hover:text-white hover:cursor-pointer"
-          onClick={handleSeeMoreClick}
-        >
-          See More
+        <div className="flex">
+          <div
+            className="mx-auto mt-4 bg-[#4D97E8] px-4 py-[6px] rounded-full text-xs text-white cursor-pointer"
+            onClick={handleSubmit}
+          >
+            Add to Schedule
+          </div>
+          <div
+            className="mx-auto mt-4 bg-[#4D97E8] px-4 py-[6px] rounded-full text-xs text-white cursor-pointer"
+            onClick={handleSeeMoreClick}
+          >
+            See More
+          </div>
         </div>
         {dialogOpen && (
           <Dialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)}>
@@ -147,6 +166,12 @@ function Workshop({
             <div className="p-4 text-black description-container">
               <div className="">{description}</div>
             </div>
+            <div
+              className="mx-auto mt-4 bg-[#4D97E8] px-7 py-[6px] w-fit rounded-full text-white cursor-pointer"
+              onClick={handleSubmit}
+            >
+              Add to Schedule
+            </div>
           </Dialog>
         )}
       </div>
@@ -159,20 +184,18 @@ interface SelectedWorkshopsProps {
 }
 
 function SelectedWorkshops({ selectedWorkshops }: SelectedWorkshopsProps) {
-  const { user } = useAuthContext();
+  // const handleSubmit = async () => {
+  //   const promises = selectedWorkshops.map((workshop: any) =>
+  //     showInterestInWorkshop(user.id, workshop.id)
+  //   );
 
-  const handleSubmit = async () => {
-    const promises = selectedWorkshops.map((workshop: any) =>
-      showInterestInWorkshop(user.id, workshop.id)
-    );
-
-    try {
-      const results = await Promise.all(promises);
-      console.log('Results:', results);
-    } catch (error) {
-      console.error('Error submitting workshops:', error);
-    }
-  };
+  //   try {
+  //     const results = await Promise.all(promises);
+  //     console.log('Results:', results);
+  //   } catch (error) {
+  //     console.error('Error submitting workshops:', error);
+  //   }
+  // };
 
   return (
     <div className="pl-5">
@@ -185,7 +208,7 @@ function SelectedWorkshops({ selectedWorkshops }: SelectedWorkshopsProps) {
         </ul>
         {selectedWorkshops.length ? (
           <button
-            onClick={handleSubmit}
+            // onClick={handleSubmit}
             className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] transition-all"
           >
             Submit
@@ -202,6 +225,7 @@ interface WorkshopRoomProps {
   room?: string;
   workshops?: Workshop[];
   workshop?: any;
+  myWorkshops?: any;
   onSelect: (id: number) => void;
   curriculum?: number;
 }
@@ -211,7 +235,8 @@ const WorkshopRoom: React.FC<WorkshopRoomProps> = ({
   workshops,
   workshop,
   onSelect,
-  curriculum
+  curriculum,
+  myWorkshops
 }) => {
   const roomNames = [
     'Curr. 1 - Beginner Dev',
@@ -233,6 +258,13 @@ const WorkshopRoom: React.FC<WorkshopRoomProps> = ({
 
   const bgColor = roomColors[Number(room) - 1] || '#000000';
 
+  const sortedWorkshops = workshops
+    ? workshops.sort(
+        (a, b) =>
+          new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
+      )
+    : [];
+
   return (
     <div>
       <div
@@ -251,6 +283,7 @@ const WorkshopRoom: React.FC<WorkshopRoomProps> = ({
               {...workshop}
               workshop={workshop}
               onSelect={onSelect}
+              myWorkshops={myWorkshops}
             />
           ))}
       </div>
@@ -262,11 +295,13 @@ interface PageProps {}
 
 const Page: React.FC<PageProps> = () => {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
+  const [myWorkshops, setMyWorkshops] = useState<any>(null);
   const [selectedWorkshops, setSelectedWorkshops] = useState<Workshop[]>([]);
   const [loading, setLoading] = useState(false);
 
   const { data: session, status } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
+  const { user } = useAuthContext();
 
   const parseWorkshopName = (name: string) => {
     const [firstPart, ...titleParts] = name.split(' - ');
@@ -316,6 +351,19 @@ const Page: React.FC<PageProps> = () => {
   }, [session]);
 
   useEffect(() => {
+    if (session?.access_token && user) {
+      setLoading(true);
+      getMyWorkshops(session.access_token, user.id)
+        .then(data => {
+          setMyWorkshops(data);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [session]);
+
+  useEffect(() => {
     const selected = workshops.filter(workshop => workshop.selected);
     setSelectedWorkshops(selected);
   }, [workshops]);
@@ -343,7 +391,7 @@ const Page: React.FC<PageProps> = () => {
   return (
     <div className="w-screen h-screen bg-white">
       <div className="flex flex-col">
-        <SelectedWorkshops selectedWorkshops={selectedWorkshops} />
+        {/* <SelectedWorkshops selectedWorkshops={selectedWorkshops} /> */}
         <div className="flex gap-2 p-4">
           {Object.entries(workshopsByRoom).map(
             ([room, roomWorkshops]: [string, Workshop[]]) => (
@@ -351,6 +399,7 @@ const Page: React.FC<PageProps> = () => {
                 key={room}
                 room={room}
                 workshops={roomWorkshops}
+                myWorkshops={myWorkshops}
                 onSelect={handleWorkshopSelect}
               />
             )
