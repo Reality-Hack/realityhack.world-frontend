@@ -83,7 +83,10 @@ export default function Dashboard() {
 
         if (acceptedFiles && acceptedFiles.length > 0) {
           try {
-            profileImageUpload = await fileUpload(acceptedFiles[0]);
+            profileImageUpload = await fileUpload(
+              session.access_token,
+              acceptedFiles[0]
+            );
             data = { ...data, profile_image: profileImageUpload.id };
           } catch (error) {
             console.error('Error in file upload:', error);
