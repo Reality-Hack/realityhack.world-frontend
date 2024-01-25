@@ -20,13 +20,15 @@ export default function HardwareCategoryFilter(
       Filter
     </button>
     {filterOn && (
-      <div className="fixed rounded-md shadow-xl bg-white z-10">
-        <button
-          className="fixed right-0 p-4 px-4 py-2 rounded-full text-black mx-4"
-          onClick={() => setFilterOn(false)}
-        >
-          <CloseIcon />
-        </button>
+      <div className="fixed rounded-md shadow-xl bg-white z-10 right-[4%] top-[16%]">
+        <div className='flex flex-end justify-end'>
+          <button
+            className="self-end rounded-full text-black mx-4"
+            onClick={() => setFilterOn(false)}
+          >
+            <CloseIcon />
+          </button>
+        </div>
         <div>
           <div className="w-56 px-5 py-4 my-4 mr-4 content">
             {/* <div className="flex flex-col"> */}

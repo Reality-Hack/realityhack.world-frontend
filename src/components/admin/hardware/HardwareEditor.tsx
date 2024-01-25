@@ -1,14 +1,15 @@
 'use client';
-import { createHardware, deleteHardware, sendHardwareRequest, updateHardware } from '@/app/api/hardware';
+import { createHardware, deleteHardware, getHardwareDevice, sendHardwareRequest, updateHardware } from '@/app/api/hardware';
 import CloseIcon from '@mui/icons-material/Close';
 import { PlusOne } from '@mui/icons-material';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
-import { Hardware, HardwareCategory, UploadedFile, hardware_categories } from '@/types/types';
+import { useEffect, useState } from 'react';
+import { Hardware, HardwareCategory, HardwareDevice, UploadedFile, hardware_categories } from '@/types/types';
 import Dropzone from '@/components/Dropzone';
 import { fileUpload } from '@/app/api/application';
 import { fixFileLink } from '@/app/api/uploaded_files';
 import HardwareCategoryFilter from '@/components/HardwareCategoryFilter';
+import { CircularProgress, LinearProgress } from '@mui/material';
 
 export default function HardwareEditor({
   hardware,
@@ -118,6 +119,7 @@ function EditableHardwareCard({
     image?.id !== item.image?.id ||
     tags !== item.tags;
   const [addTagOpen, setAddTagOpen] = useState(false);
+  const [hardwareDeviceEditorOpen, setHardwareDeviceEditorOpen] = useState(false);
   const isReady = 
     name.length > 0 &&
     quantity > 0 &&
@@ -197,9 +199,27 @@ function EditableHardwareCard({
             onChange={e => setName(e.target.value)}
           ></input>
         </span>
+        <div className='relative'>
+          {hardwareDeviceEditorOpen && (
+            <div className="absolute left-0 top-10 rounded-md shadow-xl bg-white z-10">
+              <div className='flex justify-end'>
+                <button
+                  className="px-2 py-2 rounded-full text-black"
+                  onClick={() => setHardwareDeviceEditorOpen(false)}
+                >
+                  <CloseIcon />
+                </button>
+              </div>
+              <HardwareDeviceEditor hardwareId={item.id} />
+            </div>
+          )}
+        </div>
         <button
         className='cursor-pointer text-black bg-gray-200 px-4 py-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end'
+        onClick={() => setHardwareDeviceEditorOpen(!hardwareDeviceEditorOpen)}
+        disabled={isOriginal}
         >Edit devices</button>
+        
       </div>
       <textarea
         // disabled={quantity === 0}
@@ -223,7 +243,7 @@ function EditableHardwareCard({
             </button>
           </span>
         ))}
-        <span className="relative bg-gray-200 rounded-full px-2 py-0 mx-1 text-xl">
+        <div className="relative bg-gray-200 rounded-full px-2 py-0 mx-1 text-xl">
           {addTagOpen && (
             <div className="absolute left-10 top-5 rounded-md shadow-xl bg-white z-10">
               <button
@@ -249,14 +269,12 @@ function EditableHardwareCard({
             </div>
           )}
           <button
-            onClick={() => {
-              setAddTagOpen(true);
-            }}
+            onClick={() => setAddTagOpen(!addTagOpen)}
             className="py-1"
           >
             +
           </button>{' '}
-        </span>
+        </div>
       </div>
       <div className="flex justify-between w-full">
         {/* <textarea
@@ -272,14 +290,19 @@ function EditableHardwareCard({
           Save
         </button>
         <button
-          disabled={isOriginal || sending}
+          disabled={sending}
           className="cursor-pointer text-white bg-[#CC2F34] px-4 rounded-full disabled:opacity-50 transition-all flex-shrink h-10 self-end"
           onClick={() => {
-            setSending(true);
-            deleteHardware(session!.access_token, item.id).then(() => {
-              setSending(false);
+            if(isOriginal) {
               removeItem();
-            })
+              return;
+            } else {
+              setSending(true);
+              deleteHardware(session!.access_token, item.id).then(() => {
+                setSending(false);
+                removeItem();
+              });
+            }
           }}
         >
           Delete
@@ -287,4 +310,37 @@ function EditableHardwareCard({
       </div>
     </div>
   );
+}
+
+function HardwareDeviceEditor({ hardwareId }: { hardwareId: string }) {
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState(true);
+  const [devices, setDevices] = useState<HardwareDevice[]>([]);
+  useEffect(() => {
+    if (session) {
+      setLoading(true);
+      getHardwareDevice(session.access_token, { hardware: hardwareId }).then(res => {
+        setDevices(res);
+      }).finally(() => setLoading(false));
+    }
+  }, [session]);
+
+  function addNew() {
+
+  }
+
+  return <div className="w-56 px-5 py-4 my-4 mr-4">
+    <p>{loading ? "Loading..." : `${devices.length} devices.`}</p>
+    <button
+      className="cursor-pointer text-white bg-[#493B8A] p-4 m-4 rounded-full disabled:opacity-50 transition-all h-15 self-end flex flex-row"
+      onClick={() => addNew()}
+    >add new</button>
+    <div className="content flex flex-col max-h-64 overflow-scroll mt-4">
+      {loading ? <CircularProgress /> : <>{devices.map(device => {
+        return <div className='flex flex-row'>
+          <input value={device.serial}></input>
+        </div>
+      })}</>}
+    </div>
+  </div>
 }

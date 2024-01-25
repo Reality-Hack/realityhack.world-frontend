@@ -178,11 +178,22 @@ export async function deleteHardwareRequest(accessToken: string, id: string) {
 
 export async function getHardwareDevice(
   accessToken: string,
-  { id = null, serial = null }: { id?: string | null; serial?: string | null }
+  { id = null, serial = null, hardware = null }:
+  { id?: string | null; serial?: string | null, hardware?: string | null}
 ) {
+  const kvs = [];
+  if (serial != null) {
+    kvs.push('serial=' + serial);
+  }
+  if (hardware != null) {
+    kvs.push('hardware=' + hardware);
+  }
+  if (id != null && kvs.length > 0) {
+    throw new Error('Cannot specify both retrieve and list parameters');
+  }
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/hardwaredevices${
     id == null ? '' : '/' + id
-  }/${serial == null ? '' : '?serial=' + serial}`;
+  }/${kvs.length == 0 ? '' : '?' + kvs.join('&')}`;
 
   const resp = await fetch(url, {
     headers: {
