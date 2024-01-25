@@ -11,13 +11,13 @@ export function Tab({ href, isSelected, title }: TabProps) {
     <Link href={href}>
       {isSelected && (
         <span className="relative w-full mr-8">
-          <span className="cursor-pointer text-themePrimary before:content-[''] before:w-full before:absolute before:border-b-[2px] before:bottom-[-12px] before:bg-themePrimary before:border-themePrimary text-sm">
+          <span className="text-xs sm:text-lg lg:text-lg  cursor-pointer text-themePrimary before:content-[''] before:w-full before:absolute before:border-b-[2px] before:bottom-[-12px] before:bg-themePrimary before:border-themePrimary ">
             {title}
           </span>
         </span>
       )}
       {!isSelected && (
-        <span className="pr-8 text-sm transition-all cursor-pointer hover:text-themePrimary text">
+        <span className="pr-8 text-xs sm:text-lg lg:text-lg transition-all cursor-pointer hover:text-themePrimary">
           {title}
         </span>
       )}

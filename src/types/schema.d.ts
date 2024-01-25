@@ -553,6 +553,32 @@ export interface components {
       /** Format: date-time */
       updated_at: string;
     };
+    AttendeeList: {
+      /** Format: uuid */
+      id: string;
+      first_name?: string;
+      last_name?: string;
+      participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
+      /** Format: date-time */
+      checked_in_at?: string | null;
+      /** Format: uuid */
+      profile_image?: string | null;
+      initial_setup?: boolean;
+      guardian_of?: string[];
+      /** Format: uuid */
+      sponsor_handler?: string | null;
+      prefers_destiny_hardware: components["schemas"]["RelatesToDestinyHardwareEnum"][];
+      /** @description I.e., a Discord username */
+      communications_platform_username?: string | null;
+      intended_tracks: components["schemas"]["IntendedTracksEnum"][];
+      intended_hardware_hack?: boolean;
+      sponsor_company?: string | null;
+      participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
     AttendeePatch: {
       /** Format: uuid */
       id: string;
@@ -2549,7 +2575,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["Attendee"][];
+          "application/json": components["schemas"]["AttendeeList"][];
         };
       };
     };
@@ -2746,6 +2772,7 @@ export interface operations {
       query?: {
         attendee?: string;
         destiny_team?: string;
+        destiny_team__round?: number;
         destiny_team__table__number?: number;
         /** @description A search term. */
         search?: string;
