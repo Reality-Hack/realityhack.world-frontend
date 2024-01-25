@@ -5,6 +5,7 @@
   "rules": {
     "prettier/prettier": "warn",
     "no-console": "warn",
-    "react/jsx-key": "off"
+    "react/jsx-key": "off",
+    "react-hooks/exhaustive-deps": "off"
   }
 }

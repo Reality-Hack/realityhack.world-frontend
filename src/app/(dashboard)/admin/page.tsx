@@ -65,9 +65,7 @@ const Dashboard: NextPage = ({}: any) => {
         </Link>
         <Link href="/admin/markdown">
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">
-              Markdown
-            </span>
+            <span className="text-xl text-center text-[#40337F]">Markdown</span>
           </div>
         </Link>
       </div>

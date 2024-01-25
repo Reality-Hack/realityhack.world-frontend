@@ -1,13 +1,13 @@
 'use client';
 import Dropzone from '@/components/Dropzone';
+import Loader from '@/components/Loader';
 import Modal from '@/components/Modal';
+import QRCodeGenerator from '@/components/dashboard/QRCodeGenerator';
 import { useAuthContext } from '@/hooks/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { patchMe } from './api/attendee';
 import { fileUpload } from './api/application';
-import QRCodeGenerator from '@/components/dashboard/QRCodeGenerator';
-import Loader from '@/components/Loader';
+import { patchMe } from './api/attendee';
 
 type SetupModalProps = {
   toggleOverlay: () => void;
@@ -151,7 +151,7 @@ export default function Dashboard() {
                   rejectedFiles={rejectedFiles}
                   setRejectedFiles={setRejectedFiles}
                   extraInputProps={{
-                    "data-testid": "initial-setup-profile-image"
+                    'data-testid': 'initial-setup-profile-image'
                   }}
                 />
                 <button

@@ -35,6 +35,11 @@ export const menuItems = [
     icon: '/icons/dashboard/help.svg'
   },
   {
+    href: '/lighthouses',
+    title: 'Lighthouses',
+    icon: '/icons/dashboard/lighthouse.svg'
+  },
+  {
     href: '/hardware/request',
     title: 'Hardware',
     icon: '/icons/dashboard/hardware.svg'

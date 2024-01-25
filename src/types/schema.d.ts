@@ -21,6 +21,22 @@ export interface paths {
     /** @description API endpoint that allows applications to be viewed or edited. */
     patch: operations["applications_partial_update"];
   };
+  "/attendeepreferences/": {
+    /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+    get: operations["attendeepreferences_list"];
+    /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+    post: operations["attendeepreferences_create"];
+  };
+  "/attendeepreferences/{id}/": {
+    /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+    get: operations["attendeepreferences_retrieve"];
+    /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+    put: operations["attendeepreferences_update"];
+    /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+    delete: operations["attendeepreferences_destroy"];
+    /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+    patch: operations["attendeepreferences_partial_update"];
+  };
   "/attendees/": {
     /** @description API endpoint that allows users to be viewed or edited. */
     get: operations["attendees_list"];
@@ -66,6 +82,46 @@ export interface paths {
      * information about a token's fitness for a particular use.
      */
     post: operations["auth_token_verify_create"];
+  };
+  "/destinyteamattendeevibes/": {
+    /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+    get: operations["destinyteamattendeevibes_list"];
+    /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+    post: operations["destinyteamattendeevibes_create"];
+  };
+  "/destinyteamattendeevibes/{id}/": {
+    /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+    get: operations["destinyteamattendeevibes_retrieve"];
+    /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+    put: operations["destinyteamattendeevibes_update"];
+    /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+    delete: operations["destinyteamattendeevibes_destroy"];
+    /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+    patch: operations["destinyteamattendeevibes_partial_update"];
+  };
+  "/destinyteams/": {
+    /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+    get: operations["destinyteams_list"];
+    /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+    post: operations["destinyteams_create"];
+  };
+  "/destinyteams/{id}/": {
+    /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+    get: operations["destinyteams_retrieve"];
+    /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+    put: operations["destinyteams_update"];
+    /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+    delete: operations["destinyteams_destroy"];
+    /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+    patch: operations["destinyteams_partial_update"];
+  };
+  "/discord/": {
+    /** @description API Endpoint that allows for Discord information to be viewed or edited. */
+    get: operations["discord_list"];
+  };
+  "/discord/{attendee__communications_platform_username}/": {
+    /** @description API Endpoint that allows for Discord information to be viewed or edited. */
+    delete: operations["discord_destroy"];
   };
   "/groups/": {
     /** @description API endpoint that allows groups to be viewed or edited. */
@@ -131,15 +187,31 @@ export interface paths {
     /** @description API endpoint that allows hardware devices to be viewed or edited. */
     patch: operations["hardwaredevices_partial_update"];
   };
-  "/helpdesks/": {
-    /** @description API endpoint that allows Reality Kits to be viewed or edited. */
-    get: operations["helpdesks_retrieve"];
-    /** @description API endpoint that allows Reality Kits to be viewed or edited. */
-    post: operations["helpdesks_create"];
+  "/hardwarerequests/": {
+    /** @description API endpoint that allows hardware devices to be viewed or edited. */
+    get: operations["hardwarerequests_list"];
+    /** @description API endpoint that allows hardware devices to be viewed or edited. */
+    post: operations["hardwarerequests_create"];
   };
-  "/helpdesks/{id}/": {
+  "/hardwarerequests/{id}/": {
+    /** @description API endpoint that allows hardware devices to be viewed or edited. */
+    get: operations["hardwarerequests_retrieve"];
+    /** @description API endpoint that allows hardware devices to be viewed or edited. */
+    put: operations["hardwarerequests_update"];
+    /** @description API endpoint that allows hardware devices to be viewed or edited. */
+    delete: operations["hardwarerequests_destroy"];
+    /** @description API endpoint that allows hardware devices to be viewed or edited. */
+    patch: operations["hardwarerequests_partial_update"];
+  };
+  "/lighthouses/": {
     /** @description API endpoint that allows Reality Kits to be viewed or edited. */
-    get: operations["helpdesks_retrieve_2"];
+    get: operations["lighthouses_list"];
+    /** @description API endpoint that allows Reality Kits to be viewed or edited. */
+    post: operations["lighthouses_create"];
+  };
+  "/lighthouses/{table__number}/": {
+    /** @description API endpoint that allows Reality Kits to be viewed or edited. */
+    get: operations["lighthouses_retrieve"];
   };
   "/locations/": {
     /** @description API endpoint that allows locations to be viewed or edited. */
@@ -157,6 +229,44 @@ export interface paths {
     /** @description API endpoint that allows locations to be viewed or edited. */
     patch: operations["locations_partial_update"];
   };
+  "/me/": {
+    /** @description API endpoint for getting detailed information about an authenticated user. */
+    get: operations["me_retrieve"];
+    /** @description API endpoint for getting detailed information about an authenticated user. */
+    patch: operations["me_partial_update"];
+  };
+  "/mentorhelprequests/": {
+    /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+    get: operations["mentorhelprequests_list"];
+    /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+    post: operations["mentorhelprequests_create"];
+  };
+  "/mentorhelprequests/{id}/": {
+    /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+    get: operations["mentorhelprequests_retrieve"];
+    /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+    put: operations["mentorhelprequests_update"];
+    /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+    delete: operations["mentorhelprequests_destroy"];
+    /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+    patch: operations["mentorhelprequests_partial_update"];
+  };
+  "/mentorhelprequestshistory/": {
+    /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+    get: operations["mentorhelprequestshistory_list"];
+    /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+    post: operations["mentorhelprequestshistory_create"];
+  };
+  "/mentorhelprequestshistory/{history_id}/": {
+    /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+    get: operations["mentorhelprequestshistory_retrieve"];
+    /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+    put: operations["mentorhelprequestshistory_update"];
+    /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+    delete: operations["mentorhelprequestshistory_destroy"];
+    /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+    patch: operations["mentorhelprequestshistory_partial_update"];
+  };
   "/projects/": {
     /** @description API endpoint that allows projects to be viewed or edited. */
     get: operations["projects_list"];
@@ -172,12 +282,6 @@ export interface paths {
     delete: operations["projects_destroy"];
     /** @description API endpoint that allows projects to be viewed or edited. */
     patch: operations["projects_partial_update"];
-  };
-  "/request_mentor/": {
-    /** @description API endpoint that allows Mentor Requests to be viewed or edited. */
-    get: operations["request_mentor_retrieve"];
-    /** @description API endpoint that allows Mentor Requests to be viewed or edited. */
-    post: operations["request_mentor_create"];
   };
   "/rsvps/": {
     /** @description API endpoint that allows users to be viewed or edited. */
@@ -285,19 +389,19 @@ export interface paths {
     patch: operations["uploaded_files_partial_update"];
   };
   "/workshopattendees/": {
-    /** @description API endpoint that allows workshops to be viewed or edited. */
+    /** @description API endpoint that allows workshop attendees to be viewed or edited. */
     get: operations["workshopattendees_list"];
-    /** @description API endpoint that allows workshops to be viewed or edited. */
+    /** @description API endpoint that allows workshop attendees to be viewed or edited. */
     post: operations["workshopattendees_create"];
   };
   "/workshopattendees/{id}/": {
-    /** @description API endpoint that allows workshops to be viewed or edited. */
+    /** @description API endpoint that allows workshop attendees to be viewed or edited. */
     get: operations["workshopattendees_retrieve"];
-    /** @description API endpoint that allows workshops to be viewed or edited. */
+    /** @description API endpoint that allows workshop attendees to be viewed or edited. */
     put: operations["workshopattendees_update"];
-    /** @description API endpoint that allows workshops to be viewed or edited. */
+    /** @description API endpoint that allows workshop attendees to be viewed or edited. */
     delete: operations["workshopattendees_destroy"];
-    /** @description API endpoint that allows workshops to be viewed or edited. */
+    /** @description API endpoint that allows workshop attendees to be viewed or edited. */
     patch: operations["workshopattendees_partial_update"];
   };
   "/workshops/": {
@@ -334,6 +438,13 @@ export interface components {
      * @enum {string}
      */
     AgeGroupEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
+    /**
+     * @description * `S` - Send
+     * * `A` - Alert
+     * * `F` - Resolve
+     * @enum {string}
+     */
+    AnnouncementPendingEnum: "S" | "A" | "F";
     Application: {
       /** Format: uuid */
       id: string;
@@ -372,7 +483,7 @@ export interface components {
       employer?: string | null;
       industry_other?: string | null;
       specialized_expertise?: string | null;
-      status?: components["schemas"]["StatusEnum"] | components["schemas"]["NullEnum"] | null;
+      status?: components["schemas"]["ApplicationStatusEnum"] | components["schemas"]["NullEnum"] | null;
       previously_participated?: boolean | null;
       participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
       experience_with_xr?: string | null;
@@ -405,27 +516,93 @@ export interface components {
      * @enum {string}
      */
     ApplicationParticipationClassEnum: "P" | "M" | "J";
+    /**
+     * @description * `AI` - Accepted, In-Person
+     * * `AO` - Accepted, Online
+     * * `WI` - Wait-list, In-Person
+     * * `WO` - Wait-list, Online
+     * * `D` - Declined
+     * @enum {string}
+     */
+    ApplicationStatusEnum: "AI" | "AO" | "WI" | "WO" | "D";
     Attendee: {
       /** Format: uuid */
       id: string;
       first_name?: string;
       last_name?: string;
+      participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
+      /** Format: date-time */
+      checked_in_at?: string | null;
+      /** Format: uuid */
+      profile_image?: string | null;
+      initial_setup?: boolean;
+      guardian_of?: string[];
+      /** Format: uuid */
+      sponsor_handler?: string | null;
+      prefers_destiny_hardware: components["schemas"]["RelatesToDestinyHardwareEnum"][];
+      /** @description I.e., a Discord username */
+      communications_platform_username?: string | null;
+      /** Format: email */
+      email: string;
+      intended_tracks: components["schemas"]["IntendedTracksEnum"][];
+      intended_hardware_hack?: boolean;
+      sponsor_company?: string | null;
+      participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    AttendeePatch: {
+      /** Format: uuid */
+      id: string;
+      first_name?: string;
+      last_name?: string;
+      authentication_id?: string | null;
+      /** Format: uuid */
+      profile_image?: string | null;
+      bio?: string;
+      /** Format: date-time */
+      checked_in_at?: string | null;
+      prefers_destiny_hardware: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       /** @description I.e., a Discord username */
       communications_platform_username?: string | null;
       /** Format: email */
       email: string;
       sponsor_company?: string | null;
-      participation_class?: components["schemas"]["ParticipationClass898Enum"];
+      participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
+      initial_setup?: boolean;
+      guardian_of?: string[];
+      /** Format: uuid */
+      sponsor_handler?: string | null;
+      intended_tracks: components["schemas"]["IntendedTracksEnum"][];
+      intended_hardware_hack?: boolean;
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
       updated_at: string;
+    };
+    AttendeePreference: {
+      /** Format: uuid */
+      id: string;
+      preference: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"];
+      /** Format: uuid */
+      preferer: string;
+      /** Format: uuid */
+      preferee: string;
     };
     AttendeeRSVP: {
       /** Format: uuid */
       id: string;
       first_name?: string;
       last_name?: string;
+      participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
+      /** Format: uuid */
+      profile_image?: string | null;
+      initial_setup?: boolean;
+      guardian_of?: string[];
+      /** Format: uuid */
+      sponsor_handler?: string | null;
       /** Format: uuid */
       application?: string | null;
       bio?: string;
@@ -439,6 +616,8 @@ export interface components {
       dietary_allergies: components["schemas"]["DietaryAllergiesEnum"][];
       dietary_allergies_other?: string | null;
       additional_accommodations?: string | null;
+      /** Format: date-time */
+      checked_in_at?: string | null;
       us_visa_support_is_required: boolean;
       us_visa_letter_of_invitation_required?: boolean | null;
       us_visa_support_full_name?: string | null;
@@ -447,7 +626,7 @@ export interface components {
       us_visa_support_citizenship?: components["schemas"]["UsVisaSupportCitizenshipEnum"] | components["schemas"]["NullEnum"] | null;
       us_visa_support_address?: string | null;
       /** @description Will you be under 18 on January 25, 2024 */
-      under_18_by_date: boolean;
+      under_18_by_date?: boolean | null;
       parental_consent_form_signed?: boolean | null;
       agree_to_media_release?: boolean;
       agree_to_liability_release?: boolean;
@@ -458,7 +637,7 @@ export interface components {
       /** Format: email */
       emergency_contact_email: string;
       emergency_contact_relationship: string;
-      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
       special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
       /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
       app_in_store?: string | null;
@@ -467,12 +646,19 @@ export interface components {
       non_xr_talents?: string | null;
       ar_vr_ap_in_store?: string | null;
       reality_hack_project_to_product?: boolean;
-      identify_as_native_american?: boolean;
-      participation_class?: components["schemas"]["ParticipationClass898Enum"];
+      participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
       sponsor_company?: string | null;
     };
     AttendeeRSVPCreate: {
       /** Format: uuid */
+      id: string;
+      first_name?: string;
+      last_name?: string;
+      participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
+      /** Format: uuid */
+      profile_image?: string | null;
+      authentication_id?: string | null;
+      /** Format: uuid */
       application?: string | null;
       bio?: string;
       /** Format: email */
@@ -493,7 +679,7 @@ export interface components {
       us_visa_support_citizenship?: components["schemas"]["UsVisaSupportCitizenshipEnum"] | components["schemas"]["NullEnum"] | null;
       us_visa_support_address?: string | null;
       /** @description Will you be under 18 on January 25, 2024 */
-      under_18_by_date: boolean;
+      under_18_by_date?: boolean | null;
       parental_consent_form_signed?: boolean | null;
       agree_to_media_release?: boolean;
       agree_to_liability_release?: boolean;
@@ -504,7 +690,7 @@ export interface components {
       /** Format: email */
       emergency_contact_email: string;
       emergency_contact_relationship: string;
-      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
       special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
       /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
       app_in_store?: string | null;
@@ -513,9 +699,43 @@ export interface components {
       non_xr_talents?: string | null;
       ar_vr_ap_in_store?: string | null;
       reality_hack_project_to_product?: boolean;
-      identify_as_native_american?: boolean;
-      participation_class?: components["schemas"]["ParticipationClass898Enum"];
+      participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
       sponsor_company?: string | null;
+    };
+    /** @enum {unknown} */
+    BlankEnum: "";
+    /**
+     * @description * `D` - Development
+     * * `A` - Design
+     * * `P` - Prototyping
+     * * `M` - Project Management and Leadership
+     * * `S` - Specialty
+     * @enum {string}
+     */
+    CategoryEnum: "D" | "A" | "P" | "M" | "S";
+    DestinyTeam: {
+      /** Format: uuid */
+      id: string;
+      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      round: number;
+      hardware_hack?: boolean;
+      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+      /** Format: uuid */
+      table?: string | null;
+      attendees?: string[];
+    };
+    DestinyTeamAttendeeVibe: {
+      /** Format: uuid */
+      id: string;
+      vibe: number;
+      /** Format: uuid */
+      destiny_team: string;
+      /** Format: uuid */
+      attendee: string;
     };
     /**
      * @description * `1` - Nut allergy
@@ -566,6 +786,12 @@ export interface components {
      * @enum {string}
      */
     DisabilityIdentityEnum: "A" | "B" | "C";
+    DiscordUsernameRole: {
+      /** @description I.e., a Discord username */
+      communications_platform_username?: string | null;
+      participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
+      participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
+    };
     FileUpload: {
       /** Format: uuid */
       id: string;
@@ -597,12 +823,38 @@ export interface components {
       id: string;
       name: string;
       description?: string;
-      /** Format: uri */
-      image: string;
+      image: components["schemas"]["FileUpload"];
+      tags: components["schemas"]["TagsEnum"][];
+      relates_to_destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["NullEnum"] | null;
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
       updated_at: string;
+    };
+    HardwareCount: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      description?: string;
+      image: components["schemas"]["FileUpload"];
+      available: number;
+      checked_out: number;
+      total: number;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+      tags: components["schemas"]["TagsEnum"][];
+    };
+    HardwareCreate: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      description?: string;
+      /** Format: uuid */
+      image?: string | null;
+      tags: components["schemas"]["TagsEnum"][];
+      relates_to_destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["NullEnum"] | null;
     };
     HardwareDevice: {
       /** Format: uuid */
@@ -622,7 +874,7 @@ export interface components {
       id: string;
       hardware: components["schemas"]["HardwareDeviceHardware"];
       serial: string;
-      checked_out_to: components["schemas"]["Attendee"];
+      checked_out_to: components["schemas"]["HardwareRequest"];
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
@@ -632,6 +884,7 @@ export interface components {
       /** Format: uuid */
       id: string;
       name: string;
+      tags?: components["schemas"]["TagsEnum"] | components["schemas"]["NullEnum"] | null;
     };
     HardwareDeviceHistory: {
       history_id: number;
@@ -655,6 +908,79 @@ export interface components {
      * @enum {string}
      */
     HardwareHackInterestEnum: "A" | "B" | "C" | "D";
+    HardwareRequest: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      hardware: string;
+      /** Format: uuid */
+      hardware_device?: string | null;
+      /** Format: uuid */
+      requester?: string | null;
+      /** Format: uuid */
+      team?: string | null;
+      reason?: string;
+      status?: components["schemas"]["StatusB9cEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    HardwareRequestCreate: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      hardware: string;
+      /** Format: uuid */
+      hardware_device?: string | null;
+      /** Format: email */
+      requester: string;
+      /** Format: uuid */
+      team?: string | null;
+      reason?: string;
+      status?: components["schemas"]["StatusB9cEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    HardwareRequestDetail: {
+      /** Format: uuid */
+      id: string;
+      hardware: components["schemas"]["HardwareCount"];
+      hardware_device: components["schemas"]["HardwareDeviceDetail"];
+      requester: components["schemas"]["Attendee"];
+      team: components["schemas"]["Team"];
+      reason?: string;
+      status?: components["schemas"]["StatusB9cEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    HardwareRequestList: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      hardware: string;
+      /** Format: uuid */
+      hardware_device?: string | null;
+      requester: components["schemas"]["HardwareRequestRequester"];
+      /** Format: uuid */
+      team?: string | null;
+      reason?: string;
+      status?: components["schemas"]["StatusB9cEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    HardwareRequestRequester: {
+      /** Format: uuid */
+      id: string;
+      first_name?: string;
+      last_name?: string;
+    };
     /**
      * @description * `F` - A friend
      * * `V` - A Reality Hack organizer or volunteer
@@ -818,6 +1144,24 @@ export interface components {
      * @enum {string}
      */
     IndustryEnum: "Industry" | "Accounting " | "Airlines/Aviation" | "Alternative Dispute Resolution" | "Alternative Medicine" | "Animation" | "Apparel/Fashion" | "Architecture/Planning" | "Arts/Crafts" | "Automotive" | "Aviation/Aerospace" | "Banking/Mortgage" | "Biotechnology/Greentech" | "Broadcast Media" | "Building Materials" | "Business Supplies/Equipment" | "Capital Markets/Hedge Fund/Private Equity" | "Chemicals" | "Civic/Social Organization" | "Civil Engineering" | "Commercial Real Estate" | "Computer Games" | "Computer Hardware" | "Computer Networking" | "Computer Software/Engineering" | "Computer/Network Security" | "Construction" | "Consumer Electronics" | "Consumer Goods" | "Consumer Services" | "Cosmetics" | "Dairy" | "Defense/Space" | "Design" | "E-Learning" | "Education Management" | "Electrical/Electronic Manufacturing" | "Entertainment/Movie Production" | "Environmental Services" | "Events Services" | "Executive Office" | "Facilities Services" | "Farming" | "Financial Services" | "Fine Art" | "Fishery" | "Food Production" | "Food/Beverages" | "Fundraising" | "Furniture" | "Gambling/Casinos" | "Glass/Ceramics/Concrete" | "Government Administration" | "Government Relations" | "Graphic Design/Web Design" | "Health/Fitness" | "Higher Education/Acadamia" | "Hospital/Health Care" | "Hospitality" | "Human Resources/HR" | "Import/Export" | "Individual/Family Services" | "Industrial Automation" | "Information Services" | "Information Technology/IT" | "Insurance" | "International Affairs" | "International Trade/Development" | "Internet" | "Investment Banking/Venture" | "Investment Management/Hedge Fund/Private Equity" | "Judiciary" | "Law Enforcement" | "Law Practice/Law Firms" | "Legal Services" | "Legislative Office" | "Leisure/Travel" | "Library" | "Logistics/Procurement" | "Luxury Goods/Jewelry" | "Machinery" | "Management Consulting" | "Maritime" | "Market Research" | "Marketing/Advertising/Sales" | "Mechanical or Industrial Engineering" | "Media Production" | "Medical Equipment" | "Medical Practice" | "Mental Health Care" | "Military Industry" | "Mining/Metals" | "Motion Pictures/Film" | "Museums/Institutions" | "Music" | "Nanotechnology" | "Newspapers/Journalism" | "Non-Profit/Volunteering" | "Oil/Energy/Solar/Greentech" | "Online Publishing" | "Outsourcing/Offshoring" | "Package/Freight Delivery" | "Packaging/Containers" | "Paper/Forest Products" | "Performing Arts" | "Pharmaceuticals" | "Philanthropy" | "Photography" | "Plastics" | "Political Organization" | "Primary/Secondary Education" | "Printing" | "Professional Training" | "Program Development" | "Public Relations/PR" | "Public Safety" | "Publishing Industry" | "Railroad Manufacture" | "Ranching" | "Real Estate/Mortgage" | "Recreational Facilities/Services" | "Religious Institutions" | "Renewables/Environment" | "Research Industry" | "Restaurants" | "Retail Industry" | "Security/Investigations" | "Semiconductors" | "Shipbuilding" | "Sporting Goods" | "Sports" | "Staffing/Recruiting" | "Supermarkets" | "Telecommunications" | "Textiles" | "Think Tanks" | "Tobacco" | "Translation/Localization" | "Transportation" | "Utilities" | "Venture Capital/VC" | "Veterinary" | "Warehousing" | "Wholesale" | "Wine/Spirits" | "Wireless" | "Writing/Editing" | "Other";
+    /**
+     * @description * `F` - Future Constructors
+     * * `L` - Learning
+     * * `W` - Work
+     * * `H` - Health and Well-Being
+     * * `S` - Smart Cities and Sustainability
+     * * `C` - Community Hacks
+     * @enum {string}
+     */
+    IntendedTracksEnum: "F" | "L" | "W" | "H" | "S" | "C";
+    LightHouse: {
+      /** Format: uuid */
+      id: string;
+      table: number;
+      ip_address: string;
+      mentor_requested?: components["schemas"]["MentorRequestedEnum"];
+      announcement_pending?: components["schemas"]["AnnouncementPendingEnum"];
+    };
     Location: {
       /** Format: uuid */
       id: string;
@@ -828,6 +1172,57 @@ export interface components {
       /** Format: date-time */
       updated_at: string;
     };
+    MentorHelpRequest: {
+      /** Format: uuid */
+      id: string;
+      title?: string | null;
+      description?: string | null;
+      /** Format: uuid */
+      team: string;
+      category?: components["schemas"]["CategoryEnum"] | components["schemas"]["NullEnum"] | null;
+      topic: components["schemas"]["TopicEnum"][];
+      /** Format: uuid */
+      reporter?: string | null;
+      /** Format: uuid */
+      mentor?: string | null;
+      status?: components["schemas"]["Status130Enum"];
+      category_specialty?: string | null;
+      topic_other?: string | null;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    MentorHelpRequestHistory: {
+      history_id: number;
+      /** Format: uuid */
+      id: string;
+      title?: string | null;
+      description?: string | null;
+      /** Format: uuid */
+      team?: string | null;
+      category?: components["schemas"]["CategoryEnum"] | components["schemas"]["NullEnum"] | null;
+      topic: components["schemas"]["TopicEnum"][];
+      /** Format: uuid */
+      reporter?: string | null;
+      /** Format: uuid */
+      mentor?: string | null;
+      status?: components["schemas"]["Status130Enum"];
+      category_specialty?: string | null;
+      topic_other?: string | null;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    /**
+     * @description * `R` - Requested
+     * * `A` - Acknowledged
+     * * `E` - En Route
+     * * `F` - Resolved
+     * @enum {string}
+     */
+    MentorRequestedEnum: "R" | "A" | "E" | "F";
     /** @enum {unknown} */
     NullEnum: "";
     /**
@@ -842,9 +1237,13 @@ export interface components {
      * * `M` - Mentor
      * * `J` - Judge
      * * `S` - Sponsor
+     * * `V` - Volunteer
+     * * `O` - Organizer
+     * * `G` - Guardian
+     * * `E` - Media
      * @enum {string}
      */
-    ParticipationClass898Enum: "P" | "M" | "J" | "S";
+    ParticipationClassD2aEnum: "P" | "M" | "J" | "S" | "V" | "O" | "G" | "E";
     /**
      * @description * `R` - RSVP'd
      * * `C` - Confirmed
@@ -899,7 +1298,7 @@ export interface components {
       employer?: string | null;
       industry_other?: string | null;
       specialized_expertise?: string | null;
-      status?: components["schemas"]["StatusEnum"] | components["schemas"]["NullEnum"] | null;
+      status?: components["schemas"]["ApplicationStatusEnum"] | components["schemas"]["NullEnum"] | null;
       previously_participated?: boolean | null;
       participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
       experience_with_xr?: string | null;
@@ -925,27 +1324,56 @@ export interface components {
       /** Format: uuid */
       resume?: string | null;
     };
-    PatchedAttendee: {
+    PatchedAttendeePatch: {
       /** Format: uuid */
       id?: string;
       first_name?: string;
       last_name?: string;
+      authentication_id?: string | null;
+      /** Format: uuid */
+      profile_image?: string | null;
+      bio?: string;
+      /** Format: date-time */
+      checked_in_at?: string | null;
+      prefers_destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       /** @description I.e., a Discord username */
       communications_platform_username?: string | null;
       /** Format: email */
       email?: string;
       sponsor_company?: string | null;
-      participation_class?: components["schemas"]["ParticipationClass898Enum"];
+      participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
+      initial_setup?: boolean;
+      guardian_of?: string[];
+      /** Format: uuid */
+      sponsor_handler?: string | null;
+      intended_tracks?: components["schemas"]["IntendedTracksEnum"][];
+      intended_hardware_hack?: boolean;
       /** Format: date-time */
       created_at?: string;
       /** Format: date-time */
       updated_at?: string;
+    };
+    PatchedAttendeePreference: {
+      /** Format: uuid */
+      id?: string;
+      preference?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"];
+      /** Format: uuid */
+      preferer?: string;
+      /** Format: uuid */
+      preferee?: string;
     };
     PatchedAttendeeRSVP: {
       /** Format: uuid */
       id?: string;
       first_name?: string;
       last_name?: string;
+      participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
+      /** Format: uuid */
+      profile_image?: string | null;
+      initial_setup?: boolean;
+      guardian_of?: string[];
+      /** Format: uuid */
+      sponsor_handler?: string | null;
       /** Format: uuid */
       application?: string | null;
       bio?: string;
@@ -959,6 +1387,8 @@ export interface components {
       dietary_allergies?: components["schemas"]["DietaryAllergiesEnum"][];
       dietary_allergies_other?: string | null;
       additional_accommodations?: string | null;
+      /** Format: date-time */
+      checked_in_at?: string | null;
       us_visa_support_is_required?: boolean;
       us_visa_letter_of_invitation_required?: boolean | null;
       us_visa_support_full_name?: string | null;
@@ -967,7 +1397,7 @@ export interface components {
       us_visa_support_citizenship?: components["schemas"]["UsVisaSupportCitizenshipEnum"] | components["schemas"]["NullEnum"] | null;
       us_visa_support_address?: string | null;
       /** @description Will you be under 18 on January 25, 2024 */
-      under_18_by_date?: boolean;
+      under_18_by_date?: boolean | null;
       parental_consent_form_signed?: boolean | null;
       agree_to_media_release?: boolean;
       agree_to_liability_release?: boolean;
@@ -978,7 +1408,7 @@ export interface components {
       /** Format: email */
       emergency_contact_email?: string;
       emergency_contact_relationship?: string;
-      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
       special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
       /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
       app_in_store?: string | null;
@@ -987,9 +1417,32 @@ export interface components {
       non_xr_talents?: string | null;
       ar_vr_ap_in_store?: string | null;
       reality_hack_project_to_product?: boolean;
-      identify_as_native_american?: boolean;
-      participation_class?: components["schemas"]["ParticipationClass898Enum"];
+      participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
       sponsor_company?: string | null;
+    };
+    PatchedDestinyTeam: {
+      /** Format: uuid */
+      id?: string;
+      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      round?: number;
+      hardware_hack?: boolean;
+      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+      /** Format: uuid */
+      table?: string | null;
+      attendees?: string[];
+    };
+    PatchedDestinyTeamAttendeeVibe: {
+      /** Format: uuid */
+      id?: string;
+      vibe?: number;
+      /** Format: uuid */
+      destiny_team?: string;
+      /** Format: uuid */
+      attendee?: string;
     };
     PatchedFileUpload: {
       /** Format: uuid */
@@ -1005,17 +1458,15 @@ export interface components {
       name?: string;
       permissions?: number[];
     };
-    PatchedHardware: {
+    PatchedHardwareCreate: {
       /** Format: uuid */
       id?: string;
       name?: string;
       description?: string;
-      /** Format: uri */
-      image?: string;
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
+      /** Format: uuid */
+      image?: string | null;
+      tags?: components["schemas"]["TagsEnum"][];
+      relates_to_destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["NullEnum"] | null;
     };
     PatchedHardwareDevice: {
       /** Format: uuid */
@@ -1044,11 +1495,72 @@ export interface components {
       /** Format: date-time */
       updated_at?: string;
     };
+    PatchedHardwareRequest: {
+      /** Format: uuid */
+      id?: string;
+      /** Format: uuid */
+      hardware?: string;
+      /** Format: uuid */
+      hardware_device?: string | null;
+      /** Format: uuid */
+      requester?: string | null;
+      /** Format: uuid */
+      team?: string | null;
+      reason?: string;
+      status?: components["schemas"]["StatusB9cEnum"];
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+    };
     PatchedLocation: {
       /** Format: uuid */
       id?: string;
       building?: string;
       room?: components["schemas"]["RoomEnum"];
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+    };
+    PatchedMentorHelpRequest: {
+      /** Format: uuid */
+      id?: string;
+      title?: string | null;
+      description?: string | null;
+      /** Format: uuid */
+      team?: string;
+      category?: components["schemas"]["CategoryEnum"] | components["schemas"]["NullEnum"] | null;
+      topic?: components["schemas"]["TopicEnum"][];
+      /** Format: uuid */
+      reporter?: string | null;
+      /** Format: uuid */
+      mentor?: string | null;
+      status?: components["schemas"]["Status130Enum"];
+      category_specialty?: string | null;
+      topic_other?: string | null;
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+    };
+    PatchedMentorHelpRequestHistory: {
+      history_id?: number;
+      /** Format: uuid */
+      id?: string;
+      title?: string | null;
+      description?: string | null;
+      /** Format: uuid */
+      team?: string | null;
+      category?: components["schemas"]["CategoryEnum"] | components["schemas"]["NullEnum"] | null;
+      topic?: components["schemas"]["TopicEnum"][];
+      /** Format: uuid */
+      reporter?: string | null;
+      /** Format: uuid */
+      mentor?: string | null;
+      status?: components["schemas"]["Status130Enum"];
+      category_specialty?: string | null;
+      topic_other?: string | null;
       /** Format: date-time */
       created_at?: string;
       /** Format: date-time */
@@ -1060,6 +1572,7 @@ export interface components {
       name?: string;
       /** Format: uri */
       repository_location?: string;
+      description?: string;
       /** Format: uri */
       submission_location?: string;
       /** Format: uuid */
@@ -1089,7 +1602,7 @@ export interface components {
       /** Format: int64 */
       number?: number;
       /** Format: uuid */
-      location?: string;
+      location?: string | null;
       /** Format: date-time */
       created_at?: string;
       /** Format: date-time */
@@ -1101,7 +1614,9 @@ export interface components {
       name?: string;
       attendees?: string[];
       /** Format: uuid */
-      table?: string;
+      table?: string | null;
+      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       /** Format: date-time */
       created_at?: string;
       /** Format: date-time */
@@ -1165,6 +1680,7 @@ export interface components {
       name: string;
       /** Format: uri */
       repository_location: string;
+      description: string;
       /** Format: uri */
       submission_location: string;
       /** Format: uuid */
@@ -1196,6 +1712,15 @@ export interface components {
      * @enum {string}
      */
     RecommendedForEnum: "A" | "D" | "S" | "P";
+    /**
+     * @description * `H` - Hardware Hack
+     * * `M` - Meta
+     * * `Q` - Snapdragon Spaces
+     * * `X` - XREAL
+     * * `S` - Snap Spectacles
+     * @enum {string}
+     */
+    RelatesToDestinyHardwareEnum: "H" | "M" | "Q" | "X" | "S";
     /**
      * @description * `MH` - Main Hall
      * * `AT` - Atlantis
@@ -1251,33 +1776,34 @@ export interface components {
       updated_at: string;
     };
     /**
-     * @description * `Y` - Yes
-     * * `N` - No
+     * @description * `Y` - Yay
+     * * `N` - Nay
      * @enum {string}
      */
     SpecialTrackFutureConstructorsInterestEnum: "Y" | "N";
     /**
-     * @description * `Y` - Yes
-     * * `N` - No
+     * @description * `R` - Requested
+     * * `A` - Acknowledged
+     * * `E` - En Route
+     * * `F` - Resolved
      * @enum {string}
      */
-    SpecialTrackSnapdragonSpacesInterestEnum: "Y" | "N";
+    Status130Enum: "R" | "A" | "E" | "F";
     /**
-     * @description * `AI` - Accepted, In-Person
-     * * `AO` - Accepted, Online
-     * * `WI` - Wait-list, In-Person
-     * * `WO` - Wait-list, Online
-     * * `D` - Declined
+     * @description * `P` - Pending
+     * * `A` - Approved
+     * * `R` - Rejected
+     * * `C` - Checked out
      * @enum {string}
      */
-    StatusEnum: "AI" | "AO" | "WI" | "WO" | "D";
+    StatusB9cEnum: "P" | "A" | "R" | "C";
     Table: {
       /** Format: uuid */
       id: string;
       /** Format: int64 */
       number: number;
       /** Format: uuid */
-      location: string;
+      location?: string | null;
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
@@ -1289,15 +1815,31 @@ export interface components {
       /** Format: int64 */
       number: number;
       /** Format: uuid */
-      location: string;
+      location?: string | null;
     };
+    /**
+     * @description * `AC` - AC
+     * * `SE` - SE
+     * * `VR` - VR
+     * * `AR` - AR
+     * * `MR` - MR
+     * * `CO` - CO
+     * * `HA` - HA
+     * * `CA` - CA
+     * * `TA` - TA
+     * * `HD` - HD
+     * @enum {string}
+     */
+    TagsEnum: "AC" | "SE" | "VR" | "AR" | "MR" | "CO" | "HA" | "CA" | "TA" | "HD";
     Team: {
       /** Format: uuid */
       id: string;
       name: string;
-      attendees: string[];
+      attendees?: string[];
       /** Format: uuid */
-      table: string;
+      table?: string | null;
+      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      destiny_hardware: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
@@ -1307,9 +1849,9 @@ export interface components {
       /** Format: uuid */
       id: string;
       name: string;
-      attendees: string[];
+      attendees?: string[];
       /** Format: uuid */
-      table: string;
+      table?: string | null;
     };
     TokenObtainPair: {
       username: string;
@@ -1324,6 +1866,108 @@ export interface components {
     TokenVerify: {
       token: string;
     };
+    /**
+     * @description * `1` - Development and Programming
+     * * `2` - Unity Timeline Animations
+     * * `3` - Embedded Systems (C)
+     * * `4` - Embedded Systems (Python)
+     * * `5` - C++ Android JavaScript
+     * * `6` - Backend Development
+     * * `7` - Unreal App Development
+     * * `8` - Unreal Blueprints
+     * * `9` - Unity AR Foundation
+     * * `10` - WebXR
+     * * `11` - Lens Studio
+     * * `12` - Meta Spark
+     * * `13` - Virtual Reality
+     * * `14` - Augmented Reality
+     * * `15` - Mixed Reality
+     * * `16` - Mixed Reality Toolkit
+     * * `17` - Meta XR SDK
+     * * `18` - C#
+     * * `19` - Regression Testing
+     * * `20` - OOP Design Patterns
+     * * `21` - Distributed Computing
+     * * `22` - Cybersecurity
+     * * `23` - Swift SwiftUI ARKit
+     * * `24` - Software Builds
+     * * `25` - Containers
+     * * `26` - Deployment Automation
+     * * `27` - Site-reliability engineering (SRE) Work
+     * * `28` - Python Shell Scripting
+     * * `29` - Search Implementation
+     * * `30` - Generative AI
+     * * `31` - IoT
+     * * `32` - 3D Rendering
+     * * `33` - Video Encoding
+     * * `34` - Linux OS Configuration
+     * * `35` - Cross-platform Work
+     * * `36` - Web Frontend/Backend
+     * * `37` - Project Scope
+     * * `38` - Technical Approach
+     * * `39` - App-driven Architecture
+     * * `40` - Problem-solving
+     * * `41` - Design and Prototyping
+     * * `42` - ShapesXR
+     * * `43` - Figma
+     * * `44` - Miro
+     * * `45` - Adobe Creative Suite
+     * * `46` - Mocap
+     * * `47` - 3D Stereoscopic Recording
+     * * `48` - Mobile AR
+     * * `49` - 3D Modeling
+     * * `50` - Animation
+     * * `51` - Motion Capture
+     * * `52` - XR Design Execution
+     * * `53` - Interactive Learning Programs
+     * * `54` - Computer Vision
+     * * `55` - Graphics Shaders
+     * * `56` - Git
+     * * `57` - XR/AR VR Expert
+     * * `58` - Storytelling
+     * * `59` - Visual Design
+     * * `60` - Prototyping
+     * * `61` - Analog Painting
+     * * `62` - Drawing
+     * * `63` - Sculpture
+     * * `64` - Project Management and Leadership
+     * * `65` - Producer
+     * * `66` - Peace-maker Conflict Resolution
+     * * `67` - Storyteller
+     * * `68` - Project Management
+     * * `69` - Agile Scrum
+     * * `70` - Conflict Resolution
+     * * `71` - Communication
+     * * `72` - Digital Experience Production
+     * * `73` - User Flow Design
+     * * `74` - Hardware Development (Arduino)
+     * * `75` - Hardware Development (Esp32)
+     * * `76` - Hardware Development (Raspberry Pi)
+     * * `77` - Innovation and Specialized Expertise
+     * * `78` - Biometrics in VR
+     * * `79` - Brain-Computer Interface (BCI)
+     * * `80` - Game Design
+     * * `81` - Lens Studio Projects
+     * * `82` - Snap Lens
+     * * `83` - 8thWall Expertise
+     * * `84` - Web Development
+     * * `85` - Blockchain
+     * * `86` - Networking
+     * * `87` - .NET
+     * * `O` - Other
+     * @enum {string}
+     */
+    TopicEnum: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32" | "33" | "34" | "35" | "36" | "37" | "38" | "39" | "40" | "41" | "42" | "43" | "44" | "45" | "46" | "47" | "48" | "49" | "50" | "51" | "52" | "53" | "54" | "55" | "56" | "57" | "58" | "59" | "60" | "61" | "62" | "63" | "64" | "65" | "66" | "67" | "68" | "69" | "70" | "71" | "72" | "73" | "74" | "75" | "76" | "77" | "78" | "79" | "80" | "81" | "82" | "83" | "84" | "85" | "86" | "87" | "O";
+    /**
+     * @description * `F` - Future Constructors
+     * * `L` - Learning
+     * * `W` - Work
+     * * `H` - Health and Well-Being
+     * * `S` - Smart Cities and Sustainability
+     * * `C` - Community Hacks
+     * @enum {string}
+     */
+    TrackEnum: "F" | "L" | "W" | "H" | "S" | "C";
     /**
      * @description * `AW` - Aruba
      * * `AF` - Afghanistan
@@ -1600,8 +2244,8 @@ export interface components {
       updated_at: string;
       /** Format: uuid */
       location?: string | null;
-      skills: string[];
-      hardware: string[];
+      skills?: string[];
+      hardware?: string[];
     };
     WorkshopAttendee: {
       /** Format: uuid */
@@ -1754,18 +2398,152 @@ export interface operations {
       };
     };
   };
+  /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+  attendeepreferences_list: {
+    parameters: {
+      query?: {
+        preferee?: string;
+        /**
+         * @description * `Y` - Yay
+         * * `N` - Nay
+         */
+        preference?: "N" | "Y";
+        preferer?: string;
+        /** @description A search term. */
+        search?: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["AttendeePreference"][];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+  attendeepreferences_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AttendeePreference"];
+        "application/x-www-form-urlencoded": components["schemas"]["AttendeePreference"];
+        "multipart/form-data": components["schemas"]["AttendeePreference"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": components["schemas"]["AttendeePreference"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+  attendeepreferences_retrieve: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this attendee preference. */
+        id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["AttendeePreference"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+  attendeepreferences_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this attendee preference. */
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AttendeePreference"];
+        "application/x-www-form-urlencoded": components["schemas"]["AttendeePreference"];
+        "multipart/form-data": components["schemas"]["AttendeePreference"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["AttendeePreference"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+  attendeepreferences_destroy: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this attendee preference. */
+        id: string;
+      };
+    };
+    responses: {
+      /** @description No response body */
+      204: {
+        content: never;
+      };
+    };
+  };
+  /** @description API endpoint that allows attendee preferences to be viewed or edited. */
+  attendeepreferences_partial_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this attendee preference. */
+        id: string;
+      };
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedAttendeePreference"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedAttendeePreference"];
+        "multipart/form-data": components["schemas"]["PatchedAttendeePreference"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["AttendeePreference"];
+        };
+      };
+    };
+  };
   /** @description API endpoint that allows users to be viewed or edited. */
   attendees_list: {
     parameters: {
       query?: {
+        checked_in_at?: string;
+        communications_platform_username?: string;
         email?: string;
         first_name?: string;
-        groups?: number[];
-        is_staff?: boolean;
         last_name?: string;
+        /**
+         * @description * `P` - Participant
+         * * `M` - Mentor
+         * * `J` - Judge
+         * * `S` - Sponsor
+         * * `V` - Volunteer
+         * * `O` - Organizer
+         * * `G` - Guardian
+         * * `E` - Media
+         */
+        participation_class?: "E" | "G" | "J" | "M" | "O" | "P" | "S" | "V";
+        /**
+         * @description * `A` - Digital Designer
+         * * `D` - Developer
+         * * `S` - Domain or other Specialized Skill Expert
+         * * `P` - Project Manager
+         */
+        participation_role?: "A" | "D" | "P" | "S" | null;
         /** @description A search term. */
         search?: string;
-        username?: string;
       };
     };
     responses: {
@@ -1857,15 +2635,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        "application/json": components["schemas"]["PatchedAttendee"];
-        "application/x-www-form-urlencoded": components["schemas"]["PatchedAttendee"];
-        "multipart/form-data": components["schemas"]["PatchedAttendee"];
+        "application/json": components["schemas"]["PatchedAttendeePatch"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedAttendeePatch"];
+        "multipart/form-data": components["schemas"]["PatchedAttendeePatch"];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["Attendee"];
+          "application/json": components["schemas"]["AttendeePatch"];
         };
       };
     };
@@ -1959,6 +2737,266 @@ export interface operations {
         content: {
           "application/json": components["schemas"]["TokenVerify"];
         };
+      };
+    };
+  };
+  /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+  destinyteamattendeevibes_list: {
+    parameters: {
+      query?: {
+        attendee?: string;
+        destiny_team?: string;
+        destiny_team__table__number?: number;
+        /** @description A search term. */
+        search?: string;
+        vibe?: number;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["DestinyTeamAttendeeVibe"][];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+  destinyteamattendeevibes_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DestinyTeamAttendeeVibe"];
+        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeamAttendeeVibe"];
+        "multipart/form-data": components["schemas"]["DestinyTeamAttendeeVibe"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": components["schemas"]["DestinyTeamAttendeeVibe"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+  destinyteamattendeevibes_retrieve: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this destiny team attendee vibe. */
+        id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["DestinyTeamAttendeeVibe"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+  destinyteamattendeevibes_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this destiny team attendee vibe. */
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DestinyTeamAttendeeVibe"];
+        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeamAttendeeVibe"];
+        "multipart/form-data": components["schemas"]["DestinyTeamAttendeeVibe"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["DestinyTeamAttendeeVibe"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+  destinyteamattendeevibes_destroy: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this destiny team attendee vibe. */
+        id: string;
+      };
+    };
+    responses: {
+      /** @description No response body */
+      204: {
+        content: never;
+      };
+    };
+  };
+  /** @description API endpoint that allows Detiny team attendee vibes to be viewed or edited. */
+  destinyteamattendeevibes_partial_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this destiny team attendee vibe. */
+        id: string;
+      };
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedDestinyTeamAttendeeVibe"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedDestinyTeamAttendeeVibe"];
+        "multipart/form-data": components["schemas"]["PatchedDestinyTeamAttendeeVibe"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["DestinyTeamAttendeeVibe"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+  destinyteams_list: {
+    parameters: {
+      query?: {
+        attendees?: string[];
+        round?: number;
+        /** @description A search term. */
+        search?: string;
+        table__number?: number;
+        /**
+         * @description * `F` - Future Constructors
+         * * `L` - Learning
+         * * `W` - Work
+         * * `H` - Health and Well-Being
+         * * `S` - Smart Cities and Sustainability
+         * * `C` - Community Hacks
+         */
+        track?: "C" | "F" | "H" | "L" | "S" | "W" | null;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["DestinyTeam"][];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+  destinyteams_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DestinyTeam"];
+        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeam"];
+        "multipart/form-data": components["schemas"]["DestinyTeam"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": components["schemas"]["DestinyTeam"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+  destinyteams_retrieve: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this destiny team. */
+        id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["DestinyTeam"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+  destinyteams_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this destiny team. */
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DestinyTeam"];
+        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeam"];
+        "multipart/form-data": components["schemas"]["DestinyTeam"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["DestinyTeam"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+  destinyteams_destroy: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this destiny team. */
+        id: string;
+      };
+    };
+    responses: {
+      /** @description No response body */
+      204: {
+        content: never;
+      };
+    };
+  };
+  /** @description API endpoint that allows Destiny teams to be viewed or edited. */
+  destinyteams_partial_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this destiny team. */
+        id: string;
+      };
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedDestinyTeam"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedDestinyTeam"];
+        "multipart/form-data": components["schemas"]["PatchedDestinyTeam"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["DestinyTeam"];
+        };
+      };
+    };
+  };
+  /** @description API Endpoint that allows for Discord information to be viewed or edited. */
+  discord_list: {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["DiscordUsernameRole"][];
+        };
+      };
+    };
+  };
+  /** @description API Endpoint that allows for Discord information to be viewed or edited. */
+  discord_destroy: {
+    parameters: {
+      path: {
+        attendee__communications_platform_username: string;
+      };
+    };
+    responses: {
+      /** @description No response body */
+      204: {
+        content: never;
       };
     };
   };
@@ -2076,8 +3114,29 @@ export interface operations {
   hardware_list: {
     parameters: {
       query?: {
+        /**
+         * @description * `H` - Hardware Hack
+         * * `M` - Meta
+         * * `Q` - Snapdragon Spaces
+         * * `X` - XREAL
+         * * `S` - Snap Spectacles
+         */
+        relates_to_destiny_hardware?: "H" | "M" | "Q" | "S" | "X" | null;
         /** @description A search term. */
         search?: string;
+        /**
+         * @description * `AC` - Accessory
+         * * `SE` - Sensor
+         * * `VR` - Virtual Reality
+         * * `AR` - Augmented Reality
+         * * `MR` - Mixed Reality
+         * * `CO` - Computer
+         * * `HA` - Haptics
+         * * `CA` - Camera
+         * * `TA` - Tablet
+         * * `HD` - Holographic Display
+         */
+        tags?: "AC" | "AR" | "CA" | "CO" | "HA" | "HD" | "MR" | "SE" | "TA" | "VR" | null;
       };
     };
     responses: {
@@ -2092,15 +3151,15 @@ export interface operations {
   hardware_create: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Hardware"];
-        "application/x-www-form-urlencoded": components["schemas"]["Hardware"];
-        "multipart/form-data": components["schemas"]["Hardware"];
+        "application/json": components["schemas"]["HardwareCreate"];
+        "application/x-www-form-urlencoded": components["schemas"]["HardwareCreate"];
+        "multipart/form-data": components["schemas"]["HardwareCreate"];
       };
     };
     responses: {
       201: {
         content: {
-          "application/json": components["schemas"]["Hardware"];
+          "application/json": components["schemas"]["HardwareCreate"];
         };
       };
     };
@@ -2131,15 +3190,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Hardware"];
-        "application/x-www-form-urlencoded": components["schemas"]["Hardware"];
-        "multipart/form-data": components["schemas"]["Hardware"];
+        "application/json": components["schemas"]["HardwareCreate"];
+        "application/x-www-form-urlencoded": components["schemas"]["HardwareCreate"];
+        "multipart/form-data": components["schemas"]["HardwareCreate"];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["Hardware"];
+          "application/json": components["schemas"]["HardwareCreate"];
         };
       };
     };
@@ -2169,15 +3228,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        "application/json": components["schemas"]["PatchedHardware"];
-        "application/x-www-form-urlencoded": components["schemas"]["PatchedHardware"];
-        "multipart/form-data": components["schemas"]["PatchedHardware"];
+        "application/json": components["schemas"]["PatchedHardwareCreate"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedHardwareCreate"];
+        "multipart/form-data": components["schemas"]["PatchedHardwareCreate"];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["Hardware"];
+          "application/json": components["schemas"]["HardwareCreate"];
         };
       };
     };
@@ -2301,6 +3360,14 @@ export interface operations {
       query?: {
         checked_out_to?: string;
         hardware?: string;
+        /**
+         * @description * `H` - Hardware Hack
+         * * `M` - Meta
+         * * `Q` - Snapdragon Spaces
+         * * `X` - XREAL
+         * * `S` - Snap Spectacles
+         */
+        hardware__relates_to_destiny_hardware?: "H" | "M" | "Q" | "S" | "X" | null;
         /** @description A search term. */
         search?: string;
         serial?: string;
@@ -2408,35 +3475,160 @@ export interface operations {
       };
     };
   };
-  /** @description API endpoint that allows Reality Kits to be viewed or edited. */
-  helpdesks_retrieve: {
+  /** @description API endpoint that allows hardware devices to be viewed or edited. */
+  hardwarerequests_list: {
+    parameters: {
+      query?: {
+        hardware?: string;
+        requester__first_name?: string;
+        requester__id?: string;
+        requester__last_name?: string;
+        /** @description A search term. */
+        search?: string;
+        team?: string;
+      };
+    };
     responses: {
-      /** @description No response body */
       200: {
-        content: never;
+        content: {
+          "application/json": components["schemas"]["HardwareRequestList"][];
+        };
       };
     };
   };
-  /** @description API endpoint that allows Reality Kits to be viewed or edited. */
-  helpdesks_create: {
+  /** @description API endpoint that allows hardware devices to be viewed or edited. */
+  hardwarerequests_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["HardwareRequestCreate"];
+        "application/x-www-form-urlencoded": components["schemas"]["HardwareRequestCreate"];
+        "multipart/form-data": components["schemas"]["HardwareRequestCreate"];
+      };
+    };
     responses: {
-      /** @description No response body */
       201: {
-        content: never;
+        content: {
+          "application/json": components["schemas"]["HardwareRequestCreate"];
+        };
       };
     };
   };
-  /** @description API endpoint that allows Reality Kits to be viewed or edited. */
-  helpdesks_retrieve_2: {
+  /** @description API endpoint that allows hardware devices to be viewed or edited. */
+  hardwarerequests_retrieve: {
     parameters: {
       path: {
+        /** @description A UUID string identifying this hardware request. */
+        id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["HardwareRequestDetail"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows hardware devices to be viewed or edited. */
+  hardwarerequests_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this hardware request. */
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["HardwareRequestList"];
+        "application/x-www-form-urlencoded": components["schemas"]["HardwareRequestList"];
+        "multipart/form-data": components["schemas"]["HardwareRequestList"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["HardwareRequestList"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows hardware devices to be viewed or edited. */
+  hardwarerequests_destroy: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this hardware request. */
         id: string;
       };
     };
     responses: {
       /** @description No response body */
-      200: {
+      204: {
         content: never;
+      };
+    };
+  };
+  /** @description API endpoint that allows hardware devices to be viewed or edited. */
+  hardwarerequests_partial_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this hardware request. */
+        id: string;
+      };
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedHardwareRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedHardwareRequest"];
+        "multipart/form-data": components["schemas"]["PatchedHardwareRequest"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["HardwareRequest"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Reality Kits to be viewed or edited. */
+  lighthouses_list: {
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["LightHouse"][];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Reality Kits to be viewed or edited. */
+  lighthouses_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LightHouse"];
+        "application/x-www-form-urlencoded": components["schemas"]["LightHouse"];
+        "multipart/form-data": components["schemas"]["LightHouse"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": components["schemas"]["LightHouse"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows Reality Kits to be viewed or edited. */
+  lighthouses_retrieve: {
+    parameters: {
+      path: {
+        table__number: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["LightHouse"];
+        };
       };
     };
   };
@@ -2550,12 +3742,273 @@ export interface operations {
       };
     };
   };
+  /** @description API endpoint for getting detailed information about an authenticated user. */
+  me_retrieve: {
+    responses: {
+      /** @description No response body */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /** @description API endpoint for getting detailed information about an authenticated user. */
+  me_partial_update: {
+    responses: {
+      /** @description No response body */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+  mentorhelprequests_list: {
+    parameters: {
+      query?: {
+        mentor?: string;
+        reporter?: string;
+        /** @description A search term. */
+        search?: string;
+        /**
+         * @description * `R` - Requested
+         * * `A` - Acknowledged
+         * * `E` - En Route
+         * * `F` - Resolved
+         */
+        status?: "A" | "E" | "F" | "R";
+        team?: string;
+        team__table__number?: number;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["MentorHelpRequest"][];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+  mentorhelprequests_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["MentorHelpRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["MentorHelpRequest"];
+        "multipart/form-data": components["schemas"]["MentorHelpRequest"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": components["schemas"]["MentorHelpRequest"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+  mentorhelprequests_retrieve: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this mentor help request. */
+        id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["MentorHelpRequest"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+  mentorhelprequests_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this mentor help request. */
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["MentorHelpRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["MentorHelpRequest"];
+        "multipart/form-data": components["schemas"]["MentorHelpRequest"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["MentorHelpRequest"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+  mentorhelprequests_destroy: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this mentor help request. */
+        id: string;
+      };
+    };
+    responses: {
+      /** @description No response body */
+      204: {
+        content: never;
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests to be viewed or edited. */
+  mentorhelprequests_partial_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this mentor help request. */
+        id: string;
+      };
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedMentorHelpRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedMentorHelpRequest"];
+        "multipart/form-data": components["schemas"]["PatchedMentorHelpRequest"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["MentorHelpRequest"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+  mentorhelprequestshistory_list: {
+    parameters: {
+      query?: {
+        id?: string;
+        mentor?: string;
+        reporter?: string;
+        /** @description A search term. */
+        search?: string;
+        /**
+         * @description * `R` - Requested
+         * * `A` - Acknowledged
+         * * `E` - En Route
+         * * `F` - Resolved
+         */
+        status?: "A" | "E" | "F" | "R";
+        team?: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["MentorHelpRequestHistory"][];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+  mentorhelprequestshistory_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["MentorHelpRequestHistory"];
+        "application/x-www-form-urlencoded": components["schemas"]["MentorHelpRequestHistory"];
+        "multipart/form-data": components["schemas"]["MentorHelpRequestHistory"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": components["schemas"]["MentorHelpRequestHistory"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+  mentorhelprequestshistory_retrieve: {
+    parameters: {
+      path: {
+        /** @description A unique integer value identifying this historical mentor help request. */
+        history_id: number;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["MentorHelpRequestHistory"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+  mentorhelprequestshistory_update: {
+    parameters: {
+      path: {
+        /** @description A unique integer value identifying this historical mentor help request. */
+        history_id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["MentorHelpRequestHistory"];
+        "application/x-www-form-urlencoded": components["schemas"]["MentorHelpRequestHistory"];
+        "multipart/form-data": components["schemas"]["MentorHelpRequestHistory"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["MentorHelpRequestHistory"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+  mentorhelprequestshistory_destroy: {
+    parameters: {
+      path: {
+        /** @description A unique integer value identifying this historical mentor help request. */
+        history_id: number;
+      };
+    };
+    responses: {
+      /** @description No response body */
+      204: {
+        content: never;
+      };
+    };
+  };
+  /** @description API endpoint that allows mentor help requests historical records to be viewed. */
+  mentorhelprequestshistory_partial_update: {
+    parameters: {
+      path: {
+        /** @description A unique integer value identifying this historical mentor help request. */
+        history_id: number;
+      };
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedMentorHelpRequestHistory"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedMentorHelpRequestHistory"];
+        "multipart/form-data": components["schemas"]["PatchedMentorHelpRequestHistory"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["MentorHelpRequestHistory"];
+        };
+      };
+    };
+  };
   /** @description API endpoint that allows projects to be viewed or edited. */
   projects_list: {
     parameters: {
       query?: {
         /** @description A search term. */
         search?: string;
+        team?: string;
       };
     };
     responses: {
@@ -2660,36 +4113,35 @@ export interface operations {
       };
     };
   };
-  /** @description API endpoint that allows Mentor Requests to be viewed or edited. */
-  request_mentor_retrieve: {
-    responses: {
-      /** @description No response body */
-      200: {
-        content: never;
-      };
-    };
-  };
-  /** @description API endpoint that allows Mentor Requests to be viewed or edited. */
-  request_mentor_create: {
-    responses: {
-      /** @description No response body */
-      201: {
-        content: never;
-      };
-    };
-  };
   /** @description API endpoint that allows users to be viewed or edited. */
   rsvps_list: {
     parameters: {
       query?: {
+        checked_in_at?: string;
+        communications_platform_username?: string;
         email?: string;
         first_name?: string;
-        groups?: number[];
-        is_staff?: boolean;
         last_name?: string;
+        /**
+         * @description * `P` - Participant
+         * * `M` - Mentor
+         * * `J` - Judge
+         * * `S` - Sponsor
+         * * `V` - Volunteer
+         * * `O` - Organizer
+         * * `G` - Guardian
+         * * `E` - Media
+         */
+        participation_class?: "E" | "G" | "J" | "M" | "O" | "P" | "S" | "V";
+        /**
+         * @description * `A` - Digital Designer
+         * * `D` - Developer
+         * * `S` - Domain or other Specialized Skill Expert
+         * * `P` - Project Manager
+         */
+        participation_role?: "A" | "D" | "P" | "S" | null;
         /** @description A search term. */
         search?: string;
-        username?: string;
       };
     };
     responses: {
@@ -2885,15 +4337,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["SkillProficiencyCreate"];
-        "application/x-www-form-urlencoded": components["schemas"]["SkillProficiencyCreate"];
-        "multipart/form-data": components["schemas"]["SkillProficiencyCreate"];
+        "application/json": components["schemas"]["SkillProficiency"];
+        "application/x-www-form-urlencoded": components["schemas"]["SkillProficiency"];
+        "multipart/form-data": components["schemas"]["SkillProficiency"];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["SkillProficiencyCreate"];
+          "application/json": components["schemas"]["SkillProficiency"];
         };
       };
     };
@@ -3381,7 +4833,7 @@ export interface operations {
       };
     };
   };
-  /** @description API endpoint that allows workshops to be viewed or edited. */
+  /** @description API endpoint that allows workshop attendees to be viewed or edited. */
   workshopattendees_list: {
     parameters: {
       query?: {
@@ -3406,7 +4858,7 @@ export interface operations {
       };
     };
   };
-  /** @description API endpoint that allows workshops to be viewed or edited. */
+  /** @description API endpoint that allows workshop attendees to be viewed or edited. */
   workshopattendees_create: {
     requestBody: {
       content: {
@@ -3423,7 +4875,7 @@ export interface operations {
       };
     };
   };
-  /** @description API endpoint that allows workshops to be viewed or edited. */
+  /** @description API endpoint that allows workshop attendees to be viewed or edited. */
   workshopattendees_retrieve: {
     parameters: {
       path: {
@@ -3439,7 +4891,7 @@ export interface operations {
       };
     };
   };
-  /** @description API endpoint that allows workshops to be viewed or edited. */
+  /** @description API endpoint that allows workshop attendees to be viewed or edited. */
   workshopattendees_update: {
     parameters: {
       path: {
@@ -3462,7 +4914,7 @@ export interface operations {
       };
     };
   };
-  /** @description API endpoint that allows workshops to be viewed or edited. */
+  /** @description API endpoint that allows workshop attendees to be viewed or edited. */
   workshopattendees_destroy: {
     parameters: {
       path: {
@@ -3477,7 +4929,7 @@ export interface operations {
       };
     };
   };
-  /** @description API endpoint that allows workshops to be viewed or edited. */
+  /** @description API endpoint that allows workshop attendees to be viewed or edited. */
   workshopattendees_partial_update: {
     parameters: {
       path: {
