@@ -293,7 +293,7 @@ export async function editMentorHelpRequest(
   requestId: string,
   updatedData: Partial<EditHelpRequest>
 ):Promise<EditHelpRequest> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/${requestId}`;
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/${requestId}/`;
 
   const resp = await fetch(url, {
     method: 'PATCH',

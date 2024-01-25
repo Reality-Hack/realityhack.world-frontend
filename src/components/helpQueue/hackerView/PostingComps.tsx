@@ -1,3 +1,5 @@
+import { editMentorHelpRequest } from "@/app/api/helpqueue";
+
 interface CompletedPostingProps {
     requestTitle: string;
     skillList: string[];
@@ -150,3 +152,156 @@ interface CompletedPostingProps {
     );
   }
   
+  interface MentorPostingProps {
+    access_token:string,
+    requestId:string,
+    status?: string;
+    completed?: boolean;
+    mentorFirstName?: string;
+    mentorLastName?: string;
+    requestTitle: string;
+    placeInQueue?: number;
+    topicList: string[];
+    description: string;
+    created?: string;
+    team?: string;
+  }
+  
+  export function MentorPosting({
+    access_token,
+    requestId,
+    status,
+    completed,
+    mentorFirstName,
+    mentorLastName,
+    requestTitle,
+    placeInQueue,
+    topicList,
+    description,
+    created,
+    team,
+    
+  }: MentorPostingProps) {
+    const bannerColor = (status: string) => {
+      const green = 'bg-[#8FC382] text-white';
+      const yellow = 'bg-[#F9C34A] text-black';
+      const gray = 'bg-[#D1D5DB] text-black';
+      const offwhite = 'bg-[#fff9e8] text-grey';
+      switch (status) {
+        case "REQUESTED": return gray;
+        case "ACKNOWLEDGED": return yellow;
+        case "EN_ROUTE": return green;
+        case "RESOLVED": return offwhite;
+  
+      }
+    }
+
+    function handleUpdate(status:string) {
+      const updateData = {
+        team:team,
+        topic:topicList,
+        status:status
+      }
+      editMentorHelpRequest(access_token, requestId, updateData)
+    }
+      
+    return (
+      <div className="flex flex-col bg-white border-black border-2  w-fit rounded-lg">
+        {team}
+        {mentorFirstName && (
+          <div className="bg-[#8FC382] w-full p-0 text-white flex flex-row justify-center">
+            {mentorFirstName} {mentorLastName && mentorLastName[0]}. is on their
+            way
+          </div>
+        )}
+  
+        {status && <div className={`${bannerColor(status)} w-full p-0 flex flex-row justify-center`}>
+          Status: {status}
+        </div>}
+  
+        <div className="flex flex-row gap-4 p-4">
+          <div className="font-semibold">{requestTitle}</div>
+          {placeInQueue && (
+            <div>
+              {placeInQueue == 0 && <span className="font-bold">NEXT</span>}
+              {placeInQueue !== 0 && (
+                <span className="font-bold">Place in Queue: {placeInQueue}</span>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="ml-4">
+            {created && `Submitted at ${formatTime(created)}`}
+          </div>
+          <div className="ml-4">
+            {created && calculateTimeDifference(created)}
+          </div>
+          <div className="flex px-4 gap-2">
+            {topicList.map((skill, index) => (
+              <Skill key={index} skill={skill} />
+            ))}
+          </div>
+          <div className="flex px-4">{description}</div>
+          {status == "REQUESTED" && <div  className="flex flex-col gap-2 mb-2">
+          <div className="flex flex-col justify-center gap-2 items-center">
+              <div onClick={()=>handleUpdate("A")} className="flex px-4 font-semibold bg-[#F9C34A] text-black rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer">
+              Acknowledge
+              </div>
+            
+            </div>
+            <div className="flex flex-col justify-center gap-2 items-center">
+              <div onClick={()=>handleUpdate("E")} className={`flex px-4 font-semibold bg-[#8FC382] text-white rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}>
+              On My Way
+              </div>
+            
+            </div>
+            </div>
+            }
+          {status == "ACKNOWLEDGED"&& <div  className="flex flex-col gap-2 mb-2">
+          <div className="flex flex-col justify-center gap-2 items-center">
+              <div onClick={()=>handleUpdate("R")} className="flex px-4 font-semibold bg-[#D1D5DB] text-black rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer">
+              Unacknowledge
+              </div>
+            
+            </div>
+            <div className="flex flex-col justify-center gap-2 items-center">
+            <div onClick={()=>handleUpdate("E")} className={`flex px-4 font-semibold bg-[#8FC382] text-white rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}>
+              On My Way
+              </div>
+            
+            </div>
+            </div>}
+          {status == "EN_ROUTE"&& <div  className="flex flex-col gap-2 mb-2">
+          <div className="flex flex-col justify-center gap-2 items-center">
+              <div onClick={()=>handleUpdate("R")} className="flex px-4 font-semibold bg-white border-2 border-black hover:opacity-60 drop-shadow-lg rounded-lg p-1 hover:cursor-pointer">
+              Let question go 
+              </div>
+            
+            </div>
+            <div className="flex flex-col justify-center gap-2 items-center">
+              <div onClick={()=>handleUpdate("F")} className={`flex px-4 font-semibold bg-[#fff9e8] text-grey rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}>
+              Resolve
+              </div>
+            
+            </div>
+            </div>}
+          {/* {placeInQueue && (
+            <div className="flex flex-col items-center">
+              <div className="flex px-4 font-semibold bg-red-200 rounded-lg p-1 hover:cursor-pointer">
+              Acknowledge
+              </div>
+            
+            </div>
+          )}
+          {placeInQueue && (
+            <div className="flex flex-col items-center mb-2">
+              <div className="flex px-4 font-semibold bg-red-200 rounded-lg p-1 hover:cursor-pointer">
+              On my way
+              </div>
+            </div>
+          )} */}
+        </div>
+      </div>
+    );
+  }

@@ -2,7 +2,7 @@
 import CustomSelect from '@/components/CustomSelect';
 import { StatBox } from '@/components/helpQueue/hackerView/NewRequestComps';
 import {
-  Posting
+  MentorPosting,
 } from '@/components/helpQueue/hackerView/PostingComps';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -107,18 +107,24 @@ export default function Page() {
           </div>
           {tabNames[selectedTab] == "Open Requests" && <div className='flex flex-wrap gap-2'>
             {
-              allHistoricalHelpRequests.map((req, idx) => (
-                <Posting
+              session?.access_token && allHistoricalHelpRequests.map((req, idx) => 
+              {console.log(req)
+                return (
+                <MentorPosting
+                  access_token={session.access_token}
+                  requestId={req.id}
                   status={getKeyByValue(mentor_help_status, req.status) as string}
                   key={`posting-${idx}`}
                   requestTitle={req.title}
                   description={req.description?.slice(0, 5)}
                   placeInQueue={idx}
-                  skillList={req.topic.map((topic) => getKeyByValue(MentorTopics, topic)?.replace(/_/g, ' ')) as string[]}
+                  topicList={req.topic.map((topic) => getKeyByValue(MentorTopics, topic)?.replace(/_/g, ' ')) as string[]}
                   created={req.created_at}
                   team={req.team}
                 />
-              ))
+              )}
+              
+              )
             }
           </div>}
           {tabNames[selectedTab] == "Accepted By Others" && <div>B</div>}

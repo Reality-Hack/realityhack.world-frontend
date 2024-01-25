@@ -27,10 +27,10 @@ import {
   CompletedPosting,
   Posting
 } from '@/components/helpQueue/hackerView/PostingComps';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { getMe } from '@/app/api/attendee';
 import { useAuthContext } from '@/hooks/AuthContext';
 
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 const LighthousesSocketURL = `${process.env.NEXT_PUBLIC_BACKEND_WS_URL}/ws/lighthouses/`;
 
 type LighthouseInfo = {
