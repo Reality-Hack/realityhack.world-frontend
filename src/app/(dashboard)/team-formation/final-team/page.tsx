@@ -1,7 +1,7 @@
 "use client"
 import { useSession } from 'next-auth/react';
 
-import FinalRound from "@/components/teamFormation/FinalRound";
+import FinalRound from "@/components/team-formation/FinalRound";
 
 export default function RoundTwo() {
   const { data: session, status } = useSession();

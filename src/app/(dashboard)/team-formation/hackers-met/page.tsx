@@ -34,9 +34,7 @@ interface PreferenceInput {
 
 export default function HackersMet({}) {
   const { data: session } = useSession();
-  // console.log(session)
-  // const { user } = useAuthContext();
-  const user = { id: '616cb100-30ed-4159-bf9c-154029b798dc' };
+  const { user } = useAuthContext();
 
   const [attendees, setAttendeeInfo] = useState<Attendee[]>();
   const [personalPreferences, setPersonalPreferences] = useState<Preference[]>(
@@ -78,14 +76,14 @@ export default function HackersMet({}) {
           console.error('Error fetching attendees:', error);
         });
     }
-  }, [session]);
+  }, [session, user]);
 
   async function addPreferences(preferee: string, preferenceStatus: 'Y' | 'N') {
     //HOW DO I GET THE ATTENDEE ID
     if (session) {
       const pref: PreferenceInput = {
         preference: preferenceStatus,
-        preferer: user.id,
+        preferer: user?.id,
         preferee: preferee
       };
       const retrievedPref = await addPreference(session?.access_token, pref);

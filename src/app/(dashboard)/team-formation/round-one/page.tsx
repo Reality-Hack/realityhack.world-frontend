@@ -1,5 +1,5 @@
 "use client"
-import Round from '@/components/teamFormation/Round';
+import Round from '@/components/team-formation/Round';
 import React, { useState, useEffect } from 'react';
 
 export default function RoundOne() {

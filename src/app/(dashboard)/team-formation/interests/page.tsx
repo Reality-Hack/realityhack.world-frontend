@@ -59,6 +59,7 @@ export default function Interests() {
   const handleSubmit = () => {
     if (session) {
       updateAttendee(session?.access_token, {
+        id: user?.id,
         intended_tracks: selectedTracks,
         intended_hardware_hack: isInterested
       });
