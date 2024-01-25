@@ -1,7 +1,7 @@
 'use client';
 import { createHardware, deleteHardware, getHardwareDevice, sendHardwareRequest, updateHardware } from '@/app/api/hardware';
 import CloseIcon from '@mui/icons-material/Close';
-import { PlusOne } from '@mui/icons-material';
+import { PlusOne, Save } from '@mui/icons-material';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { Hardware, HardwareCategory, HardwareDevice, UploadedFile, hardware_categories } from '@/types/types';
@@ -119,7 +119,7 @@ function EditableHardwareCard({
     image?.id !== item.image?.id ||
     tags !== item.tags;
   const [addTagOpen, setAddTagOpen] = useState(false);
-  const [hardwareDeviceEditorOpen, setHardwareDeviceEditorOpen] = useState(false);
+  const [hardwareDevicesEditorOpen, setHardwareDevicesEditorOpen] = useState(false);
   const isReady = 
     name.length > 0 &&
     quantity > 0 &&
@@ -200,23 +200,23 @@ function EditableHardwareCard({
           ></input>
         </span>
         <div className='relative'>
-          {hardwareDeviceEditorOpen && (
+          {hardwareDevicesEditorOpen && (
             <div className="absolute left-0 top-10 rounded-md shadow-xl bg-white z-10">
               <div className='flex justify-end'>
                 <button
                   className="px-2 py-2 rounded-full text-black"
-                  onClick={() => setHardwareDeviceEditorOpen(false)}
+                  onClick={() => setHardwareDevicesEditorOpen(false)}
                 >
                   <CloseIcon />
                 </button>
               </div>
-              <HardwareDeviceEditor hardwareId={item.id} />
+              <HardwareDevicesEditor hardware={item} />
             </div>
           )}
         </div>
         <button
         className='cursor-pointer text-black bg-gray-200 px-4 py-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end'
-        onClick={() => setHardwareDeviceEditorOpen(!hardwareDeviceEditorOpen)}
+        onClick={() => setHardwareDevicesEditorOpen(!hardwareDevicesEditorOpen)}
         disabled={isOriginal}
         >Edit devices</button>
         
@@ -312,35 +312,53 @@ function EditableHardwareCard({
   );
 }
 
-function HardwareDeviceEditor({ hardwareId }: { hardwareId: string }) {
+function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
-  const [devices, setDevices] = useState<HardwareDevice[]>([]);
+  const [devices, setDevices] = useState<Partial<HardwareDevice>[]>([]);
   useEffect(() => {
     if (session) {
       setLoading(true);
-      getHardwareDevice(session.access_token, { hardware: hardwareId }).then(res => {
+      getHardwareDevice(session.access_token, { hardware: hardware.id }).then(res => {
         setDevices(res);
       }).finally(() => setLoading(false));
     }
   }, [session]);
 
   function addNew() {
-
+    setDevices([
+      {
+        id: "",
+        serial: "",
+        checked_out_to: null,
+        hardware: hardware
+      },
+      ...devices
+    ])
   }
 
   return <div className="w-56 px-5 py-4 my-4 mr-4">
     <p>{loading ? "Loading..." : `${devices.length} devices.`}</p>
-    <button
-      className="cursor-pointer text-white bg-[#493B8A] p-4 m-4 rounded-full disabled:opacity-50 transition-all h-15 self-end flex flex-row"
-      onClick={() => addNew()}
-    >add new</button>
+    <p className='mt-1'>
+      <button
+        className="cursor-pointer text-white bg-[#493B8A] py-1 px-2 rounded-full disabled:opacity-50 transition-all h-15"
+        onClick={() => addNew()}
+      >+ add new</button>
+    </p>
     <div className="content flex flex-col max-h-64 overflow-scroll mt-4">
-      {loading ? <CircularProgress /> : <>{devices.map(device => {
-        return <div className='flex flex-row'>
-          <input value={device.serial}></input>
-        </div>
-      })}</>}
+      {loading ? <CircularProgress /> : devices.map(device => (<HardwareDeviceEditor device={device} />))}
     </div>
   </div>
+}
+
+function HardwareDeviceEditor({ device }: { device: Partial<HardwareDevice>}) {
+  const isOriginal = !device.id;
+  const [serial, setSerial] = useState(device.serial);
+  const hasChanged = (
+    serial !== device.serial
+  );
+  return (<div className='flex'>
+    {hasChanged || isOriginal ? <button className='text-[#493B8A]'><Save /></button> : null}
+    <input value={serial} onChange={e => setSerial(e.target.value)}></input>
+  </div>);
 }
