@@ -145,8 +145,8 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
       className={`h-11 rounded-[10px] shadow p-1`}
     >
       <div>
-        <div className="text-white text-base font-medium font-['Inter'] overflow-x-hidden cursor-pointer">
-          <div className="w-[146px] text-white opacity-60 text-[10px] font-medium font-['Inter'] leading-[10px] whitespace-nowrap">
+        <div className="overflow-x-hidden text-base font-medium text-white cursor-pointer">
+          <div className="w-[146px] text-white opacity-60 text-[10px] font-medium leading-[10px] whitespace-nowrap">
             <div
               style={{
                 fontSize: '10px',
@@ -168,9 +168,7 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
         <Dialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)}>
           <div className="flex flex-col items-center flex-shrink-0 w-full h-full gap-8 overflow-y-auto">
             <div className="flex flex-col items-center gap-2">
-              <p className="text-black text-3xl font-medium font-['Inter'] ">
-                {title}
-              </p>
+              <p className="text-3xl font-medium text-black">{title}</p>
               <div className="text-black opacity-60">
                 {roomLocation} | {formatTime(datetime)} -{' '}
                 {addHoursToTime(formatTime(datetime), 1)}

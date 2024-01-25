@@ -318,9 +318,14 @@ const Page: React.FC<PageProps> = () => {
     const speakersPart = input.substring(0, firstDashIndex);
     const description = input.substring(firstDashIndex + 3);
 
+    console.log('------------------------------------------');
+    console.log(firstDashIndex);
+
     const speakers = speakersPart
       .split(',')
       .map((speaker: any) => speaker.trim());
+
+    console.log(speakers);
 
     return { speakers, description };
   }
