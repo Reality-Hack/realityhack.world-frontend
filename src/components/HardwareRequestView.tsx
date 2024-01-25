@@ -21,6 +21,7 @@ import {
 import Box from '@mui/material/Box';
 import CustomSelect from '@/components/CustomSelect';
 import { TextInput } from './Inputs';
+import { LinearProgress } from '@mui/material';
 
 const HardwareRequestStatusOptions: {
   label: string;
@@ -149,27 +150,8 @@ export default function HardwareRequestView({
         ) : (
           <ReasonEditor
             initial={info.getValue()}
-            submit={newReason => {
-              if (session?.access_token) {
-                setRequestsLoading(true);
-                patchHardwareRequest(
-                  session.access_token,
-                  info.row.original.id,
-                  {
-                    reason: newReason
-                  }
-                )
-                  .then((newApp: HardwareRequestBrief) => {
-                    const newRequests = [...requests];
-                    newRequests[info.row.index].reason = newApp.reason;
-                    setRequests(newRequests);
-                  })
-                  .finally(() => {
-                    // TODO: .catch
-                    setRequestsLoading(false);
-                  });
-              }
-            }}
+            id={info.row.original.id}
+            access_token={session?.access_token}
           ></ReasonEditor>
         )
     }),
@@ -367,10 +349,8 @@ export default function HardwareRequestView({
                               return;
                             }
                             const newRequests = [...requests];
-                            newRequests[info.row.index].status =
-                              hardware_request_status.checked_out;
-                            newRequests[info.row.index].hardware_device =
-                              hardwareDevice;
+                            newRequests[info.row.index].status = hardware_request_status.approved;
+                            newRequests[info.row.index].hardware_device = null;
                             setRequests(newRequests);
                             setCheckedOutTo(null);
                           })
@@ -386,7 +366,6 @@ export default function HardwareRequestView({
             })
           ]
     );
-  console.log(hardware[requests[0]?.hardware]);
 
   return (
     <>
@@ -407,25 +386,48 @@ export default function HardwareRequestView({
 
 function ReasonEditor({
   initial,
-  submit
+  id,
+  access_token
 }: {
   initial: string;
-  submit: (newReason: string) => void;
+  id: string;
+  access_token: string | undefined;
 }) {
+  const [loading, setLoading] = useState(false);
+  const [initial_, setInitial] = useState(initial);
   const [value, setValue] = useState(initial);
-  return (
+
+  const submit = ((newReason: string) => {
+    if (!access_token) return;
+    setLoading(true);
+    patchHardwareRequest(
+      access_token,
+      id,
+      {
+        reason: newReason
+      }
+    )
+      .then((newApp: HardwareRequestBrief) => {
+        setInitial(newApp.reason);
+      })
+      .finally(() => {
+        // TODO: .catch
+        setLoading(false);
+      });
+  });
+
+  return loading ? <LinearProgress /> : (
     <>
-      <input value={value} onChange={e => setValue(e.target.value)}></input>
-      {value == initial ? (
-        <></>
-      ) : (
+      {value == initial_ ? <input value={value} onChange={e => setValue(e.target.value)}></input>
+      : <>
+        <textarea value={value} onChange={e => setValue(e.target.value)} rows={4}></textarea>
         <button
           className="cursor-pointer text-white bg-[#493B8A] px-2 mx-2 rounded-full disabled:opacity-50 transition-all flex-shrink h-5 self-end"
           onClick={() => submit(value)}
         >
           Submit
         </button>
-      )}
+      </>}
     </>
   );
 }

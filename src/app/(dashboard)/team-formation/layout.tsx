@@ -22,33 +22,33 @@ export default function TeamFormationLayout({
       <div className="py-4">
         <div className="pb-2 flex flex-wrap gap-2">
           <Tab
-            href="/teamFormation/hackersMet"
-            isSelected={pathname === '/teamFormation/hackersMet'}
+            href="/team-formation/hackers-met"
+            isSelected={pathname === '/team-formation/hackers-met'}
             title="Hacker's I've Met"
           />
           <Tab
-            href="/teamFormation/interests"
-            isSelected={pathname === '/teamFormation/interests'}
+            href="/team-formation/interests"
+            isSelected={pathname === '/team-formation/interests'}
             title="My Interests"
           />
           {isPastDeadline && <Tab
-            href="/teamFormation/roundOne"
-            isSelected={pathname === '/teamFormation/roundOne'}
+            href="/team-formation/round-one"
+            isSelected={pathname === '/team-formation/round-one'}
             title="Team Members - Round 1"
           />}
           {isPastDeadline && <Tab
-            href="/teamFormation/roundTwo"
-            isSelected={pathname === '/teamFormation/roundTwo'}
+            href="/team-formation/round-two"
+            isSelected={pathname === '/team-formation/round-two'}
             title="Team Members - Round 2"
           />}
           {isPastDeadline && <Tab
-            href="/teamFormation/roundThree"
-            isSelected={pathname === '/teamFormation/roundThree'}
+            href="/team-formation/round-three"
+            isSelected={pathname === '/team-formation/round-three'}
             title="Team Members - Round 3"
           />}
           {isPastDeadline && <Tab
-            href="/teamFormation/finalTeam"
-            isSelected={pathname === '/teamFormation/finalTeam'}
+            href="/team-formation/final-team"
+            isSelected={pathname === '/team-formation/final-team'}
             title="Final Team"
           />}
         </div>

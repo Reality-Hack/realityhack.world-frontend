@@ -25,6 +25,11 @@ export const menuItems = [
     icon: '/icons/dashboard/workshops.svg'
   },
   {
+    href: '/team-formation/hackers-met',
+    title: 'Team Formation',
+    icon: '/icons/dashboard/team.svg'
+  },
+  {
     href: '/team',
     title: 'My Team',
     icon: '/icons/dashboard/team.svg'

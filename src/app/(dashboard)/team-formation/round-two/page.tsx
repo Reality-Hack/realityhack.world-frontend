@@ -1,5 +1,5 @@
 "use client"
-import Round from "@/components/teamFormation/Round";
+import Round from "@/components/team-formation/Round";
 
 export default function RoundTwo() {
     const team = [{name:"Santiago Dimaren"},
