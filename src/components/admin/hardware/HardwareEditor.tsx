@@ -1,5 +1,5 @@
 'use client';
-import { createHardware, deleteHardware, getHardwareDevice, sendHardwareRequest, updateHardware } from '@/app/api/hardware';
+import { createHardware, createHardwareDevice, deleteHardware, deleteHardwareDevice, getHardwareDevice, sendHardwareRequest, updateHardware, updateHardwareDevice } from '@/app/api/hardware';
 import CloseIcon from '@mui/icons-material/Close';
 import { PlusOne, Save } from '@mui/icons-material';
 import { useSession } from 'next-auth/react';
@@ -10,6 +10,7 @@ import { fileUpload } from '@/app/api/application';
 import { fixFileLink } from '@/app/api/uploaded_files';
 import HardwareCategoryFilter from '@/components/HardwareCategoryFilter';
 import { CircularProgress, LinearProgress } from '@mui/material';
+import { TrashIcon } from '@heroicons/react/20/solid';
 
 export default function HardwareEditor({
   hardware,
@@ -346,19 +347,72 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
       >+ add new</button>
     </p>
     <div className="content flex flex-col max-h-64 overflow-scroll mt-4">
-      {loading ? <CircularProgress /> : devices.map(device => (<HardwareDeviceEditor device={device} />))}
+      {loading ? <CircularProgress /> : devices.map((device, i) => (
+      <HardwareDeviceEditor key={device.id} device={device} access_token={session?.access_token}
+      deleteDevice={() => setDevices(devices.filter((_, idx) => idx !== i))}
+      setDevice={(device) => setDevices(devices.map((_, idx) => idx === i ? device : _))}
+      />))}
     </div>
   </div>
 }
 
-function HardwareDeviceEditor({ device }: { device: Partial<HardwareDevice>}) {
+function HardwareDeviceEditor(
+  { device, access_token, deleteDevice, setDevice }:
+  { device: Partial<HardwareDevice>, access_token?: string,
+    deleteDevice: () => void, setDevice: (device: Partial<HardwareDevice>) => void}) {
+  const [loading, setLoading] = useState(false);
   const isOriginal = !device.id;
-  const [serial, setSerial] = useState(device.serial);
-  const hasChanged = (
-    serial !== device.serial
-  );
+  const [serial, setSerial] = useState(device.serial || "");
+  const hasChanged = serial !== device.serial;
+
+  function save() {
+    if (access_token) {
+      if(isOriginal) {
+        setLoading(true);
+        createHardwareDevice(access_token, {
+          serial: serial,
+          hardware: (device.hardware?.id)!,
+        }).then(res => {
+          setDevice({
+            id: res.id,
+            serial: serial,
+            hardware: device.hardware,
+          });
+        }).finally(() => setLoading(false));
+      } else {
+        setLoading(true);
+        updateHardwareDevice(access_token, {
+          id: device.id,
+          serial: serial,
+          hardware: (device.hardware?.id)!,
+        }).then(res => {
+          setDevice({
+            ...device,
+            serial: res.serial
+          });
+        }).finally(() => setLoading(false));
+      }
+    }
+  }
+
+  function remove() {
+    if (isOriginal) {
+      deleteDevice();
+    } else if (access_token) {
+      setLoading(true);
+      deleteHardwareDevice(access_token, device.id!).then(() => {
+        deleteDevice();
+      }).finally(() => setLoading(false));
+    }
+  }
+
   return (<div className='flex'>
-    {hasChanged || isOriginal ? <button className='text-[#493B8A]'><Save /></button> : null}
-    <input value={serial} onChange={e => setSerial(e.target.value)}></input>
+    <button className='text-[#CC2F34]' onClick={remove} disabled={loading}><CloseIcon /></button>
+    {hasChanged || isOriginal ? <button className='text-[#493B8A]'
+    onClick={save} disabled={loading}
+    ><Save /></button> : null}
+    <input value={serial} onChange={e => setSerial(e.target.value)} disabled={loading}
+                className="m-0.5 shadow-md rounded-md px-1 border"
+    ></input>
   </div>);
 }

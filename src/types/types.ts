@@ -252,6 +252,12 @@ export interface HardwareDevice {
   hardware: Hardware;
 }
 
+export interface HardwareDeviceForSending {
+  id?: string;
+  serial: string;
+  hardware: string;
+}
+
 export type hardware_requester = string | 'me' | null;
 
 export interface HardwareCategory {
