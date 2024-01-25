@@ -216,7 +216,7 @@ export default function Dashboard() {
                     Show QR code to check in
                   </div>
                 </div>
-                <div className="max-w-[330px] mx-auto text-white text-base font-light font-['Inter'] flex justify-center items-center">
+                <div className="max-w-[330px] mx-auto text-white text-base font-light flex justify-center items-center">
                   When you arrive, show our staff the QR code to get registered
                   and checked in at the event. <br />
                   <br />

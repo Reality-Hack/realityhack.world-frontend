@@ -27,7 +27,7 @@ export default function TimeComponent({ time }: TimeComponentProps) {
 
   return (
     <div
-      className={`text-zinc-500 text-base font-light font-['Inter'] leading-normal grid-col-${timeSlot}`}
+      className={`text-zinc-500 text-base font-light leading-normal grid-col-${timeSlot}`}
     >
       {timeSlot}
     </div>
