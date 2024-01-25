@@ -24,7 +24,7 @@ export default function TeamFormationLayout({
           <Tab
             href="/team-formation/hackers-met"
             isSelected={pathname === '/team-formation/hackers-met'}
-            title="Hacker's I've Met"
+            title="Hackers I've Met"
           />
           <Tab
             href="/team-formation/interests"
