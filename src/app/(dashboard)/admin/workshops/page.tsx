@@ -8,7 +8,8 @@ import { Modal, Box, Alert } from '@mui/material';
 import {
   getAllWorkshops,
   getMyWorkshops,
-  signinToWorkshop
+  signinToWorkshop,
+  getAllAttendedWorkshops
 } from '@/app/api/workshops';
 
 export default function Checkin() {
@@ -25,6 +26,8 @@ export default function Checkin() {
   const [workshopOptions, setWorkshopOptions] = useState([]);
   const [selectedWorkshop, setSelectedWorkshop] = useState('');
   const [registeredWorkshops, setRegisteredWorkshops] = useState<[]>([]);
+  const [myWorkshops, setMyWorkshops] = useState<[]>([]);
+  const [attendedWorkshops, setAttendedWorkshops] = useState<[]>([]);
 
   const { data: session, status } = useSession();
   const isAdmin = session && (session as any).roles?.includes('admin');
@@ -50,33 +53,13 @@ export default function Checkin() {
         setAttendees(data);
         const namesOptions = data.map((attendee: any) => ({
           value: attendee.id,
-          label: (
-            <div className="flex flex-row items-center justify-start gap-2">
-              {attendee.checked_in_at && (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 64 64"
-                  className="w-4 h-4 min-w-4 min-h-4 max-w-4 max-h-4"
-                >
-                  <path
-                    fill="#43a047"
-                    d="M32 2C15.431 2 2 15.432 2 32c0 16.568 13.432 30 30 30 16.568 0 30-13.432 30-30C62 15.432 48.568 2 32 2zm-6.975 48-.02-.02-.017.02L11 35.6l7.029-7.164 6.977 7.184 21-21.619L53 21.199 25.025 50z"
-                  />
-                </svg>
-              )}
-              {`${attendee.first_name} ${attendee.last_name}`}
-            </div>
-          )
+          label: `${attendee.first_name} ${attendee.last_name}`
         }));
         setSelectOptions(namesOptions);
       };
       getData();
     }
   }, [isAdmin, session?.access_token, showSuccessAlert]);
-
-  console.log(selectOptions);
-
-  console.log(workshopOptions);
 
   useEffect(() => {
     if (session?.access_token) {
@@ -101,29 +84,47 @@ export default function Checkin() {
     }
   }, [session]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (session?.access_token && selectedValue) {
-          const myWorkshops = await getMyWorkshops(
-            session.access_token,
-            selectedValue
-          );
-          const filteredWorkshops = workshops.filter((workshop: any) =>
-            myWorkshops.some((w: any) => w.workshop === workshop.id)
-          );
-          console.log(filteredWorkshops);
-          filteredWorkshops ? setRegisteredWorkshops(filteredWorkshops) : '';
-        }
-      } catch (error) {
-        console.error('Error fetching myWorkshops:', error);
+  const fetchWorkshops = async () => {
+    try {
+      if (session) {
+        const allWorkshops = await getAllAttendedWorkshops(
+          session.access_token
+        );
+        setAttendedWorkshops(allWorkshops);
       }
-    };
-
-    if (session?.access_token && selectedValue) {
-      fetchData();
+    } catch (error) {
+      console.error('Error fetching workshops:', error);
     }
-  }, [session, selectedValue, selectedWorkshop]);
+  };
+
+  useEffect(() => {
+    fetchWorkshops();
+  }, [selectedWorkshop]);
+
+  const fetchMyWorkshopData = async () => {
+    try {
+      if (session?.access_token && selectedValue) {
+        const myWorkshopsData = await getMyWorkshops(
+          session.access_token,
+          selectedValue
+        );
+        setMyWorkshops(myWorkshopsData);
+
+        const completedWorkshops = myWorkshopsData.filter(
+          (w: any) => w.participation === 'C'
+        );
+        setRegisteredWorkshops(completedWorkshops);
+      }
+    } catch (error) {
+      console.error('Error fetching myWorkshops:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (session?.access_token && selectedValue) {
+      fetchMyWorkshopData();
+    }
+  }, [session, selectedValue]);
 
   useEffect(() => {
     let timeout: any;
@@ -170,12 +171,25 @@ export default function Checkin() {
     setSelectedValue(value);
   };
 
-  console.log('selectedWorkshop: ', selectedWorkshop);
-
   const handleCheckin = async (userId: string, scanned?: boolean) => {
+    const selectedWorkshopDetails = myWorkshops.find(
+      (workshop: any) => workshop.workshop === selectedWorkshop
+    );
+
+    console.log('selectedWorkshopDetails: ', selectedWorkshopDetails);
+
     const attendee = (attendees as unknown as any[])?.find(
       (a: any) => a.id === userId
     );
+
+    if (!selectedWorkshopDetails) {
+      setShowErrorAlert(true);
+      setErrorAlertMessage(
+        `${attendee.first_name} ${attendee.last_name} is not registered to this workshop.`
+      );
+      handleClose();
+      return;
+    }
 
     if (!attendee) {
       setShowErrorAlert(true);
@@ -184,31 +198,25 @@ export default function Checkin() {
       return;
     }
 
+    if (!selectedWorkshop) {
+      setShowErrorAlert(true);
+      setErrorAlertMessage(`Select a workshop to register to.`);
+      handleClose();
+      return;
+    }
+
     setSelectedValue(userId);
 
     try {
-      if (attendee.checked_in_at) {
-        if (!scanned) {
-          setShowErrorAlert(true);
-          setErrorAlertMessage(
-            `${attendee.first_name} ${attendee.last_name} has already been checked in.`
-          );
-          handleClose();
-          return;
-        } else {
-          await signinToWorkshop(session?.access_token || '', {
-            attendee: userId,
-            workshop: selectedWorkshop,
-            participation: 'R'
-          });
-          showAlert(
-            `${attendee.first_name} ${attendee.last_name}'s check-in has been removed.`
-          );
-        }
+      if ((selectedWorkshopDetails as any).participation === 'C') {
+        await signinToWorkshop((selectedWorkshopDetails as any).id, {
+          participation: 'R'
+        });
+        showAlert(
+          `${attendee.first_name} ${attendee.last_name}'s check-in has been removed.`
+        );
       } else {
-        await signinToWorkshop(session?.access_token || '', {
-          attendee: userId,
-          workshop: selectedWorkshop,
+        await signinToWorkshop((selectedWorkshopDetails as any).id, {
           participation: 'C'
         });
         showAlert(
@@ -217,7 +225,10 @@ export default function Checkin() {
       }
     } catch {
       setShowErrorAlert(true);
-      setErrorAlertMessage(`invalid QR code scanned.`);
+      setErrorAlertMessage(`An error occured. Please try again.`);
+    } finally {
+      fetchMyWorkshopData();
+      fetchWorkshops();
     }
 
     handleClose();
@@ -251,30 +262,44 @@ export default function Checkin() {
     }
   };
 
-  const calculateClassCounts = (attendees: any[]) => {
-    const classCounts: { [key: string]: { total: number; checkedIn: number } } =
-      {};
-
-    attendees.forEach((attendee: any) => {
-      const classType = attendee.participation_class;
-
-      if (!classCounts[classType]) {
-        classCounts[classType] = { total: 0, checkedIn: 0 };
-      }
-
-      classCounts[classType].total += 1;
-
-      if (attendee.checked_in_at) {
-        classCounts[classType].checkedIn += 1;
-      }
-    });
-
-    return classCounts;
+  const handleWorkshopChange = (selectedOption: any) => {
+    setSelectedWorkshop(selectedOption);
   };
 
-  const handleWorkshopChange = (selectedOption: any) => {
-    console.log('selectedOption: ', selectedOption);
-    setSelectedWorkshop(selectedOption);
+  const renderWorkshops = () => {
+    return myWorkshops.map(workshop => {
+      const workshopDetails = workshops.find(
+        (w: any) => w.id === (workshop as { workshop: string }).workshop
+      );
+      if (workshopDetails) {
+        const parts = workshopDetails.name
+          .split('-')
+          .map((part: any) => part.trim());
+        const displayName = parts.slice(3).join(' - ');
+        return (
+          <li
+            key={(workshop as { id: string })?.id}
+            className="flex items-center gap-2"
+          >
+            {displayName}
+            {workshop &&
+              (workshop as { participation: string }).participation === 'C' && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 64 64"
+                  className="w-4 h-4"
+                >
+                  <path
+                    fill="#43a047"
+                    d="M32 2C15.431 2 2 15.432 2 32c0 16.568 13.432 30 30 30 16.568 0 30-13.432 30-30C62 15.432 48.568 2 32 2zm-6.975 48-.02-.02-.017.02L11 35.6l7.029-7.164 6.977 7.184 21-21.619L53 21.199 25.025 50z"
+                  />
+                </svg>
+              )}
+          </li>
+        );
+      }
+      return null;
+    });
   };
 
   return (
@@ -283,7 +308,9 @@ export default function Checkin() {
         <>
           <h1 className="mb-16 text-2xl">Workshop Checkin</h1>
           <hr className="mb-6" />
-          <span className="pb-6 text-lg font-medium">Search Participants</span>
+          <span className="pb-6 text-lg font-medium">
+            Search Registered Workshops
+          </span>
           <div className="grid gap-4 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1">
             <div className="p-4 max-w-[366px] min-h-[156px] bg-[#F4F4F4] rounded mx-auto sm:mx-0">
               <div className="mb-6">
@@ -341,26 +368,9 @@ export default function Checkin() {
                       </div>
                     </div>
                   </div>
-                  {/* <div className="py-4"></div> */}
                   <div className="pt-2">
-                    {Array.isArray(registeredWorkshops) &&
-                    registeredWorkshops ? (
-                      <>
-                        <span>Registered workshops:</span>
-                        <br />
-                        {/* <ul> */}
-                        {Array.isArray(registeredWorkshops) &&
-                          registeredWorkshops?.map((workshop: any) => {
-                            const parts = workshop.name
-                              .split('-')
-                              .map((part: any) => part.trim());
-                            const displayName = parts.slice(3).join(' - ');
-
-                            // Return the list item
-                            return <li key={workshop.id}>{displayName}</li>;
-                          })}
-                        {/* </ul> */}
-                      </>
+                    {Array.isArray(myWorkshops) && myWorkshops.length > 0 ? (
+                      <ul>{renderWorkshops()}</ul>
                     ) : (
                       <span>
                         Attendee does not have any registered workshops.
@@ -373,7 +383,7 @@ export default function Checkin() {
                   <span>Select or scan a user to continue</span>
                 </div>
               )}
-              {selectedValue && attendeeDetails && (
+              {selectedValue && attendeeDetails && selectedWorkshop && (
                 <button
                   onClick={() => handleCheckin(selectedValue, true)}
                   className="px-4 py-2 mt-4 ml-auto text-white bg-blue-500 rounded font-xs hover:bg-blue-700"
@@ -381,7 +391,7 @@ export default function Checkin() {
                   <p className="text-sm">
                     {attendeeDetails.checkedInAt
                       ? 'Remove Check In'
-                      : 'Check In User'}
+                      : 'Check In to Workshop'}
                   </p>
                 </button>
               )}
@@ -391,10 +401,15 @@ export default function Checkin() {
               <div className="flex flex-row items-center justify-center gap-4">
                 <div className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
                   <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-                    Total Attendees
+                    Registered
                   </span>
                   <span className="text-2xl font-semibold text-black text-opacity-90">
-                    {attendees ? attendees.length : 0}
+                    {
+                      attendedWorkshops.filter(
+                        workshop =>
+                          (workshop as any).workshop === selectedWorkshop
+                      ).length
+                    }
                   </span>
                 </div>
                 <div className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
@@ -402,32 +417,15 @@ export default function Checkin() {
                     Checked In
                   </span>
                   <span className="text-2xl font-semibold text-black text-opacity-90">
-                    {attendees
-                      ? attendees.filter(
-                          (attendee: { checked_in_at: any }) =>
-                            attendee.checked_in_at
-                        ).length
-                      : 0}
+                    {
+                      attendedWorkshops.filter(
+                        workshop =>
+                          (workshop as any).workshop === selectedWorkshop &&
+                          (workshop as any).participation === 'C'
+                      ).length
+                    }
                   </span>
                 </div>
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                {attendees &&
-                  Object.entries(calculateClassCounts(attendees)).map(
-                    ([classType, counts]) => (
-                      <div
-                        key={classType}
-                        className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5"
-                      >
-                        <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-                          {getParticipationClassName(classType)}s
-                        </span>
-                        <span className="text-2xl font-semibold text-black text-opacity-90">
-                          {counts.checkedIn}/{counts.total}
-                        </span>
-                      </div>
-                    )
-                  )}
               </div>
             </div>
           </div>

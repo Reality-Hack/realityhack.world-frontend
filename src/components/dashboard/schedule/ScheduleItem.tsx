@@ -63,7 +63,8 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
     3: '#9FD6A5',
     4: '#F5B354',
     5: '#65A5EB',
-    6: '#D6266E'
+    6: '#D6266E',
+    7: '#0da38f'
   };
 
   const parseWorkshopName = (name: string) => {

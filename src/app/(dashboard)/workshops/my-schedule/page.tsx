@@ -18,7 +18,8 @@ const LegendRoom: React.FC<LegendRoomProps> = ({ color, name }) => {
     '3': 'Curr. 3 - New Tech Dev',
     '4': 'Curr. 4 - Beginner Designer',
     '5': 'Curr. 5 - Advanced Designer',
-    '6': 'Curr. 6 - Hardware'
+    '6': 'Curr. 6 - Hardware',
+    '7': 'Curr. 7 - Business'
   };
 
   return (
@@ -33,14 +34,16 @@ const LegendRoom: React.FC<LegendRoomProps> = ({ color, name }) => {
 };
 
 const Page: React.FC = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const roomColors = {
     1: '#A2E1A5',
     2: '#E26677',
     3: '#777CE4',
     4: '#EFB45A',
-    5: '#CA0C6C'
+    5: '#CA0C6C',
+    6: '#CA0C6C',
+    7: '#0da38f'
   };
 
   const [userEvents, setUserEvents] = useState<WorkshopAttendeeListItem[]>();
