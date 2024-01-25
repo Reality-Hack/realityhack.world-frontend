@@ -52,8 +52,9 @@ export default function HackersMet({}) {
           // Filter attendees with participation class "P"
           const filteredAttendees = apps.filter(
             (attendees: any) =>
-              attendees.participation_class === 'P' ||
-              typeof attendees.participation_class === 'undefined'
+              (attendees.participation_class === 'P' ||
+              typeof attendees.participation_class === 'undefined') &&
+              attendees.id != user?.id
           );
           setAttendeeInfo(filteredAttendees);
         })

@@ -349,10 +349,8 @@ export default function HardwareRequestView({
                               return;
                             }
                             const newRequests = [...requests];
-                            newRequests[info.row.index].status =
-                              hardware_request_status.checked_out;
-                            newRequests[info.row.index].hardware_device =
-                              hardwareDevice;
+                            newRequests[info.row.index].status = hardware_request_status.approved;
+                            newRequests[info.row.index].hardware_device = null;
                             setRequests(newRequests);
                             setCheckedOutTo(null);
                           })
@@ -364,11 +362,10 @@ export default function HardwareRequestView({
                   >
                     Return
                   </button>
-                ) : console.log(info.row.original.hardware_device?.id, info.row.original.hardware_device, hardwareDevice.id, hardwareDevice)
+                ) : null
             })
           ]
     );
-  console.log(hardware[requests[0]?.hardware]);
 
   return (
     <>
