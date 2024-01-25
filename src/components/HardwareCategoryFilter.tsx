@@ -1,6 +1,6 @@
 'use client';
 import CloseIcon from '@mui/icons-material/Close';
-import { Hardware, HardwareCategory } from '@/types/types';
+import { Hardware, HardwareCategory, hardware_categories } from '@/types/types';
 import { useState } from 'react';
 
 
@@ -71,8 +71,8 @@ export default function HardwareCategoryFilter(
                 <div className="flex items-center" key={idx}>
                   <input
                     id={`filter-${cat.value}`}
-                    name={cat.display_name}
-                    defaultValue={cat.display_name}
+                    name={/*cat.display_name*/ hardware_categories[cat.value]}
+                    defaultValue={/*cat.display_name*/ hardware_categories[cat.value]}
                     type="checkbox"
                     checked={selected[cat.value]}
                     className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
@@ -88,7 +88,7 @@ export default function HardwareCategoryFilter(
                     htmlFor={`filter-${cat.value}`}
                     className="ml-3 text-sm"
                   >
-                    {cat.display_name}
+                    {/*cat.display_name*/ hardware_categories[cat.value]}
                   </label>
                 </div>
               )

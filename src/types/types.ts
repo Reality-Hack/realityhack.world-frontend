@@ -259,6 +259,19 @@ export interface HardwareCategory {
   display_name: string;
 }
 
+export const hardware_categories: { [key: string]: string } = {
+  AC: "Accessory",
+  SE: "Sensor",
+  VR: "Virtual Reality",
+  AR: "Augmented Reality",
+  MR: "Mixed Reality",
+  CO: "Computer",
+  HA: "Haptics",
+  CA: "Camera",
+  TA: "Tablet",
+  HD: "Holographic Display"
+}
+
 export interface UploadedFile {
   id: string;
   file: string;

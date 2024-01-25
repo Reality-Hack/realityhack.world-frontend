@@ -4,10 +4,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import { PlusOne } from '@mui/icons-material';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { Hardware, HardwareCategory, UploadedFile } from '@/types/types';
+import { Hardware, HardwareCategory, UploadedFile, hardware_categories } from '@/types/types';
 import Dropzone from '@/components/Dropzone';
 import { fileUpload } from '@/app/api/application';
-import Image from 'next/image';
 import { fixFileLink } from '@/app/api/uploaded_files';
 import HardwareCategoryFilter from '@/components/HardwareCategoryFilter';
 
@@ -30,7 +29,7 @@ export default function HardwareEditor({
   function addNew() {
     setHardwareList([
       {
-        id: "",
+        id: '',
         name: '',
         total: 1,
         available: 1,
@@ -105,7 +104,7 @@ function EditableHardwareCard({
   topLevelProps?: any;
 }) {
   const { data: session } = useSession();
-  const isOriginal = item.id == null;
+  const isOriginal = !item.id;
   const [image, setImage] = useState<null | UploadedFile>(item.image);
   const [editingImage, setEditingImage] = useState(image == null);
   const [name, setName] = useState(item.name);
@@ -118,7 +117,6 @@ function EditableHardwareCard({
     description !== item.description ||
     image?.id !== item.image?.id ||
     tags !== item.tags;
-  const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [addTagOpen, setAddTagOpen] = useState(false);
   const isReady = 
     name.length > 0 &&
@@ -128,6 +126,16 @@ function EditableHardwareCard({
   const [sending, setSending] = useState(false);
 
   if (!session) return null;
+
+  async function setAcceptedFiles(acceptedFiles: File[] | ((prevState: File[]) => File[])) {
+    if (typeof acceptedFiles === "function") {
+      acceptedFiles = acceptedFiles([]);
+    }
+    fileUpload(session?.access_token, acceptedFiles[0]).then(res => {
+      setImage(res);
+      setEditingImage(false);
+    });
+  }
 
   function saveHardware() {
     const data = {
@@ -152,7 +160,10 @@ function EditableHardwareCard({
     } else {
       createHardware(session!.access_token, data).then(res => {
         console.log(res);
-        setItem(newItem);
+        setItem({
+          ...newItem,
+          id: res.id
+        });
       }).finally(() => setSending(false));
     }
   }
@@ -162,27 +173,12 @@ function EditableHardwareCard({
       {editingImage ? (
         <>
           <Dropzone
-            acceptedFiles={acceptedFiles}
+            acceptedFiles={[]}
             rejectedFiles={[]}
             setAcceptedFiles={setAcceptedFiles}
             setRejectedFiles={() => {}}
             setFormData={() => {}}
           ></Dropzone>
-          {acceptedFiles.length > 0 ? (
-            <button
-              onClick={() => {
-                fileUpload(session.access_token, acceptedFiles[0]).then(res => {
-                  setImage(res);
-                  setEditingImage(false);
-                });
-              }}
-            >
-              Save
-            </button>
-          ) : null}
-          {!item.image ? null : (
-            <button onClick={() => setEditingImage(false)}>Cancel</button>
-          )}
         </>
       ) : (
         <>
@@ -195,18 +191,15 @@ function EditableHardwareCard({
       <div className="flex justify-between w-full">
         <span className="text-xl">
           <input
-            placeholder="Name"
+            placeholder="Enter name"
             value={name}
+            className="m-1 shadow-md rounded-md px-1 border"
             onChange={e => setName(e.target.value)}
           ></input>
         </span>
-        <input
-          placeholder="Quantity"
-          type="number"
-          step="1"
-          value={quantity}
-          onChange={e => setQuantity(Number.parseInt(e.target.value))}
-        ></input>
+        <button
+        className='cursor-pointer text-black bg-gray-200 px-4 py-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end'
+        >Edit devices</button>
       </div>
       <textarea
         // disabled={quantity === 0}
@@ -220,7 +213,7 @@ function EditableHardwareCard({
       <div className="flex w-full flex-wrap flex-initial">
         {tags.map(tag => (
           <span className="bg-gray-200 rounded-full px-2 py-1 m-1">
-            {tag.display_name}
+            {hardware_categories[tag.value] /*tag.display_name*/}
             <button
               onClick={() =>
                 setTags(tags.filter(other => other.value != tag.value))
@@ -248,7 +241,7 @@ function EditableHardwareCard({
                         className="cursor-pointer text-white bg-[#493B8A] px-4 rounded-full disabled:opacity-50 transition-all flex-shrink h-10 self-end"
                         onClick={() => setTags([...tags, cat])}
                       >
-                        {cat.display_name}
+                        {hardware_categories[cat.value] /* cat.display_name */}
                       </button>
                     </div>
                   ))}
