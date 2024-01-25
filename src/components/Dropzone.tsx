@@ -15,6 +15,7 @@ interface FormProps {
   setAcceptedFiles: React.Dispatch<React.SetStateAction<File[]>>;
   rejectedFiles: File[];
   setRejectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  extraInputProps?: object;
 }
 
 const Dropzone: React.FC<FormProps> = ({
@@ -22,7 +23,8 @@ const Dropzone: React.FC<FormProps> = ({
   acceptedFiles,
   setAcceptedFiles,
   rejectedFiles,
-  setRejectedFiles
+  setRejectedFiles,
+  extraInputProps = {}
 }) => {
   function handleUpload(data: File[]) {
     const file = data[0];
@@ -78,8 +80,8 @@ const Dropzone: React.FC<FormProps> = ({
         {...getRootProps()}
         className="flex justify-center px-8 py-16 my-4 mt-2 align-middle transition border border-gray-300 border-dashed rounded-lg outline-none focus:border-themePrimary align-center"
       >
-        <input {...getInputProps()} />
-        <div className="text-center cursor-default ">
+        <input {...getInputProps()} {...extraInputProps} />
+        <div className="text-center cursor-default">
           <div className="mx-auto">
             <svg
               xmlns="http://www.w3.org/2000/svg"

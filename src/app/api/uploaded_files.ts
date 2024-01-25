@@ -19,3 +19,7 @@ export async function getUploadedFile(
   }
   throw new Error('Failed to fetch data. Status: ' + resp.status);
 }
+
+export function fixFileLink(file: string) {
+  return (file.startsWith("http") ? "" : process.env.NEXT_PUBLIC_BACKEND_URL) + file;
+}

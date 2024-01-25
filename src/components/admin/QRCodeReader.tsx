@@ -3,32 +3,39 @@
 // QRCodeComponent.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import '@/app/globals.css'; 
+import '@/app/globals.css';
 
-
-const QRCodeReader = () => {
-  const [userId, setUserId] = useState<string | null>('');
+const QRCodeReader = ({
+  onScanSuccess,
+  displayCheckinText = false,
+  displayError = false,
+  uniquifier = 'default',
+  extraConfig = {}
+}: {
+  onScanSuccess?: (userId: string) => void;
+  displayCheckinText?: boolean;
+  displayError?: boolean;
+  uniquifier?: string;
+  extraConfig?: object;
+}) => {
+  const [decodedValue, setDecodedValue] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const qrScannerRef = useRef<Html5QrcodeScanner | null>(null);
 
+  const qrCodeSuccessCallback = (decodedText: string) => {
+    setDecodedValue(decodedText);
+  };
+
+  const qrCodeErrorCallback = (errorMessage: string) => {
+    setError(errorMessage);
+  };
+
   useEffect(() => {
-    
-    const qrCodeSuccessCallback = (decodedText: string) => {
-      setUserId(decodedText);
-      setError(null); 
-    };
-
-    const qrCodeErrorCallback = (errorMessage: string) => {
-      setError(errorMessage); // Update error state
-    };
-
-
     qrScannerRef.current = new Html5QrcodeScanner(
-      'qr-reader',
-      { fps: 2, qrbox: 250, aspectRatio: 1.7777778 },
+      `qr-reader-${uniquifier}`,
+      { fps: 2, qrbox: 250, aspectRatio: 1.7777778, ...extraConfig },
       false
     );
-
     qrScannerRef.current.render(qrCodeSuccessCallback, qrCodeErrorCallback);
 
     return () => {
@@ -36,15 +43,27 @@ const QRCodeReader = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (decodedValue && onScanSuccess) {
+      onScanSuccess(decodedValue);
+    }
+  }, [decodedValue, onScanSuccess]);
+
   return (
     <div>
-      {
-        userId ? <div></div> : <div id="qr-reader" />
-      }
-      
-      <div className="checkin-text">
-        <p className="mb-4 text-lg">{userId ? <p className="text-green-500">Checked In {userId}</p>: 'Looking for User'}</p>
-      </div>
+      {displayError && error && <p className="text-red-500">{error}</p>}
+      {decodedValue ? <div></div> : <div id={`qr-reader-${uniquifier}`} />}
+      {displayCheckinText && (
+        <div className="checkin-text">
+          <div className="mb-4 text-lg">
+            {decodedValue ? (
+              <p className="text-green-500">Value: {decodedValue}</p>
+            ) : (
+              'Looking for User'
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

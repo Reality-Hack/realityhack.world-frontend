@@ -1,4 +1,3 @@
-
 export enum status {
   accepted_in_person = 'AI',
   accepted_online = 'AO',
@@ -264,4 +263,96 @@ export enum MentorTopics {
   Networking = '86',
   NET = '87',
   Other = 'O'
+}
+
+export enum hardware_request_status {
+  pending = 'P',
+  approved = 'A',
+  rejected = 'R',
+  checked_out = 'C'
+}
+
+export interface Attendee {
+  id: string;
+  first_name: string;
+  last_name: string;
+  checked_in_at: Date | null;
+}
+
+export interface HardwareTag {
+  value: string;
+  display_name: string;
+}
+
+export interface Hardware {
+  id: string;
+  name: string;
+  description: string;
+  image: UploadedFile | null;
+  available: number;
+  checked_out: number;
+  total: number;
+  tags: HardwareTag[];
+}
+
+export interface HardwareForSending {
+  id: string;
+  name: string;
+  description: string;
+  image: string | null;
+  total: number;
+  tags: string[];
+}
+
+export interface HardwareRequest {
+  id: string;
+  hardware: Hardware;
+  hardware_device: HardwareDevice | null;
+  requester: Attendee;
+  team: string | null;
+  status: hardware_request_status;
+  reason: string;
+  submitted_at: Date;
+  updated_at: Date;
+}
+
+export interface HardwareRequestBrief {
+  id: string;
+  hardware: string;
+  hardware_device: HardwareDevice | null;
+  requester: Attendee;
+  team: string | null;
+  status: hardware_request_status;
+  reason: string;
+  submitted_at: Date;
+  updated_at: Date;
+}
+
+export interface IncompleteHardwareRequest {
+  hardware: string;
+  requester: string;
+  reason: string;
+}
+
+export interface HardwareDevice {
+  id: string;
+  serial: string;
+  created_at: Date;
+  updated_at: Date;
+  checked_out_to: HardwareRequest | HardwareRequestBrief | null;
+  hardware: Hardware;
+}
+
+export type hardware_requester = string | 'me' | null;
+
+export interface HardwareCategory {
+  value: string;
+  display_name: string;
+}
+
+export interface UploadedFile {
+  id: string;
+  file: string;
+  created_at: Date | null;
+  updated_at: Date | null;
 }

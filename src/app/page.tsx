@@ -4,14 +4,22 @@ import Modal from '@/components/Modal';
 import { useAuthContext } from '@/hooks/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { updateAttendee } from './api/attendee';
+import { patchMe } from './api/attendee';
 import { fileUpload } from './api/application';
 import QRCodeGenerator from '@/components/dashboard/QRCodeGenerator';
-import { participation_class } from '../types/application_form_types';
+import Loader from '@/components/Loader';
 
 type SetupModalProps = {
   toggleOverlay: () => void;
 };
+
+interface AttendeeData {
+  id: string;
+  first_name: string;
+  last_name: string;
+  initial_setup: boolean;
+  profile_image?: string;
+}
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -21,6 +29,29 @@ export default function Dashboard() {
 
   const toggleOverlay = () => {
     setOverlayVisible(prev => !prev);
+  };
+
+  const getParticipationClassName = (code: string) => {
+    switch (code) {
+      case 'P':
+        return 'Hacker';
+      case 'M':
+        return 'Mentor';
+      case 'J':
+        return 'Judge';
+      case 'S':
+        return 'Sponsor';
+      case 'V':
+        return 'Volunteer';
+      case 'O':
+        return 'Organizer';
+      case 'G':
+        return 'Guardian';
+      case 'E':
+        return 'Media';
+      default:
+        return '';
+    }
   };
 
   function SetupModal({ toggleOverlay }: SetupModalProps) {
@@ -45,18 +76,20 @@ export default function Dashboard() {
       let profileImageUpload;
 
       if (session) {
-        const data = {
-          id: user?.id,
+        let data: AttendeeData = {
+          id: user.id,
           first_name: firstName,
           last_name: lastName,
-          initial_setup: 'True',
-          profile_image: null
+          initial_setup: true
         };
 
         if (acceptedFiles && acceptedFiles.length > 0) {
           try {
-            profileImageUpload = await fileUpload(acceptedFiles[0]);
-            data.profile_image = profileImageUpload.id;
+            profileImageUpload = await fileUpload(
+              session.access_token,
+              acceptedFiles[0]
+            );
+            data = { ...data, profile_image: profileImageUpload.id };
           } catch (error) {
             console.error('Error in file upload:', error);
             setIsUploading(false);
@@ -65,8 +98,7 @@ export default function Dashboard() {
         }
 
         try {
-          await updateAttendee(session.access_token, data);
-          console.log('Attendee updated successfully!');
+          await patchMe(session.access_token, data);
           window.location.reload();
         } catch (error) {
           console.error('Error updating attendee:', error);
@@ -118,6 +150,9 @@ export default function Dashboard() {
                   setAcceptedFiles={setAcceptedFiles}
                   rejectedFiles={rejectedFiles}
                   setRejectedFiles={setRejectedFiles}
+                  extraInputProps={{
+                    "data-testid": "initial-setup-profile-image"
+                  }}
                 />
                 <button
                   className="transition-all mx-auto mb-auto mt-4 bg-[#4D97E8] hover:bg-[#4589d2] px-7 py-2 rounded-full text-white"
@@ -135,7 +170,7 @@ export default function Dashboard() {
 
   return (
     <div className="p-6">
-      {status === 'authenticated' && (
+      {status === 'authenticated' ? (
         <>
           {!user?.initial_setup && <SetupModal toggleOverlay={toggleOverlay} />}
           <h1 className="text-2xl">Welcome, {user?.first_name}!</h1>
@@ -175,11 +210,7 @@ export default function Dashboard() {
                     <span>{user?.last_name}</span>
                   </div>
                   <div className="w-32 h-9 bg-neutral-800 rounded-[5px] flex justify-center items-center text-white">
-                    {user?.participation_class === 'P'
-                      ? 'Hacker'
-                      : user?.participation_class === 'M'
-                      ? 'Mentor'
-                      : 'Judge'}
+                    {getParticipationClassName(user?.participation_class)}
                   </div>
                   <div className="pt-6 pb-4 text-white">
                     Show QR code to check in
@@ -395,6 +426,8 @@ export default function Dashboard() {
             </div>
           </div>
         </>
+      ) : (
+        <Loader />
       )}
     </div>
   );

@@ -3,301 +3,318 @@
  * Do not make direct changes to the file.
  */
 
+
 export interface paths {
-  '/applications/': {
+  "/applications/": {
     /** @description API endpoint that allows applications to be viewed or edited. */
-    get: operations['applications_list'];
+    get: operations["applications_list"];
     /** @description API endpoint that allows applications to be viewed or edited. */
-    post: operations['applications_create'];
+    post: operations["applications_create"];
   };
-  '/applications/{id}/': {
+  "/applications/{id}/": {
     /** @description API endpoint that allows applications to be viewed or edited. */
-    get: operations['applications_retrieve'];
+    get: operations["applications_retrieve"];
     /** @description API endpoint that allows applications to be viewed or edited. */
-    put: operations['applications_update'];
+    put: operations["applications_update"];
     /** @description API endpoint that allows applications to be viewed or edited. */
-    delete: operations['applications_destroy'];
+    delete: operations["applications_destroy"];
     /** @description API endpoint that allows applications to be viewed or edited. */
-    patch: operations['applications_partial_update'];
+    patch: operations["applications_partial_update"];
   };
-  '/attendees/': {
+  "/attendees/": {
     /** @description API endpoint that allows users to be viewed or edited. */
-    get: operations['attendees_list'];
+    get: operations["attendees_list"];
     /** @description API endpoint that allows users to be viewed or edited. */
-    post: operations['attendees_create'];
+    post: operations["attendees_create"];
   };
-  '/attendees/{id}/': {
+  "/attendees/{id}/": {
     /** @description API endpoint that allows users to be viewed or edited. */
-    get: operations['attendees_retrieve'];
+    get: operations["attendees_retrieve"];
     /** @description API endpoint that allows users to be viewed or edited. */
-    put: operations['attendees_update'];
+    put: operations["attendees_update"];
     /** @description API endpoint that allows users to be viewed or edited. */
-    delete: operations['attendees_destroy'];
+    delete: operations["attendees_destroy"];
     /** @description API endpoint that allows users to be viewed or edited. */
-    patch: operations['attendees_partial_update'];
+    patch: operations["attendees_partial_update"];
   };
-  '/auth/schema/': {
+  "/auth/schema/": {
     /**
      * @description OpenApi3 schema for this API. Format can be selected via content negotiation.
      *
      * - YAML: application/vnd.oai.openapi
      * - JSON: application/vnd.oai.openapi+json
      */
-    get: operations['auth_schema_retrieve'];
+    get: operations["auth_schema_retrieve"];
   };
-  '/auth/token/': {
+  "/auth/token/": {
     /**
      * @description Takes a set of user credentials and returns an access and refresh JSON web
      * token pair to prove the authentication of those credentials.
      */
-    post: operations['auth_token_create'];
+    post: operations["auth_token_create"];
   };
-  '/auth/token/refresh/': {
+  "/auth/token/refresh/": {
     /**
      * @description Takes a refresh type JSON web token and returns an access type JSON web
      * token if the refresh token is valid.
      */
-    post: operations['auth_token_refresh_create'];
+    post: operations["auth_token_refresh_create"];
   };
-  '/auth/token/verify/': {
+  "/auth/token/verify/": {
     /**
      * @description Takes a token and indicates if it is valid.  This view provides no
      * information about a token's fitness for a particular use.
      */
-    post: operations['auth_token_verify_create'];
+    post: operations["auth_token_verify_create"];
   };
-  '/groups/': {
+  "/groups/": {
     /** @description API endpoint that allows groups to be viewed or edited. */
-    get: operations['groups_list'];
+    get: operations["groups_list"];
     /** @description API endpoint that allows groups to be viewed or edited. */
-    post: operations['groups_create'];
+    post: operations["groups_create"];
   };
-  '/groups/{id}/': {
+  "/groups/{id}/": {
     /** @description API endpoint that allows groups to be viewed or edited. */
-    get: operations['groups_retrieve'];
+    get: operations["groups_retrieve"];
     /** @description API endpoint that allows groups to be viewed or edited. */
-    put: operations['groups_update'];
+    put: operations["groups_update"];
     /** @description API endpoint that allows groups to be viewed or edited. */
-    delete: operations['groups_destroy'];
+    delete: operations["groups_destroy"];
     /** @description API endpoint that allows groups to be viewed or edited. */
-    patch: operations['groups_partial_update'];
+    patch: operations["groups_partial_update"];
   };
-  '/hardware/': {
+  "/hardware/": {
     /** @description API endpoint that allows hardware to be viewed or edited. */
-    get: operations['hardware_list'];
+    get: operations["hardware_list"];
     /** @description API endpoint that allows hardware to be viewed or edited. */
-    post: operations['hardware_create'];
+    post: operations["hardware_create"];
   };
-  '/hardware/{id}/': {
+  "/hardware/{id}/": {
     /** @description API endpoint that allows hardware to be viewed or edited. */
-    get: operations['hardware_retrieve'];
+    get: operations["hardware_retrieve"];
     /** @description API endpoint that allows hardware to be viewed or edited. */
-    put: operations['hardware_update'];
+    put: operations["hardware_update"];
     /** @description API endpoint that allows hardware to be viewed or edited. */
-    delete: operations['hardware_destroy'];
+    delete: operations["hardware_destroy"];
     /** @description API endpoint that allows hardware to be viewed or edited. */
-    patch: operations['hardware_partial_update'];
+    patch: operations["hardware_partial_update"];
   };
-  '/hardwaredevicehistory/': {
+  "/hardwaredevicehistory/": {
     /** @description API endpoint that allows hardware device historical records to be viewed. */
-    get: operations['hardwaredevicehistory_list'];
+    get: operations["hardwaredevicehistory_list"];
     /** @description API endpoint that allows hardware device historical records to be viewed. */
-    post: operations['hardwaredevicehistory_create'];
+    post: operations["hardwaredevicehistory_create"];
   };
-  '/hardwaredevicehistory/{history_id}/': {
+  "/hardwaredevicehistory/{history_id}/": {
     /** @description API endpoint that allows hardware device historical records to be viewed. */
-    get: operations['hardwaredevicehistory_retrieve'];
+    get: operations["hardwaredevicehistory_retrieve"];
     /** @description API endpoint that allows hardware device historical records to be viewed. */
-    put: operations['hardwaredevicehistory_update'];
+    put: operations["hardwaredevicehistory_update"];
     /** @description API endpoint that allows hardware device historical records to be viewed. */
-    delete: operations['hardwaredevicehistory_destroy'];
+    delete: operations["hardwaredevicehistory_destroy"];
     /** @description API endpoint that allows hardware device historical records to be viewed. */
-    patch: operations['hardwaredevicehistory_partial_update'];
+    patch: operations["hardwaredevicehistory_partial_update"];
   };
-  '/hardwaredevices/': {
+  "/hardwaredevices/": {
     /** @description API endpoint that allows hardware devices to be viewed or edited. */
-    get: operations['hardwaredevices_list'];
+    get: operations["hardwaredevices_list"];
     /** @description API endpoint that allows hardware devices to be viewed or edited. */
-    post: operations['hardwaredevices_create'];
+    post: operations["hardwaredevices_create"];
   };
-  '/hardwaredevices/{id}/': {
+  "/hardwaredevices/{id}/": {
     /** @description API endpoint that allows hardware devices to be viewed or edited. */
-    get: operations['hardwaredevices_retrieve'];
+    get: operations["hardwaredevices_retrieve"];
     /** @description API endpoint that allows hardware devices to be viewed or edited. */
-    put: operations['hardwaredevices_update'];
+    put: operations["hardwaredevices_update"];
     /** @description API endpoint that allows hardware devices to be viewed or edited. */
-    delete: operations['hardwaredevices_destroy'];
+    delete: operations["hardwaredevices_destroy"];
     /** @description API endpoint that allows hardware devices to be viewed or edited. */
-    patch: operations['hardwaredevices_partial_update'];
+    patch: operations["hardwaredevices_partial_update"];
   };
-  '/helpdesks/': {
+  "/helpdesks/": {
     /** @description API endpoint that allows Reality Kits to be viewed or edited. */
-    get: operations['helpdesks_retrieve'];
+    get: operations["helpdesks_retrieve"];
     /** @description API endpoint that allows Reality Kits to be viewed or edited. */
-    post: operations['helpdesks_create'];
+    post: operations["helpdesks_create"];
   };
-  '/helpdesks/{id}/': {
+  "/helpdesks/{id}/": {
     /** @description API endpoint that allows Reality Kits to be viewed or edited. */
-    get: operations['helpdesks_retrieve_2'];
+    get: operations["helpdesks_retrieve_2"];
   };
-  '/locations/': {
+  "/locations/": {
     /** @description API endpoint that allows locations to be viewed or edited. */
-    get: operations['locations_list'];
+    get: operations["locations_list"];
     /** @description API endpoint that allows locations to be viewed or edited. */
-    post: operations['locations_create'];
+    post: operations["locations_create"];
   };
-  '/locations/{id}/': {
+  "/locations/{id}/": {
     /** @description API endpoint that allows locations to be viewed or edited. */
-    get: operations['locations_retrieve'];
+    get: operations["locations_retrieve"];
     /** @description API endpoint that allows locations to be viewed or edited. */
-    put: operations['locations_update'];
+    put: operations["locations_update"];
     /** @description API endpoint that allows locations to be viewed or edited. */
-    delete: operations['locations_destroy'];
+    delete: operations["locations_destroy"];
     /** @description API endpoint that allows locations to be viewed or edited. */
-    patch: operations['locations_partial_update'];
+    patch: operations["locations_partial_update"];
   };
-  '/projects/': {
+  "/projects/": {
     /** @description API endpoint that allows projects to be viewed or edited. */
-    get: operations['projects_list'];
+    get: operations["projects_list"];
     /** @description API endpoint that allows projects to be viewed or edited. */
-    post: operations['projects_create'];
+    post: operations["projects_create"];
   };
-  '/projects/{id}/': {
+  "/projects/{id}/": {
     /** @description API endpoint that allows projects to be viewed or edited. */
-    get: operations['projects_retrieve'];
+    get: operations["projects_retrieve"];
     /** @description API endpoint that allows projects to be viewed or edited. */
-    put: operations['projects_update'];
+    put: operations["projects_update"];
     /** @description API endpoint that allows projects to be viewed or edited. */
-    delete: operations['projects_destroy'];
+    delete: operations["projects_destroy"];
     /** @description API endpoint that allows projects to be viewed or edited. */
-    patch: operations['projects_partial_update'];
+    patch: operations["projects_partial_update"];
   };
-  '/request_mentor/': {
+  "/request_mentor/": {
     /** @description API endpoint that allows Mentor Requests to be viewed or edited. */
-    get: operations['request_mentor_retrieve'];
+    get: operations["request_mentor_retrieve"];
     /** @description API endpoint that allows Mentor Requests to be viewed or edited. */
-    post: operations['request_mentor_create'];
+    post: operations["request_mentor_create"];
   };
-  '/schema/spectacular': {
+  "/rsvps/": {
+    /** @description API endpoint that allows users to be viewed or edited. */
+    get: operations["rsvps_list"];
+    /** @description API endpoint that allows users to be viewed or edited. */
+    post: operations["rsvps_create"];
+  };
+  "/rsvps/{id}/": {
+    /** @description API endpoint that allows users to be viewed or edited. */
+    get: operations["rsvps_retrieve"];
+    /** @description API endpoint that allows users to be viewed or edited. */
+    put: operations["rsvps_update"];
+    /** @description API endpoint that allows users to be viewed or edited. */
+    delete: operations["rsvps_destroy"];
+    /** @description API endpoint that allows users to be viewed or edited. */
+    patch: operations["rsvps_partial_update"];
+  };
+  "/schema/spectacular/": {
     /**
      * @description OpenApi3 schema for this API. Format can be selected via content negotiation.
      *
      * - YAML: application/vnd.oai.openapi
      * - JSON: application/vnd.oai.openapi+json
      */
-    get: operations['schema_spectacular_retrieve'];
+    get: operations["schema_spectacular_retrieve"];
   };
-  '/skillproficiencies/': {
+  "/skillproficiencies/": {
     /** @description API endpoint that allows skill proficiencies to be viewed or edited. */
-    get: operations['skillproficiencies_list'];
+    get: operations["skillproficiencies_list"];
     /** @description API endpoint that allows skill proficiencies to be viewed or edited. */
-    post: operations['skillproficiencies_create'];
+    post: operations["skillproficiencies_create"];
   };
-  '/skillproficiencies/{id}/': {
+  "/skillproficiencies/{id}/": {
     /** @description API endpoint that allows skill proficiencies to be viewed or edited. */
-    get: operations['skillproficiencies_retrieve'];
+    get: operations["skillproficiencies_retrieve"];
     /** @description API endpoint that allows skill proficiencies to be viewed or edited. */
-    put: operations['skillproficiencies_update'];
+    put: operations["skillproficiencies_update"];
     /** @description API endpoint that allows skill proficiencies to be viewed or edited. */
-    delete: operations['skillproficiencies_destroy'];
+    delete: operations["skillproficiencies_destroy"];
     /** @description API endpoint that allows skill proficiencies to be viewed or edited. */
-    patch: operations['skillproficiencies_partial_update'];
+    patch: operations["skillproficiencies_partial_update"];
   };
-  '/skills/': {
+  "/skills/": {
     /** @description API endpoint that allows skills to be viewed or edited. */
-    get: operations['skills_list'];
+    get: operations["skills_list"];
     /** @description API endpoint that allows skills to be viewed or edited. */
-    post: operations['skills_create'];
+    post: operations["skills_create"];
   };
-  '/skills/{id}/': {
+  "/skills/{id}/": {
     /** @description API endpoint that allows skills to be viewed or edited. */
-    get: operations['skills_retrieve'];
+    get: operations["skills_retrieve"];
     /** @description API endpoint that allows skills to be viewed or edited. */
-    put: operations['skills_update'];
+    put: operations["skills_update"];
     /** @description API endpoint that allows skills to be viewed or edited. */
-    delete: operations['skills_destroy'];
+    delete: operations["skills_destroy"];
     /** @description API endpoint that allows skills to be viewed or edited. */
-    patch: operations['skills_partial_update'];
+    patch: operations["skills_partial_update"];
   };
-  '/tables/': {
+  "/tables/": {
     /** @description API endpoint that allows tables to be viewed or edited. */
-    get: operations['tables_list'];
+    get: operations["tables_list"];
     /** @description API endpoint that allows tables to be viewed or edited. */
-    post: operations['tables_create'];
+    post: operations["tables_create"];
   };
-  '/tables/{id}/': {
+  "/tables/{id}/": {
     /** @description API endpoint that allows tables to be viewed or edited. */
-    get: operations['tables_retrieve'];
+    get: operations["tables_retrieve"];
     /** @description API endpoint that allows tables to be viewed or edited. */
-    put: operations['tables_update'];
+    put: operations["tables_update"];
     /** @description API endpoint that allows tables to be viewed or edited. */
-    delete: operations['tables_destroy'];
+    delete: operations["tables_destroy"];
     /** @description API endpoint that allows tables to be viewed or edited. */
-    patch: operations['tables_partial_update'];
+    patch: operations["tables_partial_update"];
   };
-  '/teams/': {
+  "/teams/": {
     /** @description API endpoint that allows teams to be viewed or edited. */
-    get: operations['teams_list'];
+    get: operations["teams_list"];
     /** @description API endpoint that allows teams to be viewed or edited. */
-    post: operations['teams_create'];
+    post: operations["teams_create"];
   };
-  '/teams/{id}/': {
+  "/teams/{id}/": {
     /** @description API endpoint that allows teams to be viewed or edited. */
-    get: operations['teams_retrieve'];
+    get: operations["teams_retrieve"];
     /** @description API endpoint that allows teams to be viewed or edited. */
-    put: operations['teams_update'];
+    put: operations["teams_update"];
     /** @description API endpoint that allows teams to be viewed or edited. */
-    delete: operations['teams_destroy'];
+    delete: operations["teams_destroy"];
     /** @description API endpoint that allows teams to be viewed or edited. */
-    patch: operations['teams_partial_update'];
+    patch: operations["teams_partial_update"];
   };
-  '/uploaded_files/': {
+  "/uploaded_files/": {
     /** @description API endpoint that allows files to be viewed or edited. */
-    get: operations['uploaded_files_list'];
+    get: operations["uploaded_files_list"];
     /** @description API endpoint that allows files to be viewed or edited. */
-    post: operations['uploaded_files_create'];
+    post: operations["uploaded_files_create"];
   };
-  '/uploaded_files/{id}/': {
+  "/uploaded_files/{id}/": {
     /** @description API endpoint that allows files to be viewed or edited. */
-    get: operations['uploaded_files_retrieve'];
+    get: operations["uploaded_files_retrieve"];
     /** @description API endpoint that allows files to be viewed or edited. */
-    put: operations['uploaded_files_update'];
+    put: operations["uploaded_files_update"];
     /** @description API endpoint that allows files to be viewed or edited. */
-    delete: operations['uploaded_files_destroy'];
+    delete: operations["uploaded_files_destroy"];
     /** @description API endpoint that allows files to be viewed or edited. */
-    patch: operations['uploaded_files_partial_update'];
+    patch: operations["uploaded_files_partial_update"];
   };
-  '/workshopattendees/': {
+  "/workshopattendees/": {
     /** @description API endpoint that allows workshops to be viewed or edited. */
-    get: operations['workshopattendees_list'];
+    get: operations["workshopattendees_list"];
     /** @description API endpoint that allows workshops to be viewed or edited. */
-    post: operations['workshopattendees_create'];
+    post: operations["workshopattendees_create"];
   };
-  '/workshopattendees/{id}/': {
+  "/workshopattendees/{id}/": {
     /** @description API endpoint that allows workshops to be viewed or edited. */
-    get: operations['workshopattendees_retrieve'];
+    get: operations["workshopattendees_retrieve"];
     /** @description API endpoint that allows workshops to be viewed or edited. */
-    put: operations['workshopattendees_update'];
+    put: operations["workshopattendees_update"];
     /** @description API endpoint that allows workshops to be viewed or edited. */
-    delete: operations['workshopattendees_destroy'];
+    delete: operations["workshopattendees_destroy"];
     /** @description API endpoint that allows workshops to be viewed or edited. */
-    patch: operations['workshopattendees_partial_update'];
+    patch: operations["workshopattendees_partial_update"];
   };
-  '/workshops/': {
+  "/workshops/": {
     /** @description API endpoint that allows workshops to be viewed ot edited. */
-    get: operations['workshops_list'];
+    get: operations["workshops_list"];
     /** @description API endpoint that allows workshops to be viewed ot edited. */
-    post: operations['workshops_create'];
+    post: operations["workshops_create"];
   };
-  '/workshops/{id}/': {
+  "/workshops/{id}/": {
     /** @description API endpoint that allows workshops to be viewed ot edited. */
-    get: operations['workshops_retrieve'];
+    get: operations["workshops_retrieve"];
     /** @description API endpoint that allows workshops to be viewed ot edited. */
-    put: operations['workshops_update'];
+    put: operations["workshops_update"];
     /** @description API endpoint that allows workshops to be viewed ot edited. */
-    delete: operations['workshops_destroy'];
+    delete: operations["workshops_destroy"];
     /** @description API endpoint that allows workshops to be viewed ot edited. */
-    patch: operations['workshops_partial_update'];
+    patch: operations["workshops_partial_update"];
   };
 }
 
@@ -316,25 +333,26 @@ export interface components {
      * * `H` - I prefer not to say
      * @enum {string}
      */
-    AgeGroupEnum: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H';
+    AgeGroupEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
     Application: {
       /** Format: uuid */
       id: string;
-      gender_identity: components['schemas']['GenderIdentityEnum'][];
-      nationality: components['schemas']['NationalityEnum'][];
-      current_country: components['schemas']['CurrentCountryEnum'][];
-      race_ethnic_group: components['schemas']['RaceEthnicGroupEnum'][];
-      disabilities: components['schemas']['DisabilitiesEnum'][];
-      previous_participation: components['schemas']['PreviousParticipationEnum'][];
-      heard_about_us: components['schemas']['HeardAboutUsEnum'][];
-      digital_designer_skills: components['schemas']['DigitalDesignerSkillsEnum'][];
-      industry: components['schemas']['IndustryEnum'][];
+      gender_identity: components["schemas"]["GenderIdentityEnum"][];
+      nationality: components["schemas"]["UsVisaSupportCitizenshipEnum"][];
+      current_country: components["schemas"]["UsVisaSupportCitizenshipEnum"][];
+      race_ethnic_group: components["schemas"]["RaceEthnicGroupEnum"][];
+      disabilities: components["schemas"]["DisabilitiesEnum"][];
+      previous_participation: components["schemas"]["PreviousParticipationEnum"][];
+      heard_about_us: components["schemas"]["HeardAboutUsEnum"][];
+      digital_designer_skills: components["schemas"]["DigitalDesignerSkillsEnum"][];
+      industry: components["schemas"]["IndustryEnum"][];
       first_name: string;
       middle_name?: string | null;
       last_name: string;
-      current_city: string;
+      participation_class?: components["schemas"]["ApplicationParticipationClassEnum"];
+      current_city?: string | null;
       pronouns?: string | null;
-      age_group?: components['schemas']['AgeGroupEnum'];
+      age_group?: components["schemas"]["AgeGroupEnum"] | components["schemas"]["NullEnum"] | null;
       /** Format: email */
       email: string;
       event_year?: number;
@@ -344,26 +362,23 @@ export interface components {
       secondary_portfolio?: string | null;
       gender_identity_other?: string | null;
       race_ethnic_group_other?: string | null;
-      disability_identity?: components['schemas']['DisabilityIdentityEnum'];
+      disability_identity?: components["schemas"]["DisabilityIdentityEnum"] | components["schemas"]["NullEnum"] | null;
       disabilities_other?: string | null;
       disability_accommodations?: string | null;
-      participation_capacity?: components['schemas']['ParticipationCapacityEnum'];
+      participation_capacity?: components["schemas"]["ParticipationCapacityEnum"] | components["schemas"]["NullEnum"] | null;
       student_school?: string | null;
       student_field_of_study?: string | null;
       occupation?: string | null;
       employer?: string | null;
       industry_other?: string | null;
       specialized_expertise?: string | null;
-      status?:
-        | components['schemas']['StatusEnum']
-        | components['schemas']['NullEnum']
-        | null;
-      previously_participated?: boolean;
-      participation_role?: components['schemas']['ParticipationRoleEnum'];
+      status?: components["schemas"]["StatusEnum"] | components["schemas"]["NullEnum"] | null;
+      previously_participated?: boolean | null;
+      participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
       experience_with_xr?: string | null;
       theme_essay?: string | null;
       theme_essay_follow_up?: string | null;
-      hardware_hack_interest?: components['schemas']['HardwareHackInterestEnum'];
+      hardware_hack_interest?: components["schemas"]["HardwareHackInterestEnum"];
       heard_about_us_other?: string | null;
       digital_designer_skills_other?: string | null;
       communications_platform_username?: string | null;
@@ -372,534 +387,156 @@ export interface components {
       submitted_at: string;
       /** Format: date-time */
       updated_at: string;
+      mentor_qualified_fields?: string | null;
+      mentor_mentoring_steps?: string | null;
+      mentor_previously_mentored?: boolean | null;
+      judge_judging_steps?: string | null;
+      judge_invited_by?: string | null;
+      judge_previously_judged?: boolean | null;
+      /** Format: date-time */
+      rsvp_email_sent_at?: string | null;
       /** Format: uuid */
-      resume: string;
+      resume?: string | null;
     };
+    /**
+     * @description * `P` - Participant
+     * * `M` - Mentor
+     * * `J` - Judge
+     * @enum {string}
+     */
+    ApplicationParticipationClassEnum: "P" | "M" | "J";
     Attendee: {
       /** Format: uuid */
       id: string;
       first_name?: string;
       last_name?: string;
-      /** @description The groups this user belongs to. A user will get all permissions granted to each of their groups. */
-      groups?: number[];
-      /** @description Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
-      username: string;
+      /** @description I.e., a Discord username */
+      communications_platform_username?: string | null;
       /** Format: email */
       email: string;
-      /**
-       * Staff status
-       * @description Designates whether the user can log into this admin site.
-       */
-      is_staff?: boolean;
-      /** Format: uuid */
-      application?: string | null;
+      sponsor_company?: string | null;
+      participation_class?: components["schemas"]["ParticipationClass898Enum"];
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
       updated_at: string;
     };
+    AttendeeRSVP: {
+      /** Format: uuid */
+      id: string;
+      first_name?: string;
+      last_name?: string;
+      /** Format: uuid */
+      application?: string | null;
+      bio?: string;
+      /** Format: email */
+      email: string;
+      shirt_size?: components["schemas"]["ShirtSizeEnum"] | components["schemas"]["NullEnum"] | null;
+      /** @description I.e., a Discord username */
+      communications_platform_username?: string | null;
+      dietary_restrictions: components["schemas"]["DietaryRestrictionsEnum"][];
+      dietary_restrictions_other?: string | null;
+      dietary_allergies: components["schemas"]["DietaryAllergiesEnum"][];
+      dietary_allergies_other?: string | null;
+      additional_accommodations?: string | null;
+      us_visa_support_is_required: boolean;
+      us_visa_letter_of_invitation_required?: boolean | null;
+      us_visa_support_full_name?: string | null;
+      us_visa_support_document_number?: string | null;
+      us_visa_support_national_identification_document_type?: components["schemas"]["UsVisaSupportNationalIdentificationDocumentTypeEnum"] | components["schemas"]["NullEnum"] | null;
+      us_visa_support_citizenship?: components["schemas"]["UsVisaSupportCitizenshipEnum"] | components["schemas"]["NullEnum"] | null;
+      us_visa_support_address?: string | null;
+      /** @description Will you be under 18 on January 25, 2024 */
+      under_18_by_date: boolean;
+      parental_consent_form_signed?: boolean | null;
+      agree_to_media_release?: boolean;
+      agree_to_liability_release?: boolean;
+      agree_to_rules_code_of_conduct?: boolean;
+      emergency_contact_name: string;
+      personal_phone_number: string;
+      emergency_contact_phone_number: string;
+      /** Format: email */
+      emergency_contact_email: string;
+      emergency_contact_relationship: string;
+      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
+      app_in_store?: string | null;
+      currently_build_for_xr?: string | null;
+      currently_use_xr?: string | null;
+      non_xr_talents?: string | null;
+      ar_vr_ap_in_store?: string | null;
+      reality_hack_project_to_product?: boolean;
+      identify_as_native_american?: boolean;
+      participation_class?: components["schemas"]["ParticipationClass898Enum"];
+      sponsor_company?: string | null;
+    };
+    AttendeeRSVPCreate: {
+      /** Format: uuid */
+      application?: string | null;
+      bio?: string;
+      /** Format: email */
+      email: string;
+      shirt_size?: components["schemas"]["ShirtSizeEnum"] | components["schemas"]["NullEnum"] | null;
+      /** @description I.e., a Discord username */
+      communications_platform_username?: string | null;
+      dietary_restrictions: components["schemas"]["DietaryRestrictionsEnum"][];
+      dietary_restrictions_other?: string | null;
+      dietary_allergies: components["schemas"]["DietaryAllergiesEnum"][];
+      dietary_allergies_other?: string | null;
+      additional_accommodations?: string | null;
+      us_visa_support_is_required: boolean;
+      us_visa_letter_of_invitation_required?: boolean | null;
+      us_visa_support_full_name?: string | null;
+      us_visa_support_document_number?: string | null;
+      us_visa_support_national_identification_document_type?: components["schemas"]["UsVisaSupportNationalIdentificationDocumentTypeEnum"] | components["schemas"]["NullEnum"] | null;
+      us_visa_support_citizenship?: components["schemas"]["UsVisaSupportCitizenshipEnum"] | components["schemas"]["NullEnum"] | null;
+      us_visa_support_address?: string | null;
+      /** @description Will you be under 18 on January 25, 2024 */
+      under_18_by_date: boolean;
+      parental_consent_form_signed?: boolean | null;
+      agree_to_media_release?: boolean;
+      agree_to_liability_release?: boolean;
+      agree_to_rules_code_of_conduct?: boolean;
+      emergency_contact_name: string;
+      personal_phone_number: string;
+      emergency_contact_phone_number: string;
+      /** Format: email */
+      emergency_contact_email: string;
+      emergency_contact_relationship: string;
+      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
+      app_in_store?: string | null;
+      currently_build_for_xr?: string | null;
+      currently_use_xr?: string | null;
+      non_xr_talents?: string | null;
+      ar_vr_ap_in_store?: string | null;
+      reality_hack_project_to_product?: boolean;
+      identify_as_native_american?: boolean;
+      participation_class?: components["schemas"]["ParticipationClass898Enum"];
+      sponsor_company?: string | null;
+    };
     /**
-     * @description * `AW` - Aruba
-     * * `AF` - Afghanistan
-     * * `AO` - Angola
-     * * `AI` - Anguilla
-     * * `AX` - Åland Islands
-     * * `AL` - Albania
-     * * `AD` - Andorra
-     * * `AE` - United Arab Emirates
-     * * `AR` - Argentina
-     * * `AM` - Armenia
-     * * `AS` - American Samoa
-     * * `AQ` - Antarctica
-     * * `TF` - French Southern Territories
-     * * `AG` - Antigua and Barbuda
-     * * `AU` - Australia
-     * * `AT` - Austria
-     * * `AZ` - Azerbaijan
-     * * `BI` - Burundi
-     * * `BE` - Belgium
-     * * `BJ` - Benin
-     * * `BQ` - Bonaire, Sint Eustatius and Saba
-     * * `BF` - Burkina Faso
-     * * `BD` - Bangladesh
-     * * `BG` - Bulgaria
-     * * `BH` - Bahrain
-     * * `BS` - Bahamas
-     * * `BA` - Bosnia and Herzegovina
-     * * `BL` - Saint Barthélemy
-     * * `BY` - Belarus
-     * * `BZ` - Belize
-     * * `BM` - Bermuda
-     * * `BO` - Bolivia, Plurinational State of
-     * * `BR` - Brazil
-     * * `BB` - Barbados
-     * * `BN` - Brunei Darussalam
-     * * `BT` - Bhutan
-     * * `BV` - Bouvet Island
-     * * `BW` - Botswana
-     * * `CF` - Central African Republic
-     * * `CA` - Canada
-     * * `CC` - Cocos (Keeling) Islands
-     * * `CH` - Switzerland
-     * * `CL` - Chile
-     * * `CN` - China
-     * * `CI` - Côte d'Ivoire
-     * * `CM` - Cameroon
-     * * `CD` - Congo, The Democratic Republic of the
-     * * `CG` - Congo
-     * * `CK` - Cook Islands
-     * * `CO` - Colombia
-     * * `KM` - Comoros
-     * * `CV` - Cabo Verde
-     * * `CR` - Costa Rica
-     * * `CU` - Cuba
-     * * `CW` - Curaçao
-     * * `CX` - Christmas Island
-     * * `KY` - Cayman Islands
-     * * `CY` - Cyprus
-     * * `CZ` - Czechia
-     * * `DE` - Germany
-     * * `DJ` - Djibouti
-     * * `DM` - Dominica
-     * * `DK` - Denmark
-     * * `DO` - Dominican Republic
-     * * `DZ` - Algeria
-     * * `EC` - Ecuador
-     * * `EG` - Egypt
-     * * `ER` - Eritrea
-     * * `EH` - Western Sahara
-     * * `ES` - Spain
-     * * `EE` - Estonia
-     * * `ET` - Ethiopia
-     * * `FI` - Finland
-     * * `FJ` - Fiji
-     * * `FK` - Falkland Islands (Malvinas)
-     * * `FR` - France
-     * * `FO` - Faroe Islands
-     * * `FM` - Micronesia, Federated States of
-     * * `GA` - Gabon
-     * * `GB` - United Kingdom
-     * * `GE` - Georgia
-     * * `GG` - Guernsey
-     * * `GH` - Ghana
-     * * `GI` - Gibraltar
-     * * `GN` - Guinea
-     * * `GP` - Guadeloupe
-     * * `GM` - Gambia
-     * * `GW` - Guinea-Bissau
-     * * `GQ` - Equatorial Guinea
-     * * `GR` - Greece
-     * * `GD` - Grenada
-     * * `GL` - Greenland
-     * * `GT` - Guatemala
-     * * `GF` - French Guiana
-     * * `GU` - Guam
-     * * `GY` - Guyana
-     * * `HK` - Hong Kong
-     * * `HM` - Heard Island and McDonald Islands
-     * * `HN` - Honduras
-     * * `HR` - Croatia
-     * * `HT` - Haiti
-     * * `HU` - Hungary
-     * * `ID` - Indonesia
-     * * `IM` - Isle of Man
-     * * `IN` - India
-     * * `IO` - British Indian Ocean Territory
-     * * `IE` - Ireland
-     * * `IR` - Iran, Islamic Republic of
-     * * `IQ` - Iraq
-     * * `IS` - Iceland
-     * * `IL` - Israel
-     * * `IT` - Italy
-     * * `JM` - Jamaica
-     * * `JE` - Jersey
-     * * `JO` - Jordan
-     * * `JP` - Japan
-     * * `KZ` - Kazakhstan
-     * * `KE` - Kenya
-     * * `KG` - Kyrgyzstan
-     * * `KH` - Cambodia
-     * * `KI` - Kiribati
-     * * `KN` - Saint Kitts and Nevis
-     * * `KR` - Korea, Republic of
-     * * `KW` - Kuwait
-     * * `LA` - Lao People's Democratic Republic
-     * * `LB` - Lebanon
-     * * `LR` - Liberia
-     * * `LY` - Libya
-     * * `LC` - Saint Lucia
-     * * `LI` - Liechtenstein
-     * * `LK` - Sri Lanka
-     * * `LS` - Lesotho
-     * * `LT` - Lithuania
-     * * `LU` - Luxembourg
-     * * `LV` - Latvia
-     * * `MO` - Macao
-     * * `MF` - Saint Martin (French part)
-     * * `MA` - Morocco
-     * * `MC` - Monaco
-     * * `MD` - Moldova, Republic of
-     * * `MG` - Madagascar
-     * * `MV` - Maldives
-     * * `MX` - Mexico
-     * * `MH` - Marshall Islands
-     * * `MK` - North Macedonia
-     * * `ML` - Mali
-     * * `MT` - Malta
-     * * `MM` - Myanmar
-     * * `ME` - Montenegro
-     * * `MN` - Mongolia
-     * * `MP` - Northern Mariana Islands
-     * * `MZ` - Mozambique
-     * * `MR` - Mauritania
-     * * `MS` - Montserrat
-     * * `MQ` - Martinique
-     * * `MU` - Mauritius
-     * * `MW` - Malawi
-     * * `MY` - Malaysia
-     * * `YT` - Mayotte
-     * * `NA` - Namibia
-     * * `NC` - New Caledonia
-     * * `NE` - Niger
-     * * `NF` - Norfolk Island
-     * * `NG` - Nigeria
-     * * `NI` - Nicaragua
-     * * `NU` - Niue
-     * * `NL` - Netherlands
-     * * `NO` - Norway
-     * * `NP` - Nepal
-     * * `NR` - Nauru
-     * * `NZ` - New Zealand
-     * * `OM` - Oman
-     * * `PK` - Pakistan
-     * * `PA` - Panama
-     * * `PN` - Pitcairn
-     * * `PE` - Peru
-     * * `PH` - Philippines
-     * * `PW` - Palau
-     * * `PG` - Papua New Guinea
-     * * `PL` - Poland
-     * * `PR` - Puerto Rico
-     * * `KP` - Korea, Democratic People's Republic of
-     * * `PT` - Portugal
-     * * `PY` - Paraguay
-     * * `PS` - Palestine, State of
-     * * `PF` - French Polynesia
-     * * `QA` - Qatar
-     * * `RE` - Réunion
-     * * `RO` - Romania
-     * * `RU` - Russian Federation
-     * * `RW` - Rwanda
-     * * `SA` - Saudi Arabia
-     * * `SD` - Sudan
-     * * `SN` - Senegal
-     * * `SG` - Singapore
-     * * `GS` - South Georgia and the South Sandwich Islands
-     * * `SH` - Saint Helena, Ascension and Tristan da Cunha
-     * * `SJ` - Svalbard and Jan Mayen
-     * * `SB` - Solomon Islands
-     * * `SL` - Sierra Leone
-     * * `SV` - El Salvador
-     * * `SM` - San Marino
-     * * `SO` - Somalia
-     * * `PM` - Saint Pierre and Miquelon
-     * * `RS` - Serbia
-     * * `SS` - South Sudan
-     * * `ST` - Sao Tome and Principe
-     * * `SR` - Suriname
-     * * `SK` - Slovakia
-     * * `SI` - Slovenia
-     * * `SE` - Sweden
-     * * `SZ` - Eswatini
-     * * `SX` - Sint Maarten (Dutch part)
-     * * `SC` - Seychelles
-     * * `SY` - Syrian Arab Republic
-     * * `TC` - Turks and Caicos Islands
-     * * `TD` - Chad
-     * * `TG` - Togo
-     * * `TH` - Thailand
-     * * `TJ` - Tajikistan
-     * * `TK` - Tokelau
-     * * `TM` - Turkmenistan
-     * * `TL` - Timor-Leste
-     * * `TO` - Tonga
-     * * `TT` - Trinidad and Tobago
-     * * `TN` - Tunisia
-     * * `TR` - Turkey
-     * * `TV` - Tuvalu
-     * * `TW` - Taiwan, Province of China
-     * * `TZ` - Tanzania, United Republic of
-     * * `UG` - Uganda
-     * * `UA` - Ukraine
-     * * `UM` - United States Minor Outlying Islands
-     * * `UY` - Uruguay
-     * * `US` - United States
-     * * `UZ` - Uzbekistan
-     * * `VA` - Holy See (Vatican City State)
-     * * `VC` - Saint Vincent and the Grenadines
-     * * `VE` - Venezuela, Bolivarian Republic of
-     * * `VG` - Virgin Islands, British
-     * * `VI` - Virgin Islands, U.S.
-     * * `VN` - Viet Nam
-     * * `VU` - Vanuatu
-     * * `WF` - Wallis and Futuna
-     * * `WS` - Samoa
-     * * `YE` - Yemen
-     * * `ZA` - South Africa
-     * * `ZM` - Zambia
-     * * `ZW` - Zimbabwe
+     * @description * `1` - Nut allergy
+     * * `2` - Shellfish allergy
+     * * `3` - Dairy allergy
+     * * `4` - Soy allergy
+     * * `5` - Other
      * @enum {string}
      */
-    CurrentCountryEnum:
-      | 'AW'
-      | 'AF'
-      | 'AO'
-      | 'AI'
-      | 'AX'
-      | 'AL'
-      | 'AD'
-      | 'AE'
-      | 'AR'
-      | 'AM'
-      | 'AS'
-      | 'AQ'
-      | 'TF'
-      | 'AG'
-      | 'AU'
-      | 'AT'
-      | 'AZ'
-      | 'BI'
-      | 'BE'
-      | 'BJ'
-      | 'BQ'
-      | 'BF'
-      | 'BD'
-      | 'BG'
-      | 'BH'
-      | 'BS'
-      | 'BA'
-      | 'BL'
-      | 'BY'
-      | 'BZ'
-      | 'BM'
-      | 'BO'
-      | 'BR'
-      | 'BB'
-      | 'BN'
-      | 'BT'
-      | 'BV'
-      | 'BW'
-      | 'CF'
-      | 'CA'
-      | 'CC'
-      | 'CH'
-      | 'CL'
-      | 'CN'
-      | 'CI'
-      | 'CM'
-      | 'CD'
-      | 'CG'
-      | 'CK'
-      | 'CO'
-      | 'KM'
-      | 'CV'
-      | 'CR'
-      | 'CU'
-      | 'CW'
-      | 'CX'
-      | 'KY'
-      | 'CY'
-      | 'CZ'
-      | 'DE'
-      | 'DJ'
-      | 'DM'
-      | 'DK'
-      | 'DO'
-      | 'DZ'
-      | 'EC'
-      | 'EG'
-      | 'ER'
-      | 'EH'
-      | 'ES'
-      | 'EE'
-      | 'ET'
-      | 'FI'
-      | 'FJ'
-      | 'FK'
-      | 'FR'
-      | 'FO'
-      | 'FM'
-      | 'GA'
-      | 'GB'
-      | 'GE'
-      | 'GG'
-      | 'GH'
-      | 'GI'
-      | 'GN'
-      | 'GP'
-      | 'GM'
-      | 'GW'
-      | 'GQ'
-      | 'GR'
-      | 'GD'
-      | 'GL'
-      | 'GT'
-      | 'GF'
-      | 'GU'
-      | 'GY'
-      | 'HK'
-      | 'HM'
-      | 'HN'
-      | 'HR'
-      | 'HT'
-      | 'HU'
-      | 'ID'
-      | 'IM'
-      | 'IN'
-      | 'IO'
-      | 'IE'
-      | 'IR'
-      | 'IQ'
-      | 'IS'
-      | 'IL'
-      | 'IT'
-      | 'JM'
-      | 'JE'
-      | 'JO'
-      | 'JP'
-      | 'KZ'
-      | 'KE'
-      | 'KG'
-      | 'KH'
-      | 'KI'
-      | 'KN'
-      | 'KR'
-      | 'KW'
-      | 'LA'
-      | 'LB'
-      | 'LR'
-      | 'LY'
-      | 'LC'
-      | 'LI'
-      | 'LK'
-      | 'LS'
-      | 'LT'
-      | 'LU'
-      | 'LV'
-      | 'MO'
-      | 'MF'
-      | 'MA'
-      | 'MC'
-      | 'MD'
-      | 'MG'
-      | 'MV'
-      | 'MX'
-      | 'MH'
-      | 'MK'
-      | 'ML'
-      | 'MT'
-      | 'MM'
-      | 'ME'
-      | 'MN'
-      | 'MP'
-      | 'MZ'
-      | 'MR'
-      | 'MS'
-      | 'MQ'
-      | 'MU'
-      | 'MW'
-      | 'MY'
-      | 'YT'
-      | 'NA'
-      | 'NC'
-      | 'NE'
-      | 'NF'
-      | 'NG'
-      | 'NI'
-      | 'NU'
-      | 'NL'
-      | 'NO'
-      | 'NP'
-      | 'NR'
-      | 'NZ'
-      | 'OM'
-      | 'PK'
-      | 'PA'
-      | 'PN'
-      | 'PE'
-      | 'PH'
-      | 'PW'
-      | 'PG'
-      | 'PL'
-      | 'PR'
-      | 'KP'
-      | 'PT'
-      | 'PY'
-      | 'PS'
-      | 'PF'
-      | 'QA'
-      | 'RE'
-      | 'RO'
-      | 'RU'
-      | 'RW'
-      | 'SA'
-      | 'SD'
-      | 'SN'
-      | 'SG'
-      | 'GS'
-      | 'SH'
-      | 'SJ'
-      | 'SB'
-      | 'SL'
-      | 'SV'
-      | 'SM'
-      | 'SO'
-      | 'PM'
-      | 'RS'
-      | 'SS'
-      | 'ST'
-      | 'SR'
-      | 'SK'
-      | 'SI'
-      | 'SE'
-      | 'SZ'
-      | 'SX'
-      | 'SC'
-      | 'SY'
-      | 'TC'
-      | 'TD'
-      | 'TG'
-      | 'TH'
-      | 'TJ'
-      | 'TK'
-      | 'TM'
-      | 'TL'
-      | 'TO'
-      | 'TT'
-      | 'TN'
-      | 'TR'
-      | 'TV'
-      | 'TW'
-      | 'TZ'
-      | 'UG'
-      | 'UA'
-      | 'UM'
-      | 'UY'
-      | 'US'
-      | 'UZ'
-      | 'VA'
-      | 'VC'
-      | 'VE'
-      | 'VG'
-      | 'VI'
-      | 'VN'
-      | 'VU'
-      | 'WF'
-      | 'WS'
-      | 'YE'
-      | 'ZA'
-      | 'ZM'
-      | 'ZW';
+    DietaryAllergiesEnum: "1" | "2" | "3" | "4" | "5";
+    /**
+     * @description * `1` - Vegetarian
+     * * `2` - Vegan
+     * * `3` - Gluten free
+     * * `4` - Halal
+     * * `5` - Lactose Intolerant
+     * * `6` - Kosher
+     * * `7` - Other
+     * @enum {string}
+     */
+    DietaryRestrictionsEnum: "1" | "2" | "3" | "4" | "5" | "6" | "7";
     /**
      * @description * `A` - Digital Art
      * * `B` - Animation
@@ -909,7 +546,7 @@ export interface components {
      * * `F` - Other
      * @enum {string}
      */
-    DigitalDesignerSkillsEnum: 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+    DigitalDesignerSkillsEnum: "A" | "B" | "C" | "D" | "E" | "F";
     /**
      * @description * `A` - Hearing difficulty - Deaf or having serious difficulty hearing (DEAR).
      * * `B` - Vision difficulty - Blind or having serious difficulty seeing, even when wearing glasses (DEYE).
@@ -921,14 +558,14 @@ export interface components {
      * * `O` - Other
      * @enum {string}
      */
-    DisabilitiesEnum: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'O';
+    DisabilitiesEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "O";
     /**
      * @description * `A` - Yes
      * * `B` - No
      * * `C` - I prefer not to say
      * @enum {string}
      */
-    DisabilityIdentityEnum: 'A' | 'B' | 'C';
+    DisabilityIdentityEnum: "A" | "B" | "C";
     FileUpload: {
       /** Format: uuid */
       id: string;
@@ -949,7 +586,7 @@ export interface components {
      * * `O` - Other
      * @enum {string}
      */
-    GenderIdentityEnum: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'O';
+    GenderIdentityEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "O";
     GroupDetail: {
       id: number;
       name: string;
@@ -983,9 +620,9 @@ export interface components {
     HardwareDeviceDetail: {
       /** Format: uuid */
       id: string;
-      hardware: components['schemas']['HardwareDeviceHardware'];
+      hardware: components["schemas"]["HardwareDeviceHardware"];
       serial: string;
-      checked_out_to: components['schemas']['Attendee'];
+      checked_out_to: components["schemas"]["Attendee"];
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
@@ -1017,7 +654,7 @@ export interface components {
      * * `D` - 100%; I want to join
      * @enum {string}
      */
-    HardwareHackInterestEnum: 'A' | 'B' | 'C' | 'D';
+    HardwareHackInterestEnum: "A" | "B" | "C" | "D";
     /**
      * @description * `F` - A friend
      * * `V` - A Reality Hack organizer or volunteer
@@ -1028,7 +665,7 @@ export interface components {
      * * `O` - Other
      * @enum {string}
      */
-    HeardAboutUsEnum: 'F' | 'V' | 'N' | 'S' | 'C' | 'P' | 'O';
+    HeardAboutUsEnum: "F" | "V" | "N" | "S" | "C" | "P" | "O";
     /**
      * @description * `Industry` - Industry
      * * `Accounting ` - Accounting
@@ -1180,164 +817,512 @@ export interface components {
      * * `Other` - Other
      * @enum {string}
      */
-    IndustryEnum:
-      | 'Industry'
-      | 'Accounting '
-      | 'Airlines/Aviation'
-      | 'Alternative Dispute Resolution'
-      | 'Alternative Medicine'
-      | 'Animation'
-      | 'Apparel/Fashion'
-      | 'Architecture/Planning'
-      | 'Arts/Crafts'
-      | 'Automotive'
-      | 'Aviation/Aerospace'
-      | 'Banking/Mortgage'
-      | 'Biotechnology/Greentech'
-      | 'Broadcast Media'
-      | 'Building Materials'
-      | 'Business Supplies/Equipment'
-      | 'Capital Markets/Hedge Fund/Private Equity'
-      | 'Chemicals'
-      | 'Civic/Social Organization'
-      | 'Civil Engineering'
-      | 'Commercial Real Estate'
-      | 'Computer Games'
-      | 'Computer Hardware'
-      | 'Computer Networking'
-      | 'Computer Software/Engineering'
-      | 'Computer/Network Security'
-      | 'Construction'
-      | 'Consumer Electronics'
-      | 'Consumer Goods'
-      | 'Consumer Services'
-      | 'Cosmetics'
-      | 'Dairy'
-      | 'Defense/Space'
-      | 'Design'
-      | 'E-Learning'
-      | 'Education Management'
-      | 'Electrical/Electronic Manufacturing'
-      | 'Entertainment/Movie Production'
-      | 'Environmental Services'
-      | 'Events Services'
-      | 'Executive Office'
-      | 'Facilities Services'
-      | 'Farming'
-      | 'Financial Services'
-      | 'Fine Art'
-      | 'Fishery'
-      | 'Food Production'
-      | 'Food/Beverages'
-      | 'Fundraising'
-      | 'Furniture'
-      | 'Gambling/Casinos'
-      | 'Glass/Ceramics/Concrete'
-      | 'Government Administration'
-      | 'Government Relations'
-      | 'Graphic Design/Web Design'
-      | 'Health/Fitness'
-      | 'Higher Education/Acadamia'
-      | 'Hospital/Health Care'
-      | 'Hospitality'
-      | 'Human Resources/HR'
-      | 'Import/Export'
-      | 'Individual/Family Services'
-      | 'Industrial Automation'
-      | 'Information Services'
-      | 'Information Technology/IT'
-      | 'Insurance'
-      | 'International Affairs'
-      | 'International Trade/Development'
-      | 'Internet'
-      | 'Investment Banking/Venture'
-      | 'Investment Management/Hedge Fund/Private Equity'
-      | 'Judiciary'
-      | 'Law Enforcement'
-      | 'Law Practice/Law Firms'
-      | 'Legal Services'
-      | 'Legislative Office'
-      | 'Leisure/Travel'
-      | 'Library'
-      | 'Logistics/Procurement'
-      | 'Luxury Goods/Jewelry'
-      | 'Machinery'
-      | 'Management Consulting'
-      | 'Maritime'
-      | 'Market Research'
-      | 'Marketing/Advertising/Sales'
-      | 'Mechanical or Industrial Engineering'
-      | 'Media Production'
-      | 'Medical Equipment'
-      | 'Medical Practice'
-      | 'Mental Health Care'
-      | 'Military Industry'
-      | 'Mining/Metals'
-      | 'Motion Pictures/Film'
-      | 'Museums/Institutions'
-      | 'Music'
-      | 'Nanotechnology'
-      | 'Newspapers/Journalism'
-      | 'Non-Profit/Volunteering'
-      | 'Oil/Energy/Solar/Greentech'
-      | 'Online Publishing'
-      | 'Outsourcing/Offshoring'
-      | 'Package/Freight Delivery'
-      | 'Packaging/Containers'
-      | 'Paper/Forest Products'
-      | 'Performing Arts'
-      | 'Pharmaceuticals'
-      | 'Philanthropy'
-      | 'Photography'
-      | 'Plastics'
-      | 'Political Organization'
-      | 'Primary/Secondary Education'
-      | 'Printing'
-      | 'Professional Training'
-      | 'Program Development'
-      | 'Public Relations/PR'
-      | 'Public Safety'
-      | 'Publishing Industry'
-      | 'Railroad Manufacture'
-      | 'Ranching'
-      | 'Real Estate/Mortgage'
-      | 'Recreational Facilities/Services'
-      | 'Religious Institutions'
-      | 'Renewables/Environment'
-      | 'Research Industry'
-      | 'Restaurants'
-      | 'Retail Industry'
-      | 'Security/Investigations'
-      | 'Semiconductors'
-      | 'Shipbuilding'
-      | 'Sporting Goods'
-      | 'Sports'
-      | 'Staffing/Recruiting'
-      | 'Supermarkets'
-      | 'Telecommunications'
-      | 'Textiles'
-      | 'Think Tanks'
-      | 'Tobacco'
-      | 'Translation/Localization'
-      | 'Transportation'
-      | 'Utilities'
-      | 'Venture Capital/VC'
-      | 'Veterinary'
-      | 'Warehousing'
-      | 'Wholesale'
-      | 'Wine/Spirits'
-      | 'Wireless'
-      | 'Writing/Editing'
-      | 'Other';
+    IndustryEnum: "Industry" | "Accounting " | "Airlines/Aviation" | "Alternative Dispute Resolution" | "Alternative Medicine" | "Animation" | "Apparel/Fashion" | "Architecture/Planning" | "Arts/Crafts" | "Automotive" | "Aviation/Aerospace" | "Banking/Mortgage" | "Biotechnology/Greentech" | "Broadcast Media" | "Building Materials" | "Business Supplies/Equipment" | "Capital Markets/Hedge Fund/Private Equity" | "Chemicals" | "Civic/Social Organization" | "Civil Engineering" | "Commercial Real Estate" | "Computer Games" | "Computer Hardware" | "Computer Networking" | "Computer Software/Engineering" | "Computer/Network Security" | "Construction" | "Consumer Electronics" | "Consumer Goods" | "Consumer Services" | "Cosmetics" | "Dairy" | "Defense/Space" | "Design" | "E-Learning" | "Education Management" | "Electrical/Electronic Manufacturing" | "Entertainment/Movie Production" | "Environmental Services" | "Events Services" | "Executive Office" | "Facilities Services" | "Farming" | "Financial Services" | "Fine Art" | "Fishery" | "Food Production" | "Food/Beverages" | "Fundraising" | "Furniture" | "Gambling/Casinos" | "Glass/Ceramics/Concrete" | "Government Administration" | "Government Relations" | "Graphic Design/Web Design" | "Health/Fitness" | "Higher Education/Acadamia" | "Hospital/Health Care" | "Hospitality" | "Human Resources/HR" | "Import/Export" | "Individual/Family Services" | "Industrial Automation" | "Information Services" | "Information Technology/IT" | "Insurance" | "International Affairs" | "International Trade/Development" | "Internet" | "Investment Banking/Venture" | "Investment Management/Hedge Fund/Private Equity" | "Judiciary" | "Law Enforcement" | "Law Practice/Law Firms" | "Legal Services" | "Legislative Office" | "Leisure/Travel" | "Library" | "Logistics/Procurement" | "Luxury Goods/Jewelry" | "Machinery" | "Management Consulting" | "Maritime" | "Market Research" | "Marketing/Advertising/Sales" | "Mechanical or Industrial Engineering" | "Media Production" | "Medical Equipment" | "Medical Practice" | "Mental Health Care" | "Military Industry" | "Mining/Metals" | "Motion Pictures/Film" | "Museums/Institutions" | "Music" | "Nanotechnology" | "Newspapers/Journalism" | "Non-Profit/Volunteering" | "Oil/Energy/Solar/Greentech" | "Online Publishing" | "Outsourcing/Offshoring" | "Package/Freight Delivery" | "Packaging/Containers" | "Paper/Forest Products" | "Performing Arts" | "Pharmaceuticals" | "Philanthropy" | "Photography" | "Plastics" | "Political Organization" | "Primary/Secondary Education" | "Printing" | "Professional Training" | "Program Development" | "Public Relations/PR" | "Public Safety" | "Publishing Industry" | "Railroad Manufacture" | "Ranching" | "Real Estate/Mortgage" | "Recreational Facilities/Services" | "Religious Institutions" | "Renewables/Environment" | "Research Industry" | "Restaurants" | "Retail Industry" | "Security/Investigations" | "Semiconductors" | "Shipbuilding" | "Sporting Goods" | "Sports" | "Staffing/Recruiting" | "Supermarkets" | "Telecommunications" | "Textiles" | "Think Tanks" | "Tobacco" | "Translation/Localization" | "Transportation" | "Utilities" | "Venture Capital/VC" | "Veterinary" | "Warehousing" | "Wholesale" | "Wine/Spirits" | "Wireless" | "Writing/Editing" | "Other";
     Location: {
       /** Format: uuid */
       id: string;
       building: string;
-      room?: components['schemas']['RoomEnum'];
+      room?: components["schemas"]["RoomEnum"];
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
       updated_at: string;
+    };
+    /** @enum {unknown} */
+    NullEnum: "";
+    /**
+     * @description * `S` - Student
+     * * `P` - Professional
+     * * `H` - Hobbyist
+     * @enum {string}
+     */
+    ParticipationCapacityEnum: "S" | "P" | "H";
+    /**
+     * @description * `P` - Participant
+     * * `M` - Mentor
+     * * `J` - Judge
+     * * `S` - Sponsor
+     * @enum {string}
+     */
+    ParticipationClass898Enum: "P" | "M" | "J" | "S";
+    /**
+     * @description * `R` - RSVP'd
+     * * `C` - Confirmed
+     * * `I` - Instructor
+     * * `V` - Volunteer
+     * @enum {string}
+     */
+    ParticipationEnum: "R" | "C" | "I" | "V";
+    /**
+     * @description * `A` - Digital Designer
+     * * `D` - Developer
+     * * `S` - Domain or other Specialized Skill Expert
+     * * `P` - Project Manager
+     * @enum {string}
+     */
+    ParticipationRoleEnum: "A" | "D" | "S" | "P";
+    PatchedApplication: {
+      /** Format: uuid */
+      id?: string;
+      gender_identity?: components["schemas"]["GenderIdentityEnum"][];
+      nationality?: components["schemas"]["UsVisaSupportCitizenshipEnum"][];
+      current_country?: components["schemas"]["UsVisaSupportCitizenshipEnum"][];
+      race_ethnic_group?: components["schemas"]["RaceEthnicGroupEnum"][];
+      disabilities?: components["schemas"]["DisabilitiesEnum"][];
+      previous_participation?: components["schemas"]["PreviousParticipationEnum"][];
+      heard_about_us?: components["schemas"]["HeardAboutUsEnum"][];
+      digital_designer_skills?: components["schemas"]["DigitalDesignerSkillsEnum"][];
+      industry?: components["schemas"]["IndustryEnum"][];
+      first_name?: string;
+      middle_name?: string | null;
+      last_name?: string;
+      participation_class?: components["schemas"]["ApplicationParticipationClassEnum"];
+      current_city?: string | null;
+      pronouns?: string | null;
+      age_group?: components["schemas"]["AgeGroupEnum"] | components["schemas"]["NullEnum"] | null;
+      /** Format: email */
+      email?: string;
+      event_year?: number;
+      /** Format: uri */
+      portfolio?: string | null;
+      /** Format: uri */
+      secondary_portfolio?: string | null;
+      gender_identity_other?: string | null;
+      race_ethnic_group_other?: string | null;
+      disability_identity?: components["schemas"]["DisabilityIdentityEnum"] | components["schemas"]["NullEnum"] | null;
+      disabilities_other?: string | null;
+      disability_accommodations?: string | null;
+      participation_capacity?: components["schemas"]["ParticipationCapacityEnum"] | components["schemas"]["NullEnum"] | null;
+      student_school?: string | null;
+      student_field_of_study?: string | null;
+      occupation?: string | null;
+      employer?: string | null;
+      industry_other?: string | null;
+      specialized_expertise?: string | null;
+      status?: components["schemas"]["StatusEnum"] | components["schemas"]["NullEnum"] | null;
+      previously_participated?: boolean | null;
+      participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
+      experience_with_xr?: string | null;
+      theme_essay?: string | null;
+      theme_essay_follow_up?: string | null;
+      hardware_hack_interest?: components["schemas"]["HardwareHackInterestEnum"];
+      heard_about_us_other?: string | null;
+      digital_designer_skills_other?: string | null;
+      communications_platform_username?: string | null;
+      outreach_groups?: string | null;
+      /** Format: date-time */
+      submitted_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+      mentor_qualified_fields?: string | null;
+      mentor_mentoring_steps?: string | null;
+      mentor_previously_mentored?: boolean | null;
+      judge_judging_steps?: string | null;
+      judge_invited_by?: string | null;
+      judge_previously_judged?: boolean | null;
+      /** Format: date-time */
+      rsvp_email_sent_at?: string | null;
+      /** Format: uuid */
+      resume?: string | null;
+    };
+    PatchedAttendee: {
+      /** Format: uuid */
+      id?: string;
+      first_name?: string;
+      last_name?: string;
+      /** @description I.e., a Discord username */
+      communications_platform_username?: string | null;
+      /** Format: email */
+      email?: string;
+      sponsor_company?: string | null;
+      participation_class?: components["schemas"]["ParticipationClass898Enum"];
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+    };
+    PatchedAttendeeRSVP: {
+      /** Format: uuid */
+      id?: string;
+      first_name?: string;
+      last_name?: string;
+      /** Format: uuid */
+      application?: string | null;
+      bio?: string;
+      /** Format: email */
+      email?: string;
+      shirt_size?: components["schemas"]["ShirtSizeEnum"] | components["schemas"]["NullEnum"] | null;
+      /** @description I.e., a Discord username */
+      communications_platform_username?: string | null;
+      dietary_restrictions?: components["schemas"]["DietaryRestrictionsEnum"][];
+      dietary_restrictions_other?: string | null;
+      dietary_allergies?: components["schemas"]["DietaryAllergiesEnum"][];
+      dietary_allergies_other?: string | null;
+      additional_accommodations?: string | null;
+      us_visa_support_is_required?: boolean;
+      us_visa_letter_of_invitation_required?: boolean | null;
+      us_visa_support_full_name?: string | null;
+      us_visa_support_document_number?: string | null;
+      us_visa_support_national_identification_document_type?: components["schemas"]["UsVisaSupportNationalIdentificationDocumentTypeEnum"] | components["schemas"]["NullEnum"] | null;
+      us_visa_support_citizenship?: components["schemas"]["UsVisaSupportCitizenshipEnum"] | components["schemas"]["NullEnum"] | null;
+      us_visa_support_address?: string | null;
+      /** @description Will you be under 18 on January 25, 2024 */
+      under_18_by_date?: boolean;
+      parental_consent_form_signed?: boolean | null;
+      agree_to_media_release?: boolean;
+      agree_to_liability_release?: boolean;
+      agree_to_rules_code_of_conduct?: boolean;
+      emergency_contact_name?: string;
+      personal_phone_number?: string;
+      emergency_contact_phone_number?: string;
+      /** Format: email */
+      emergency_contact_email?: string;
+      emergency_contact_relationship?: string;
+      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
+      app_in_store?: string | null;
+      currently_build_for_xr?: string | null;
+      currently_use_xr?: string | null;
+      non_xr_talents?: string | null;
+      ar_vr_ap_in_store?: string | null;
+      reality_hack_project_to_product?: boolean;
+      identify_as_native_american?: boolean;
+      participation_class?: components["schemas"]["ParticipationClass898Enum"];
+      sponsor_company?: string | null;
+    };
+    PatchedFileUpload: {
+      /** Format: uuid */
+      id?: string;
+      /** Format: uri */
+      file?: string;
+      claimed?: boolean;
+      /** Format: date-time */
+      created_at?: string;
+    };
+    PatchedGroupDetail: {
+      id?: number;
+      name?: string;
+      permissions?: number[];
+    };
+    PatchedHardware: {
+      /** Format: uuid */
+      id?: string;
+      name?: string;
+      description?: string;
+      /** Format: uri */
+      image?: string;
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+    };
+    PatchedHardwareDevice: {
+      /** Format: uuid */
+      id?: string;
+      /** Format: uuid */
+      hardware?: string;
+      serial?: string;
+      /** Format: uuid */
+      checked_out_to?: string | null;
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+    };
+    PatchedHardwareDeviceHistory: {
+      history_id?: number;
+      /** Format: uuid */
+      id?: string;
+      /** Format: uuid */
+      hardware?: string | null;
+      serial?: string;
+      /** Format: uuid */
+      checked_out_to?: string | null;
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+    };
+    PatchedLocation: {
+      /** Format: uuid */
+      id?: string;
+      building?: string;
+      room?: components["schemas"]["RoomEnum"];
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+    };
+    PatchedProject: {
+      /** Format: uuid */
+      id?: string;
+      name?: string;
+      /** Format: uri */
+      repository_location?: string;
+      /** Format: uri */
+      submission_location?: string;
+      /** Format: uuid */
+      team?: string | null;
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+    };
+    PatchedSkill: {
+      /** Format: uuid */
+      id?: string;
+      name?: string;
+    };
+    PatchedSkillProficiencyCreate: {
+      /** Format: uuid */
+      id?: string;
+      /** Format: uuid */
+      skill?: string;
+      proficiency?: components["schemas"]["ProficiencyEnum"];
+      /** Format: uuid */
+      attendee?: string | null;
+    };
+    PatchedTable: {
+      /** Format: uuid */
+      id?: string;
+      /** Format: int64 */
+      number?: number;
+      /** Format: uuid */
+      location?: string;
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+    };
+    PatchedTeam: {
+      /** Format: uuid */
+      id?: string;
+      name?: string;
+      attendees?: string[];
+      /** Format: uuid */
+      table?: string;
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+    };
+    PatchedWorkshop: {
+      /** Format: uuid */
+      id?: string;
+      recommended_for?: components["schemas"]["RecommendedForEnum"][];
+      name?: string;
+      /** Format: date-time */
+      datetime?: string | null;
+      duration?: number | null;
+      description?: string | null;
+      /** Format: uri */
+      course_materials?: string | null;
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+      /** Format: uuid */
+      location?: string | null;
+      skills?: string[];
+      hardware?: string[];
+    };
+    PatchedWorkshopAttendee: {
+      /** Format: uuid */
+      id?: string;
+      participation?: components["schemas"]["ParticipationEnum"];
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+      /** Format: uuid */
+      workshop?: string;
+      /** Format: uuid */
+      attendee?: string;
+    };
+    /**
+     * @description * `A` - 2016
+     * * `B` - 2017
+     * * `C` - 2018
+     * * `D` - 2019
+     * * `E` - 2020
+     * * `F` - 2022
+     * * `G` - 2023
+     * @enum {string}
+     */
+    PreviousParticipationEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G";
+    /**
+     * @description * `N` - Novice
+     * * `C` - Competent
+     * * `P` - Proficient
+     * * `M` - Master
+     * @enum {string}
+     */
+    ProficiencyEnum: "N" | "C" | "P" | "M";
+    Project: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      /** Format: uri */
+      repository_location: string;
+      /** Format: uri */
+      submission_location: string;
+      /** Format: uuid */
+      team?: string | null;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    /**
+     * @description * `A` - Asian, Asian American, or of Asian descent
+     * * `B` - Black, African American, or of African descent
+     * * `C` - Hispanic, Latino, Latina, Latinx, or of Latinx or Spanish-speaking descent
+     * * `D` - Middle Eastern, North African, or of North African descent
+     * * `E` - Native American, American Indian, Alaska Native, or Indigenous
+     * * `F` - Pacific Islander or Native Hawaiian
+     * * `G` - White or of European descent
+     * * `H` - Multi-racial or multi-ethnic
+     * * `I` - I prefer not to say
+     * * `O` - Other
+     * @enum {string}
+     */
+    RaceEthnicGroupEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "O";
+    /**
+     * @description * `A` - Digital Designer
+     * * `D` - Developer
+     * * `S` - Domain or other Specialized Skill Expert
+     * * `P` - Project Manager
+     * @enum {string}
+     */
+    RecommendedForEnum: "A" | "D" | "S" | "P";
+    /**
+     * @description * `MH` - Main Hall
+     * * `AT` - Atlantis
+     * @enum {string}
+     */
+    RoomEnum: "MH" | "AT";
+    /**
+     * @description * `1` - XS
+     * * `2` - S
+     * * `3` - M
+     * * `4` - L
+     * * `5` - XL
+     * * `6` - XXL
+     * @enum {string}
+     */
+    ShirtSizeEnum: "1" | "2" | "3" | "4" | "5" | "6";
+    Skill: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+    };
+    SkillProficiency: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      skill: string;
+      proficiency?: components["schemas"]["ProficiencyEnum"];
+      /** Format: uuid */
+      attendee: string | null;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    SkillProficiencyCreate: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      skill: string;
+      proficiency?: components["schemas"]["ProficiencyEnum"];
+      /** Format: uuid */
+      attendee: string | null;
+    };
+    SkillProficiencyDetail: {
+      /** Format: uuid */
+      id: string;
+      skill: components["schemas"]["Skill"];
+      proficiency?: components["schemas"]["ProficiencyEnum"];
+      attendee: components["schemas"]["Attendee"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    /**
+     * @description * `Y` - Yes
+     * * `N` - No
+     * @enum {string}
+     */
+    SpecialTrackFutureConstructorsInterestEnum: "Y" | "N";
+    /**
+     * @description * `Y` - Yes
+     * * `N` - No
+     * @enum {string}
+     */
+    SpecialTrackSnapdragonSpacesInterestEnum: "Y" | "N";
+    /**
+     * @description * `AI` - Accepted, In-Person
+     * * `AO` - Accepted, Online
+     * * `WI` - Wait-list, In-Person
+     * * `WO` - Wait-list, Online
+     * * `D` - Declined
+     * @enum {string}
+     */
+    StatusEnum: "AI" | "AO" | "WI" | "WO" | "D";
+    Table: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int64 */
+      number: number;
+      /** Format: uuid */
+      location: string;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    TableCreate: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int64 */
+      number: number;
+      /** Format: uuid */
+      location: string;
+    };
+    Team: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      attendees: string[];
+      /** Format: uuid */
+      table: string;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    TeamCreate: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      attendees: string[];
+      /** Format: uuid */
+      table: string;
+    };
+    TokenObtainPair: {
+      username: string;
+      password: string;
+      access: string;
+      refresh: string;
+    };
+    TokenRefresh: {
+      access: string;
+      refresh: string;
+    };
+    TokenVerify: {
+      token: string;
     };
     /**
      * @description * `AW` - Aruba
@@ -1591,695 +1576,17 @@ export interface components {
      * * `ZW` - Zimbabwe
      * @enum {string}
      */
-    NationalityEnum:
-      | 'AW'
-      | 'AF'
-      | 'AO'
-      | 'AI'
-      | 'AX'
-      | 'AL'
-      | 'AD'
-      | 'AE'
-      | 'AR'
-      | 'AM'
-      | 'AS'
-      | 'AQ'
-      | 'TF'
-      | 'AG'
-      | 'AU'
-      | 'AT'
-      | 'AZ'
-      | 'BI'
-      | 'BE'
-      | 'BJ'
-      | 'BQ'
-      | 'BF'
-      | 'BD'
-      | 'BG'
-      | 'BH'
-      | 'BS'
-      | 'BA'
-      | 'BL'
-      | 'BY'
-      | 'BZ'
-      | 'BM'
-      | 'BO'
-      | 'BR'
-      | 'BB'
-      | 'BN'
-      | 'BT'
-      | 'BV'
-      | 'BW'
-      | 'CF'
-      | 'CA'
-      | 'CC'
-      | 'CH'
-      | 'CL'
-      | 'CN'
-      | 'CI'
-      | 'CM'
-      | 'CD'
-      | 'CG'
-      | 'CK'
-      | 'CO'
-      | 'KM'
-      | 'CV'
-      | 'CR'
-      | 'CU'
-      | 'CW'
-      | 'CX'
-      | 'KY'
-      | 'CY'
-      | 'CZ'
-      | 'DE'
-      | 'DJ'
-      | 'DM'
-      | 'DK'
-      | 'DO'
-      | 'DZ'
-      | 'EC'
-      | 'EG'
-      | 'ER'
-      | 'EH'
-      | 'ES'
-      | 'EE'
-      | 'ET'
-      | 'FI'
-      | 'FJ'
-      | 'FK'
-      | 'FR'
-      | 'FO'
-      | 'FM'
-      | 'GA'
-      | 'GB'
-      | 'GE'
-      | 'GG'
-      | 'GH'
-      | 'GI'
-      | 'GN'
-      | 'GP'
-      | 'GM'
-      | 'GW'
-      | 'GQ'
-      | 'GR'
-      | 'GD'
-      | 'GL'
-      | 'GT'
-      | 'GF'
-      | 'GU'
-      | 'GY'
-      | 'HK'
-      | 'HM'
-      | 'HN'
-      | 'HR'
-      | 'HT'
-      | 'HU'
-      | 'ID'
-      | 'IM'
-      | 'IN'
-      | 'IO'
-      | 'IE'
-      | 'IR'
-      | 'IQ'
-      | 'IS'
-      | 'IL'
-      | 'IT'
-      | 'JM'
-      | 'JE'
-      | 'JO'
-      | 'JP'
-      | 'KZ'
-      | 'KE'
-      | 'KG'
-      | 'KH'
-      | 'KI'
-      | 'KN'
-      | 'KR'
-      | 'KW'
-      | 'LA'
-      | 'LB'
-      | 'LR'
-      | 'LY'
-      | 'LC'
-      | 'LI'
-      | 'LK'
-      | 'LS'
-      | 'LT'
-      | 'LU'
-      | 'LV'
-      | 'MO'
-      | 'MF'
-      | 'MA'
-      | 'MC'
-      | 'MD'
-      | 'MG'
-      | 'MV'
-      | 'MX'
-      | 'MH'
-      | 'MK'
-      | 'ML'
-      | 'MT'
-      | 'MM'
-      | 'ME'
-      | 'MN'
-      | 'MP'
-      | 'MZ'
-      | 'MR'
-      | 'MS'
-      | 'MQ'
-      | 'MU'
-      | 'MW'
-      | 'MY'
-      | 'YT'
-      | 'NA'
-      | 'NC'
-      | 'NE'
-      | 'NF'
-      | 'NG'
-      | 'NI'
-      | 'NU'
-      | 'NL'
-      | 'NO'
-      | 'NP'
-      | 'NR'
-      | 'NZ'
-      | 'OM'
-      | 'PK'
-      | 'PA'
-      | 'PN'
-      | 'PE'
-      | 'PH'
-      | 'PW'
-      | 'PG'
-      | 'PL'
-      | 'PR'
-      | 'KP'
-      | 'PT'
-      | 'PY'
-      | 'PS'
-      | 'PF'
-      | 'QA'
-      | 'RE'
-      | 'RO'
-      | 'RU'
-      | 'RW'
-      | 'SA'
-      | 'SD'
-      | 'SN'
-      | 'SG'
-      | 'GS'
-      | 'SH'
-      | 'SJ'
-      | 'SB'
-      | 'SL'
-      | 'SV'
-      | 'SM'
-      | 'SO'
-      | 'PM'
-      | 'RS'
-      | 'SS'
-      | 'ST'
-      | 'SR'
-      | 'SK'
-      | 'SI'
-      | 'SE'
-      | 'SZ'
-      | 'SX'
-      | 'SC'
-      | 'SY'
-      | 'TC'
-      | 'TD'
-      | 'TG'
-      | 'TH'
-      | 'TJ'
-      | 'TK'
-      | 'TM'
-      | 'TL'
-      | 'TO'
-      | 'TT'
-      | 'TN'
-      | 'TR'
-      | 'TV'
-      | 'TW'
-      | 'TZ'
-      | 'UG'
-      | 'UA'
-      | 'UM'
-      | 'UY'
-      | 'US'
-      | 'UZ'
-      | 'VA'
-      | 'VC'
-      | 'VE'
-      | 'VG'
-      | 'VI'
-      | 'VN'
-      | 'VU'
-      | 'WF'
-      | 'WS'
-      | 'YE'
-      | 'ZA'
-      | 'ZM'
-      | 'ZW';
-    /** @enum {unknown} */
-    NullEnum: '';
+    UsVisaSupportCitizenshipEnum: "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AQ" | "TF" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BQ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BV" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CG" | "CK" | "CO" | "KM" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HM" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SH" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UM" | "UY" | "US" | "UZ" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
     /**
-     * @description * `S` - Student
-     * * `P` - Professional
-     * * `H` - Hobbyist
+     * @description * `P` - Passport
+     * * `N` - National/State/Municipal ID
      * @enum {string}
      */
-    ParticipationCapacityEnum: 'S' | 'P' | 'H';
-    /**
-     * @description * `R` - RSVP'd
-     * * `C` - Confirmed
-     * * `I` - Instructor
-     * * `V` - Volunteer
-     * @enum {string}
-     */
-    ParticipationEnum: 'R' | 'C' | 'I' | 'V';
-    /**
-     * @description * `A` - Digital Designer
-     * * `D` - Developer
-     * * `S` - Domain or other Specialized Skill Expert
-     * * `P` - Project Manager
-     * @enum {string}
-     */
-    ParticipationRoleEnum: 'A' | 'D' | 'S' | 'P';
-    PatchedApplication: {
-      /** Format: uuid */
-      id?: string;
-      gender_identity?: components['schemas']['GenderIdentityEnum'][];
-      nationality?: components['schemas']['NationalityEnum'][];
-      current_country?: components['schemas']['CurrentCountryEnum'][];
-      race_ethnic_group?: components['schemas']['RaceEthnicGroupEnum'][];
-      disabilities?: components['schemas']['DisabilitiesEnum'][];
-      previous_participation?: components['schemas']['PreviousParticipationEnum'][];
-      heard_about_us?: components['schemas']['HeardAboutUsEnum'][];
-      digital_designer_skills?: components['schemas']['DigitalDesignerSkillsEnum'][];
-      industry?: components['schemas']['IndustryEnum'][];
-      first_name?: string;
-      middle_name?: string | null;
-      last_name?: string;
-      current_city?: string;
-      pronouns?: string | null;
-      age_group?: components['schemas']['AgeGroupEnum'];
-      /** Format: email */
-      email?: string;
-      event_year?: number;
-      /** Format: uri */
-      portfolio?: string | null;
-      /** Format: uri */
-      secondary_portfolio?: string | null;
-      gender_identity_other?: string | null;
-      race_ethnic_group_other?: string | null;
-      disability_identity?: components['schemas']['DisabilityIdentityEnum'];
-      disabilities_other?: string | null;
-      disability_accommodations?: string | null;
-      participation_capacity?: components['schemas']['ParticipationCapacityEnum'];
-      student_school?: string | null;
-      student_field_of_study?: string | null;
-      occupation?: string | null;
-      employer?: string | null;
-      industry_other?: string | null;
-      specialized_expertise?: string | null;
-      status?:
-        | components['schemas']['StatusEnum']
-        | components['schemas']['NullEnum']
-        | null;
-      previously_participated?: boolean;
-      participation_role?: components['schemas']['ParticipationRoleEnum'];
-      experience_with_xr?: string | null;
-      theme_essay?: string | null;
-      theme_essay_follow_up?: string | null;
-      hardware_hack_interest?: components['schemas']['HardwareHackInterestEnum'];
-      heard_about_us_other?: string | null;
-      digital_designer_skills_other?: string | null;
-      communications_platform_username?: string | null;
-      outreach_groups?: string | null;
-      /** Format: date-time */
-      submitted_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-      /** Format: uuid */
-      resume?: string;
-    };
-    PatchedAttendee: {
-      /** Format: uuid */
-      id?: string;
-      first_name?: string;
-      last_name?: string;
-      /** @description The groups this user belongs to. A user will get all permissions granted to each of their groups. */
-      groups?: number[];
-      /** @description Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
-      username?: string;
-      /** Format: email */
-      email?: string;
-      /**
-       * Staff status
-       * @description Designates whether the user can log into this admin site.
-       */
-      is_staff?: boolean;
-      /** Format: uuid */
-      application?: string | null;
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-    };
-    PatchedFileUpload: {
-      /** Format: uuid */
-      id?: string;
-      /** Format: uri */
-      file?: string;
-      claimed?: boolean;
-      /** Format: date-time */
-      created_at?: string;
-    };
-    PatchedGroupDetail: {
-      id?: number;
-      name?: string;
-      permissions?: number[];
-    };
-    PatchedHardware: {
-      /** Format: uuid */
-      id?: string;
-      name?: string;
-      description?: string;
-      /** Format: uri */
-      image?: string;
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-    };
-    PatchedHardwareDevice: {
-      /** Format: uuid */
-      id?: string;
-      /** Format: uuid */
-      hardware?: string;
-      serial?: string;
-      /** Format: uuid */
-      checked_out_to?: string | null;
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-    };
-    PatchedHardwareDeviceHistory: {
-      history_id?: number;
-      /** Format: uuid */
-      id?: string;
-      /** Format: uuid */
-      hardware?: string | null;
-      serial?: string;
-      /** Format: uuid */
-      checked_out_to?: string | null;
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-    };
-    PatchedLocation: {
-      /** Format: uuid */
-      id?: string;
-      building?: string;
-      room?: components['schemas']['RoomEnum'];
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-    };
-    PatchedProject: {
-      /** Format: uuid */
-      id?: string;
-      name?: string;
-      /** Format: uri */
-      repository_location?: string;
-      /** Format: uri */
-      submission_location?: string;
-      /** Format: uuid */
-      team?: string | null;
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-    };
-    PatchedSkill: {
-      /** Format: uuid */
-      id?: string;
-      name?: string;
-    };
-    PatchedSkillProficiencyCreate: {
-      /** Format: uuid */
-      id?: string;
-      /** Format: uuid */
-      skill?: string;
-      proficiency?: components['schemas']['ProficiencyEnum'];
-      /** Format: uuid */
-      attendee?: string | null;
-      /** Format: uuid */
-      application?: string | null;
-    };
-    PatchedTable: {
-      /** Format: uuid */
-      id?: string;
-      /** Format: int64 */
-      number?: number;
-      /** Format: uuid */
-      location?: string;
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-    };
-    PatchedTeam: {
-      /** Format: uuid */
-      id?: string;
-      name?: string;
-      attendees?: string[];
-      /** Format: uuid */
-      table?: string;
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-    };
-    PatchedWorkshop: {
-      /** Format: uuid */
-      id?: string;
-      recommended_for?: components['schemas']['RecommendedForEnum'][];
-      name?: string;
-      /** Format: date-time */
-      datetime?: string | null;
-      duration?: number | null;
-      description?: string | null;
-      /** Format: uri */
-      course_materials?: string | null;
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-      /** Format: uuid */
-      location?: string | null;
-      skills?: string[];
-      hardware?: string[];
-    };
-    PatchedWorkshopAttendee: {
-      /** Format: uuid */
-      id?: string;
-      participation?: components['schemas']['ParticipationEnum'];
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-      /** Format: uuid */
-      workshop?: string;
-      /** Format: uuid */
-      attendee?: string;
-    };
-    /**
-     * @description * `A` - 2016
-     * * `B` - 2017
-     * * `C` - 2018
-     * * `D` - 2019
-     * * `E` - 2020
-     * * `F` - 2022
-     * * `G` - 2023
-     * @enum {string}
-     */
-    PreviousParticipationEnum: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
-    /**
-     * @description * `N` - Novice
-     * * `C` - Competent
-     * * `P` - Proficient
-     * * `M` - Master
-     * @enum {string}
-     */
-    ProficiencyEnum: 'N' | 'C' | 'P' | 'M';
-    Project: {
-      /** Format: uuid */
-      id: string;
-      name: string;
-      /** Format: uri */
-      repository_location: string;
-      /** Format: uri */
-      submission_location: string;
-      /** Format: uuid */
-      team?: string | null;
-      /** Format: date-time */
-      created_at: string;
-      /** Format: date-time */
-      updated_at: string;
-    };
-    /**
-     * @description * `A` - Asian, Asian American, or of Asian descent
-     * * `B` - Black, African American, or of African descent
-     * * `C` - Hispanic, Latino, Latina, Latinx, or of Latinx or Spanish-speaking descent
-     * * `D` - Middle Eastern, North African, or of North African descent
-     * * `E` - Native American, American Indian, Alaska Native, or Indigenous
-     * * `F` - Pacific Islander or Native Hawaiian
-     * * `G` - White or of European descent
-     * * `H` - Multi-racial or multi-ethnic
-     * * `I` - I prefer not to say
-     * * `O` - Other
-     * @enum {string}
-     */
-    RaceEthnicGroupEnum:
-      | 'A'
-      | 'B'
-      | 'C'
-      | 'D'
-      | 'E'
-      | 'F'
-      | 'G'
-      | 'H'
-      | 'I'
-      | 'O';
-    /**
-     * @description * `A` - Digital Designer
-     * * `D` - Developer
-     * * `S` - Domain or other Specialized Skill Expert
-     * * `P` - Project Manager
-     * @enum {string}
-     */
-    RecommendedForEnum: 'A' | 'D' | 'S' | 'P';
-    /**
-     * @description * `MH` - Main Hall
-     * * `AT` - Atlantis
-     * @enum {string}
-     */
-    RoomEnum: 'MH' | 'AT';
-    Skill: {
-      /** Format: uuid */
-      id: string;
-      name: string;
-    };
-    SkillProficiency: {
-      /** Format: uuid */
-      id: string;
-      /** Format: uuid */
-      skill: string;
-      proficiency?: components['schemas']['ProficiencyEnum'];
-      /** Format: uuid */
-      attendee: string | null;
-      /** Format: uuid */
-      application?: string | null;
-      /** Format: date-time */
-      created_at: string;
-      /** Format: date-time */
-      updated_at: string;
-    };
-    SkillProficiencyCreate: {
-      /** Format: uuid */
-      id: string;
-      /** Format: uuid */
-      skill: string;
-      proficiency?: components['schemas']['ProficiencyEnum'];
-      /** Format: uuid */
-      attendee: string | null;
-      /** Format: uuid */
-      application?: string | null;
-    };
-    SkillProficiencyDetail: {
-      /** Format: uuid */
-      id: string;
-      skill: components['schemas']['Skill'];
-      proficiency?: components['schemas']['ProficiencyEnum'];
-      attendee: components['schemas']['Attendee'];
-      /** Format: uuid */
-      application?: string | null;
-      /** Format: date-time */
-      created_at: string;
-      /** Format: date-time */
-      updated_at: string;
-    };
-    /**
-     * @description * `AI` - Accepted, In-Person
-     * * `AO` - Accepted, Online
-     * * `WI` - Wait-list, In-Person
-     * * `WO` - Wait-list, Online
-     * * `D` - Declined
-     * @enum {string}
-     */
-    StatusEnum: 'AI' | 'AO' | 'WI' | 'WO' | 'D';
-    Table: {
-      /** Format: uuid */
-      id: string;
-      /** Format: int64 */
-      number: number;
-      /** Format: uuid */
-      location: string;
-      /** Format: date-time */
-      created_at: string;
-      /** Format: date-time */
-      updated_at: string;
-    };
-    TableCreate: {
-      /** Format: uuid */
-      id: string;
-      /** Format: int64 */
-      number: number;
-      /** Format: uuid */
-      location: string;
-    };
-    Team: {
-      /** Format: uuid */
-      id: string;
-      name: string;
-      attendees: string[];
-      /** Format: uuid */
-      table: string;
-      /** Format: date-time */
-      created_at: string;
-      /** Format: date-time */
-      updated_at: string;
-    };
-    TeamCreate: {
-      /** Format: uuid */
-      id: string;
-      name: string;
-      attendees: string[];
-      /** Format: uuid */
-      table: string;
-    };
-    TokenObtainPair: {
-      username: string;
-      password: string;
-      access: string;
-      refresh: string;
-    };
-    TokenRefresh: {
-      access: string;
-      refresh: string;
-    };
-    TokenVerify: {
-      token: string;
-    };
+    UsVisaSupportNationalIdentificationDocumentTypeEnum: "P" | "N";
     Workshop: {
       /** Format: uuid */
       id: string;
-      recommended_for: components['schemas']['RecommendedForEnum'][];
+      recommended_for: components["schemas"]["RecommendedForEnum"][];
       name: string;
       /** Format: date-time */
       datetime?: string | null;
@@ -2299,7 +1606,7 @@ export interface components {
     WorkshopAttendee: {
       /** Format: uuid */
       id: string;
-      participation?: components['schemas']['ParticipationEnum'];
+      participation?: components["schemas"]["ParticipationEnum"];
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
@@ -2322,6 +1629,7 @@ export type $defs = Record<string, never>;
 export type external = Record<string, never>;
 
 export interface operations {
+
   /** @description API endpoint that allows applications to be viewed or edited. */
   applications_list: {
     parameters: {
@@ -2332,14 +1640,14 @@ export interface operations {
          * * `P` - Professional
          * * `H` - Hobbyist
          */
-        participation_capacity?: 'H' | 'P' | 'S';
+        participation_capacity?: "H" | "P" | "S" | null;
         /**
          * @description * `A` - Digital Designer
          * * `D` - Developer
          * * `S` - Domain or other Specialized Skill Expert
          * * `P` - Project Manager
          */
-        participation_role?: 'A' | 'D' | 'P' | 'S';
+        participation_role?: "A" | "D" | "P" | "S" | null;
         /** @description A search term. */
         search?: string;
       };
@@ -2347,7 +1655,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Application'][];
+          "application/json": components["schemas"]["Application"][];
         };
       };
     };
@@ -2356,15 +1664,15 @@ export interface operations {
   applications_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['Application'];
-        'application/x-www-form-urlencoded': components['schemas']['Application'];
-        'multipart/form-data': components['schemas']['Application'];
+        "application/json": components["schemas"]["Application"];
+        "application/x-www-form-urlencoded": components["schemas"]["Application"];
+        "multipart/form-data": components["schemas"]["Application"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['Application'];
+          "application/json": components["schemas"]["Application"];
         };
       };
     };
@@ -2380,7 +1688,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Application'];
+          "application/json": components["schemas"]["Application"];
         };
       };
     };
@@ -2395,15 +1703,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['Application'];
-        'application/x-www-form-urlencoded': components['schemas']['Application'];
-        'multipart/form-data': components['schemas']['Application'];
+        "application/json": components["schemas"]["Application"];
+        "application/x-www-form-urlencoded": components["schemas"]["Application"];
+        "multipart/form-data": components["schemas"]["Application"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Application'];
+          "application/json": components["schemas"]["Application"];
         };
       };
     };
@@ -2433,15 +1741,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedApplication'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedApplication'];
-        'multipart/form-data': components['schemas']['PatchedApplication'];
+        "application/json": components["schemas"]["PatchedApplication"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedApplication"];
+        "multipart/form-data": components["schemas"]["PatchedApplication"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Application'];
+          "application/json": components["schemas"]["Application"];
         };
       };
     };
@@ -2463,7 +1771,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Attendee'][];
+          "application/json": components["schemas"]["Attendee"][];
         };
       };
     };
@@ -2472,15 +1780,15 @@ export interface operations {
   attendees_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['Attendee'];
-        'application/x-www-form-urlencoded': components['schemas']['Attendee'];
-        'multipart/form-data': components['schemas']['Attendee'];
+        "application/json": components["schemas"]["Attendee"];
+        "application/x-www-form-urlencoded": components["schemas"]["Attendee"];
+        "multipart/form-data": components["schemas"]["Attendee"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['Attendee'];
+          "application/json": components["schemas"]["Attendee"];
         };
       };
     };
@@ -2496,7 +1804,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Attendee'];
+          "application/json": components["schemas"]["Attendee"];
         };
       };
     };
@@ -2511,15 +1819,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['Attendee'];
-        'application/x-www-form-urlencoded': components['schemas']['Attendee'];
-        'multipart/form-data': components['schemas']['Attendee'];
+        "application/json": components["schemas"]["Attendee"];
+        "application/x-www-form-urlencoded": components["schemas"]["Attendee"];
+        "multipart/form-data": components["schemas"]["Attendee"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Attendee'];
+          "application/json": components["schemas"]["Attendee"];
         };
       };
     };
@@ -2549,15 +1857,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedAttendee'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedAttendee'];
-        'multipart/form-data': components['schemas']['PatchedAttendee'];
+        "application/json": components["schemas"]["PatchedAttendee"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedAttendee"];
+        "multipart/form-data": components["schemas"]["PatchedAttendee"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Attendee'];
+          "application/json": components["schemas"]["Attendee"];
         };
       };
     };
@@ -2571,121 +1879,23 @@ export interface operations {
   auth_schema_retrieve: {
     parameters: {
       query?: {
-        format?: 'json' | 'yaml';
-        lang?:
-          | 'af'
-          | 'ar'
-          | 'ar-dz'
-          | 'ast'
-          | 'az'
-          | 'be'
-          | 'bg'
-          | 'bn'
-          | 'br'
-          | 'bs'
-          | 'ca'
-          | 'ckb'
-          | 'cs'
-          | 'cy'
-          | 'da'
-          | 'de'
-          | 'dsb'
-          | 'el'
-          | 'en'
-          | 'en-au'
-          | 'en-gb'
-          | 'eo'
-          | 'es'
-          | 'es-ar'
-          | 'es-co'
-          | 'es-mx'
-          | 'es-ni'
-          | 'es-ve'
-          | 'et'
-          | 'eu'
-          | 'fa'
-          | 'fi'
-          | 'fr'
-          | 'fy'
-          | 'ga'
-          | 'gd'
-          | 'gl'
-          | 'he'
-          | 'hi'
-          | 'hr'
-          | 'hsb'
-          | 'hu'
-          | 'hy'
-          | 'ia'
-          | 'id'
-          | 'ig'
-          | 'io'
-          | 'is'
-          | 'it'
-          | 'ja'
-          | 'ka'
-          | 'kab'
-          | 'kk'
-          | 'km'
-          | 'kn'
-          | 'ko'
-          | 'ky'
-          | 'lb'
-          | 'lt'
-          | 'lv'
-          | 'mk'
-          | 'ml'
-          | 'mn'
-          | 'mr'
-          | 'ms'
-          | 'my'
-          | 'nb'
-          | 'ne'
-          | 'nl'
-          | 'nn'
-          | 'os'
-          | 'pa'
-          | 'pl'
-          | 'pt'
-          | 'pt-br'
-          | 'ro'
-          | 'ru'
-          | 'sk'
-          | 'sl'
-          | 'sq'
-          | 'sr'
-          | 'sr-latn'
-          | 'sv'
-          | 'sw'
-          | 'ta'
-          | 'te'
-          | 'tg'
-          | 'th'
-          | 'tk'
-          | 'tr'
-          | 'tt'
-          | 'udm'
-          | 'uk'
-          | 'ur'
-          | 'uz'
-          | 'vi'
-          | 'zh-hans'
-          | 'zh-hant';
+        format?: "json" | "yaml";
+        lang?: "af" | "ar" | "ar-dz" | "ast" | "az" | "be" | "bg" | "bn" | "br" | "bs" | "ca" | "ckb" | "cs" | "cy" | "da" | "de" | "dsb" | "el" | "en" | "en-au" | "en-gb" | "eo" | "es" | "es-ar" | "es-co" | "es-mx" | "es-ni" | "es-ve" | "et" | "eu" | "fa" | "fi" | "fr" | "fy" | "ga" | "gd" | "gl" | "he" | "hi" | "hr" | "hsb" | "hu" | "hy" | "ia" | "id" | "ig" | "io" | "is" | "it" | "ja" | "ka" | "kab" | "kk" | "km" | "kn" | "ko" | "ky" | "lb" | "lt" | "lv" | "mk" | "ml" | "mn" | "mr" | "ms" | "my" | "nb" | "ne" | "nl" | "nn" | "os" | "pa" | "pl" | "pt" | "pt-br" | "ro" | "ru" | "sk" | "sl" | "sq" | "sr" | "sr-latn" | "sv" | "sw" | "ta" | "te" | "tg" | "th" | "tk" | "tr" | "tt" | "udm" | "uk" | "ur" | "uz" | "vi" | "zh-hans" | "zh-hant";
       };
     };
     responses: {
       200: {
         content: {
-          'application/vnd.oai.openapi': {
+          "application/vnd.oai.openapi": {
             [key: string]: unknown;
           };
-          'application/yaml': {
+          "application/yaml": {
             [key: string]: unknown;
           };
-          'application/vnd.oai.openapi+json': {
+          "application/vnd.oai.openapi+json": {
             [key: string]: unknown;
           };
-          'application/json': {
+          "application/json": {
             [key: string]: unknown;
           };
         };
@@ -2699,15 +1909,15 @@ export interface operations {
   auth_token_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['TokenObtainPair'];
-        'application/x-www-form-urlencoded': components['schemas']['TokenObtainPair'];
-        'multipart/form-data': components['schemas']['TokenObtainPair'];
+        "application/json": components["schemas"]["TokenObtainPair"];
+        "application/x-www-form-urlencoded": components["schemas"]["TokenObtainPair"];
+        "multipart/form-data": components["schemas"]["TokenObtainPair"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['TokenObtainPair'];
+          "application/json": components["schemas"]["TokenObtainPair"];
         };
       };
     };
@@ -2719,15 +1929,15 @@ export interface operations {
   auth_token_refresh_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['TokenRefresh'];
-        'application/x-www-form-urlencoded': components['schemas']['TokenRefresh'];
-        'multipart/form-data': components['schemas']['TokenRefresh'];
+        "application/json": components["schemas"]["TokenRefresh"];
+        "application/x-www-form-urlencoded": components["schemas"]["TokenRefresh"];
+        "multipart/form-data": components["schemas"]["TokenRefresh"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['TokenRefresh'];
+          "application/json": components["schemas"]["TokenRefresh"];
         };
       };
     };
@@ -2739,15 +1949,15 @@ export interface operations {
   auth_token_verify_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['TokenVerify'];
-        'application/x-www-form-urlencoded': components['schemas']['TokenVerify'];
-        'multipart/form-data': components['schemas']['TokenVerify'];
+        "application/json": components["schemas"]["TokenVerify"];
+        "application/x-www-form-urlencoded": components["schemas"]["TokenVerify"];
+        "multipart/form-data": components["schemas"]["TokenVerify"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['TokenVerify'];
+          "application/json": components["schemas"]["TokenVerify"];
         };
       };
     };
@@ -2763,7 +1973,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['GroupDetail'][];
+          "application/json": components["schemas"]["GroupDetail"][];
         };
       };
     };
@@ -2772,15 +1982,15 @@ export interface operations {
   groups_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['GroupDetail'];
-        'application/x-www-form-urlencoded': components['schemas']['GroupDetail'];
-        'multipart/form-data': components['schemas']['GroupDetail'];
+        "application/json": components["schemas"]["GroupDetail"];
+        "application/x-www-form-urlencoded": components["schemas"]["GroupDetail"];
+        "multipart/form-data": components["schemas"]["GroupDetail"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['GroupDetail'];
+          "application/json": components["schemas"]["GroupDetail"];
         };
       };
     };
@@ -2796,7 +2006,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['GroupDetail'];
+          "application/json": components["schemas"]["GroupDetail"];
         };
       };
     };
@@ -2811,15 +2021,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['GroupDetail'];
-        'application/x-www-form-urlencoded': components['schemas']['GroupDetail'];
-        'multipart/form-data': components['schemas']['GroupDetail'];
+        "application/json": components["schemas"]["GroupDetail"];
+        "application/x-www-form-urlencoded": components["schemas"]["GroupDetail"];
+        "multipart/form-data": components["schemas"]["GroupDetail"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['GroupDetail'];
+          "application/json": components["schemas"]["GroupDetail"];
         };
       };
     };
@@ -2849,15 +2059,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedGroupDetail'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedGroupDetail'];
-        'multipart/form-data': components['schemas']['PatchedGroupDetail'];
+        "application/json": components["schemas"]["PatchedGroupDetail"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedGroupDetail"];
+        "multipart/form-data": components["schemas"]["PatchedGroupDetail"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['GroupDetail'];
+          "application/json": components["schemas"]["GroupDetail"];
         };
       };
     };
@@ -2873,7 +2083,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Hardware'][];
+          "application/json": components["schemas"]["Hardware"][];
         };
       };
     };
@@ -2882,15 +2092,15 @@ export interface operations {
   hardware_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['Hardware'];
-        'application/x-www-form-urlencoded': components['schemas']['Hardware'];
-        'multipart/form-data': components['schemas']['Hardware'];
+        "application/json": components["schemas"]["Hardware"];
+        "application/x-www-form-urlencoded": components["schemas"]["Hardware"];
+        "multipart/form-data": components["schemas"]["Hardware"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['Hardware'];
+          "application/json": components["schemas"]["Hardware"];
         };
       };
     };
@@ -2906,7 +2116,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Hardware'];
+          "application/json": components["schemas"]["Hardware"];
         };
       };
     };
@@ -2921,15 +2131,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['Hardware'];
-        'application/x-www-form-urlencoded': components['schemas']['Hardware'];
-        'multipart/form-data': components['schemas']['Hardware'];
+        "application/json": components["schemas"]["Hardware"];
+        "application/x-www-form-urlencoded": components["schemas"]["Hardware"];
+        "multipart/form-data": components["schemas"]["Hardware"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Hardware'];
+          "application/json": components["schemas"]["Hardware"];
         };
       };
     };
@@ -2959,15 +2169,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedHardware'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedHardware'];
-        'multipart/form-data': components['schemas']['PatchedHardware'];
+        "application/json": components["schemas"]["PatchedHardware"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedHardware"];
+        "multipart/form-data": components["schemas"]["PatchedHardware"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Hardware'];
+          "application/json": components["schemas"]["Hardware"];
         };
       };
     };
@@ -2986,7 +2196,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['HardwareDeviceHistory'][];
+          "application/json": components["schemas"]["HardwareDeviceHistory"][];
         };
       };
     };
@@ -2995,15 +2205,15 @@ export interface operations {
   hardwaredevicehistory_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['HardwareDeviceHistory'];
-        'application/x-www-form-urlencoded': components['schemas']['HardwareDeviceHistory'];
-        'multipart/form-data': components['schemas']['HardwareDeviceHistory'];
+        "application/json": components["schemas"]["HardwareDeviceHistory"];
+        "application/x-www-form-urlencoded": components["schemas"]["HardwareDeviceHistory"];
+        "multipart/form-data": components["schemas"]["HardwareDeviceHistory"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['HardwareDeviceHistory'];
+          "application/json": components["schemas"]["HardwareDeviceHistory"];
         };
       };
     };
@@ -3019,7 +2229,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['HardwareDeviceHistory'];
+          "application/json": components["schemas"]["HardwareDeviceHistory"];
         };
       };
     };
@@ -3034,15 +2244,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['HardwareDeviceHistory'];
-        'application/x-www-form-urlencoded': components['schemas']['HardwareDeviceHistory'];
-        'multipart/form-data': components['schemas']['HardwareDeviceHistory'];
+        "application/json": components["schemas"]["HardwareDeviceHistory"];
+        "application/x-www-form-urlencoded": components["schemas"]["HardwareDeviceHistory"];
+        "multipart/form-data": components["schemas"]["HardwareDeviceHistory"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['HardwareDeviceHistory'];
+          "application/json": components["schemas"]["HardwareDeviceHistory"];
         };
       };
     };
@@ -3072,15 +2282,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedHardwareDeviceHistory'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedHardwareDeviceHistory'];
-        'multipart/form-data': components['schemas']['PatchedHardwareDeviceHistory'];
+        "application/json": components["schemas"]["PatchedHardwareDeviceHistory"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedHardwareDeviceHistory"];
+        "multipart/form-data": components["schemas"]["PatchedHardwareDeviceHistory"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['HardwareDeviceHistory'];
+          "application/json": components["schemas"]["HardwareDeviceHistory"];
         };
       };
     };
@@ -3099,7 +2309,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['HardwareDevice'][];
+          "application/json": components["schemas"]["HardwareDevice"][];
         };
       };
     };
@@ -3108,15 +2318,15 @@ export interface operations {
   hardwaredevices_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['HardwareDevice'];
-        'application/x-www-form-urlencoded': components['schemas']['HardwareDevice'];
-        'multipart/form-data': components['schemas']['HardwareDevice'];
+        "application/json": components["schemas"]["HardwareDevice"];
+        "application/x-www-form-urlencoded": components["schemas"]["HardwareDevice"];
+        "multipart/form-data": components["schemas"]["HardwareDevice"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['HardwareDevice'];
+          "application/json": components["schemas"]["HardwareDevice"];
         };
       };
     };
@@ -3132,7 +2342,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['HardwareDeviceDetail'];
+          "application/json": components["schemas"]["HardwareDeviceDetail"];
         };
       };
     };
@@ -3147,15 +2357,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['HardwareDevice'];
-        'application/x-www-form-urlencoded': components['schemas']['HardwareDevice'];
-        'multipart/form-data': components['schemas']['HardwareDevice'];
+        "application/json": components["schemas"]["HardwareDevice"];
+        "application/x-www-form-urlencoded": components["schemas"]["HardwareDevice"];
+        "multipart/form-data": components["schemas"]["HardwareDevice"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['HardwareDevice'];
+          "application/json": components["schemas"]["HardwareDevice"];
         };
       };
     };
@@ -3185,15 +2395,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedHardwareDevice'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedHardwareDevice'];
-        'multipart/form-data': components['schemas']['PatchedHardwareDevice'];
+        "application/json": components["schemas"]["PatchedHardwareDevice"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedHardwareDevice"];
+        "multipart/form-data": components["schemas"]["PatchedHardwareDevice"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['HardwareDevice'];
+          "application/json": components["schemas"]["HardwareDevice"];
         };
       };
     };
@@ -3241,7 +2451,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Location'][];
+          "application/json": components["schemas"]["Location"][];
         };
       };
     };
@@ -3250,15 +2460,15 @@ export interface operations {
   locations_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['Location'];
-        'application/x-www-form-urlencoded': components['schemas']['Location'];
-        'multipart/form-data': components['schemas']['Location'];
+        "application/json": components["schemas"]["Location"];
+        "application/x-www-form-urlencoded": components["schemas"]["Location"];
+        "multipart/form-data": components["schemas"]["Location"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['Location'];
+          "application/json": components["schemas"]["Location"];
         };
       };
     };
@@ -3274,7 +2484,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Location'];
+          "application/json": components["schemas"]["Location"];
         };
       };
     };
@@ -3289,15 +2499,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['Location'];
-        'application/x-www-form-urlencoded': components['schemas']['Location'];
-        'multipart/form-data': components['schemas']['Location'];
+        "application/json": components["schemas"]["Location"];
+        "application/x-www-form-urlencoded": components["schemas"]["Location"];
+        "multipart/form-data": components["schemas"]["Location"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Location'];
+          "application/json": components["schemas"]["Location"];
         };
       };
     };
@@ -3327,15 +2537,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedLocation'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedLocation'];
-        'multipart/form-data': components['schemas']['PatchedLocation'];
+        "application/json": components["schemas"]["PatchedLocation"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedLocation"];
+        "multipart/form-data": components["schemas"]["PatchedLocation"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Location'];
+          "application/json": components["schemas"]["Location"];
         };
       };
     };
@@ -3351,7 +2561,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Project'][];
+          "application/json": components["schemas"]["Project"][];
         };
       };
     };
@@ -3360,15 +2570,15 @@ export interface operations {
   projects_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['Project'];
-        'application/x-www-form-urlencoded': components['schemas']['Project'];
-        'multipart/form-data': components['schemas']['Project'];
+        "application/json": components["schemas"]["Project"];
+        "application/x-www-form-urlencoded": components["schemas"]["Project"];
+        "multipart/form-data": components["schemas"]["Project"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['Project'];
+          "application/json": components["schemas"]["Project"];
         };
       };
     };
@@ -3384,7 +2594,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Project'];
+          "application/json": components["schemas"]["Project"];
         };
       };
     };
@@ -3399,15 +2609,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['Project'];
-        'application/x-www-form-urlencoded': components['schemas']['Project'];
-        'multipart/form-data': components['schemas']['Project'];
+        "application/json": components["schemas"]["Project"];
+        "application/x-www-form-urlencoded": components["schemas"]["Project"];
+        "multipart/form-data": components["schemas"]["Project"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Project'];
+          "application/json": components["schemas"]["Project"];
         };
       };
     };
@@ -3437,15 +2647,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedProject'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedProject'];
-        'multipart/form-data': components['schemas']['PatchedProject'];
+        "application/json": components["schemas"]["PatchedProject"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedProject"];
+        "multipart/form-data": components["schemas"]["PatchedProject"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Project'];
+          "application/json": components["schemas"]["Project"];
         };
       };
     };
@@ -3468,6 +2678,122 @@ export interface operations {
       };
     };
   };
+  /** @description API endpoint that allows users to be viewed or edited. */
+  rsvps_list: {
+    parameters: {
+      query?: {
+        email?: string;
+        first_name?: string;
+        groups?: number[];
+        is_staff?: boolean;
+        last_name?: string;
+        /** @description A search term. */
+        search?: string;
+        username?: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["AttendeeRSVP"][];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows users to be viewed or edited. */
+  rsvps_create: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AttendeeRSVPCreate"];
+        "application/x-www-form-urlencoded": components["schemas"]["AttendeeRSVPCreate"];
+        "multipart/form-data": components["schemas"]["AttendeeRSVPCreate"];
+      };
+    };
+    responses: {
+      201: {
+        content: {
+          "application/json": components["schemas"]["AttendeeRSVPCreate"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows users to be viewed or edited. */
+  rsvps_retrieve: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this attendees. */
+        id: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["AttendeeRSVP"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows users to be viewed or edited. */
+  rsvps_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this attendees. */
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AttendeeRSVP"];
+        "application/x-www-form-urlencoded": components["schemas"]["AttendeeRSVP"];
+        "multipart/form-data": components["schemas"]["AttendeeRSVP"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["AttendeeRSVP"];
+        };
+      };
+    };
+  };
+  /** @description API endpoint that allows users to be viewed or edited. */
+  rsvps_destroy: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this attendees. */
+        id: string;
+      };
+    };
+    responses: {
+      /** @description No response body */
+      204: {
+        content: never;
+      };
+    };
+  };
+  /** @description API endpoint that allows users to be viewed or edited. */
+  rsvps_partial_update: {
+    parameters: {
+      path: {
+        /** @description A UUID string identifying this attendees. */
+        id: string;
+      };
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedAttendeeRSVP"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedAttendeeRSVP"];
+        "multipart/form-data": components["schemas"]["PatchedAttendeeRSVP"];
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["AttendeeRSVP"];
+        };
+      };
+    };
+  };
   /**
    * @description OpenApi3 schema for this API. Format can be selected via content negotiation.
    *
@@ -3477,121 +2803,23 @@ export interface operations {
   schema_spectacular_retrieve: {
     parameters: {
       query?: {
-        format?: 'json' | 'yaml';
-        lang?:
-          | 'af'
-          | 'ar'
-          | 'ar-dz'
-          | 'ast'
-          | 'az'
-          | 'be'
-          | 'bg'
-          | 'bn'
-          | 'br'
-          | 'bs'
-          | 'ca'
-          | 'ckb'
-          | 'cs'
-          | 'cy'
-          | 'da'
-          | 'de'
-          | 'dsb'
-          | 'el'
-          | 'en'
-          | 'en-au'
-          | 'en-gb'
-          | 'eo'
-          | 'es'
-          | 'es-ar'
-          | 'es-co'
-          | 'es-mx'
-          | 'es-ni'
-          | 'es-ve'
-          | 'et'
-          | 'eu'
-          | 'fa'
-          | 'fi'
-          | 'fr'
-          | 'fy'
-          | 'ga'
-          | 'gd'
-          | 'gl'
-          | 'he'
-          | 'hi'
-          | 'hr'
-          | 'hsb'
-          | 'hu'
-          | 'hy'
-          | 'ia'
-          | 'id'
-          | 'ig'
-          | 'io'
-          | 'is'
-          | 'it'
-          | 'ja'
-          | 'ka'
-          | 'kab'
-          | 'kk'
-          | 'km'
-          | 'kn'
-          | 'ko'
-          | 'ky'
-          | 'lb'
-          | 'lt'
-          | 'lv'
-          | 'mk'
-          | 'ml'
-          | 'mn'
-          | 'mr'
-          | 'ms'
-          | 'my'
-          | 'nb'
-          | 'ne'
-          | 'nl'
-          | 'nn'
-          | 'os'
-          | 'pa'
-          | 'pl'
-          | 'pt'
-          | 'pt-br'
-          | 'ro'
-          | 'ru'
-          | 'sk'
-          | 'sl'
-          | 'sq'
-          | 'sr'
-          | 'sr-latn'
-          | 'sv'
-          | 'sw'
-          | 'ta'
-          | 'te'
-          | 'tg'
-          | 'th'
-          | 'tk'
-          | 'tr'
-          | 'tt'
-          | 'udm'
-          | 'uk'
-          | 'ur'
-          | 'uz'
-          | 'vi'
-          | 'zh-hans'
-          | 'zh-hant';
+        format?: "json" | "yaml";
+        lang?: "af" | "ar" | "ar-dz" | "ast" | "az" | "be" | "bg" | "bn" | "br" | "bs" | "ca" | "ckb" | "cs" | "cy" | "da" | "de" | "dsb" | "el" | "en" | "en-au" | "en-gb" | "eo" | "es" | "es-ar" | "es-co" | "es-mx" | "es-ni" | "es-ve" | "et" | "eu" | "fa" | "fi" | "fr" | "fy" | "ga" | "gd" | "gl" | "he" | "hi" | "hr" | "hsb" | "hu" | "hy" | "ia" | "id" | "ig" | "io" | "is" | "it" | "ja" | "ka" | "kab" | "kk" | "km" | "kn" | "ko" | "ky" | "lb" | "lt" | "lv" | "mk" | "ml" | "mn" | "mr" | "ms" | "my" | "nb" | "ne" | "nl" | "nn" | "os" | "pa" | "pl" | "pt" | "pt-br" | "ro" | "ru" | "sk" | "sl" | "sq" | "sr" | "sr-latn" | "sv" | "sw" | "ta" | "te" | "tg" | "th" | "tk" | "tr" | "tt" | "udm" | "uk" | "ur" | "uz" | "vi" | "zh-hans" | "zh-hant";
       };
     };
     responses: {
       200: {
         content: {
-          'application/vnd.oai.openapi': {
+          "application/vnd.oai.openapi": {
             [key: string]: unknown;
           };
-          'application/yaml': {
+          "application/yaml": {
             [key: string]: unknown;
           };
-          'application/vnd.oai.openapi+json': {
+          "application/vnd.oai.openapi+json": {
             [key: string]: unknown;
           };
-          'application/json': {
+          "application/json": {
             [key: string]: unknown;
           };
         };
@@ -3609,7 +2837,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['SkillProficiency'][];
+          "application/json": components["schemas"]["SkillProficiency"][];
         };
       };
     };
@@ -3618,15 +2846,15 @@ export interface operations {
   skillproficiencies_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['SkillProficiencyCreate'];
-        'application/x-www-form-urlencoded': components['schemas']['SkillProficiencyCreate'];
-        'multipart/form-data': components['schemas']['SkillProficiencyCreate'];
+        "application/json": components["schemas"]["SkillProficiencyCreate"];
+        "application/x-www-form-urlencoded": components["schemas"]["SkillProficiencyCreate"];
+        "multipart/form-data": components["schemas"]["SkillProficiencyCreate"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['SkillProficiencyCreate'];
+          "application/json": components["schemas"]["SkillProficiencyCreate"];
         };
       };
     };
@@ -3642,7 +2870,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['SkillProficiencyDetail'];
+          "application/json": components["schemas"]["SkillProficiencyDetail"];
         };
       };
     };
@@ -3657,15 +2885,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['SkillProficiencyCreate'];
-        'application/x-www-form-urlencoded': components['schemas']['SkillProficiencyCreate'];
-        'multipart/form-data': components['schemas']['SkillProficiencyCreate'];
+        "application/json": components["schemas"]["SkillProficiencyCreate"];
+        "application/x-www-form-urlencoded": components["schemas"]["SkillProficiencyCreate"];
+        "multipart/form-data": components["schemas"]["SkillProficiencyCreate"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['SkillProficiencyCreate'];
+          "application/json": components["schemas"]["SkillProficiencyCreate"];
         };
       };
     };
@@ -3695,15 +2923,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedSkillProficiencyCreate'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedSkillProficiencyCreate'];
-        'multipart/form-data': components['schemas']['PatchedSkillProficiencyCreate'];
+        "application/json": components["schemas"]["PatchedSkillProficiencyCreate"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedSkillProficiencyCreate"];
+        "multipart/form-data": components["schemas"]["PatchedSkillProficiencyCreate"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['SkillProficiencyCreate'];
+          "application/json": components["schemas"]["SkillProficiencyCreate"];
         };
       };
     };
@@ -3719,7 +2947,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Skill'][];
+          "application/json": components["schemas"]["Skill"][];
         };
       };
     };
@@ -3728,15 +2956,15 @@ export interface operations {
   skills_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['Skill'];
-        'application/x-www-form-urlencoded': components['schemas']['Skill'];
-        'multipart/form-data': components['schemas']['Skill'];
+        "application/json": components["schemas"]["Skill"];
+        "application/x-www-form-urlencoded": components["schemas"]["Skill"];
+        "multipart/form-data": components["schemas"]["Skill"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['Skill'];
+          "application/json": components["schemas"]["Skill"];
         };
       };
     };
@@ -3752,7 +2980,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Skill'];
+          "application/json": components["schemas"]["Skill"];
         };
       };
     };
@@ -3767,15 +2995,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['Skill'];
-        'application/x-www-form-urlencoded': components['schemas']['Skill'];
-        'multipart/form-data': components['schemas']['Skill'];
+        "application/json": components["schemas"]["Skill"];
+        "application/x-www-form-urlencoded": components["schemas"]["Skill"];
+        "multipart/form-data": components["schemas"]["Skill"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Skill'];
+          "application/json": components["schemas"]["Skill"];
         };
       };
     };
@@ -3805,15 +3033,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedSkill'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedSkill'];
-        'multipart/form-data': components['schemas']['PatchedSkill'];
+        "application/json": components["schemas"]["PatchedSkill"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedSkill"];
+        "multipart/form-data": components["schemas"]["PatchedSkill"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Skill'];
+          "application/json": components["schemas"]["Skill"];
         };
       };
     };
@@ -3829,7 +3057,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Table'][];
+          "application/json": components["schemas"]["Table"][];
         };
       };
     };
@@ -3838,15 +3066,15 @@ export interface operations {
   tables_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['TableCreate'];
-        'application/x-www-form-urlencoded': components['schemas']['TableCreate'];
-        'multipart/form-data': components['schemas']['TableCreate'];
+        "application/json": components["schemas"]["TableCreate"];
+        "application/x-www-form-urlencoded": components["schemas"]["TableCreate"];
+        "multipart/form-data": components["schemas"]["TableCreate"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['TableCreate'];
+          "application/json": components["schemas"]["TableCreate"];
         };
       };
     };
@@ -3862,7 +3090,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Table'];
+          "application/json": components["schemas"]["Table"];
         };
       };
     };
@@ -3877,15 +3105,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['Table'];
-        'application/x-www-form-urlencoded': components['schemas']['Table'];
-        'multipart/form-data': components['schemas']['Table'];
+        "application/json": components["schemas"]["Table"];
+        "application/x-www-form-urlencoded": components["schemas"]["Table"];
+        "multipart/form-data": components["schemas"]["Table"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Table'];
+          "application/json": components["schemas"]["Table"];
         };
       };
     };
@@ -3915,15 +3143,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedTable'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedTable'];
-        'multipart/form-data': components['schemas']['PatchedTable'];
+        "application/json": components["schemas"]["PatchedTable"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedTable"];
+        "multipart/form-data": components["schemas"]["PatchedTable"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Table'];
+          "application/json": components["schemas"]["Table"];
         };
       };
     };
@@ -3943,7 +3171,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Team'][];
+          "application/json": components["schemas"]["Team"][];
         };
       };
     };
@@ -3952,15 +3180,15 @@ export interface operations {
   teams_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['TeamCreate'];
-        'application/x-www-form-urlencoded': components['schemas']['TeamCreate'];
-        'multipart/form-data': components['schemas']['TeamCreate'];
+        "application/json": components["schemas"]["TeamCreate"];
+        "application/x-www-form-urlencoded": components["schemas"]["TeamCreate"];
+        "multipart/form-data": components["schemas"]["TeamCreate"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['TeamCreate'];
+          "application/json": components["schemas"]["TeamCreate"];
         };
       };
     };
@@ -3976,7 +3204,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Team'];
+          "application/json": components["schemas"]["Team"];
         };
       };
     };
@@ -3991,15 +3219,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['Team'];
-        'application/x-www-form-urlencoded': components['schemas']['Team'];
-        'multipart/form-data': components['schemas']['Team'];
+        "application/json": components["schemas"]["Team"];
+        "application/x-www-form-urlencoded": components["schemas"]["Team"];
+        "multipart/form-data": components["schemas"]["Team"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Team'];
+          "application/json": components["schemas"]["Team"];
         };
       };
     };
@@ -4029,15 +3257,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedTeam'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedTeam'];
-        'multipart/form-data': components['schemas']['PatchedTeam'];
+        "application/json": components["schemas"]["PatchedTeam"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedTeam"];
+        "multipart/form-data": components["schemas"]["PatchedTeam"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Team'];
+          "application/json": components["schemas"]["Team"];
         };
       };
     };
@@ -4054,7 +3282,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['FileUpload'][];
+          "application/json": components["schemas"]["FileUpload"][];
         };
       };
     };
@@ -4063,15 +3291,15 @@ export interface operations {
   uploaded_files_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['FileUpload'];
-        'application/x-www-form-urlencoded': components['schemas']['FileUpload'];
-        'multipart/form-data': components['schemas']['FileUpload'];
+        "application/json": components["schemas"]["FileUpload"];
+        "application/x-www-form-urlencoded": components["schemas"]["FileUpload"];
+        "multipart/form-data": components["schemas"]["FileUpload"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['FileUpload'];
+          "application/json": components["schemas"]["FileUpload"];
         };
       };
     };
@@ -4087,7 +3315,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['FileUpload'];
+          "application/json": components["schemas"]["FileUpload"];
         };
       };
     };
@@ -4102,15 +3330,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['FileUpload'];
-        'application/x-www-form-urlencoded': components['schemas']['FileUpload'];
-        'multipart/form-data': components['schemas']['FileUpload'];
+        "application/json": components["schemas"]["FileUpload"];
+        "application/x-www-form-urlencoded": components["schemas"]["FileUpload"];
+        "multipart/form-data": components["schemas"]["FileUpload"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['FileUpload'];
+          "application/json": components["schemas"]["FileUpload"];
         };
       };
     };
@@ -4140,15 +3368,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedFileUpload'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedFileUpload'];
-        'multipart/form-data': components['schemas']['PatchedFileUpload'];
+        "application/json": components["schemas"]["PatchedFileUpload"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedFileUpload"];
+        "multipart/form-data": components["schemas"]["PatchedFileUpload"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['FileUpload'];
+          "application/json": components["schemas"]["FileUpload"];
         };
       };
     };
@@ -4164,7 +3392,7 @@ export interface operations {
          * * `I` - Instructor
          * * `V` - Volunteer
          */
-        participation?: 'C' | 'I' | 'R' | 'V';
+        participation?: "C" | "I" | "R" | "V";
         /** @description A search term. */
         search?: string;
         workshop?: string;
@@ -4173,7 +3401,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['WorkshopAttendee'][];
+          "application/json": components["schemas"]["WorkshopAttendee"][];
         };
       };
     };
@@ -4182,15 +3410,15 @@ export interface operations {
   workshopattendees_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['WorkshopAttendee'];
-        'application/x-www-form-urlencoded': components['schemas']['WorkshopAttendee'];
-        'multipart/form-data': components['schemas']['WorkshopAttendee'];
+        "application/json": components["schemas"]["WorkshopAttendee"];
+        "application/x-www-form-urlencoded": components["schemas"]["WorkshopAttendee"];
+        "multipart/form-data": components["schemas"]["WorkshopAttendee"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['WorkshopAttendee'];
+          "application/json": components["schemas"]["WorkshopAttendee"];
         };
       };
     };
@@ -4206,7 +3434,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['WorkshopAttendee'];
+          "application/json": components["schemas"]["WorkshopAttendee"];
         };
       };
     };
@@ -4221,15 +3449,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['WorkshopAttendee'];
-        'application/x-www-form-urlencoded': components['schemas']['WorkshopAttendee'];
-        'multipart/form-data': components['schemas']['WorkshopAttendee'];
+        "application/json": components["schemas"]["WorkshopAttendee"];
+        "application/x-www-form-urlencoded": components["schemas"]["WorkshopAttendee"];
+        "multipart/form-data": components["schemas"]["WorkshopAttendee"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['WorkshopAttendee'];
+          "application/json": components["schemas"]["WorkshopAttendee"];
         };
       };
     };
@@ -4259,15 +3487,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedWorkshopAttendee'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedWorkshopAttendee'];
-        'multipart/form-data': components['schemas']['PatchedWorkshopAttendee'];
+        "application/json": components["schemas"]["PatchedWorkshopAttendee"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedWorkshopAttendee"];
+        "multipart/form-data": components["schemas"]["PatchedWorkshopAttendee"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['WorkshopAttendee'];
+          "application/json": components["schemas"]["WorkshopAttendee"];
         };
       };
     };
@@ -4285,7 +3513,7 @@ export interface operations {
          * * `S` - Domain or other Specialized Skill Expert
          * * `P` - Project Manager
          */
-        recommended_for?: 'A' | 'D' | 'P' | 'S' | null;
+        recommended_for?: "A" | "D" | "P" | "S" | null;
         /** @description A search term. */
         search?: string;
       };
@@ -4293,7 +3521,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Workshop'][];
+          "application/json": components["schemas"]["Workshop"][];
         };
       };
     };
@@ -4302,15 +3530,15 @@ export interface operations {
   workshops_create: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['Workshop'];
-        'application/x-www-form-urlencoded': components['schemas']['Workshop'];
-        'multipart/form-data': components['schemas']['Workshop'];
+        "application/json": components["schemas"]["Workshop"];
+        "application/x-www-form-urlencoded": components["schemas"]["Workshop"];
+        "multipart/form-data": components["schemas"]["Workshop"];
       };
     };
     responses: {
       201: {
         content: {
-          'application/json': components['schemas']['Workshop'];
+          "application/json": components["schemas"]["Workshop"];
         };
       };
     };
@@ -4326,7 +3554,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Workshop'];
+          "application/json": components["schemas"]["Workshop"];
         };
       };
     };
@@ -4341,15 +3569,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['Workshop'];
-        'application/x-www-form-urlencoded': components['schemas']['Workshop'];
-        'multipart/form-data': components['schemas']['Workshop'];
+        "application/json": components["schemas"]["Workshop"];
+        "application/x-www-form-urlencoded": components["schemas"]["Workshop"];
+        "multipart/form-data": components["schemas"]["Workshop"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Workshop'];
+          "application/json": components["schemas"]["Workshop"];
         };
       };
     };
@@ -4379,15 +3607,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['PatchedWorkshop'];
-        'application/x-www-form-urlencoded': components['schemas']['PatchedWorkshop'];
-        'multipart/form-data': components['schemas']['PatchedWorkshop'];
+        "application/json": components["schemas"]["PatchedWorkshop"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedWorkshop"];
+        "multipart/form-data": components["schemas"]["PatchedWorkshop"];
       };
     };
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['Workshop'];
+          "application/json": components["schemas"]["Workshop"];
         };
       };
     };

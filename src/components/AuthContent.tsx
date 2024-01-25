@@ -18,6 +18,8 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+  const isAdmin = session && (session as any).roles?.includes('admin');
+  const isSponsor = session && (session as any).roles?.includes('sponsor');
 
   const navRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +49,7 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
     if (!areFeatureFlagsDefined) {
       setTimeout(() => {
         setLoaded(true);
-      }, 200);
+      }, 400);
       return;
     }
 
@@ -62,6 +64,18 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
       }
     }, 400);
 
+    if (!isAdmin && pathname.startsWith('/admin')) {
+      session ? router.replace('/') : router.replace('/signin');
+      setTimeout(() => setLoaded(true), 400);
+      return;
+    }
+
+    if (!isSponsor && pathname.startsWith('/sponsor')) {
+      session ? router.replace('/') : router.replace('/signin');
+      setTimeout(() => setLoaded(true), 400);
+      return;
+    }
+
     if (
       session &&
       (pathname === '/apply' ||
@@ -69,30 +83,20 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
         pathname.startsWith('/rsvp/') ||
         pathname === '/signin')
     ) {
-      console.log('redirecting');
       router.replace('/');
-      setTimeout(() => setLoaded(true), 200);
+      setTimeout(() => setLoaded(true), 400);
+      return;
     }
 
     if (
       !session &&
       !pathname.startsWith('/apply/') &&
-      !pathname.startsWith('/rsvp/') &&
-      pathname !== '/signin'
-    ) {
-      console.log('redirecting');
-      router.replace('/');
-      setTimeout(() => setLoaded(true), 200);
-    }
-
-    if (
-      !session &&
-      !pathname.startsWith('/apply/') &&
+      pathname !== '/apply' &&
       pathname !== '/signin' &&
       !pathname.startsWith('/rsvp/')
     ) {
-      router.replace('/apply');
-      setTimeout(() => setLoaded(true), 200);
+      router.replace('/signin');
+      setTimeout(() => setLoaded(true), 400);
       return;
     }
   }, [session, status]);

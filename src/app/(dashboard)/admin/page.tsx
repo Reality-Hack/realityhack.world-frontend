@@ -5,9 +5,8 @@ const Dashboard: NextPage = ({}: any) => {
   return (
     <div className="h-screen">
       <h1 className="mt-6 mb-5 ml-6 text-3xl text">Admin Dashboard</h1>
-      
       <div className="flex flex-wrap justify-center gap-6 ml-6 mt-14">
-      <Link href="/admin/checkin">
+        <Link href="/admin/checkin">
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
             <span className="text-xl text-center text-[#40337F]">
               Check In User
@@ -21,7 +20,12 @@ const Dashboard: NextPage = ({}: any) => {
             </span>
           </div>
         </Link>
-        <Link href="/admin/applications/participants">
+        <Link href="/admin/rsvp/participants">
+          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
+            <span className="text-xl text-center text-[#40337F]">RSVPs</span>
+          </div>
+        </Link>
+        <Link href="/admin/users">
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
             <span className="text-xl text-center text-[#40337F]">Users</span>
           </div>
@@ -37,11 +41,14 @@ const Dashboard: NextPage = ({}: any) => {
             </span>
           </div>
         </Link>
-        <Link href="/admin/applications/participants">
+        <Link href="/admin/teams">
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">
-              Hardware Requests
-            </span>
+            <span className="text-xl text-center text-[#40337F]">Teams</span>
+          </div>
+        </Link>
+        <Link href="/admin/hardware">
+          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
+            <span className="text-xl text-center text-[#40337F]">Hardware</span>
           </div>
         </Link>
         <Link href="/admin/applications/participants">
@@ -53,6 +60,13 @@ const Dashboard: NextPage = ({}: any) => {
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
             <span className="text-xl text-center text-[#40337F]">
               Mentors & Sponsors
+            </span>
+          </div>
+        </Link>
+        <Link href="/admin/markdown">
+          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
+            <span className="text-xl text-center text-[#40337F]">
+              Markdown
             </span>
           </div>
         </Link>

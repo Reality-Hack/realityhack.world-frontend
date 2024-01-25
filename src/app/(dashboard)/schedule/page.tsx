@@ -1,7 +1,7 @@
 'use client';
 import { useSession } from 'next-auth/react';
 
-export default function Schedule() {
+export default function Workshops() {
   const { data: session, status } = useSession();
 
   return (

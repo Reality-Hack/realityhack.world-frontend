@@ -30,6 +30,7 @@ export default function Nav({
 }: NavProps) {
   const { data: session, status } = useSession();
   const isAdmin = session && (session as any).roles?.includes('admin');
+  const isSponsor = session && (session as any).roles?.includes('sponsor');
   const { isFeatureEnabled } = useFeatureFlags();
 
   const { user } = useAuthContext();
@@ -123,6 +124,7 @@ export default function Nav({
           {menuItems.map((item, index) => {
             const shouldRenderItem =
               (item.href !== '/admin' || isAdmin) &&
+              (item.href !== '/sponsor' || isSponsor) &&
               isFeatureEnabled(item.href);
 
             if (shouldRenderItem) {

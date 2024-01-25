@@ -96,7 +96,6 @@ const JudgeApp: NextPage = ({}: any) => {
     const getData = async () => {
       const options = await applicationOptions(formData);
       setOptions(options);
-      console.log('options: ', options);
       setIndustries(options.actions.POST.industry.choices);
     };
     getData();

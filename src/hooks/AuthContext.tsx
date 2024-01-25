@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       fetchUser();
     }
-  }, [session, status]);
+  }, [session]);
 
   const contextValue: AuthContextType = {
     session,
