@@ -351,15 +351,16 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
       <HardwareDeviceEditor key={device.id} device={device} access_token={session?.access_token}
       deleteDevice={() => setDevices(devices.filter((_, idx) => idx !== i))}
       setDevice={(device) => setDevices(devices.map((_, idx) => idx === i ? device : _))}
+      index={i+1}
       />))}
     </div>
   </div>
 }
 
 function HardwareDeviceEditor(
-  { device, access_token, deleteDevice, setDevice }:
+  { device, access_token, deleteDevice, setDevice, index }:
   { device: Partial<HardwareDevice>, access_token?: string,
-    deleteDevice: () => void, setDevice: (device: Partial<HardwareDevice>) => void}) {
+    deleteDevice: () => void, setDevice: (device: Partial<HardwareDevice>) => void, index?: number}) {
   const [loading, setLoading] = useState(false);
   const isOriginal = !device.id;
   const [serial, setSerial] = useState(device.serial || "");
@@ -407,6 +408,7 @@ function HardwareDeviceEditor(
   }
 
   return (<div className='flex'>
+    {index}.
     <button className='text-[#CC2F34]' onClick={remove} disabled={loading}><CloseIcon /></button>
     {hasChanged || isOriginal ? <button className='text-[#493B8A]'
     onClick={save} disabled={loading}
