@@ -1,6 +1,9 @@
 'use client';
 import CustomSelect from '@/components/CustomSelect';
-import { Posting, Skill, StatBox } from '@/components/helpQueue/hackerView/NewRequestComps';
+import { StatBox } from '@/components/helpQueue/hackerView/NewRequestComps';
+import {
+  Posting
+} from '@/components/helpQueue/hackerView/PostingComps';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import React, { useEffect, useState } from 'react';
@@ -98,7 +101,7 @@ export default function Page() {
         <div className='p-4'>
           <div className='flex flex-wrap w-20'>
           </div>
-          {tabNames[selectedTab] == "Open Requests" && <div className='flex flex-wrap gap-2'>
+          {/* {tabNames[selectedTab] == "Open Requests" && <div className='flex flex-wrap gap-2'>
             <Posting 
               requestTitle="Fip Title"
               description="Description"
@@ -109,7 +112,7 @@ export default function Page() {
               description="Description"
               skillList={["a","b"]}
             />  
-          </div>}
+          </div>} */}
           {tabNames[selectedTab] == "Accepted By Others" && <div>B</div>}
           {tabNames[selectedTab] == "Completed" && <div>C</div>}
         </div>

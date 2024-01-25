@@ -18,11 +18,15 @@ import {
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import {
-  CompletedPosting,
-  Posting,
+  // CompletedPosting,
+  // Posting,
   QuestionDialog,
   StatBox
 } from '@/components/helpQueue/hackerView/NewRequestComps';
+import {
+  CompletedPosting,
+  Posting
+} from '@/components/helpQueue/hackerView/PostingComps';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { getMe } from '@/app/api/attendee';
 import { useAuthContext } from '@/hooks/AuthContext';
@@ -43,6 +47,7 @@ type LighthouseInfo = {
 export default function Help2() {
   const { data: session } = useSession();
   const { user } = useAuthContext();
+  
 
   const [myTable, setMyTable] = useState<Table>();
   const [myId, setMyId] = useState<String>();
@@ -98,9 +103,11 @@ export default function Help2() {
       getAllTables(session.access_token).then(tables => {
         // setTables(tables);
         // setTables(tables);
-        const mytable = tables.find(t => t.id == user.team.table)
-        console.log(mytable)
-        setMyTable(mytable)
+        // const mytable = tables.find(t => t.id == user.team.table)
+        // console.log(mytable)
+        // console.log(user)
+        console.log(session)
+        // setMyTable(mytable)
       });
     }
   },[user]);
@@ -170,28 +177,29 @@ export default function Help2() {
   }[readyState];
 
 // mentorhelprequestpost endpoint
-  function onNewHelpRequest( topics: string[], description?: string, reporter?: string, category?: string, category_specialty?:string )  {
+  function onNewHelpRequest( topics: string[],team:string, description?: string, reporter?: string, category?: string, category_specialty?:string )  {
     const newHelpRequest : CreateHelpRequest = {
       description:description,
       topics:topics,
-      team:user.team,
-      category:category,
-      category_specialty:category_specialty,
+      team: team
+      // reporter: reporter,
+      // category: category,
+      // category_specialty:category_specialty,
     }
     if (session?.access_token){
         addMentorHelpRequest(session?.access_token, newHelpRequest)
     }
   }
-  function onEditToHelpRequest(team: string, topics: string[], description?: string, reporter?: string, category?: string, category_specialty?:string )  {
+  function onEditToHelpRequest(team: string, topics: string[], requestId: string, description?: string, reporter?: string, category?: string, category_specialty?:string )  {
     const editedHelpRequest : CreateHelpRequest = {
       description:description,
       topics:topics,
       team:team,
-      category:category,
-      category_specialty:category_specialty,
+      // category:category,
+      // category_specialty:category_specialty,
     }
     if (session?.access_token){
-        editMentorHelpRequest(session?.access_token, editedHelpRequest)
+        editMentorHelpRequest(session?.access_token, requestId, editedHelpRequest)
     }
   }
 
@@ -217,7 +225,7 @@ export default function Help2() {
 
       <div className="flex flex-wrap gap-2">
         {allHelpRequests
-          .filter(el => el.team == user?.team.id)
+          .filter(el => el.team == user?.team?.id)
           .map((req, idx) => (
             <Posting
               status={myLighthouse?.mentor_requested}

@@ -4,6 +4,8 @@ import { HelpRequest, addMentorHelpRequest } from '@/app/api/helpqueue';
 import {  ThemeProvider,  createTheme} from '@mui/material';
 import { MentorTopics } from '@/types/types';
 import SelectToolWithOther from '@/app/(dashboard)/mentors/SelectToolWithOther';
+import { useAuthContext } from '@/hooks/AuthContext';
+
 interface StatBoxProps {
   src: string;
   label: string;
@@ -62,6 +64,7 @@ interface QuestionDialogProps {
   closeNewRequestDialog: () => void;
   onSubmit: (
     topics: string[],
+    team: string,
     description?: string,
     reporter?: string,
     category?: string,
@@ -75,54 +78,10 @@ export function QuestionDialog({
   onSubmit
 }: QuestionDialogProps) {
   const [textareaValue, setTextareaValue] = useState<string>('');
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  // const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   //this is to see if you can submit the question or not
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
 
-  const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const files = Array.from(e.dataTransfer.files || []).slice(0, 3); // Limit to three files
-    const imageFiles = files.filter(file => file.type.startsWith('image/')); // Filter only image files
-    setSelectedFiles(imageFiles);
-  };
-
-  const handleDeletePreview = (index: number) => {
-    const updatedFiles = [...selectedFiles];
-    updatedFiles.splice(index, 1);
-    setSelectedFiles(updatedFiles);
-    setPreviewImage(null); // Reset previewImage state
-  };
-
-  const handleFileClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []).slice(0, 3); // Limit to three files
-    const imageFiles = files.filter(file => file.type.startsWith('image/')); // Filter only image files
-    setSelectedFiles(prevFiles => [...imageFiles, ...prevFiles].slice(0, 3));
-    setPreviewImage(null); // Reset previewImage state
-  };
-
-  const handleImageClick = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      setPreviewImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-  const fileInputRef = React.createRef<HTMLInputElement>();
-
-  const eraseImage = (index: number) => {
-    const updatedFiles = [...selectedFiles];
-    updatedFiles.splice(index, 1);
-    setSelectedFiles(updatedFiles);
-    setPreviewImage(null); // Reset previewImage state
-  };
+  const { user } = useAuthContext();
 
   const formattedOptions = Object.keys(MentorTopics).map(key =>
     key.replace(/_/g, ' ')
@@ -149,7 +108,6 @@ export function QuestionDialog({
         isOpen={isNewRequestDialogOpen}
         onClose={() => {
           closeNewRequestDialog();
-          setPreviewImage(null);
         }}
       >
         <div className="flex flex-col gap-4">
@@ -179,56 +137,15 @@ export function QuestionDialog({
               value={textareaValue}
               onChange={e => setTextareaValue(e.target.value)}
             />
-            <div className="font-bold">Add up to three screenshots</div>
-            <div
-              className="border-dashed border-2 p-4 cursor-pointer rounded-md"
-              onDragOver={e => e.preventDefault()}
-              onDrop={handleFileDrop}
-              onClick={handleFileClick}
-            >
-              Drag and drop or click to upload
-            </div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: 'none' }}
-              multiple
-              onChange={handleFileInputChange}
-            />
-            {selectedFiles.length > 0 && (
-              <div className="mt-2">
-                <strong>Selected files:</strong>
-                <ul className="flex flex-wrap gap-2">
-                  {selectedFiles.map((file, index) => (
-                 
-                 <li className='flex flex-row gap-2' key={index} onClick={() => handleImageClick(file)}>
-                      <button className="bg-red-400 text-white rounded-lg p-2" onClick={() => handleDeletePreview(index)}>
-                X
-              </button>
-                      <SelectedFile
-                        fileTitle={file.name}
-                        eraseImage={() => eraseImage(index)}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <strong>Preview:</strong>
-            {previewImage && (
-              <div className="">
-                <img
-                  src={previewImage}
-                  alt="Preview"
-                  style={{ maxWidth: '100%', maxHeight: '200px' }}
-                />
-              </div>
-            )}
           </div>
           <div
             onClick={() => {
+              if (!user || !user.team) {
+                console.error('User or team is null');
+                return;
+              }
               if (textareaValue.trim() !== '' && canSubmit) {
-                onSubmit(selectedItems, textareaValue);
+                onSubmit(selectedItems, user?.team?.id, textareaValue);
               }
             }}            
           className={`mt-auto ml-auto py-1 px-2 rounded-xl ${
@@ -242,30 +159,6 @@ export function QuestionDialog({
         </div>
       </Dialog>
     </ThemeProvider>
-  );
-}
-
-export function SelectedFile({
-  fileTitle,
-  eraseImage
-}: {
-  fileTitle: string;
-  eraseImage: () => void;
-}) {
-  // Split fileTitle into title and type
-  const title =
-    fileTitle.length > 7 ? `${fileTitle.slice(0, 7)}...` : fileTitle;
-  const fileType = fileTitle.substring(fileTitle.lastIndexOf('.') + 1);
-
-  return (
-    <div className="flex gap-2 w-fit border p-1 rounded-lg items-center bg-gray-100">
-      <div className="ml-auto" onClick={eraseImage}>
-        <Image alt="y" src={'/CloseX.png'} width={15} height={15} />
-      </div>
-      <div>
-        {title}.{fileType}
-      </div>
-    </div>
   );
 }
 
