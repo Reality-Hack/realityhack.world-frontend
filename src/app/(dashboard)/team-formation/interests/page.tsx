@@ -69,7 +69,7 @@ export default function Interests() {
   return (
     <div className="flex flex-col gap-8 ">
       <div className="text-blue-400 font-semibold text-2xl">MY INTERESTS</div>
-      <div className="flex flex-col gap-2">
+      {!tracks ? "Loading..." : <div className="flex flex-col gap-2">
         <div className="font-semibold">PURPOSE TRACKS (Select. 2)</div>
         <div className="text-lg text-red-400">{warning}</div>
         <CustomSelectMultipleTyping
@@ -130,8 +130,8 @@ export default function Interests() {
             }
             trackName={'Community Hack'}
           />
-      </div>
-    </div>
+        </div>
+      </div>}
     </div>
   );
 }
