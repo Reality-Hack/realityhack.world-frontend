@@ -169,7 +169,7 @@ export default function HackersMet({}) {
       <div className="flex flex-wrap items-center justify-center">
         <div className="text-blue-400 text-3xl">{`Hackers I've Met`}</div>
         <button className='ml-auto p-2 rounded-lg bg-blue-300 text-white hover:opacity-60 drop-shadow-lg'
-        onClick={handleOpenDialog} disabled={!(attendeesLoading || preferencesLoading)}>My Personal Contacts</button>{' '}
+        onClick={handleOpenDialog} disabled={attendeesLoading || preferencesLoading}>My Personal Contacts</button>{' '}
       </div>
 
       <PreferenceRowForm
