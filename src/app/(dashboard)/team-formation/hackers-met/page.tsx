@@ -13,6 +13,7 @@ import React, { MouseEventHandler, useEffect, useState } from 'react';
 import CustomDialog from './Dialogue';
 import QRCodeReader from '@/components/admin/QRCodeReader';
 import { getAvailableTracks } from '@/app/api/teamformation';
+import { LinearProgress } from '@mui/material';
 
 interface Attendee {
   participation_class?: string;
@@ -36,6 +37,9 @@ export default function HackersMet({}) {
   const { data: session } = useSession();
   const { user } = useAuthContext();
 
+  const [attendeesLoading, setAttendeesLoading] = useState(false);
+  const [preferencesLoading, setPreferencesLoading] = useState(false);
+
   const [attendees, setAttendeeInfo] = useState<Attendee[]>();
   const [personalPreferences, setPersonalPreferences] = useState<Preference[]>(
     []
@@ -47,6 +51,7 @@ export default function HackersMet({}) {
   
   useEffect(() => {
     if (session?.access_token) {
+      setAttendeesLoading(true);
       getAllAttendees(session.access_token)
         .then(apps => {
           // Filter attendees with participation class "P"
@@ -61,12 +66,13 @@ export default function HackersMet({}) {
         .catch(error => {
           // Handle error if necessary
           console.error('Error fetching attendees:', error);
-        });
+        }).finally(() => setAttendeesLoading(false));
     }
   }, [session]);
 
   useEffect(() => {
     if (session && user) {
+      setPreferencesLoading(true);
       getPreferencesByAttendeeId(session.access_token, user.id)
         .then(prefs => {
           setPersonalPreferences(prefs);
@@ -75,7 +81,7 @@ export default function HackersMet({}) {
         .catch(error => {
           // Handle error if necessary
           console.error('Error fetching attendees:', error);
-        });
+        }).finally(() => setPreferencesLoading(false));
     }
   }, [session, user]);
 
@@ -95,6 +101,7 @@ export default function HackersMet({}) {
 
   async function deletePreferences(preferenceId: string) {
     if (session) {
+      setPreferencesLoading(true);
       await deletePreference(session?.access_token, preferenceId);
       let oldPrefIdx = personalPreferences.findIndex(
         el => el.id === preferenceId
@@ -102,6 +109,7 @@ export default function HackersMet({}) {
       let newPrefList = personalPreferences.slice();
       newPrefList.splice(oldPrefIdx, 1);
       setPersonalPreferences(newPrefList);
+      setPreferencesLoading(false);
     }
   }
 
@@ -110,6 +118,7 @@ export default function HackersMet({}) {
     preferenceId: string
   ) {
     if (session) {
+      setPreferencesLoading(true);
       await updatePreference(session?.access_token, preferenceId, preference);
       let oldPrefIdx = personalPreferences.findIndex(
         el => el.id === preferenceId
@@ -119,6 +128,7 @@ export default function HackersMet({}) {
         newPrefList[oldPrefIdx].preference = preference;
       }
       setPersonalPreferences(newPrefList);
+      setPreferencesLoading(false);
     }
   }
 
@@ -158,7 +168,8 @@ export default function HackersMet({}) {
     <div className='flex flex-col gap-2'>
       <div className="flex flex-wrap items-center justify-center">
         <div className="text-blue-400 text-3xl">{`Hackers I've Met`}</div>
-        <button className='ml-auto p-2 rounded-lg bg-blue-300 text-white hover:opacity-60 drop-shadow-lg' onClick={handleOpenDialog}>My Personal Contacts</button>{' '}
+        <button className='ml-auto p-2 rounded-lg bg-blue-300 text-white hover:opacity-60 drop-shadow-lg'
+        onClick={handleOpenDialog} disabled={!(attendeesLoading || preferencesLoading)}>My Personal Contacts</button>{' '}
       </div>
 
       <PreferenceRowForm
@@ -168,9 +179,10 @@ export default function HackersMet({}) {
         profilePicSrc={'newPreference.src'}
         options={availableAttendeeOptions || []}
         addToPreferences={addPreferences}
+        enabled={!attendeesLoading}
       />
       <div>
-        {personalPreferences &&
+        {attendeesLoading || preferencesLoading ? <LinearProgress /> : personalPreferences &&
           attendees &&
           personalPreferences.map((pref: Preference, index: number) => (
             <PersonRow
@@ -296,6 +308,7 @@ interface PreferenceFormRow {
   status?: string;
   options: { label: string; value: string }[];
   addToPreferences: (preferee: string, preferenceStatus: 'Y' | 'N') => void;
+  enabled: boolean;
 }
 
 function PreferenceRowForm({
@@ -303,8 +316,11 @@ function PreferenceRowForm({
   name,
   status,
   options,
-  addToPreferences
+  addToPreferences,
+  enabled
+
 }: PreferenceFormRow) {
+  // const { user } = useAuthContext();
   const [fellowAttendee, setFellowAttendee] = useState('');
 
   function handleAttendeeSelection(value: string) {
@@ -312,17 +328,13 @@ function PreferenceRowForm({
   }
 
   function handlePreferenceSelection(preference: 'Y' | 'N') {
-    // const { user } = useAuthContext();
-    const user = { id: '616cb100-30ed-4159-bf9c-154029b798dc' };
-
-    console.log('pkpokpokpokpokpokpokpok', user);
     addToPreferences(fellowAttendee, preference);
     setFellowAttendee('');
   }
 
   return (
     <div>
-      <div className="flex flex-row gap-2 items-center">
+      {enabled ? <><div className="flex flex-row gap-2 items-center">
         <CustomSelectTyping
           width="100%"
           label="Select a status"
@@ -364,7 +376,7 @@ function PreferenceRowForm({
           {/* <img src={profilePicSrc} width={20} height={20} alt="person" /> */}
           <div className="text-lg font-semibold">{name}</div>
         </div>
-      </div>
+      </div></> : "Loading..."}
     </div>
   );
 }
