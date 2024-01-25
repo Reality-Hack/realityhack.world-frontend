@@ -20,7 +20,7 @@ export default function TimeComponent({ time }: TimeComponentProps) {
       }
     } else {
       setAmOrPm('am');
-      setTimeSlot(`${timex}`);
+      setTimeSlot(`${time}`);
     }
   }),
     [];
