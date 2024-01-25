@@ -137,7 +137,6 @@ export default function Help2() {
 
   //subscribe to the websocket
   useEffect(() => {
-    console.log('use effect 1 ');
     setLoading(true);
     if (lastMessage !== null) {
       const payload: LightHouseMessage[] | { message: LightHouseMessage } =

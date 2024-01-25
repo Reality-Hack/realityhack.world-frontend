@@ -51,6 +51,7 @@ export type HelpRequestHistory = {
   id: string;
   mentor: string;
   reporter: string;
+  topic: Array<string>;
   status: string;
   team: string;
   title: string;
@@ -171,7 +172,8 @@ export async function getAllMyTeamsHistoricalHelpRequests(
  * @returns list of helpRequestHistory objects
  */
 export async function getAllHelpRequestsFromHistory(
-  accessToken: string
+  accessToken: string,
+  mentorTopcis?:  string[],
 ): Promise<HelpRequestHistory[]> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequestshistory/`;
   const resp = await fetch(url, {
@@ -182,6 +184,7 @@ export async function getAllHelpRequestsFromHistory(
   });
   const result = await resp.json();
   if (resp.ok) {
+    console.log(result);
     return result;
   }
   throw new Error(

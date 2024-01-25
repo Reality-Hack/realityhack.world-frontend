@@ -46,6 +46,21 @@ interface CompletedPostingProps {
     created,
     team
   }: PostingProps) {
+
+    const bannerColor = (status: string) => {
+      const green = 'bg-[#8FC382] text-white';
+      const yellow = 'bg-[#F9C34A] text-black';
+      const gray = 'bg-[#D1D5DB] text-black';
+      const offwhite = 'bg-[#fff9e8] text-grey';
+      switch (status) {
+        case "REQUESTED": return gray;
+        case "ACKNOWLEDGED": return yellow;
+        case "EN_ROUTE": return green;
+        case "RESOLVED": return offwhite;
+  
+      }
+    }
+      
     return (
       <div className="flex flex-col bg-white border-black border-2  w-fit rounded-lg">
         {team}
@@ -56,7 +71,7 @@ interface CompletedPostingProps {
           </div>
         )}
   
-        <div className="bg-[#8FC382] w-full p-0 text-white flex flex-row justify-center">
+        <div className={`${bannerColor(status)} w-full p-0 flex flex-row justify-center`}>
           Status: {status}
         </div>
   

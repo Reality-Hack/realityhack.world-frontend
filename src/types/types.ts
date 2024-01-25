@@ -201,12 +201,12 @@ export enum MentorTopics {
   Software_Builds = '24',
   Containers = '25',
   Deployment_Automation = '26',
-  SRE_Work = '27',
+  Site_reliability_engineering_SRE_Work = '27',
   Python_Shell_Scripting = '28',
   Search_Implementation = '29',
   Generative_AI = '30',
   IoT = '31',
-  Rendering_3D = '32',
+  ThreeD_Rendering = '32',
   Video_Encoding = '33',
   Linux_OS_Configuration = '34',
   Cross_platform_Work = '35',
@@ -221,9 +221,9 @@ export enum MentorTopics {
   Miro = '44',
   Adobe_Creative_Suite = '45',
   Mocap = '46',
-  Stereoscopic_Recording_3D = '47',
+  ThreeD_Stereoscopic_Recording = '47',
   Mobile_AR = '48',
-  Modeling_3D = '49',
+  ThreeD_Modeling = '49',
   Animation = '50',
   Motion_Capture = '51',
   XR_Design_Execution = '52',
@@ -257,12 +257,29 @@ export enum MentorTopics {
   Game_Design = '80',
   Lens_Studio_Projects = '81',
   Snap_Lens = '82',
-  _8thWall_Expertise = '83',
+  Eighth_Wall_Expertise = '83',
   Web_Development = '84',
   Blockchain = '85',
   Networking = '86',
-  NET = '87',
+  Dot_NET = '87',
   Other = 'O'
+}
+
+export function getKeyByValue(enumObj: any, value: string): string | null {
+  for (const [key, val] of Object.entries(enumObj)) {
+      if (val === value) {
+          return key;
+      }
+  }
+  return null; // return null if no matching key is found
+}
+
+
+export enum mentor_help_status {
+  REQUESTED = 'R',
+  ACKNOWLEDGED = 'A',
+  EN_ROUTE = 'E',
+  RESOLVED = 'F'
 }
 
 export enum hardware_request_status {
