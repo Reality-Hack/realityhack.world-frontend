@@ -138,7 +138,7 @@ const Page: React.FC = () => {
                             duration={data.duration || 2}
                             workshopName={data.name || 'defaultWorkshopName'}
                             description={
-                              data.description || 'defaultDescription'
+                              data.description || 'No Description provided.'
                             }
                             datetime={
                               data.datetime || '2024-01-13T02:09:00.806940Z'

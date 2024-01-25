@@ -176,8 +176,6 @@ export default function Checkin() {
       (workshop: any) => workshop.workshop === selectedWorkshop
     );
 
-    console.log('selectedWorkshopDetails: ', selectedWorkshopDetails);
-
     const attendee = (attendees as unknown as any[])?.find(
       (a: any) => a.id === userId
     );

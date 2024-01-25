@@ -58,12 +58,12 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
   const [loading, setLoading] = useState(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const roomColors: { [key: string]: string } = {
-    1: '#7584F3',
-    2: '#EE7379',
-    3: '#9FD6A5',
-    4: '#F5B354',
-    5: '#65A5EB',
-    6: '#D6266E',
+    1: '#A2E1A5',
+    2: '#E26677',
+    3: '#777CE4',
+    4: '#EFB45A',
+    5: '#CA0C6C',
+    6: '#CA0C6C',
     7: '#0da38f'
   };
 
@@ -142,10 +142,10 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
         paddingLeft: '8px',
         paddingRight: '16px'
       }}
-      className={`h-11 rounded-[10px] shadow p-1 hover:cursor-pointer`}
+      className={`h-11 rounded-[10px] shadow p-1`}
     >
       <div>
-        <div className="text-white text-base font-medium font-['Inter'] overflow-x-hidden">
+        <div className="text-white text-base font-medium font-['Inter'] overflow-x-hidden cursor-pointer">
           <div className="w-[146px] text-white opacity-60 text-[10px] font-medium font-['Inter'] leading-[10px] whitespace-nowrap">
             <div
               style={{
@@ -175,19 +175,12 @@ const ScheduleRoom: React.FC<ScheduleRoomProps> = ({
                 {roomLocation} | {formatTime(datetime)} -{' '}
                 {addHoursToTime(formatTime(datetime), 1)}
               </div>
-              <div className="flex flex-row gap-2">
-                {recommended_for.map(attendeeType => (
-                  <div className="p-1 bg-blue-200 rounded-lg w-fit">
-                    {(ExperienceLevel as Record<string, string>)[attendeeType]}
-                  </div>
-                ))}
-              </div>
             </div>
             <div className=" overflow-ellipsis">
               <div className="flex-grow ">{description}</div>
             </div>{' '}
             <div
-              className={`border-opacity-0 bg-[#4D97E8] text-white mx-auto mt-4 border px-4 py-[6px] rounded-full text-xs  transition-all whitespace-nowrap`}
+              className={`border-opacity-0 bg-[#4D97E8] text-white mx-auto mt-4 border px-4 py-[6px] rounded-full text-xs  transition-all whitespace-nowrap cursor-pointer`}
               onClick={handleSubmit}
             >
               Remove Workshop

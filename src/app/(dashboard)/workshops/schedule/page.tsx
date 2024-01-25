@@ -140,16 +140,21 @@ function Workshop({
           </div>
         </div>
         <div className="flex flex-wrap">
-          {workshop.speakers.map((speaker: string) => {
-            return (
-              <div
-                key={speaker}
-                className={`text-xs px-3 py-0.5 mr-2 mb-2 rounded-md bg-slate-300`}
-              >
-                {speaker}
-              </div>
-            );
-          })}
+          {workshop.speakers.length &&
+            workshop.speakers.map((speaker: string) => {
+              return (
+                <div
+                  key={speaker}
+                  className={
+                    speaker
+                      ? 'text-xs px-3 py-0.5 mr-2 mb-2 rounded-md bg-slate-300'
+                      : ''
+                  }
+                >
+                  {speaker}
+                </div>
+              );
+            })}
         </div>
 
         <div className="flex items-center">
