@@ -18,7 +18,8 @@ const LegendRoom: React.FC<LegendRoomProps> = ({ color, name }) => {
     '3': 'Curr. 3 - New Tech Dev',
     '4': 'Curr. 4 - Beginner Designer',
     '5': 'Curr. 5 - Advanced Designer',
-    '6': 'Curr. 6 - Hardware'
+    '6': 'Curr. 6 - Hardware',
+    '7': 'Curr. 7 - Business'
   };
 
   return (
@@ -33,14 +34,16 @@ const LegendRoom: React.FC<LegendRoomProps> = ({ color, name }) => {
 };
 
 const Page: React.FC = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const roomColors = {
     1: '#A2E1A5',
     2: '#E26677',
     3: '#777CE4',
     4: '#EFB45A',
-    5: '#CA0C6C'
+    5: '#CA0C6C',
+    6: '#CA0C6C',
+    7: '#0da38f'
   };
 
   const [userEvents, setUserEvents] = useState<WorkshopAttendeeListItem[]>();
@@ -99,7 +102,7 @@ const Page: React.FC = () => {
           <div>
             <div>
               <div className="w-[100%] bg-neutral-50 rounded-[10px] shadow overflow-x-scroll h-[576px]">
-                <span className="text-zinc-500 text-2xl font-normal font-['Inter'] leading-normal mt-6 ml-3 ">
+                <span className="mt-6 ml-3 text-2xl font-normal leading-normal text-zinc-500 ">
                   Schedule
                 </span>
                 <div className="p-4 rounded-[10px] min-w-[1000px] overflow-x-auto">
@@ -135,7 +138,7 @@ const Page: React.FC = () => {
                             duration={data.duration || 2}
                             workshopName={data.name || 'defaultWorkshopName'}
                             description={
-                              data.description || 'defaultDescription'
+                              data.description || 'No Description provided.'
                             }
                             datetime={
                               data.datetime || '2024-01-13T02:09:00.806940Z'
@@ -151,11 +154,11 @@ const Page: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="origin-top-left -rotate-90 translate-y-[-500%] text-zinc-500 text-base font-light font-['Inter'] leading-normal tracking-[2.88px]">
+            <div className="origin-top-left -rotate-90 translate-y-[-500%] text-zinc-500 text-base font-light leading-normal tracking-[2.88px]">
               Monday January 25
             </div>
           </div>
-          <div className="text-zinc-500 text-2xl font-normal font-['Inter'] leading-normal bg-white border-2 border-gray-200 flex flex-col gap-2 w-fit p-2 rounded-lg bg-neutral-50 rounded-[10px] shadow">
+          <div className="text-zinc-500 text-2xl font-normal leading-normal bg-white border-2 border-gray-200 flex flex-col gap-2 w-fit p-2 rounded-lg bg-neutral-50 rounded-[10px] shadow">
             Legend
             {Object.entries(roomColors).map(([roomId, color]) => (
               <LegendRoom color={color} name={roomId} key={roomId} />

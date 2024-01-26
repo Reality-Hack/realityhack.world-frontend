@@ -1,16 +1,15 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  Dispatch,
-  SetStateAction
-} from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Divider, Input, Select, Space, Button } from 'antd';
 import type { InputRef } from 'antd';
+import { Button, Divider, Input, Select, Space } from 'antd';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 
 interface SelectToolWithOtherProps {
-  // Add any additional props if needed
   placeholder: string;
   mentorTopics: string[];
   canSubmit: (submissionState: boolean) => void;

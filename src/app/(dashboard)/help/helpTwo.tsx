@@ -6,17 +6,11 @@ import {
   Table,
   Team,
   addMentorHelpRequest,
-  editMentorHelpRequest,
   getAllHelpRequests,
   getAllHelpRequestsFromHistory,
-  getAllMyTeamsHelpRequests,
-  getAllMyTeamsHistoricalHelpRequests,
-  getAllTables,
-  getTable
+  getAllTables
   // getTeamIdFromAttendeeId
 } from '@/app/api/helpqueue';
-import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
 import {
   // CompletedPosting,
   // Posting,
@@ -27,11 +21,12 @@ import {
   CompletedPosting,
   Posting
 } from '@/components/helpQueue/hackerView/PostingComps';
-import { getMe } from '@/app/api/attendee';
 import { useAuthContext } from '@/hooks/AuthContext';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
-import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { MentorTopics } from '@/types/types';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 const LighthousesSocketURL = `${process.env.NEXT_PUBLIC_BACKEND_WS_URL}/ws/lighthouses/`;
 
 type LighthouseInfo = {
@@ -50,7 +45,6 @@ export default function Help2() {
   const { user } = useAuthContext();
 
   const [myTable, setMyTable] = useState<Table>();
-  const [myId, setMyId] = useState<String>();
   const [allHelpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
   const [allHistoricalHelpRequests, setHistoricalHelpRequests] = useState<
     HelpRequestHistory[]
@@ -177,32 +171,8 @@ export default function Help2() {
       addMentorHelpRequest(session?.access_token, newHelpRequest);
     }
   }
-  function onEditToHelpRequest(
-    team: string,
-    topics: string[],
-    requestId: string,
-    description?: string,
-    reporter?: string,
-    category?: string,
-    category_specialty?: string
-  ) {
-    const editedHelpRequest: CreateHelpRequest = {
-      description: description,
-      topic: topics,
-      team: team
-      // category:category,
-      // category_specialty:category_specialty,
-    };
-    if (session?.access_token) {
-      editMentorHelpRequest(
-        session?.access_token,
-        requestId,
-        editedHelpRequest
-      );
-    }
-  }
 
-  const formattedOptions = [];
+  const formattedOptions: { label: string; value: string }[] = [];
 
   for (const key in MentorTopics) {
     formattedOptions.push({
@@ -212,7 +182,7 @@ export default function Help2() {
   }
 
   const getTopicLabels = (topicIds: any) => {
-    return topicIds.map(id => {
+    return topicIds?.map((id: string) => {
       const option = formattedOptions.find(option => option.value === id);
       return option ? option.label : 'Unknown';
     });
@@ -246,7 +216,7 @@ export default function Help2() {
               requestTitle={req.title}
               description={req.description?.slice(0, 5)}
               placeInQueue={idx}
-              skillList={getTopicLabels(req.topic)}
+              skillList={getTopicLabels(req.topics) ?? []}
               created={req.created_at}
               team={req.team}
             />

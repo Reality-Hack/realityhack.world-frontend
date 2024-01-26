@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Divider, Input, Select, Space, Button, Tag } from 'antd';
 import type { InputRef } from 'antd';
+import { Button, Divider, Input, Select, Space, Tag } from 'antd';
+import React, { useRef, useState } from 'react';
 
 let index = 0;
 
@@ -29,7 +29,7 @@ const CustomDropdown: React.FC<{
         ref={inputRef}
         value={name}
         onChange={onNameChange}
-        onKeyDown={(e) => e.stopPropagation()}
+        onKeyDown={e => e.stopPropagation()}
       />
       <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
         Add item
@@ -40,7 +40,6 @@ const CustomDropdown: React.FC<{
   </>
 );
 
-
 const CustomHH: React.FC = () => {
   const [items, setItems] = useState(['jack', 'lucy']);
   const [name, setName] = useState('');
@@ -50,7 +49,9 @@ const CustomHH: React.FC = () => {
     setName(event.target.value);
   };
 
-  const addItem = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+  const addItem = (
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => {
     e.preventDefault();
     setItems([...items, name || `New item ${index++}`]);
     setName('');
@@ -59,7 +60,7 @@ const CustomHH: React.FC = () => {
     }, 0);
   };
 
-  const tagRender: TagRender = (props) => {
+  const tagRender: TagRender = props => {
     const { label, value, closable, onClose, color } = props;
     const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
       event.preventDefault();
@@ -82,13 +83,18 @@ const CustomHH: React.FC = () => {
     <Select
       style={{ width: 300 }}
       placeholder="custom dropdown render"
-      dropdownRender={(menu) => (
-        <CustomDropdown inputRef={inputRef} name={name} onNameChange={onNameChange} addItem={addItem}>
+      dropdownRender={menu => (
+        <CustomDropdown
+          inputRef={inputRef}
+          name={name}
+          onNameChange={onNameChange}
+          addItem={addItem}
+        >
           {menu}
         </CustomDropdown>
       )}
-      tagRender={tagRender}
-      options={items.map((item) => ({ label: item, value: item }))}
+      tagRender={tagRender as any}
+      options={items.map(item => ({ label: item, value: item }))}
     />
   );
 };

@@ -1,14 +1,14 @@
 'use client';
-import { useSession } from 'next-auth/react';
-import React, { useEffect, useState, MouseEvent } from 'react';
 import {
   getAllWorkshops,
   getMyWorkshops,
-  showInterestInWorkshop,
-  removeInterestInWorkshop
+  removeInterestInWorkshop,
+  showInterestInWorkshop
 } from '@/app/api/workshops';
 import { useAuthContext } from '@/hooks/AuthContext';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { useSession } from 'next-auth/react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 
 interface Workshop {
   workshop: any;
@@ -50,7 +50,8 @@ const keywords: WorkshopKeywords = {
   3: { name: 'Developer', category: 'New Tech', bg_color: '#623330' },
   4: { name: 'Designer', category: 'Beginner', bg_color: '#274566' },
   5: { name: 'Designer', category: 'Advanced', bg_color: '#3F2D60' },
-  6: { name: 'Hardware', category: 'Hardware', bg_color: '#7E6338' }
+  6: { name: 'Hardware', category: 'Hardware', bg_color: '#7E6338' },
+  7: { name: 'Business', category: 'Business', bg_color: '#7E6338' }
 };
 
 function Workshop({
@@ -139,12 +140,23 @@ function Workshop({
           </div>
         </div>
         <div className="flex flex-wrap">
-          <div
-            className={`text-xs px-3 py-0.5 mr-2 mb-2 rounded-md bg-slate-300`}
-          >
-            {workshop.speakers}
-          </div>
+          {workshop.speakers.length &&
+            workshop.speakers.map((speaker: string) => {
+              return (
+                <div
+                  key={speaker}
+                  className={
+                    speaker
+                      ? 'text-xs px-3 py-0.5 mr-2 mb-2 rounded-md bg-slate-300'
+                      : ''
+                  }
+                >
+                  {speaker}
+                </div>
+              );
+            })}
         </div>
+
         <div className="flex items-center">
           <div
             className={`${isEnrolled ? 'bg-white border border-[#4D97E8] text-[#4D97E8]' : `border-opacity-0 bg-[#4D97E8] text-white `} mx-auto mt-4 border px-4 py-[6px] rounded-full text-xs cursor-pointer transition-all whitespace-nowrap`}
@@ -190,14 +202,23 @@ function Workshop({
                 {keywords[curriculum]?.category || 'Unknown Room'}
               </div>
             </div>
-            <div className="p-4 text-black description-container">
-              <div className="">{description}</div>
-            </div>
-            <div
-              className={`${isEnrolled ? 'bg-white border border-[#4D97E8] text-[#4D97E8]' : `bg-[#4D97E8] text-white `} w-fit mx-auto mt-4  px-4 py-[6px] rounded-full text-xs cursor-pointer transition-all`}
-              onClick={handleSubmit}
-            >
-              {isEnrolled ? 'Remove' : 'Add to Schedule'}
+            <div className="p-4 text-black">
+              <div
+                className="overflow-scroll"
+                style={{ maxHeight: '200px', overflow: 'auto' }}
+              >
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: description?.replace(/\n/g, '<br />') || ''
+                  }}
+                ></div>
+              </div>
+              <div
+                className={`${isEnrolled ? 'bg-white border border-[#4D97E8] text-[#4D97E8]' : `bg-[#4D97E8] text-white `} w-fit mx-auto mt-4  px-4 py-[6px] rounded-full text-xs cursor-pointer  transition-all`}
+                onClick={handleSubmit}
+              >
+                {isEnrolled ? 'Remove' : 'Add to Schedule'}
+              </div>
             </div>
           </Dialog>
         )}
@@ -227,7 +248,8 @@ const WorkshopRoom: React.FC<WorkshopRoomProps> = ({
     'Curr. 3 - New Tech Dev',
     'Curr. 4 - Beginner Designer',
     'Curr. 5 - Advanced Designer',
-    'Curr. 6 - Hardware'
+    'Curr. 6 - Hardware',
+    'Curr. 7 - Business'
   ];
 
   const roomColors = [
@@ -236,7 +258,8 @@ const WorkshopRoom: React.FC<WorkshopRoomProps> = ({
     '#777CE4',
     '#EFB45A',
     '#6DA9E5',
-    '#CA0C6C'
+    '#CA0C6C',
+    '#0da38f'
   ];
 
   const bgColor = roomColors[Number(room) - 1] || '#000000';
@@ -290,10 +313,14 @@ const Page: React.FC<PageProps> = () => {
     return { roomLocation, title, curriculum };
   };
 
-  function splitDescription(input: string) {
-    const [speakersPart, description] = input.split(' - ');
+  function splitDescription(input: any) {
+    const firstDashIndex = input.indexOf(' - ');
+    const speakersPart = input.substring(0, firstDashIndex);
+    const description = input.substring(firstDashIndex + 3);
 
-    const speakers = speakersPart.split(',').map(speaker => speaker.trim());
+    const speakers = speakersPart
+      .split(',')
+      .map((speaker: any) => speaker.trim());
 
     return { speakers, description };
   }
@@ -368,7 +395,7 @@ const Page: React.FC<PageProps> = () => {
         <div className="flex gap-2 p-4">
           {Object.entries(workshopsByRoom).map(
             ([room, roomWorkshops]: [string, Workshop[]]) => (
-              <div className="w-full">
+              <div className="w-full" key={room}>
                 <WorkshopRoom
                   key={room}
                   room={room}
@@ -410,7 +437,7 @@ const Dialog: React.FC<DialogProps> = ({ isOpen, onClose, children }) => {
         className="fixed inset-0 flex items-center justify-center z-[1002]"
         onClick={handleDialogClick}
       >
-        <div className="relative w-1/2 p-4 bg-white rounded-md shadow-md h-1/2">
+        <div className="relative w-1/2 p-4 bg-white rounded-md shadow-md">
           <div className="flex">
             <button className="ml-auto " onClick={onClose}>
               Close

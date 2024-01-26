@@ -49,7 +49,7 @@ export function Posting({
   created,
   team
 }: PostingProps) {
-  const bannerColor = (status: string) => {
+  const bannerColor = (status: string | void) => {
     const green = 'bg-[#8FC382] text-white';
     const yellow = 'bg-[#F9C34A] text-black';
     const gray = 'bg-[#D1D5DB] text-black';
@@ -64,20 +64,21 @@ export function Posting({
       case 'RESOLVED':
         return offwhite;
     }
+    return offwhite;
   };
 
   const [remainingTime, setRemainingTime] = useState<string | null>(null);
 
   useEffect(() => {
     // Calculate the initial remaining time
-    const initialRemainingTime = calculateTimeDifference(created);
+    const initialRemainingTime = calculateTimeDifference(created ?? '');
 
     // Update the state with the initial remaining time
     setRemainingTime(initialRemainingTime);
 
     // Set up an interval to update the remaining time every second
     const intervalId = setInterval(() => {
-      const updatedRemainingTime = calculateTimeDifference(created);
+      const updatedRemainingTime = calculateTimeDifference(created ?? '');
 
       // Update the state with the latest remaining time
       setRemainingTime(updatedRemainingTime);
@@ -108,7 +109,7 @@ export function Posting({
         {/* <div className="font-semibold">{requestTitle}</div> */}
         {placeInQueue && (
           <div>
-            {placeInQueue == 0 && <span className="font-bold">NEXT</span>}
+            {placeInQueue === 0 && <span className="font-bold">NEXT</span>}
             {placeInQueue !== 0 && (
               <span className="font-bold">Place in Queue: {placeInQueue}</span>
             )}
@@ -131,7 +132,7 @@ export function Posting({
         {placeInQueue && (
           <div className="flex flex-col items-center">
             <div className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] cursor-pointer transition-all">
-              I've been helped
+              {`I've been helped`}
             </div>
             <div className="gap-1.5s flex mt-0 mb-4 border border-[#0066F5] px-4 py-[6px] text-[#0066F5] rounded-md shadow my-4 font-light text-sm cursor-pointer transition-all">
               Cancel Request
@@ -237,12 +238,17 @@ export function MentorPosting({
       topic: topicList,
       status: status
     };
-    editMentorHelpRequest(access_token, requestId, updateData);
+    const apiReturn = editMentorHelpRequest(
+      access_token,
+      requestId,
+      updateData
+    );
+    console.log(apiReturn, 'heyyyyyyy');
   }
 
   return (
     <div className="flex flex-col bg-white border-2 border-black rounded-lg w-fit">
-      {team}
+      {/* {team} */}
       {mentorFirstName && (
         <div className="bg-[#8FC382] w-full p-0 text-white flex flex-row justify-center">
           {mentorFirstName} {mentorLastName && mentorLastName[0]}. is on their
@@ -252,7 +258,7 @@ export function MentorPosting({
 
       {status && (
         <div
-          className={`${bannerColor(status)} w-full p-0 flex flex-row justify-center`}
+          className={`${bannerColor(status)} flex flex-row justify-center overflow-hidden mt-1`}
         >
           Status: {status}
         </div>
@@ -277,7 +283,7 @@ export function MentorPosting({
           {created && calculateTimeDifference(created)}
         </div>
         <div className="flex gap-2 px-4">
-          {topicList.map((skill, index) => (
+          {topicList?.map((skill, index) => (
             <Skill key={index} skill={skill} />
           ))}
         </div>

@@ -1,15 +1,15 @@
 'use client';
 
-import React, {
+import { getMe } from '@/app/api/attendee';
+import { useSession } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
+import {
+  ReactNode,
   createContext,
   useContext,
   useEffect,
-  useState,
-  ReactNode
+  useState
 } from 'react';
-import { useSession } from 'next-auth/react';
-import { usePathname, useRouter } from 'next/navigation';
-import { getMe } from '@/app/api/attendee';
 
 interface AuthContextType {
   session: any;
@@ -29,13 +29,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+  const [meFetchedFlag, setMeFetchedFlag] = useState<boolean>(false);
 
   useEffect(() => {
-    if (session) {
+    if (session && !meFetchedFlag) {
       const fetchUser = async () => {
         try {
           const details = await getMe(session.access_token);
           setUser(details);
+          setMeFetchedFlag(true);
         } catch (error) {
           console.error('Error fetching attendee details:', error);
         }

@@ -5,6 +5,23 @@
 
 export async function getAllWorkshops(accessToken: string) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshops/`;
+
+  const resp = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    }
+  });
+
+  if (resp.ok) {
+    return await resp.json();
+  }
+  throw new Error('Failed to fetch data. Status: ' + resp.status);
+}
+
+export async function getAllAttendedWorkshops(accessToken: string) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/`;
+
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -54,9 +71,9 @@ export async function getWorkshop(accessToken: string, id: string) {
 
 // take attendance for workshop (user signs in to a specific workshop)
 export async function signinToWorkshop(id: string, data: any) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/`;
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/${id}/`;
   const response = await fetch(url, {
-    method: 'POST',
+    method: 'PATCH',
     headers: {
       'Content-Type': 'application/json'
     },

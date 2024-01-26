@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  PatchedTeam,
   SerializedTeam,
   deleteTeam,
   getTeam,
@@ -40,9 +39,9 @@ export default function TeamPage({ params }: { params: { id: string } }) {
 
   const saveTeam = useCallback(async () => {
     if (isAdmin && session?.access_token && !!team) {
-      const data: PatchedTeam = {
+      const data: any = {
         name: team.name,
-        table: team.table!.id,
+        table: team.table?.id,
         attendees: team.attendees.map(attendee => attendee.id)
       };
       const result = await updateTeam(params.id, data, session?.access_token);

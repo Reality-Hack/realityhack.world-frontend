@@ -5,16 +5,14 @@ import {
   updateApplication
 } from '@/app/api/application';
 import { getUploadedFile } from '@/app/api/uploaded_files';
-import CustomSelect from '@/components/CustomSelect';
+import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 import Table from '@/components/Table';
 import { Application, status } from '@/types/types';
-import Box from '@mui/material/Box';
 import { ColumnDef, Row, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../Modal';
-import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 
 interface ApplicationTableProps {
   type: string;

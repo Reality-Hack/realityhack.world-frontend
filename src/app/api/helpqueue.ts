@@ -258,38 +258,6 @@ export async function getAllTables(accessToken: string): Promise<Table[]> {
     )}`
   );
 }
-/**
- * getTable: makes api call to fetch all tables
- * @param accessToken session token to make connection
- * @returns list of table objects
- */
-export async function getTable(
-  accessToken: string,
-  id: string
-): Promise<Table> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/tables/${id}/`;
-  const resp = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
-    }
-  });
-  const result = await resp.json();
-  if (resp.ok) {
-    return result;
-  }
-  throw new Error(
-    `Failed to get specific table Status: ${resp.status}\n Result: ${JSON.stringify(
-      result
-    )}`
-  );
-}
-// return ("table location")
-
-//mentorHelpRequests(team) >> teams(id) >> table
-//lighthouse message has table number which has mentor_requested
-
-//attendee one
 
 export async function editMentorHelpRequest(
   accessToken: string,
@@ -297,7 +265,6 @@ export async function editMentorHelpRequest(
   updatedData: Partial<EditHelpRequest>
 ): Promise<EditHelpRequest> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/${requestId}/`;
-
   const resp = await fetch(url, {
     method: 'PATCH',
     headers: {
@@ -306,10 +273,8 @@ export async function editMentorHelpRequest(
     },
     body: JSON.stringify(updatedData)
   });
-
   if (resp.ok) {
-    const data = await resp.json();
-    return data;
+    return await resp.json();
   }
 
   throw new Error('Failed to fetch data. Status: ' + resp.status);

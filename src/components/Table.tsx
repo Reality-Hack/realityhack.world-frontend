@@ -22,6 +22,10 @@ interface TableProps<T> {
   search?: boolean;
   pagination?: boolean;
   loading?: boolean;
+  getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
+  defaultSorting?: SortingState;
+  rowSelection?: any;
+  setRowSelection?: (rowSelection: any) => void;
 }
 
 /**
@@ -37,6 +41,11 @@ interface TableProps<T> {
  * @props search boolean to render search input, only searches local data
  * @props pagination boolean to render pagination menu, paginates local data
  * @props loading boolean to determine if a loading indicator should be shown
+ * @props getRowId
+ * @props defaultSorting SortingState to set initial sorting to, must use an existing column id https://github.com/TanStack/table/discussions/5091
+ * @props rowSelection expected to be row selection state for row selection i.e. const [rowSelection, setRowSelection] = useState({});
+ *  if not passed in, will not render selection. See https://tanstack.com/table/v8/docs/examples/react/row-selection for example
+ * @props setRowSelection expected set state function for rowSelection. Must include rowSelection
  * @returns a table rendered with tailwind css using react-table
  */
 export default function Table<T>({
@@ -45,9 +54,13 @@ export default function Table<T>({
   onRowClick,
   search,
   pagination,
-  loading
+  loading,
+  defaultSorting,
+  getRowId,
+  rowSelection,
+  setRowSelection
 }: TableProps<T>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(defaultSorting ?? []);
   const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable<T>({
@@ -55,14 +68,18 @@ export default function Table<T>({
     columns,
     state: {
       sorting,
-      globalFilter
+      globalFilter,
+      rowSelection
     },
+    enableRowSelection: !!rowSelection,
+    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     ...(pagination && { getPaginationRowModel: getPaginationRowModel() }),
     onGlobalFilterChange: setGlobalFilter,
+    getRowId: getRowId,
     debugTable: false,
     autoResetPageIndex: false
   });

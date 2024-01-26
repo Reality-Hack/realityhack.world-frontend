@@ -25,6 +25,11 @@ export const menuItems = [
     icon: '/icons/dashboard/workshops.svg'
   },
   {
+    href: '/team-formation/hackers-met',
+    title: 'Team Formation',
+    icon: '/icons/dashboard/team.svg'
+  },
+  {
     href: '/team',
     title: 'My Team',
     icon: '/icons/dashboard/team.svg'
@@ -33,6 +38,11 @@ export const menuItems = [
     href: '/help',
     title: 'Help Queue',
     icon: '/icons/dashboard/help.svg'
+  },
+  {
+    href: '/lighthouses',
+    title: 'Lighthouses',
+    icon: '/icons/dashboard/lighthouse.svg'
   },
   {
     href: '/hardware/request',

@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { HelpRequest, addMentorHelpRequest } from '@/app/api/helpqueue';
-import { ThemeProvider, createTheme } from '@mui/material';
-import { MentorTopics } from '@/types/types';
 import SelectToolWithOther from '@/app/(dashboard)/mentors/SelectToolWithOther';
 import { useAuthContext } from '@/hooks/AuthContext';
+import { MentorTopics } from '@/types/types';
+import { ThemeProvider, createTheme } from '@mui/material';
+import Image from 'next/image';
+import React, { useState } from 'react';
 
 interface StatBoxProps {
   src: string;
@@ -83,14 +82,6 @@ export function QuestionDialog({
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
 
   const { user } = useAuthContext();
-
-  // const formattedOptions = Object.values(MentorTopics).map(
-  //   (key: any, value: any) => ({
-  //     label: key.replace(/_/g, ' '),
-  //     value: MentorTopics[key as keyof typeof MentorTopics]
-  //   })
-  // );
-
   const formattedOptions = [];
 
   for (const key in MentorTopics) {
@@ -99,9 +90,6 @@ export function QuestionDialog({
       value: MentorTopics[key as keyof typeof MentorTopics]
     });
   }
-
-  console.log('formattedOptions: ', formattedOptions);
-  // console.log('MentorTopics: ', MentorTopics);
 
   const theme = createTheme({
     components: {
@@ -130,15 +118,15 @@ export function QuestionDialog({
         }}
       >
         <div className="flex flex-col gap-4">
-          <div className="text-xl font-medium whitespace-nowrap">
+          <div className="text-md md:text-2xl font-bold whitespace-nowrap">
             New Help Request
           </div>
           <div className="flex flex-col gap-4">
             <div className="font-medium">
               What do you need help with
-              <span className="mb-2 text-red-400 text-md">*</span>?
+              <span className="text-lg md:text-2xl text-red-400">*</span>?
             </div>
-            <div className="w-full">
+            <div className="w-40">
               {/* tag renderer with a custom dropdown */}
               <SelectToolWithOther
                 canSubmit={setCanSubmit}

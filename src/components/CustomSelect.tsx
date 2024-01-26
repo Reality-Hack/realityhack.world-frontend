@@ -14,6 +14,7 @@ export interface CustomSelectProps {
   disabled?: boolean;
   search?: boolean;
   onSearch?: (value: string) => void;
+  width?:string;
 }
 
 export default function CustomSelect({
@@ -23,7 +24,8 @@ export default function CustomSelect({
   onChange,
   disabled,
   search,
-  onSearch
+  onSearch,
+  width
 }: CustomSelectProps) {
   const filterOptions = (input: any, option: any) => {
     let labelContent;
@@ -47,7 +49,7 @@ export default function CustomSelect({
         <Select
           showSearch
           value={value}
-          style={{ width: 250 }}
+          style={{ width: width || 250 }}
           size="small"
           disabled={disabled}
           placeholder={label}
@@ -59,7 +61,7 @@ export default function CustomSelect({
       ) : (
         <Select
           value={value}
-          style={{ width: 180 }}
+          style={{ width: width || 180 }}
           size="small"
           disabled={disabled}
           placeholder={label}
