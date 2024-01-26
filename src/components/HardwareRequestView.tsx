@@ -314,7 +314,7 @@ export default function HardwareRequestView({
                           .then((newApp: HardwareRequestBrief) => {
                             const newRequests = [...requests];
                             newRequests[info.row.index].status = newApp.status;
-                            if(!newApp?.hardware_device?.id) {
+                            if(typeof newApp.hardware_device === 'string' || newApp.hardware_device instanceof String) {
                               //@ts-ignore
                               getHardwareDevice(session.access_token, {id: newApp.hardware_device}).then((newDevice: HardwareDevice) => {
                                 newRequests[info.row.index].hardware_device = newDevice
