@@ -147,13 +147,8 @@ export async function deleteTeam(teamID: string, accessToken: string) {
     }
   });
 
-  const result = await resp.json();
   if (resp.ok) {
-    return result;
+    return;
   }
-  throw new Error(
-    `Failed to delete team Status: ${resp.status}\n Result: ${JSON.stringify(
-      result
-    )}`
-  );
+  throw new Error(`Failed to delete team Status: ${resp.status}\n`);
 }

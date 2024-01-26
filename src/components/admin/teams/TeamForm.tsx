@@ -48,8 +48,8 @@ export default function TeamForm({ team, onChange }: TeamFormProps) {
     onChange({ ...team, name });
   };
 
-  const changeTable = (table: Table) => {
-    onChange({ ...team, table: table });
+  const changeTable = (table: Table | undefined | null) => {
+    onChange({ ...team, table: table ?? undefined });
   };
 
   const changeAttendees = (attendees: Attendee[] | null) => {
@@ -72,14 +72,13 @@ export default function TeamForm({ team, onChange }: TeamFormProps) {
         id="table-select"
         value={team.table}
         loading={loading}
-        disableClearable
-        onChange={(event: any, newValue: Table) => {
+        onChange={(event: any, newValue: Table | null | undefined) => {
           changeTable(newValue);
         }}
         options={tableOptions}
-        getOptionLabel={option => `Table ${option.number}`}
-        getOptionKey={option => option.id}
-        isOptionEqualToValue={(a, b) => a.id === b.id}
+        getOptionLabel={option => `Table ${option?.number}`}
+        getOptionKey={option => option?.id ?? ''}
+        isOptionEqualToValue={(a, b) => a?.id === b?.id}
         renderInput={params => (
           <TextField {...params} label="Table" size="small" />
         )}

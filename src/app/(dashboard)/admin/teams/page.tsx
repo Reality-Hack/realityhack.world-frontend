@@ -4,10 +4,12 @@ import TeamDialog from '@/components/admin/teams/TeamDialog';
 import TeamTable from '@/components/admin/teams/TeamTable';
 import { Alert } from '@mui/material';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function TeamListPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const isAdmin = session && session.roles?.includes('admin');
   const [open, setOpen] = useState<boolean>(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
@@ -16,8 +18,8 @@ export default function TeamListPage() {
   const saveTeam = async (newTeam: TeamCreate) => {
     try {
       if (isAdmin && session?.access_token) {
-        await createTeam(newTeam, session.access_token);
-        setOpen(false);
+        const result = await createTeam(newTeam, session.access_token);
+        router.replace(`/admin/teams/${result.id}`);
       }
     } catch (error: any) {
       setShowErrorAlert(true);
