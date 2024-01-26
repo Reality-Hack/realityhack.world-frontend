@@ -21,7 +21,7 @@ export type HelpRequest = {
 };
 export type CreateHelpRequest = {
   team: string;
-  topics: string[];
+  topic: string[];
   description?: string;
   mentor?: string;
   reporter?: string; //an attendee
@@ -39,7 +39,7 @@ export type EditHelpRequest = {
   reporter: string; //an attendee
   status?: string;
   title?: string;
-  // category?: string; //dapms - not using this 
+  // category?: string; //dapms - not using this
   // category_specialty?: string; //deprecated - not using this
   topic_other?: string;
 };
@@ -91,7 +91,7 @@ export async function getAllHelpRequests(
 ): Promise<HelpRequest[]> {
   // console.log(accessToken)
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/`;
-  
+
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ export async function getAllMyTeamsHistoricalHelpRequests(
  */
 export async function getAllHelpRequestsFromHistory(
   accessToken: string,
-  mentorTopcis?:  string[],
+  mentorTopcis?: string[]
 ): Promise<HelpRequestHistory[]> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequestshistory/`;
   const resp = await fetch(url, {
@@ -213,7 +213,7 @@ export async function getAllHelpRequestsFromHistory(
 // }
 
 /**
- * 
+ *
  * @param attendeeId the attendee id sting
  * @returns teamId string
  */
@@ -259,11 +259,14 @@ export async function getAllTables(accessToken: string): Promise<Table[]> {
   );
 }
 /**
- * getTable: makes api call to fetch all tables 
+ * getTable: makes api call to fetch all tables
  * @param accessToken session token to make connection
  * @returns list of table objects
  */
-export async function getTable(accessToken: string,id:string): Promise<Table> {
+export async function getTable(
+  accessToken: string,
+  id: string
+): Promise<Table> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/tables/${id}/`;
   const resp = await fetch(url, {
     headers: {
@@ -292,16 +295,16 @@ export async function editMentorHelpRequest(
   accessToken: string,
   requestId: string,
   updatedData: Partial<EditHelpRequest>
-):Promise<EditHelpRequest> {
+): Promise<EditHelpRequest> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/${requestId}/`;
 
   const resp = await fetch(url, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + accessToken,
+      Authorization: 'Bearer ' + accessToken
     },
-    body: JSON.stringify(updatedData),
+    body: JSON.stringify(updatedData)
   });
 
   if (resp.ok) {
@@ -315,7 +318,6 @@ export async function editMentorHelpRequest(
 export async function addMentorHelpRequest(
   accessToken: string,
   newRequest: CreateHelpRequest
-
 ): Promise<HelpRequest> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/`;
 
@@ -328,14 +330,10 @@ export async function addMentorHelpRequest(
     body: JSON.stringify(newRequest)
   });
 
-  const data: HelpRequest | undefined = await response.json();
+  const data: HelpRequest = await response.json();
 
   if (response.ok) {
-    if (data) {
-      return data;
-    } else {
-      throw new Error('Unexpected empty response.');
-    }
+    return data;
   } else {
     throw new Error(
       `Failed to add mentor help request. Status: ${
@@ -349,7 +347,7 @@ export async function addMentorHelpRequest(
 export async function updateHelpRequestStatus(
   accessToken: string,
   requestId: string,
-  status: "R" | "A" | "E" | "F"
+  status: 'R' | 'A' | 'E' | 'F'
 ) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequest/${requestId}/`;
 

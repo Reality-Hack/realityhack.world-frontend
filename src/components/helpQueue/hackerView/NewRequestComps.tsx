@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { HelpRequest, addMentorHelpRequest } from '@/app/api/helpqueue';
-import {  ThemeProvider,  createTheme} from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material';
 import { MentorTopics } from '@/types/types';
 import SelectToolWithOther from '@/app/(dashboard)/mentors/SelectToolWithOther';
 import { useAuthContext } from '@/hooks/AuthContext';
@@ -14,11 +14,11 @@ interface StatBoxProps {
 
 export function StatBox({ src, label, stat }: StatBoxProps) {
   return (
-    <div className="flex flex-row bg-white w-fit drop-shadow-2xl p-6 gap-2 rounded-lg border-black border-2">
+    <div className="flex flex-row gap-2 p-6 bg-white border-2 border-black rounded-lg w-fit drop-shadow-2xl">
       <Image src={src} alt={label} height={4} width={50} />
       <div className="flex flex-col">
         <div>{label}</div>
-        <div className="font-bold text-4xl">{stat}</div>
+        <div className="text-4xl font-bold">{stat}</div>
       </div>
     </div>
   );
@@ -47,9 +47,9 @@ export function Dialog({ isOpen, onClose, children }: DialogProps) {
       className="fixed inset-0 flex items-center justify-center"
       onClick={handleDialogClick}
     >
-      <div className="bg-gray-300 w-1/2 h-1/2 p-4 rounded-md shadow-md overflow-y-auto">
+      <div className="w-1/2 p-4 overflow-y-auto bg-gray-300 rounded-md shadow-md h-1/2">
         <div className="flex">
-          <button className=" ml-auto" onClick={onClose}>
+          <button className="ml-auto " onClick={onClose}>
             Close
           </button>
         </div>
@@ -83,16 +83,32 @@ export function QuestionDialog({
 
   const { user } = useAuthContext();
 
-  const formattedOptions = Object.keys(MentorTopics).map(key =>
-    key.replace(/_/g, ' ')
-  );
+  // const formattedOptions = Object.values(MentorTopics).map(
+  //   (key: any, value: any) => ({
+  //     label: key.replace(/_/g, ' '),
+  //     value: MentorTopics[key as keyof typeof MentorTopics]
+  //   })
+  // );
+
+  const formattedOptions = [];
+
+  for (const key in MentorTopics) {
+    formattedOptions.push({
+      label: key.replace(/_/g, ' '),
+      value: MentorTopics[key as keyof typeof MentorTopics]
+    });
+  }
+
+  console.log('formattedOptions: ', formattedOptions);
+  // console.log('MentorTopics: ', MentorTopics);
+
   const theme = createTheme({
     components: {
       MuiInputBase: {
         styleOverrides: {
-          "root": {
-            "&.Mui-focused": {
-              "border": "white"
+          root: {
+            '&.Mui-focused': {
+              border: 'white'
             }
           }
         }
@@ -100,7 +116,9 @@ export function QuestionDialog({
     }
   });
 
-    const [selectedItems, setSelectedItems] = useState<string[]>([]); // New state variable
+  const [selectedItems, setSelectedItems] = useState<string[]>([]); // New state variable
+
+  // console.log('selectedItems: ', selectedItems);
 
   return (
     <ThemeProvider theme={theme}>
@@ -111,25 +129,28 @@ export function QuestionDialog({
         }}
       >
         <div className="flex flex-col gap-4">
-          <div className="text-2xl font-bold">New Help Request</div>
+          <div className="text-2xl font-bold whitespace-nowrap">
+            New Help Request
+          </div>
           <div className="flex flex-col gap-4">
             <div className="font-bold">
               What do you need help with
-              <span className="text-red-400 text-2xl">*</span>?
+              <span className="text-2xl text-red-400">*</span>?
             </div>
             <div className="w-full">
               {/* tag renderer with a custom dropdown */}
               <SelectToolWithOther
                 canSubmit={setCanSubmit}
-                mentorTopics={formattedOptions}
+                mentorTopics={formattedOptions.map(option => option.label)}
                 placeholder={'Select Your Skill'}
                 selectedItems={selectedItems}
                 setSelectedItems={setSelectedItems}
+                formattedOptions={formattedOptions}
               />
             </div>
             <div className="font-bold">
               Describe your request in detail
-              <span className="text-red-400 text-2xl">*</span>:
+              <span className="text-2xl text-red-400">*</span>:
             </div>
             <textarea
               className="w-full h-20 p-4 rounded-md"
@@ -147,8 +168,8 @@ export function QuestionDialog({
               if (textareaValue.trim() !== '' && canSubmit) {
                 onSubmit(selectedItems, user?.team?.id, textareaValue);
               }
-            }}            
-          className={`mt-auto ml-auto py-1 px-2 rounded-xl ${
+            }}
+            className={`mt-auto ml-auto py-1 px-2 rounded-xl ${
               textareaValue.trim() !== '' && canSubmit
                 ? 'bg-green-200 cursor-pointer'
                 : 'bg-red-200 cursor-not-allowed'
@@ -161,4 +182,3 @@ export function QuestionDialog({
     </ThemeProvider>
   );
 }
-

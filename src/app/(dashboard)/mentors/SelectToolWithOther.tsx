@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, Dispatch,SetStateAction } from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  Dispatch,
+  SetStateAction
+} from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Divider, Input, Select, Space, Button } from 'antd';
 import type { InputRef } from 'antd';
@@ -7,29 +13,30 @@ interface SelectToolWithOtherProps {
   // Add any additional props if needed
   placeholder: string;
   mentorTopics: string[];
-  canSubmit: (submissionState:boolean) => void;
+  canSubmit: (submissionState: boolean) => void;
   selectedItems: string[];
   setSelectedItems: Dispatch<SetStateAction<string[]>>;
+  formattedOptions: { label: string; value: string }[];
 }
 const SelectToolWithOther: React.FC<SelectToolWithOtherProps> = ({
   mentorTopics,
-  placeholder, 
+  placeholder,
   canSubmit,
   selectedItems,
-  setSelectedItems
+  setSelectedItems,
+  formattedOptions
 }) => {
   const [name, setName] = useState('');
   const inputRef = useRef<InputRef>(null);
   // const [selectedItems, setSelectedItems] = useState<string[]>([]); // New state variable
 
-  useEffect(()=>{
+  useEffect(() => {
     if (selectedItems.length > 0) {
-      canSubmit(true)
+      canSubmit(true);
+    } else {
+      canSubmit(false);
     }
-    else{
-      canSubmit(false)
-    }
-  },[selectedItems])
+  }, [selectedItems]);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -47,17 +54,41 @@ const SelectToolWithOther: React.FC<SelectToolWithOtherProps> = ({
     }
   };
 
-  function handleSelection(value: string) {
+  function handleSelection(selectedLabel: string) {
+    // console.log('prevSelectedItems: ', selectedItems);
+    // console.log('selectedLabel: ', selectedLabel);
+    // console.log('formattedOptions: ', formattedOptions);
+
     setSelectedItems(prevSelectedItems => {
-      // Check if itemName is not already included in prevSelectedItems
-      if (!prevSelectedItems.includes(value)) {
-        // If not included, add the value to the array
-        return [...prevSelectedItems, value];
+      const option = formattedOptions.find(
+        option => option.label === selectedLabel
+      );
+
+      if (!option) {
+        console.error('Option not found for label: ', selectedLabel);
+        return prevSelectedItems;
       }
-      // If included, return the array as it is (no duplicates)
-      return prevSelectedItems;
+
+      const numericValue = parseInt(option.value, 10);
+
+      if (isNaN(numericValue)) {
+        console.error(
+          'Invalid value for label: ',
+          selectedLabel,
+          'Value:',
+          option.value
+        );
+        return prevSelectedItems;
+      }
+
+      if (!prevSelectedItems.includes(numericValue.toString())) {
+        return [...prevSelectedItems, numericValue.toString()];
+      } else {
+        return prevSelectedItems.filter(
+          item => item !== numericValue.toString()
+        );
+      }
     });
-    
   }
 
   const addItem = (
@@ -77,7 +108,7 @@ const SelectToolWithOther: React.FC<SelectToolWithOtherProps> = ({
         // If included, return the array as it is (no duplicates)
         return prevSelectedItems;
       });
-      
+
       setTimeout(() => {
         inputRef.current?.focus();
       }, 0);
@@ -102,15 +133,23 @@ const SelectToolWithOther: React.FC<SelectToolWithOtherProps> = ({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap gap-2">
-        {selectedItems.map((el, idx) => (
-          <SkillTag
-            key={idx}
-            skill={el}
-            color={`blue`}
-            onDelete={() => removeSkill(el)}
-          />
-        ))}
+        {selectedItems.map((value, idx) => {
+          const option = formattedOptions.find(
+            option => option.value === value
+          );
+          const label = option ? option.label : 'Unknown';
+
+          return (
+            <SkillTag
+              key={idx}
+              skill={label}
+              color={`blue`}
+              onDelete={() => removeSkill(value)}
+            />
+          );
+        })}
       </div>
+
       <Select
         style={{ width: 300 }}
         placeholder={`${placeholder}`}
@@ -122,7 +161,7 @@ const SelectToolWithOther: React.FC<SelectToolWithOtherProps> = ({
                 ref={inputRef}
                 value={name}
                 onChange={onNameChange}
-                // onKeyDown={(e) => e.stopPropagation()}
+                // onKeyDown={e => e.stopPropagation()}
                 onKeyDown={handleKeyPress}
               />
               <Button
@@ -137,15 +176,13 @@ const SelectToolWithOther: React.FC<SelectToolWithOtherProps> = ({
             {menu}
           </div>
         )}
-        options={mentorTopics
-          .filter((item) => !selectedItems.includes(item)) // Filter out selected items
-          .filter((item) => item.toLowerCase().includes(name.toLowerCase()))
-          .sort()
-          .map((item) => ({
-            label: item,
-            value: item,
+        onSelect={handleSelection}
+        options={formattedOptions
+          .filter(option => !selectedItems?.includes(option?.value))
+          .map(option => ({
+            label: option.label,
+            value: option.label
           }))}
-        onSelect={value => handleSelection(value)}
         showSearch={true}
         onSearch={value => setName(value)}
         // mode="tags"
@@ -172,11 +209,10 @@ const SkillTag: React.FC<SkillTagProps> = ({ skill, color, onDelete }) => {
       className={`p-2 border-1 border-black rounded-lg flex gap-1 items-center`}
       style={{ backgroundColor: `light${randomColor}`, color: randomColor }}
     >
-
       <div>{skill}</div>
       <div
         onClick={onDelete}
-        className="bg-red-300 px-2 text-white rounded-lg text-red-500 hover:cursor-pointer font-bold"
+        className="px-2 font-bold text-white text-red-500 bg-red-300 rounded-lg hover:cursor-pointer"
       >
         x
       </div>

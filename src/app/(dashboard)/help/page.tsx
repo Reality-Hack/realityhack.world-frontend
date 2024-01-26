@@ -1,11 +1,7 @@
 'use client';
 import { useSession } from 'next-auth/react';
 import Help2 from './helpTwo';
-import Image from 'next/image';
 import React, { useState } from 'react';
-import LighthouseTable from "./websocket"
-import { StatBox, Dialog, QuestionDialog, SelectedFile } from '@/components/helpQueue/hackerView/NewRequestComps';
-import { CompletedPosting, Posting,Skill } from '@/components/helpQueue/hackerView/PostingComps';
 export default function Help() {
   const { data: session, status } = useSession();
   const exampleSkillList = ['React', 'JavaScript', 'CSS', 'Node.js'];
@@ -25,17 +21,15 @@ export default function Help() {
   const closeNewRequestDialog = () => {
     setNewRequestDialogOpen(false);
   };
-  
 
   return (
     <>
-      <div>Help</div>
       <Help2 />
       {/* <LighthouseTable /> */}
     </>
-    // <div className="h-screen w-screen bg-white">
-    //   <div className="text-4xl p-4"> Help Queue</div>
-    //   <div className="flex flex-col gap-8 m-4 p-4 rounded-md bg-gray-200">
+    // <div className="w-screen h-screen bg-white">
+    //   <div className="p-4 text-4xl"> Help Queue</div>
+    //   <div className="flex flex-col gap-8 p-4 m-4 bg-gray-200 rounded-md">
     //     <div className="flex gap-4">
     //       <StatBox src="/icons/dashboard/mentee_1.png" label="Active Requests" stat="9" />
     //       <StatBox src="/icons/dashboard/help.png" label="Mentors Available" stat="9" />
@@ -43,7 +37,7 @@ export default function Help() {
     //     <div className="flex ">
     //       <div className="text-4xl font-semibold"> Your Help Requests</div>
     //       <div
-    //         className="bg-red-200 ml-auto p-2 cursor-pointer rounded-2xl mx-2"
+    //         className="p-2 mx-2 ml-auto bg-red-200 cursor-pointer rounded-2xl"
     //         onClick={openNewRequestDialog}
     //       >
     //         New Help Request
@@ -71,7 +65,7 @@ export default function Help() {
     //       Show/Hide Completed Requests{' '}
     //       <span
     //         onClick={toggleCompletedRequests}
-    //         className="cursor-pointer transform hover:rotate-90 transition-transform"
+    //         className="transition-transform transform cursor-pointer hover:rotate-90"
     //       >
     //         {completedRequestsArrow}
     //       </span>
@@ -99,4 +93,3 @@ export default function Help() {
     // </div>
   );
 }
-

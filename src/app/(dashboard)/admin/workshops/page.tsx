@@ -74,10 +74,6 @@ export default function Checkin() {
     }
   }, [isAdmin, session?.access_token, showSuccessAlert]);
 
-  console.log(selectOptions);
-
-  console.log(workshopOptions);
-
   useEffect(() => {
     if (session?.access_token) {
       getAllWorkshops(session.access_token).then(data => {
@@ -112,7 +108,6 @@ export default function Checkin() {
           const filteredWorkshops = workshops.filter((workshop: any) =>
             myWorkshops.some((w: any) => w.workshop === workshop.id)
           );
-          console.log(filteredWorkshops);
           filteredWorkshops ? setRegisteredWorkshops(filteredWorkshops) : '';
         }
       } catch (error) {
@@ -169,8 +164,6 @@ export default function Checkin() {
     setRegisteredWorkshops([]);
     setSelectedValue(value);
   };
-
-  console.log('selectedWorkshop: ', selectedWorkshop);
 
   const handleCheckin = async (userId: string, scanned?: boolean) => {
     const attendee = (attendees as unknown as any[])?.find(
@@ -273,7 +266,6 @@ export default function Checkin() {
   };
 
   const handleWorkshopChange = (selectedOption: any) => {
-    console.log('selectedOption: ', selectedOption);
     setSelectedWorkshop(selectedOption);
   };
 
