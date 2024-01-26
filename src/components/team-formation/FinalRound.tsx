@@ -1,5 +1,3 @@
-import React from 'react';
-import MyRadioButtonGroup from './RadioOptions';
 
 interface TeamMember {
   name: string;

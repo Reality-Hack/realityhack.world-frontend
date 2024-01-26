@@ -1,14 +1,14 @@
 'use client';
-import { useSession } from 'next-auth/react';
-import React, { useEffect, useState, MouseEvent } from 'react';
 import {
   getAllWorkshops,
   getMyWorkshops,
-  showInterestInWorkshop,
-  removeInterestInWorkshop
+  removeInterestInWorkshop,
+  showInterestInWorkshop
 } from '@/app/api/workshops';
 import { useAuthContext } from '@/hooks/AuthContext';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { useSession } from 'next-auth/react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 
 interface Workshop {
   workshop: any;
@@ -318,14 +318,9 @@ const Page: React.FC<PageProps> = () => {
     const speakersPart = input.substring(0, firstDashIndex);
     const description = input.substring(firstDashIndex + 3);
 
-    console.log('------------------------------------------');
-    console.log(firstDashIndex);
-
     const speakers = speakersPart
       .split(',')
       .map((speaker: any) => speaker.trim());
-
-    console.log(speakers);
 
     return { speakers, description };
   }
