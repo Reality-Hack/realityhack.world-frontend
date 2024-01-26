@@ -1,11 +1,11 @@
 'use client';
-import { useEffect, Dispatch, SetStateAction } from 'react';
-import { useSession, signOut } from 'next-auth/react';
-import Link from 'next/link';
 import { menuItems } from '@/app/utils/menuItems';
-import Loader from './Loader';
 import { useAuthContext } from '@/hooks/AuthContext';
+import { signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 import useFeatureFlags from '../hooks/useFeaureFlags';
+import Loader from './Loader';
 
 async function keycloakSessionLogOut(): Promise<void> {
   try {
@@ -95,7 +95,11 @@ export default function Nav({
                       <span className="text-white">
                         {user?.first_name} {user?.last_name}
                       </span>
-                      <span className="text-xs">No team joined</span>
+                      {!!user?.team ? (
+                        <span className="text-xs">{user.team.name}</span>
+                      ) : (
+                        <span className="text-xs">No team joined</span>
+                      )}
                     </div>
                   </div>
                 </span>{' '}
