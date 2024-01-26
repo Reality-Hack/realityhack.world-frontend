@@ -9,48 +9,51 @@ export default function TeamFormationLayout({
 }) {
   const pathname = usePathname();
 
-  // Get the current date and time
-  const currentDate = new Date();
-  const deadlineDate = new Date('2024-01-27T10:59:00');
+  const TEAM_FORMATION_STAGE = process.env.NEXT_PUBLIC_TEAM_FORMATION_STAGE;
 
-  // Check if the current date is past the deadline
-  const isPastDeadline = currentDate > deadlineDate;
-  
   return (
     <div className="h-screen p-6 pt-8 pl-2">
       <h1 className="text-3xl">Team Formation</h1>
       <div className="py-4">
-        <div className="pb-2 flex flex-wrap gap-2">
+        <div className="pb-2 flex flex-wrap gap-2 md:flex-row flex-col">
           <Tab
             href="/team-formation/hackers-met"
             isSelected={pathname === '/team-formation/hackers-met'}
-            title="Hacker's I've Met"
+            title="Hackers I've Met"
           />
           <Tab
             href="/team-formation/interests"
             isSelected={pathname === '/team-formation/interests'}
             title="My Interests"
           />
-          {isPastDeadline && <Tab
-            href="/team-formation/round-one"
-            isSelected={pathname === '/team-formation/round-one'}
-            title="Team Members - Round 1"
-          />}
-          {isPastDeadline && <Tab
-            href="/team-formation/round-two"
-            isSelected={pathname === '/team-formation/round-two'}
-            title="Team Members - Round 2"
-          />}
-          {isPastDeadline && <Tab
-            href="/team-formation/round-three"
-            isSelected={pathname === '/team-formation/round-three'}
-            title="Team Members - Round 3"
-          />}
-          {isPastDeadline && <Tab
-            href="/team-formation/final-team"
-            isSelected={pathname === '/team-formation/final-team'}
-            title="Final Team"
-          />}
+          {TEAM_FORMATION_STAGE === '1' && (
+            <Tab
+              href="/team-formation/round-one"
+              isSelected={pathname === '/team-formation/round-one'}
+              title="Destiny Team Round 1"
+            />
+          )}
+          {TEAM_FORMATION_STAGE === '2' && (
+            <Tab
+              href="/team-formation/round-two"
+              isSelected={pathname === '/team-formation/round-two'}
+              title="Destiny Team Round 2"
+            />
+          )}
+          {TEAM_FORMATION_STAGE === '3' && (
+            <Tab
+              href="/team-formation/round-three"
+              isSelected={pathname === '/team-formation/round-three'}
+              title="Destiny Team Round 3"
+            />
+          )}
+          {TEAM_FORMATION_STAGE === '4' && (
+            <Tab
+              href="/team-formation/final-team"
+              isSelected={pathname === '/team-formation/final-team'}
+              title="Final Team"
+            />
+          )}
         </div>
         <hr className="dark:border-borderDark" />
       </div>

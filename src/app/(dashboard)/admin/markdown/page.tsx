@@ -1,4 +1,4 @@
-import Markdown from 'react-markdown'
+import Markdown from 'react-markdown';
 
 export default async function MarkdownPreview() {
   try {
@@ -17,10 +17,7 @@ class Project(models.Model):
         return f"{self.name}"
 \`\`\`
 `;
-    console.log(markdown);
-    return (
-      <Markdown>{markdown}</Markdown>
-    );
+    return <Markdown>{markdown}</Markdown>;
   } catch (err) {
     console.error(err);
 

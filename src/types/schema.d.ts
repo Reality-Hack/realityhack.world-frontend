@@ -579,6 +579,12 @@ export interface components {
       /** Format: date-time */
       updated_at: string;
     };
+    AttendeeName: {
+      /** Format: uuid */
+      id: string;
+      first_name?: string;
+      last_name?: string;
+    };
     AttendeePatch: {
       /** Format: uuid */
       id: string;
@@ -742,6 +748,8 @@ export interface components {
     DestinyTeam: {
       /** Format: uuid */
       id: string;
+      attendees: components["schemas"]["AttendeeName"][];
+      table: components["schemas"]["TableNumber"];
       track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
       round: number;
       hardware_hack?: boolean;
@@ -750,9 +758,6 @@ export interface components {
       created_at: string;
       /** Format: date-time */
       updated_at: string;
-      /** Format: uuid */
-      table?: string | null;
-      attendees?: string[];
     };
     DestinyTeamAttendeeVibe: {
       /** Format: uuid */
@@ -1449,6 +1454,8 @@ export interface components {
     PatchedDestinyTeam: {
       /** Format: uuid */
       id?: string;
+      attendees?: components["schemas"]["AttendeeName"][];
+      table?: components["schemas"]["TableNumber"];
       track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
       round?: number;
       hardware_hack?: boolean;
@@ -1457,9 +1464,6 @@ export interface components {
       created_at?: string;
       /** Format: date-time */
       updated_at?: string;
-      /** Format: uuid */
-      table?: string | null;
-      attendees?: string[];
     };
     PatchedDestinyTeamAttendeeVibe: {
       /** Format: uuid */
@@ -1638,9 +1642,8 @@ export interface components {
       /** Format: uuid */
       id?: string;
       name?: string;
-      attendees?: string[];
-      /** Format: uuid */
-      table?: string | null;
+      attendees?: components["schemas"]["AttendeeName"][];
+      table?: components["schemas"]["TableNumber"];
       track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
       destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       /** Format: date-time */
@@ -1843,6 +1846,12 @@ export interface components {
       /** Format: uuid */
       location?: string | null;
     };
+    TableNumber: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int64 */
+      number: number;
+    };
     /**
      * @description * `AC` - AC
      * * `SE` - SE
@@ -1861,9 +1870,8 @@ export interface components {
       /** Format: uuid */
       id: string;
       name: string;
-      attendees?: string[];
-      /** Format: uuid */
-      table?: string | null;
+      attendees: components["schemas"]["AttendeeName"][];
+      table: components["schemas"]["TableNumber"];
       track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
       destiny_hardware: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       /** Format: date-time */
