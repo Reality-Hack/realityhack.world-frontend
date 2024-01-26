@@ -317,7 +317,9 @@ export default function HardwareRequestView({
                             if(typeof newApp.hardware_device === 'string' || newApp.hardware_device instanceof String) {
                               //@ts-ignore
                               getHardwareDevice(session.access_token, {id: newApp.hardware_device}).then((newDevice: HardwareDevice) => {
-                                newRequests[info.row.index].hardware_device = newDevice
+                                const newRequests = [...requests];
+                                newRequests[info.row.index].hardware_device = newDevice;
+                                setRequests(newRequests);
                               });
                             } else {
                               newRequests[info.row.index].hardware_device = newApp.hardware_device;
