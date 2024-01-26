@@ -1,5 +1,5 @@
 'use client';
-import { SerializedTeam, TeamCreate } from '@/app/api/team';
+import { SerializedTeam } from '@/app/api/team';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useEffect, useState } from 'react';
@@ -8,7 +8,7 @@ import TeamForm from './TeamForm';
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSave: (newTeam: TeamCreate) => void;
+  onSave: (newTeam: any) => void;
 };
 
 const defaultTeam: SerializedTeam = {
@@ -47,9 +47,9 @@ export default function TeamDialog({ open, onClose, onSave }: Props) {
             <button
               className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] transition-all"
               onClick={() => {
-                let payload: TeamCreate = {
+                let payload = {
                   name: team.name,
-                  table: team.table!.id,
+                  table: team.table?.id,
                   attendees: team.attendees.map(a => a.id)
                 };
                 onSave(payload);

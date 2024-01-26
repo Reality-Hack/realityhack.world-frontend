@@ -134,8 +134,10 @@ function EditableHardwareCard({
 
   if (!session) return null;
 
-  async function setAcceptedFiles(acceptedFiles: File[] | ((prevState: File[]) => File[])) {
-    if (typeof acceptedFiles === "function") {
+  async function setAcceptedFiles(
+    acceptedFiles: File[] | ((prevState: File[]) => File[])
+  ) {
+    if (typeof acceptedFiles === 'function') {
       acceptedFiles = acceptedFiles([]);
     }
     fileUpload(session?.access_token, acceptedFiles[0]).then(res => {
@@ -209,10 +211,10 @@ function EditableHardwareCard({
             onChange={e => setName(e.target.value)}
           ></input>
         </span>
-        <div className='relative'>
+        <div className="relative">
           {hardwareDevicesEditorOpen && (
             <div className="absolute left-0 top-10 rounded-md shadow-xl bg-white z-10">
-              <div className='flex justify-end'>
+              <div className="flex justify-end">
                 <button
                   className="px-2 py-2 rounded-full text-black"
                   onClick={() => setHardwareDevicesEditorOpen(false)}
@@ -225,11 +227,14 @@ function EditableHardwareCard({
           )}
         </div>
         <button
-        className='cursor-pointer text-black bg-gray-200 px-4 py-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end'
-        onClick={() => setHardwareDevicesEditorOpen(!hardwareDevicesEditorOpen)}
-        disabled={isOriginal}
-        >Edit devices</button>
-        
+          className="cursor-pointer text-black bg-gray-200 px-4 py-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end"
+          onClick={() =>
+            setHardwareDevicesEditorOpen(!hardwareDevicesEditorOpen)
+          }
+          disabled={isOriginal}
+        >
+          Edit devices
+        </button>
       </div>
       <textarea
         // disabled={quantity === 0}
@@ -278,10 +283,7 @@ function EditableHardwareCard({
               </div>
             </div>
           )}
-          <button
-            onClick={() => setAddTagOpen(!addTagOpen)}
-            className="py-1"
-          >
+          <button onClick={() => setAddTagOpen(!addTagOpen)} className="py-1">
             +
           </button>{' '}
         </div>
@@ -303,7 +305,7 @@ function EditableHardwareCard({
           disabled={sending}
           className="cursor-pointer text-white bg-[#CC2F34] px-4 rounded-full disabled:opacity-50 transition-all flex-shrink h-10 self-end"
           onClick={() => {
-            if(isOriginal) {
+            if (isOriginal) {
               removeItem();
               return;
             } else {
@@ -329,22 +331,24 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
   useEffect(() => {
     if (session) {
       setLoading(true);
-      getHardwareDevice(session.access_token, { hardware: hardware.id }).then(res => {
-        setDevices(res);
-      }).finally(() => setLoading(false));
+      getHardwareDevice(session.access_token, { hardware: hardware.id })
+        .then(res => {
+          setDevices(res);
+        })
+        .finally(() => setLoading(false));
     }
   }, [session]);
 
   function addNew() {
     setDevices([
       {
-        id: "",
-        serial: "",
+        id: '',
+        serial: '',
         checked_out_to: null,
         hardware: hardware
       },
       ...devices
-    ])
+    ]);
   }
 
   return <div className="w-56 px-5 py-4 my-4 mr-4">
@@ -363,7 +367,7 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
       index={i+1}
       />))}
     </div>
-  </div>
+  );
 }
 
 function HardwareDeviceEditor(
@@ -372,35 +376,39 @@ function HardwareDeviceEditor(
     deleteDevice: () => void, setDevice: (device: Partial<HardwareDevice>) => void, index?: number}) {
   const [loading, setLoading] = useState(false);
   const isOriginal = !device.id;
-  const [serial, setSerial] = useState(device.serial || "");
+  const [serial, setSerial] = useState(device.serial || '');
   const hasChanged = serial !== device.serial;
 
   function save() {
     if (access_token) {
-      if(isOriginal) {
+      if (isOriginal) {
         setLoading(true);
         createHardwareDevice(access_token, {
           serial: serial,
-          hardware: (device.hardware?.id)!,
-        }).then(res => {
-          setDevice({
-            id: res.id,
-            serial: serial,
-            hardware: device.hardware,
-          });
-        }).finally(() => setLoading(false));
+          hardware: device.hardware?.id!
+        })
+          .then(res => {
+            setDevice({
+              id: res.id,
+              serial: serial,
+              hardware: device.hardware
+            });
+          })
+          .finally(() => setLoading(false));
       } else {
         setLoading(true);
         updateHardwareDevice(access_token, {
           id: device.id,
           serial: serial,
-          hardware: (device.hardware?.id)!,
-        }).then(res => {
-          setDevice({
-            ...device,
-            serial: res.serial
-          });
-        }).finally(() => setLoading(false));
+          hardware: device.hardware?.id!
+        })
+          .then(res => {
+            setDevice({
+              ...device,
+              serial: res.serial
+            });
+          })
+          .finally(() => setLoading(false));
       }
     }
   }
@@ -410,9 +418,11 @@ function HardwareDeviceEditor(
       deleteDevice();
     } else if (access_token) {
       setLoading(true);
-      deleteHardwareDevice(access_token, device.id!).then(() => {
-        deleteDevice();
-      }).finally(() => setLoading(false));
+      deleteHardwareDevice(access_token, device.id!)
+        .then(() => {
+          deleteDevice();
+        })
+        .finally(() => setLoading(false));
     }
   }
 

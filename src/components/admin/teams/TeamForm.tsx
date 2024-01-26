@@ -20,6 +20,17 @@ type TeamFormProps = {
   onChange: (team: SerializedTeam) => void;
 };
 
+function getTableLabel(table: number | void) {
+  if (!table) {
+    return `Table #${table}`;
+  }
+  if (table <= 68) {
+    return `Media Lab: Table #${table}`;
+  } else {
+    return `Walker: Table #${table}`;
+  }
+}
+
 export default function TeamForm({ team, onChange }: TeamFormProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [attendeeOptions, setAttendeeOptions] = useState<Attendee[]>([]);
@@ -48,8 +59,8 @@ export default function TeamForm({ team, onChange }: TeamFormProps) {
     onChange({ ...team, name });
   };
 
-  const changeTable = (table: Table) => {
-    onChange({ ...team, table: table });
+  const changeTable = (table: Table | undefined | null) => {
+    onChange({ ...team, table: table ?? undefined });
   };
 
   const changeAttendees = (attendees: Attendee[] | null) => {
@@ -72,14 +83,13 @@ export default function TeamForm({ team, onChange }: TeamFormProps) {
         id="table-select"
         value={team.table}
         loading={loading}
-        disableClearable
-        onChange={(event: any, newValue: Table) => {
+        onChange={(event: any, newValue: Table | null | undefined) => {
           changeTable(newValue);
         }}
         options={tableOptions}
-        getOptionLabel={option => `Table ${option.number}`}
-        getOptionKey={option => option.id}
-        isOptionEqualToValue={(a, b) => a.id === b.id}
+        getOptionLabel={option => getTableLabel(option?.number)}
+        getOptionKey={option => option?.id ?? ''}
+        isOptionEqualToValue={(a, b) => a?.id === b?.id}
         renderInput={params => (
           <TextField {...params} label="Table" size="small" />
         )}
