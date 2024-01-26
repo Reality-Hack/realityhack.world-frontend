@@ -4,7 +4,8 @@ import {
   patchHardwareRequest,
   deleteHardwareRequest,
   getAllHardware,
-  getHardwareDevice
+  getHardwareDevice,
+  updateHardwareDevice
 } from '@/app/api/hardware';
 import { useSession } from 'next-auth/react';
 import { useEffect, useMemo, useState } from 'react';
@@ -313,8 +314,14 @@ export default function HardwareRequestView({
                           .then((newApp: HardwareRequestBrief) => {
                             const newRequests = [...requests];
                             newRequests[info.row.index].status = newApp.status;
-                            newRequests[info.row.index].hardware_device =
-                              newApp.hardware_device;
+                            if(!newApp?.hardware_device?.id) {
+                              //@ts-ignore
+                              getHardwareDevice(session.access_token, {id: newApp.hardware_device}).then((newDevice: HardwareDevice) => {
+                                newRequests[info.row.index].hardware_device = newDevice
+                              });
+                            } else {
+                              newRequests[info.row.index].hardware_device = newApp.hardware_device;
+                            }
                             setRequests(newRequests);
                             setCheckedOutTo(newApp);
                           })
@@ -334,15 +341,20 @@ export default function HardwareRequestView({
                     onClick={() => {
                       if (session?.access_token) {
                         setRequestsLoading(true);
-                        patchHardwareRequest(
+                        Promise.all([patchHardwareRequest(
                           session.access_token,
                           info.row.original.id,
                           {
                             status: hardware_request_status.approved,
                             hardware_device: null
                           }
-                        )
-                          .then((newApp: HardwareRequestBrief) => {
+                        ),
+                        updateHardwareDevice(session.access_token, {
+                          id: hardwareDevice.id,
+                          checked_out_to: null
+                        })
+                      ])
+                          .then(([newApp, _newDevice]) => {
                             if (
                               newApp.status != hardware_request_status.approved
                             ) {

@@ -256,6 +256,7 @@ export interface HardwareDeviceForSending {
   id?: string;
   serial: string;
   hardware: string;
+  checked_out_to?: string | null
 }
 
 export type hardware_requester = string | 'me' | null;

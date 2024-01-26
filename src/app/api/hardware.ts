@@ -214,7 +214,7 @@ export async function getHardwareDevice(
 
 export async function createHardwareDevice(
   accessToken: string,
-  device: HardwareDeviceForSending
+  device: Partial<HardwareDeviceForSending>
 ) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/hardwaredevices/`;
   const content = JSON.stringify(device);
@@ -238,7 +238,7 @@ export async function createHardwareDevice(
 
 export async function updateHardwareDevice(
   accessToken: string,
-  device: HardwareDeviceForSending
+  device: Partial<HardwareDeviceForSending>
 ) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/hardwaredevices/${device.id}/`;
   const content = JSON.stringify(device);
