@@ -1,4 +1,5 @@
 import { editMentorHelpRequest } from '@/app/api/helpqueue';
+import { useEffect, useState } from 'react';
 
 interface CompletedPostingProps {
   requestTitle: string;
@@ -65,6 +66,27 @@ export function Posting({
     }
   };
 
+  const [remainingTime, setRemainingTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Calculate the initial remaining time
+    const initialRemainingTime = calculateTimeDifference(created);
+
+    // Update the state with the initial remaining time
+    setRemainingTime(initialRemainingTime);
+
+    // Set up an interval to update the remaining time every second
+    const intervalId = setInterval(() => {
+      const updatedRemainingTime = calculateTimeDifference(created);
+
+      // Update the state with the latest remaining time
+      setRemainingTime(updatedRemainingTime);
+    }, 1000);
+
+    // Cleanup the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, [created]);
+
   return (
     <div className="flex flex-col bg-white border-black rounded-lg shadow-md w-[300px]">
       <div className="h-2 w-full bg-[#4D97E8] rounded-t-lg" />
@@ -82,8 +104,8 @@ export function Posting({
         Status: {status}
       </div>
 
-      <div className="flex flex-row gap-4 p-4">
-        <div className="font-semibold">{requestTitle}</div>
+      <div className="flex flex-row gap-4 p-4 mx-auto">
+        {/* <div className="font-semibold">{requestTitle}</div> */}
         {placeInQueue && (
           <div>
             {placeInQueue == 0 && <span className="font-bold">NEXT</span>}
@@ -94,10 +116,10 @@ export function Posting({
         )}
       </div>
       <div className="flex flex-col gap-2">
-        <div className="ml-4 text-xs">
+        <div className="mx-auto text-xs">
           {created && `Submitted at ${formatTime(created)}`}
         </div>
-        <div className="ml-4">
+        <div className="mx-auto">
           {created && calculateTimeDifference(created)}
         </div>
         <div className="flex flex-wrap items-center justify-center w-full gap-2 px-4">
@@ -209,6 +231,7 @@ export function MentorPosting({
   };
 
   function handleUpdate(status: string) {
+    console.log(status);
     const updateData = {
       team: team,
       topic: topicList,
