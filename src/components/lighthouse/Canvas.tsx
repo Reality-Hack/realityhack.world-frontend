@@ -62,10 +62,6 @@ export default function Canvas({
       return;
     }
     const stage = e.target.getStage();
-    console.log(
-      stage?.getPointerPosition()?.x ?? 0,
-      stage?.getPointerPosition()?.y ?? 0
-    );
     setStartPosition({
       x: stage?.getPointerPosition()?.x ?? 0,
       y: stage?.getPointerPosition()?.y ?? 0

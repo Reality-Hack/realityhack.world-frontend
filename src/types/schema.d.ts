@@ -579,6 +579,12 @@ export interface components {
       /** Format: date-time */
       updated_at: string;
     };
+    AttendeeName: {
+      /** Format: uuid */
+      id: string;
+      first_name?: string;
+      last_name?: string;
+    };
     AttendeePatch: {
       /** Format: uuid */
       id: string;
@@ -742,6 +748,8 @@ export interface components {
     DestinyTeam: {
       /** Format: uuid */
       id: string;
+      attendees: components["schemas"]["AttendeeName"][];
+      table: components["schemas"]["TableNumber"];
       track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
       round: number;
       hardware_hack?: boolean;
@@ -750,9 +758,6 @@ export interface components {
       created_at: string;
       /** Format: date-time */
       updated_at: string;
-      /** Format: uuid */
-      table?: string | null;
-      attendees?: string[];
     };
     DestinyTeamAttendeeVibe: {
       /** Format: uuid */
@@ -762,6 +767,20 @@ export interface components {
       destiny_team: string;
       /** Format: uuid */
       attendee: string;
+    };
+    DestinyTeamUpdate: {
+      /** Format: uuid */
+      id: string;
+      table: components["schemas"]["TableNumber"];
+      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      round: number;
+      hardware_hack?: boolean;
+      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+      attendees?: string[];
     };
     /**
      * @description * `1` - Nut allergy
@@ -1446,21 +1465,6 @@ export interface components {
       participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
       sponsor_company?: string | null;
     };
-    PatchedDestinyTeam: {
-      /** Format: uuid */
-      id?: string;
-      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
-      round?: number;
-      hardware_hack?: boolean;
-      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
-      /** Format: uuid */
-      table?: string | null;
-      attendees?: string[];
-    };
     PatchedDestinyTeamAttendeeVibe: {
       /** Format: uuid */
       id?: string;
@@ -1469,6 +1473,20 @@ export interface components {
       destiny_team?: string;
       /** Format: uuid */
       attendee?: string;
+    };
+    PatchedDestinyTeamUpdate: {
+      /** Format: uuid */
+      id?: string;
+      table?: components["schemas"]["TableNumber"];
+      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      round?: number;
+      hardware_hack?: boolean;
+      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      updated_at?: string;
+      attendees?: string[];
     };
     PatchedFileUpload: {
       /** Format: uuid */
@@ -1638,9 +1656,8 @@ export interface components {
       /** Format: uuid */
       id?: string;
       name?: string;
-      attendees?: string[];
-      /** Format: uuid */
-      table?: string | null;
+      attendees?: components["schemas"]["AttendeeName"][];
+      table?: components["schemas"]["TableNumber"];
       track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
       destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       /** Format: date-time */
@@ -1843,6 +1860,12 @@ export interface components {
       /** Format: uuid */
       location?: string | null;
     };
+    TableNumber: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int64 */
+      number: number;
+    };
     /**
      * @description * `AC` - AC
      * * `SE` - SE
@@ -1861,9 +1884,8 @@ export interface components {
       /** Format: uuid */
       id: string;
       name: string;
-      attendees?: string[];
-      /** Format: uuid */
-      table?: string | null;
+      attendees: components["schemas"]["AttendeeName"][];
+      table: components["schemas"]["TableNumber"];
       track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
       destiny_hardware: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       /** Format: date-time */
@@ -2913,15 +2935,15 @@ export interface operations {
   destinyteams_create: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["DestinyTeam"];
-        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeam"];
-        "multipart/form-data": components["schemas"]["DestinyTeam"];
+        "application/json": components["schemas"]["DestinyTeamUpdate"];
+        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeamUpdate"];
+        "multipart/form-data": components["schemas"]["DestinyTeamUpdate"];
       };
     };
     responses: {
       201: {
         content: {
-          "application/json": components["schemas"]["DestinyTeam"];
+          "application/json": components["schemas"]["DestinyTeamUpdate"];
         };
       };
     };
@@ -2952,15 +2974,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["DestinyTeam"];
-        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeam"];
-        "multipart/form-data": components["schemas"]["DestinyTeam"];
+        "application/json": components["schemas"]["DestinyTeamUpdate"];
+        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeamUpdate"];
+        "multipart/form-data": components["schemas"]["DestinyTeamUpdate"];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["DestinyTeam"];
+          "application/json": components["schemas"]["DestinyTeamUpdate"];
         };
       };
     };
@@ -2990,15 +3012,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        "application/json": components["schemas"]["PatchedDestinyTeam"];
-        "application/x-www-form-urlencoded": components["schemas"]["PatchedDestinyTeam"];
-        "multipart/form-data": components["schemas"]["PatchedDestinyTeam"];
+        "application/json": components["schemas"]["PatchedDestinyTeamUpdate"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedDestinyTeamUpdate"];
+        "multipart/form-data": components["schemas"]["PatchedDestinyTeamUpdate"];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["DestinyTeam"];
+          "application/json": components["schemas"]["DestinyTeamUpdate"];
         };
       };
     };

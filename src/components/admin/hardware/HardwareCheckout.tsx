@@ -1,12 +1,12 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import QRCodeReader from '@/components/admin/QRCodeReader';
-import { getHardware, getHardwareDevice } from '@/app/api/hardware';
-import { Attendee, HardwareDevice } from '@/types/types';
-import HardwareRequestView from '@/components/HardwareRequestView';
 import { getAttendee } from '@/app/api/attendee';
+import { getHardware, getHardwareDevice } from '@/app/api/hardware';
 import CustomSelect from '@/components/CustomSelect';
+import HardwareRequestView from '@/components/HardwareRequestView';
+import QRCodeReader from '@/components/admin/QRCodeReader';
+import { Attendee, HardwareDevice } from '@/types/types';
+import { useSession } from 'next-auth/react';
+import { useMemo, useState } from 'react';
 
 export default function HardwareCheckout({
   attendees,
@@ -138,7 +138,6 @@ function UserScanner({
           qrbox: 500
         }}
         onScanSuccess={(id: string) => {
-          console.log('User:', id);
           getAttendee(session!.access_token, id).then(attendee => {
             setUser(attendee);
           });
@@ -213,12 +212,10 @@ function HardwareDeviceScanner({
           const identifier = id.slice(1);
           const isSerial = id.startsWith('S');
           const query = isSerial ? { serial: identifier } : { id: identifier };
-          console.log('Hardware device ID:', id);
           getHardwareDevice(session!.access_token, query).then(device => {
             if (isSerial) {
               device = device[0];
             }
-            console.log('Retrieved device:', device);
             if (
               typeof device.hardware == 'string' ||
               device.hardware instanceof String

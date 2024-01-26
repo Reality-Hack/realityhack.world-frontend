@@ -1,4 +1,10 @@
-export async function submitVibeCheck(
+import { components } from '@/types/schema';
+
+export type DestinyTeam = components['schemas']['DestinyTeam'];
+export type DestinyTeamAttendeeVibe =
+  components['schemas']['DestinyTeamAttendeeVibe'];
+
+export async function postVibeCheck(
   accessToken: string,
   vibeCheck: string,
   attendeeId: string,
@@ -7,7 +13,7 @@ export async function submitVibeCheck(
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteamattendeevibes/`;
 
   const resp = await fetch(url, {
-    method: 'PATCH',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + accessToken
@@ -108,7 +114,105 @@ export async function getAvailableTracks(
   }
 }
 
+export async function getDestinyTeamsByAttendee(
+  accessToken: string,
+  attendeeId: string,
+  round: number
+): Promise<DestinyTeam[]> {
+  let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteams/?attendees=${attendeeId}&round=${round}`;
+  const resp = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    }
+  });
+  const result = await resp.json();
+  if (resp.ok) {
+    return result;
+  }
+  throw new Error(
+    `Failed to get destiny teams Status: ${resp.status}\n Result: ${JSON.stringify(
+      result
+    )}`
+  );
+}
 
-export async function getTeamFormationTeam(){
-  
+export async function getAttendeeVibeForTeam(
+  accessToken: string,
+  destinyTeamId: string,
+  attendeeId: string
+) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteamattendeevibes/?destiny_team=${destinyTeamId}&attendee=${attendeeId}`;
+  const resp = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    }
+  });
+  const result = await resp.json();
+  if (resp.ok) {
+    return result;
+  }
+  throw new Error(
+    `Failed to get destiny team attendee vibe Status: ${resp.status}\n Result: ${JSON.stringify(
+      result
+    )}`
+  );
+}
+
+export async function createAttendeeVibeForTeam(
+  accessToken: string,
+  destinyTeamId: string,
+  attendeeId: string,
+  vibe: number
+): Promise<DestinyTeamAttendeeVibe> {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteamattendeevibes/`;
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    },
+    body: JSON.stringify({
+      vibe: vibe,
+      destiny_team: destinyTeamId,
+      attendee: attendeeId
+    })
+  });
+  const result = await resp.json();
+  if (resp.ok) {
+    return result;
+  }
+  throw new Error(
+    `Failed to create destiny team attendee vibe Status: ${resp.status}\n Result: ${JSON.stringify(
+      result
+    )}`
+  );
+}
+
+export async function updateAttendeeVibeForTeam(
+  accessToken: string,
+  attendeevibeId: string,
+  vibe: number
+): Promise<DestinyTeamAttendeeVibe> {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteamattendeevibes/${attendeevibeId}/`;
+  const resp = await fetch(url, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    },
+    body: JSON.stringify({
+      vibe: vibe
+    })
+  });
+  const result = await resp.json();
+  if (resp.ok) {
+    return result;
+  }
+  throw new Error(
+    `Failed to patch destiny team attendee vibe Status: ${resp.status}\n Result: ${JSON.stringify(
+      result
+    )}`
+  );
 }

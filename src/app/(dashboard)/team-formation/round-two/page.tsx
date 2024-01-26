@@ -1,15 +1,10 @@
-"use client"
-import Round from "@/components/team-formation/Round";
+'use client';
+import Round from '@/components/team-formation/Round';
 
 export default function RoundTwo() {
-    const team = [{name:"Santiago Dimaren"},
-    {name:"Shane Sengelman"},
-    {name:"Austin Edelman"},
-    {name:"Stepan Something"},
-    {name:"Peter Something"}]
   return (
     <div>
-      <Round round={2} location="Table 1" track="track 8" team={team}/>
+      <Round round={2} />
     </div>
   );
 }

@@ -1,15 +1,17 @@
 'use client';
-import { createHardware, deleteHardware, sendHardwareRequest, updateHardware } from '@/app/api/hardware';
+import { fileUpload } from '@/app/api/application';
+import {
+  createHardware,
+  deleteHardware,
+  updateHardware
+} from '@/app/api/hardware';
+import { fixFileLink } from '@/app/api/uploaded_files';
+import Dropzone from '@/components/Dropzone';
+import HardwareCategoryFilter from '@/components/HardwareCategoryFilter';
+import { Hardware, HardwareCategory, UploadedFile } from '@/types/types';
 import CloseIcon from '@mui/icons-material/Close';
-import { PlusOne } from '@mui/icons-material';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { Hardware, HardwareCategory, UploadedFile } from '@/types/types';
-import Dropzone from '@/components/Dropzone';
-import { fileUpload } from '@/app/api/application';
-import Image from 'next/image';
-import { fixFileLink } from '@/app/api/uploaded_files';
-import HardwareCategoryFilter from '@/components/HardwareCategoryFilter';
 
 export default function HardwareEditor({
   hardware,
@@ -30,7 +32,7 @@ export default function HardwareEditor({
   function addNew() {
     setHardwareList([
       {
-        id: "",
+        id: '',
         name: '',
         total: 1,
         available: 1,
@@ -62,30 +64,34 @@ export default function HardwareEditor({
       ></HardwareCategoryFilter>
       <div className="flex flex-wrap justify-left gap-6 ml-6 mt-14">
         {hardwareList
-        .filter(
-          (item: Hardware) =>
-            (selectAll ||
-              item.tags.some(
-                tag => selected[tag?.value || (tag as unknown as string)]
-              ) ||
-              !Object.entries(selected).some(([_, val]) => val)) &&
-            (!search ||
-              item.name.toLowerCase().includes(search.toLowerCase()))
-        )
-        .map((item: any, i: number) => (
-          <EditableHardwareCard
-            item={item}
-            setItem={newItem => {
-              const newList = [...hardwareList];
-              newList[i] = newItem;
-              setHardwareList(newList);
-            }}
-            removeItem={() => setHardwareList(hardwareList.filter((_, idx) => idx !== i))}
-            key={item.id || (i + 1).toString()}
-            hardwareCategories={hardwareCategories}
-            topLevelProps={{"data-testid": `hardware-request-hardware-${i}`}}
-          ></EditableHardwareCard>
-        ))}
+          .filter(
+            (item: Hardware) =>
+              (selectAll ||
+                item.tags.some(
+                  tag => selected[tag?.value || (tag as unknown as string)]
+                ) ||
+                !Object.entries(selected).some(([_, val]) => val)) &&
+              (!search ||
+                item.name.toLowerCase().includes(search.toLowerCase()))
+          )
+          .map((item: any, i: number) => (
+            <EditableHardwareCard
+              item={item}
+              setItem={newItem => {
+                const newList = [...hardwareList];
+                newList[i] = newItem;
+                setHardwareList(newList);
+              }}
+              removeItem={() =>
+                setHardwareList(hardwareList.filter((_, idx) => idx !== i))
+              }
+              key={item.id || (i + 1).toString()}
+              hardwareCategories={hardwareCategories}
+              topLevelProps={{
+                'data-testid': `hardware-request-hardware-${i}`
+              }}
+            ></EditableHardwareCard>
+          ))}
       </div>
     </div>
   );
@@ -98,7 +104,7 @@ function EditableHardwareCard({
   hardwareCategories,
   topLevelProps = {}
 }: {
-  item: Hardware; 
+  item: Hardware;
   setItem: (item: Hardware) => void;
   removeItem: () => void;
   hardwareCategories: HardwareCategory[];
@@ -120,11 +126,8 @@ function EditableHardwareCard({
     tags !== item.tags;
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [addTagOpen, setAddTagOpen] = useState(false);
-  const isReady = 
-    name.length > 0 &&
-    quantity > 0 &&
-    description.length > 0 &&
-    image != null;
+  const isReady =
+    name.length > 0 && quantity > 0 && description.length > 0 && image != null;
   const [sending, setSending] = useState(false);
 
   if (!session) return null;
@@ -146,19 +149,25 @@ function EditableHardwareCard({
     };
     setSending(true);
     if (!isOriginal) {
-      updateHardware(session!.access_token, data).then(res => {
-        setItem(newItem);
-      }).finally(() => setSending(false));
+      updateHardware(session!.access_token, data)
+        .then(res => {
+          setItem(newItem);
+        })
+        .finally(() => setSending(false));
     } else {
-      createHardware(session!.access_token, data).then(res => {
-        console.log(res);
-        setItem(newItem);
-      }).finally(() => setSending(false));
+      createHardware(session!.access_token, data)
+        .then(res => {
+          setItem(newItem);
+        })
+        .finally(() => setSending(false));
     }
   }
 
   return (
-    <div {...topLevelProps} className="flex-col gap-2 w-[355px] bg-gradient-to-t from-[#FFFFFF] to-[#FFFFFF] border border-blue-500 rounded-[10px] shadow flex justify-center items-center p-2">
+    <div
+      {...topLevelProps}
+      className="flex-col gap-2 w-[355px] bg-gradient-to-t from-[#FFFFFF] to-[#FFFFFF] border border-blue-500 rounded-[10px] shadow flex justify-center items-center p-2"
+    >
       {editingImage ? (
         <>
           <Dropzone
@@ -286,7 +295,7 @@ function EditableHardwareCard({
             deleteHardware(session!.access_token, item.id).then(() => {
               setSending(false);
               removeItem();
-            })
+            });
           }}
         >
           Delete
