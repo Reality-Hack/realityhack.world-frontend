@@ -20,6 +20,17 @@ type TeamFormProps = {
   onChange: (team: SerializedTeam) => void;
 };
 
+function getTableLabel(table: number | void) {
+  if (!table) {
+    return `Table #${table}`;
+  }
+  if (table <= 68) {
+    return `Media Lab: Table #${table}`;
+  } else {
+    return `Walker: Table #${table}`;
+  }
+}
+
 export default function TeamForm({ team, onChange }: TeamFormProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [attendeeOptions, setAttendeeOptions] = useState<Attendee[]>([]);
@@ -76,7 +87,7 @@ export default function TeamForm({ team, onChange }: TeamFormProps) {
           changeTable(newValue);
         }}
         options={tableOptions}
-        getOptionLabel={option => `Table ${option?.number}`}
+        getOptionLabel={option => getTableLabel(option?.number)}
         getOptionKey={option => option?.id ?? ''}
         isOptionEqualToValue={(a, b) => a?.id === b?.id}
         renderInput={params => (
