@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { HelpRequest, addMentorHelpRequest } from '@/app/api/helpqueue';
-import { ThemeProvider, createTheme } from '@mui/material';
-import { MentorTopics } from '@/types/types';
 import SelectToolWithOther from '@/app/(dashboard)/mentors/SelectToolWithOther';
 import { useAuthContext } from '@/hooks/AuthContext';
+import { MentorTopics } from '@/types/types';
+import { ThemeProvider, createTheme } from '@mui/material';
+import Image from 'next/image';
+import React, { useState } from 'react';
 
 interface StatBoxProps {
   src: string;
@@ -44,10 +43,10 @@ export function Dialog({ isOpen, onClose, children }: DialogProps) {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center"
+      className="fixed inset-0 flex items-center justify-center z-[1001]"
       onClick={handleDialogClick}
     >
-      <div className="w-1/2 p-4 overflow-y-auto bg-gray-300 rounded-md shadow-md h-1/2">
+      <div className="w-1/2 p-4 overflow-y-auto bg-white rounded-md shadow-md h-1/2 z-[2000]">
         <div className="flex">
           <button className="ml-auto " onClick={onClose}>
             Close
@@ -55,6 +54,7 @@ export function Dialog({ isOpen, onClose, children }: DialogProps) {
         </div>
         <div>{children}</div>
       </div>
+      <div className="fixed inset-0 bg-black/30 z-[1002]"></div>
     </div>
   );
 }
@@ -82,14 +82,6 @@ export function QuestionDialog({
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
 
   const { user } = useAuthContext();
-
-  // const formattedOptions = Object.values(MentorTopics).map(
-  //   (key: any, value: any) => ({
-  //     label: key.replace(/_/g, ' '),
-  //     value: MentorTopics[key as keyof typeof MentorTopics]
-  //   })
-  // );
-
   const formattedOptions = [];
 
   for (const key in MentorTopics) {
@@ -98,9 +90,6 @@ export function QuestionDialog({
       value: MentorTopics[key as keyof typeof MentorTopics]
     });
   }
-
-  console.log('formattedOptions: ', formattedOptions);
-  // console.log('MentorTopics: ', MentorTopics);
 
   const theme = createTheme({
     components: {
@@ -133,7 +122,7 @@ export function QuestionDialog({
             New Help Request
           </div>
           <div className="flex flex-col gap-4">
-            <div className="font-bold">
+            <div className="font-medium">
               What do you need help with
               <span className="text-lg md:text-2xl text-red-400">*</span>?
             </div>
@@ -148,12 +137,12 @@ export function QuestionDialog({
                 formattedOptions={formattedOptions}
               />
             </div>
-            <div className="font-bold">
+            <div className="font-medium">
               Describe your request in detail
-              <span className="text-2xl text-red-400">*</span>:
+              <span className="mb-2 text-red-400 text-md">*</span>:
             </div>
             <textarea
-              className="w-full h-20 p-4 rounded-md"
+              className="w-full h-20 p-2 border border-[#d9d9d9] rounded-md focus:outline-none focus:border-[#4096ff] hover:border-[#4096ff] transition-all"
               placeholder="Type your description here"
               value={textareaValue}
               onChange={e => setTextareaValue(e.target.value)}
@@ -169,10 +158,10 @@ export function QuestionDialog({
                 onSubmit(selectedItems, user?.team?.id, textareaValue);
               }
             }}
-            className={`mt-auto ml-auto py-1 px-2 rounded-xl ${
+            className={`gap-1.5s mr-6 flex mt-0 mb-4  text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm cursor-pointer transition-all w-fit ${
               textareaValue.trim() !== '' && canSubmit
-                ? 'bg-green-200 cursor-pointer'
-                : 'bg-red-200 cursor-not-allowed'
+                ? 'hover:bg-[#0066F5] bg-[#1677FF] cursor-pointer'
+                : 'bg-gray-300 cursor-not-allowed'
             }`}
           >
             Submit Help Request

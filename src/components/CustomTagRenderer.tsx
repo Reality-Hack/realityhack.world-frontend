@@ -1,9 +1,6 @@
-import React from 'react';
-import { Select, Tag } from 'antd';
-import type { SelectProps } from 'antd';
 import { MentorTopics } from '@/types/types';
-
-type TagRender = SelectProps['tagRender'];
+import { Select, Tag } from 'antd';
+import React from 'react';
 
 const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
@@ -19,11 +16,11 @@ const mentorTopicsOptions = Object.keys(MentorTopics)
   .map(key => ({
     value: MentorTopics[key as keyof typeof MentorTopics],
     label: key.replace(/_/g, ' '),
-    color: getRandomColor(),
+    color: getRandomColor()
   }));
-  
-const tagRender: TagRender = (props) => {
-  const { label, value, closable, onClose, color,backgroundColor } = props;
+
+const tagRender = (props: any) => {
+  const { label, value, closable, onClose, color, backgroundColor } = props;
   const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
     event.preventDefault();
     event.stopPropagation();
@@ -33,7 +30,7 @@ const tagRender: TagRender = (props) => {
       onMouseDown={onPreventMouseDown}
       closable={closable}
       onClose={onClose}
-      style={{ marginRight: 3,color:color,backgroundColor:backgroundColor }}
+      style={{ marginRight: 3, color: color, backgroundColor: backgroundColor }}
     >
       {label}
     </Tag>

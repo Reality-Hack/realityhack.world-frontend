@@ -182,7 +182,7 @@ export default function Help2() {
   }
 
   const getTopicLabels = (topicIds: any) => {
-    return topicIds.map((id: string) => {
+    return topicIds?.map((id: string) => {
       const option = formattedOptions.find(option => option.value === id);
       return option ? option.label : 'Unknown';
     });
@@ -216,7 +216,7 @@ export default function Help2() {
               requestTitle={req.title}
               description={req.description?.slice(0, 5)}
               placeInQueue={idx}
-              skillList={getTopicLabels(req.topics)}
+              skillList={getTopicLabels(req.topics) ?? []}
               created={req.created_at}
               team={req.team}
             />

@@ -1,21 +1,13 @@
 'use client';
-import CustomSelect from '@/components/CustomSelect';
-import { StatBox } from '@/components/helpQueue/hackerView/NewRequestComps';
+import { HelpRequest, getAllHelpRequests } from '@/app/api/helpqueue';
 import { MentorPosting } from '@/components/helpQueue/hackerView/PostingComps';
+import { useAuthContext } from '@/hooks/AuthContext';
+import { MentorTopics, getKeyByValue, mentor_help_status } from '@/types/types';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import React, { useEffect, useState } from 'react';
-import SelectToolWithOther from './SelectToolWithOther';
-import FormattedTopicsAsList from '@/components/helpQueue/TopicFormatted';
 import { useSession } from 'next-auth/react';
-import { useAuthContext } from '@/hooks/AuthContext';
-import {
-  HelpRequestHistory,
-  getAllHelpRequestsFromHistory,
-  getAllHelpRequests,
-  HelpRequest
-} from '@/app/api/helpqueue';
-import { MentorTopics, mentor_help_status, getKeyByValue } from '@/types/types';
+import { useEffect, useState } from 'react';
+import SelectToolWithOther from './SelectToolWithOther';
 
 export default function Page() {
   const { data: session } = useSession();
@@ -28,9 +20,7 @@ export default function Page() {
     setSelectedTab(newValue);
   };
 
-  const [allHelpRequests, setAllHelpRequests] = useState<
-  HelpRequest[]
-  >([]);
+  const [allHelpRequests, setAllHelpRequests] = useState<HelpRequest[]>([]);
   // const [allHistoricalHelpRequests, setHistoricalHelpRequests] = useState<
   //   HelpRequestHistory[]
   // >([]);
@@ -40,15 +30,22 @@ export default function Page() {
     setSelectedSkill(selectedValue);
   }
 
+  const formattedOptions = [];
+
+  for (const key in MentorTopics) {
+    formattedOptions.push({
+      label: key.replace(/_/g, ' '),
+      value: MentorTopics[key as keyof typeof MentorTopics]
+    });
+  }
+
   // //get all help requests
   useEffect(() => {
     console.log('making api call');
     if (session?.access_token) {
-      getAllHelpRequests(session.access_token).then(
-        helpReqs => {
-          setAllHelpRequests(helpReqs);
-        }
-      );
+      getAllHelpRequests(session.access_token).then(helpReqs => {
+        setAllHelpRequests(helpReqs);
+      });
     }
   }, []);
 
@@ -81,13 +78,12 @@ export default function Page() {
         })}
       </Tabs>
       <SelectToolWithOther
-        placeholder="Type Question Filter"
+        canSubmit={() => true}
+        mentorTopics={formattedOptions.map(option => option.label)}
+        placeholder={'Select Your Skill'}
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}
-        mentorTopics={Object.keys(MentorTopics).map(
-          key => key.replace(/_/g, ' ')
-        )}
-        canSubmit={() => true}
+        formattedOptions={formattedOptions}
       />
       <div>
         <div className="p-4">

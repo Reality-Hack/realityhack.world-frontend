@@ -71,14 +71,14 @@ export function Posting({
 
   useEffect(() => {
     // Calculate the initial remaining time
-    const initialRemainingTime = calculateTimeDifference(created);
+    const initialRemainingTime = calculateTimeDifference(created ?? '');
 
     // Update the state with the initial remaining time
     setRemainingTime(initialRemainingTime);
 
     // Set up an interval to update the remaining time every second
     const intervalId = setInterval(() => {
-      const updatedRemainingTime = calculateTimeDifference(created);
+      const updatedRemainingTime = calculateTimeDifference(created ?? '');
 
       // Update the state with the latest remaining time
       setRemainingTime(updatedRemainingTime);
@@ -105,8 +105,8 @@ export function Posting({
         Status: {status}
       </div>
 
-      <div className="flex flex-row gap-4 p-4">
-        <div className="font-semibold">{requestTitle}</div>
+      <div className="flex flex-row gap-4 p-4 mx-auto">
+        {/* <div className="font-semibold">{requestTitle}</div> */}
         {placeInQueue && (
           <div>
             {placeInQueue === 0 && <span className="font-bold">NEXT</span>}
@@ -117,10 +117,10 @@ export function Posting({
         )}
       </div>
       <div className="flex flex-col gap-2">
-        <div className="ml-4 text-xs">
+        <div className="mx-auto text-xs">
           {created && `Submitted at ${formatTime(created)}`}
         </div>
-        <div className="ml-4">
+        <div className="mx-auto">
           {created && calculateTimeDifference(created)}
         </div>
         <div className="flex flex-wrap items-center justify-center w-full gap-2 px-4">
