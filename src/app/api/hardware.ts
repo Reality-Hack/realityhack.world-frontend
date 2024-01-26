@@ -6,7 +6,9 @@ import {
   hardware_request_status,
   HardwareRequestBrief,
   Hardware,
-  HardwareForSending
+  HardwareForSending,
+  HardwareDevice,
+  HardwareDeviceForSending
 } from '@/types/types';
 
 export async function getAllHardware(accessToken: string) {
@@ -178,11 +180,22 @@ export async function deleteHardwareRequest(accessToken: string, id: string) {
 
 export async function getHardwareDevice(
   accessToken: string,
-  { id = null, serial = null }: { id?: string | null; serial?: string | null }
+  { id = null, serial = null, hardware = null }:
+  { id?: string | null; serial?: string | null, hardware?: string | null}
 ) {
+  const kvs = [];
+  if (serial != null) {
+    kvs.push('serial=' + serial);
+  }
+  if (hardware != null) {
+    kvs.push('hardware=' + hardware);
+  }
+  if (id != null && kvs.length > 0) {
+    throw new Error('Cannot specify both retrieve and list parameters');
+  }
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/hardwaredevices${
     id == null ? '' : '/' + id
-  }/${serial == null ? '' : '?serial=' + serial}`;
+  }/${kvs.length == 0 ? '' : '?' + kvs.join('&')}`;
 
   const resp = await fetch(url, {
     headers: {
@@ -197,6 +210,76 @@ export async function getHardwareDevice(
   }
 
   throw new Error('Failed to fetch data. Status: ' + resp.status);
+}
+
+export async function createHardwareDevice(
+  accessToken: string,
+  device: HardwareDeviceForSending
+) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/hardwaredevices/`;
+  const content = JSON.stringify(device);
+
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    },
+    body: content
+  });
+
+  if (resp.ok) {
+    const data = await resp.json();
+    return data;
+  }
+
+  throw new Error('Failed to send data. Status: ' + resp.status);
+}
+
+export async function updateHardwareDevice(
+  accessToken: string,
+  device: HardwareDeviceForSending
+) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/hardwaredevices/${device.id}/`;
+  const content = JSON.stringify(device);
+
+  const resp = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    },
+    body: content
+  });
+
+  if (resp.ok) {
+    const data = await resp.json();
+    return data;
+  }
+
+  throw new Error('Failed to send data. Status: ' + resp.status);
+}
+
+export async function deleteHardwareDevice(
+  accessToken: string,
+  device: string
+) {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/hardwaredevices/${device}`;
+
+  const resp = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    }
+  });
+
+  if (resp.ok) {
+    const data = await resp.text();
+    return data;
+  }
+
+  throw new Error('Failed to send data. Status: ' + resp.status);
 }
 
 export async function getHardware(accessToken: string, id: string) {

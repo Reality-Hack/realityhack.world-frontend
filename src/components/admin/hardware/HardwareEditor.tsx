@@ -1,17 +1,16 @@
 'use client';
 import { fileUpload } from '@/app/api/application';
-import {
-  createHardware,
-  deleteHardware,
-  updateHardware
-} from '@/app/api/hardware';
-import { fixFileLink } from '@/app/api/uploaded_files';
-import Dropzone from '@/components/Dropzone';
-import HardwareCategoryFilter from '@/components/HardwareCategoryFilter';
-import { Hardware, HardwareCategory, UploadedFile } from '@/types/types';
+import { createHardware, createHardwareDevice, deleteHardware, deleteHardwareDevice, getHardwareDevice, sendHardwareRequest, updateHardware, updateHardwareDevice } from '@/app/api/hardware';
 import CloseIcon from '@mui/icons-material/Close';
+import { PlusOne, Save } from '@mui/icons-material';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Hardware, HardwareCategory, HardwareDevice, UploadedFile, hardware_categories } from '@/types/types';
+import Dropzone from '@/components/Dropzone';
+import { fixFileLink } from '@/app/api/uploaded_files';
+import HardwareCategoryFilter from '@/components/HardwareCategoryFilter';
+import { CircularProgress, LinearProgress } from '@mui/material';
+import { TrashIcon } from '@heroicons/react/20/solid';
 
 export default function HardwareEditor({
   hardware,
@@ -111,7 +110,7 @@ function EditableHardwareCard({
   topLevelProps?: any;
 }) {
   const { data: session } = useSession();
-  const isOriginal = item.id == null;
+  const isOriginal = !item.id;
   const [image, setImage] = useState<null | UploadedFile>(item.image);
   const [editingImage, setEditingImage] = useState(image == null);
   const [name, setName] = useState(item.name);
@@ -124,13 +123,26 @@ function EditableHardwareCard({
     description !== item.description ||
     image?.id !== item.image?.id ||
     tags !== item.tags;
-  const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [addTagOpen, setAddTagOpen] = useState(false);
-  const isReady =
-    name.length > 0 && quantity > 0 && description.length > 0 && image != null;
+  const [hardwareDevicesEditorOpen, setHardwareDevicesEditorOpen] = useState(false);
+  const isReady = 
+    name.length > 0 &&
+    quantity > 0 &&
+    description.length > 0 &&
+    image != null;
   const [sending, setSending] = useState(false);
 
   if (!session) return null;
+
+  async function setAcceptedFiles(acceptedFiles: File[] | ((prevState: File[]) => File[])) {
+    if (typeof acceptedFiles === "function") {
+      acceptedFiles = acceptedFiles([]);
+    }
+    fileUpload(session?.access_token, acceptedFiles[0]).then(res => {
+      setImage(res);
+      setEditingImage(false);
+    });
+  }
 
   function saveHardware() {
     const data = {
@@ -155,11 +167,13 @@ function EditableHardwareCard({
         })
         .finally(() => setSending(false));
     } else {
-      createHardware(session!.access_token, data)
-        .then(res => {
-          setItem(newItem);
-        })
-        .finally(() => setSending(false));
+      createHardware(session!.access_token, data).then(res => {
+        console.log(res);
+        setItem({
+          ...newItem,
+          id: res.id
+        });
+      }).finally(() => setSending(false));
     }
   }
 
@@ -171,27 +185,12 @@ function EditableHardwareCard({
       {editingImage ? (
         <>
           <Dropzone
-            acceptedFiles={acceptedFiles}
+            acceptedFiles={[]}
             rejectedFiles={[]}
             setAcceptedFiles={setAcceptedFiles}
             setRejectedFiles={() => {}}
             setFormData={() => {}}
           ></Dropzone>
-          {acceptedFiles.length > 0 ? (
-            <button
-              onClick={() => {
-                fileUpload(session.access_token, acceptedFiles[0]).then(res => {
-                  setImage(res);
-                  setEditingImage(false);
-                });
-              }}
-            >
-              Save
-            </button>
-          ) : null}
-          {!item.image ? null : (
-            <button onClick={() => setEditingImage(false)}>Cancel</button>
-          )}
         </>
       ) : (
         <>
@@ -204,18 +203,33 @@ function EditableHardwareCard({
       <div className="flex justify-between w-full">
         <span className="text-xl">
           <input
-            placeholder="Name"
+            placeholder="Enter name"
             value={name}
+            className="m-1 shadow-md rounded-md px-1 border"
             onChange={e => setName(e.target.value)}
           ></input>
         </span>
-        <input
-          placeholder="Quantity"
-          type="number"
-          step="1"
-          value={quantity}
-          onChange={e => setQuantity(Number.parseInt(e.target.value))}
-        ></input>
+        <div className='relative'>
+          {hardwareDevicesEditorOpen && (
+            <div className="absolute left-0 top-10 rounded-md shadow-xl bg-white z-10">
+              <div className='flex justify-end'>
+                <button
+                  className="px-2 py-2 rounded-full text-black"
+                  onClick={() => setHardwareDevicesEditorOpen(false)}
+                >
+                  <CloseIcon />
+                </button>
+              </div>
+              <HardwareDevicesEditor hardware={item} />
+            </div>
+          )}
+        </div>
+        <button
+        className='cursor-pointer text-black bg-gray-200 px-4 py-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end'
+        onClick={() => setHardwareDevicesEditorOpen(!hardwareDevicesEditorOpen)}
+        disabled={isOriginal}
+        >Edit devices</button>
+        
       </div>
       <textarea
         // disabled={quantity === 0}
@@ -229,7 +243,7 @@ function EditableHardwareCard({
       <div className="flex w-full flex-wrap flex-initial">
         {tags.map(tag => (
           <span className="bg-gray-200 rounded-full px-2 py-1 m-1">
-            {tag.display_name}
+            {hardware_categories[tag.value] /*tag.display_name*/}
             <button
               onClick={() =>
                 setTags(tags.filter(other => other.value != tag.value))
@@ -239,7 +253,7 @@ function EditableHardwareCard({
             </button>
           </span>
         ))}
-        <span className="relative bg-gray-200 rounded-full px-2 py-0 mx-1 text-xl">
+        <div className="relative bg-gray-200 rounded-full px-2 py-0 mx-1 text-xl">
           {addTagOpen && (
             <div className="absolute left-10 top-5 rounded-md shadow-xl bg-white z-10">
               <button
@@ -257,7 +271,7 @@ function EditableHardwareCard({
                         className="cursor-pointer text-white bg-[#493B8A] px-4 rounded-full disabled:opacity-50 transition-all flex-shrink h-10 self-end"
                         onClick={() => setTags([...tags, cat])}
                       >
-                        {cat.display_name}
+                        {hardware_categories[cat.value] /* cat.display_name */}
                       </button>
                     </div>
                   ))}
@@ -265,14 +279,12 @@ function EditableHardwareCard({
             </div>
           )}
           <button
-            onClick={() => {
-              setAddTagOpen(true);
-            }}
+            onClick={() => setAddTagOpen(!addTagOpen)}
             className="py-1"
           >
             +
           </button>{' '}
-        </span>
+        </div>
       </div>
       <div className="flex justify-between w-full">
         {/* <textarea
@@ -288,14 +300,19 @@ function EditableHardwareCard({
           Save
         </button>
         <button
-          disabled={isOriginal || sending}
+          disabled={sending}
           className="cursor-pointer text-white bg-[#CC2F34] px-4 rounded-full disabled:opacity-50 transition-all flex-shrink h-10 self-end"
           onClick={() => {
-            setSending(true);
-            deleteHardware(session!.access_token, item.id).then(() => {
-              setSending(false);
+            if(isOriginal) {
               removeItem();
-            });
+              return;
+            } else {
+              setSending(true);
+              deleteHardware(session!.access_token, item.id).then(() => {
+                setSending(false);
+                removeItem();
+              });
+            }
           }}
         >
           Delete
@@ -303,4 +320,110 @@ function EditableHardwareCard({
       </div>
     </div>
   );
+}
+
+function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState(true);
+  const [devices, setDevices] = useState<Partial<HardwareDevice>[]>([]);
+  useEffect(() => {
+    if (session) {
+      setLoading(true);
+      getHardwareDevice(session.access_token, { hardware: hardware.id }).then(res => {
+        setDevices(res);
+      }).finally(() => setLoading(false));
+    }
+  }, [session]);
+
+  function addNew() {
+    setDevices([
+      {
+        id: "",
+        serial: "",
+        checked_out_to: null,
+        hardware: hardware
+      },
+      ...devices
+    ])
+  }
+
+  return <div className="w-56 px-5 py-4 my-4 mr-4">
+    <p>{loading ? "Loading..." : `${devices.length} devices.`}</p>
+    <p className='mt-1'>
+      <button
+        className="cursor-pointer text-white bg-[#493B8A] py-1 px-2 rounded-full disabled:opacity-50 transition-all h-15"
+        onClick={() => addNew()}
+      >+ add new</button>
+    </p>
+    <div className="content flex flex-col max-h-64 overflow-scroll mt-4">
+      {loading ? <CircularProgress /> : devices.map((device, i) => (
+      <HardwareDeviceEditor key={device.id} device={device} access_token={session?.access_token}
+      deleteDevice={() => setDevices(devices.filter((_, idx) => idx !== i))}
+      setDevice={(device) => setDevices(devices.map((_, idx) => idx === i ? device : _))}
+      index={i+1}
+      />))}
+    </div>
+  </div>
+}
+
+function HardwareDeviceEditor(
+  { device, access_token, deleteDevice, setDevice, index }:
+  { device: Partial<HardwareDevice>, access_token?: string,
+    deleteDevice: () => void, setDevice: (device: Partial<HardwareDevice>) => void, index?: number}) {
+  const [loading, setLoading] = useState(false);
+  const isOriginal = !device.id;
+  const [serial, setSerial] = useState(device.serial || "");
+  const hasChanged = serial !== device.serial;
+
+  function save() {
+    if (access_token) {
+      if(isOriginal) {
+        setLoading(true);
+        createHardwareDevice(access_token, {
+          serial: serial,
+          hardware: (device.hardware?.id)!,
+        }).then(res => {
+          setDevice({
+            id: res.id,
+            serial: serial,
+            hardware: device.hardware,
+          });
+        }).finally(() => setLoading(false));
+      } else {
+        setLoading(true);
+        updateHardwareDevice(access_token, {
+          id: device.id,
+          serial: serial,
+          hardware: (device.hardware?.id)!,
+        }).then(res => {
+          setDevice({
+            ...device,
+            serial: res.serial
+          });
+        }).finally(() => setLoading(false));
+      }
+    }
+  }
+
+  function remove() {
+    if (isOriginal) {
+      deleteDevice();
+    } else if (access_token) {
+      setLoading(true);
+      deleteHardwareDevice(access_token, device.id!).then(() => {
+        deleteDevice();
+      }).finally(() => setLoading(false));
+    }
+  }
+
+  return (<div className='flex'>
+    {index}.
+    <button className='text-[#CC2F34]' onClick={remove} disabled={loading}><CloseIcon /></button>
+    {hasChanged || isOriginal ? <button className='text-[#493B8A]'
+    onClick={save} disabled={loading}
+    ><Save /></button> : null}
+    <input value={serial} onChange={e => setSerial(e.target.value)} disabled={loading}
+                className="m-0.5 shadow-md rounded-md px-1 border"
+    ></input>
+  </div>);
 }
