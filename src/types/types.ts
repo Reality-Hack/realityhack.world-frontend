@@ -360,11 +360,31 @@ export interface HardwareDevice {
   hardware: Hardware;
 }
 
+export interface HardwareDeviceForSending {
+  id?: string;
+  serial: string;
+  hardware: string;
+  checked_out_to?: string | null;
+}
+
 export type hardware_requester = string | 'me' | null;
 
 export interface HardwareCategory {
   value: string;
   display_name: string;
+}
+
+export const hardware_categories: { [key: string]: string } = {
+  AC: "Accessory",
+  SE: "Sensor",
+  VR: "Virtual Reality",
+  AR: "Augmented Reality",
+  MR: "Mixed Reality",
+  CO: "Computer",
+  HA: "Haptics",
+  CA: "Camera",
+  TA: "Tablet",
+  HD: "Holographic Display"
 }
 
 export interface UploadedFile {

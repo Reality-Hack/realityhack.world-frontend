@@ -1,6 +1,6 @@
 'use client';
 import CloseIcon from '@mui/icons-material/Close';
-import { Hardware, HardwareCategory } from '@/types/types';
+import { Hardware, HardwareCategory, hardware_categories } from '@/types/types';
 import { useState } from 'react';
 
 
@@ -20,13 +20,15 @@ export default function HardwareCategoryFilter(
       Filter
     </button>
     {filterOn && (
-      <div className="fixed rounded-md shadow-xl bg-white z-10">
-        <button
-          className="fixed right-0 p-4 px-4 py-2 rounded-full text-black mx-4"
-          onClick={() => setFilterOn(false)}
-        >
-          <CloseIcon />
-        </button>
+      <div className="fixed rounded-md shadow-xl bg-white z-10 right-[4%] top-[16%]">
+        <div className='flex flex-end justify-end'>
+          <button
+            className="self-end rounded-full text-black mx-4"
+            onClick={() => setFilterOn(false)}
+          >
+            <CloseIcon />
+          </button>
+        </div>
         <div>
           <div className="w-56 px-5 py-4 my-4 mr-4 content">
             {/* <div className="flex flex-col"> */}
@@ -71,8 +73,8 @@ export default function HardwareCategoryFilter(
                 <div className="flex items-center" key={idx}>
                   <input
                     id={`filter-${cat.value}`}
-                    name={cat.display_name}
-                    defaultValue={cat.display_name}
+                    name={/*cat.display_name*/ hardware_categories[cat.value]}
+                    defaultValue={/*cat.display_name*/ hardware_categories[cat.value]}
                     type="checkbox"
                     checked={selected[cat.value]}
                     className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
@@ -88,7 +90,7 @@ export default function HardwareCategoryFilter(
                     htmlFor={`filter-${cat.value}`}
                     className="ml-3 text-sm"
                   >
-                    {cat.display_name}
+                    {/*cat.display_name*/ hardware_categories[cat.value]}
                   </label>
                 </div>
               )
