@@ -129,15 +129,15 @@ export function QuestionDialog({
         }}
       >
         <div className="flex flex-col gap-4">
-          <div className="text-2xl font-bold whitespace-nowrap">
+          <div className="text-md md:text-2xl font-bold whitespace-nowrap">
             New Help Request
           </div>
           <div className="flex flex-col gap-4">
             <div className="font-bold">
               What do you need help with
-              <span className="text-2xl text-red-400">*</span>?
+              <span className="text-lg md:text-2xl text-red-400">*</span>?
             </div>
-            <div className="w-full">
+            <div className="w-40">
               {/* tag renderer with a custom dropdown */}
               <SelectToolWithOther
                 canSubmit={setCanSubmit}

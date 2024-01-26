@@ -1,16 +1,16 @@
 'use client';
-import { useSession } from 'next-auth/react';
-import React, { useState, useEffect } from 'react';
-import QRCodeReader from '@/components/admin/QRCodeReader';
-import CustomSelect from '@/components/CustomSelect';
 import { getAllAttendees } from '@/app/api/attendee';
-import { Modal, Box, Alert } from '@mui/material';
 import {
+  getAllAttendedWorkshops,
   getAllWorkshops,
   getMyWorkshops,
-  signinToWorkshop,
-  getAllAttendedWorkshops
+  signinToWorkshop
 } from '@/app/api/workshops';
+import CustomSelect from '@/components/CustomSelect';
+import QRCodeReader from '@/components/admin/QRCodeReader';
+import { Alert, Box, Modal } from '@mui/material';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
 export default function Checkin() {
   const [attendees, setAttendees] = useState<[]>([]);

@@ -11,7 +11,9 @@ import { useSession } from 'next-auth/react';
 import { useAuthContext } from '@/hooks/AuthContext';
 import {
   HelpRequestHistory,
-  getAllHelpRequestsFromHistory
+  getAllHelpRequestsFromHistory,
+  getAllHelpRequests,
+  HelpRequest
 } from '@/app/api/helpqueue';
 import { MentorTopics, mentor_help_status, getKeyByValue } from '@/types/types';
 
@@ -26,22 +28,25 @@ export default function Page() {
     setSelectedTab(newValue);
   };
 
-  const [allHistoricalHelpRequests, setHistoricalHelpRequests] = useState<
-    HelpRequestHistory[]
+  const [allHelpRequests, setAllHelpRequests] = useState<
+  HelpRequest[]
   >([]);
+  // const [allHistoricalHelpRequests, setHistoricalHelpRequests] = useState<
+  //   HelpRequestHistory[]
+  // >([]);
 
   const [selectedSkill, setSelectedSkill] = useState<string>(''); // State to store the selected skill
   function handleSkillSelection(selectedValue: string) {
     setSelectedSkill(selectedValue);
   }
 
-  // //get all historical help requests
+  // //get all help requests
   useEffect(() => {
     console.log('making api call');
     if (session?.access_token) {
-      getAllHelpRequestsFromHistory(session.access_token).then(
-        historicalHelpReqs => {
-          setHistoricalHelpRequests(historicalHelpReqs);
+      getAllHelpRequests(session.access_token).then(
+        helpReqs => {
+          setAllHelpRequests(helpReqs);
         }
       );
     }
@@ -50,14 +55,6 @@ export default function Page() {
   return (
     <div className="h-full flex flex-col gap-4 bg-gray-200 h-[800px] w-full overflow-y-auto p-2 rounded-lg">
       <div className="text-3xl">Help Queue</div>
-      <div className="flex gap-4">
-        <StatBox
-          src="/icons/dashboard/help.png"
-          label="Mentors Available"
-          stat="9"
-        />
-      </div>
-      <div>{JSON.stringify(allHistoricalHelpRequests[0])}</div>
       <div className="text-2xl">Help Requests</div>
       <Tabs
         value={selectedTab}
@@ -88,7 +85,7 @@ export default function Page() {
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}
         mentorTopics={Object.keys(MentorTopics).map(
-          key => key.replace(/_/g, ' ') || []
+          key => key.replace(/_/g, ' ')
         )}
         canSubmit={() => true}
       />
@@ -98,8 +95,7 @@ export default function Page() {
           {tabNames[selectedTab] == 'Open Requests' && (
             <div className="flex flex-wrap gap-2">
               {session?.access_token &&
-                allHistoricalHelpRequests.map((req, idx) => {
-                  console.log(req);
+                allHelpRequests.map((req, idx) => {
                   return (
                     <MentorPosting
                       access_token={session.access_token}
@@ -112,7 +108,7 @@ export default function Page() {
                       description={req.description?.slice(0, 5)}
                       placeInQueue={idx}
                       topicList={
-                        req.topic.map(topic =>
+                        req.topics?.map(topic =>
                           getKeyByValue(MentorTopics, topic)?.replace(/_/g, ' ')
                         ) as string[]
                       }

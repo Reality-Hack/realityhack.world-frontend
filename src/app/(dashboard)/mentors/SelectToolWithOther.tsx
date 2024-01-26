@@ -1,13 +1,13 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  Dispatch,
-  SetStateAction
-} from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Divider, Input, Select, Space, Button } from 'antd';
 import type { InputRef } from 'antd';
+import { Button, Divider, Input, Select, Space } from 'antd';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 
 interface SelectToolWithOtherProps {
   // Add any additional props if needed
@@ -16,16 +16,21 @@ interface SelectToolWithOtherProps {
   canSubmit: (submissionState: boolean) => void;
   selectedItems: string[];
   setSelectedItems: Dispatch<SetStateAction<string[]>>;
-  formattedOptions: { label: string; value: string }[];
+  // formattedOptions: { label: string; value: string }[];
 }
 const SelectToolWithOther: React.FC<SelectToolWithOtherProps> = ({
   mentorTopics,
   placeholder,
   canSubmit,
   selectedItems,
-  setSelectedItems,
-  formattedOptions
+  setSelectedItems
+  // formattedOptions
 }) => {
+  const formattedOptions = Object.keys(mentorTopics).map((key: string) => ({
+    label: String(key).replace(/_/g, ' '), // Convert key to string explicitly
+    value: mentorTopics[key as keyof typeof mentorTopics]
+  }));
+
   const [name, setName] = useState('');
   const inputRef = useRef<InputRef>(null);
   // const [selectedItems, setSelectedItems] = useState<string[]>([]); // New state variable
