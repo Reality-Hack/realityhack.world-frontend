@@ -367,7 +367,7 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
       index={i+1}
       />))}
     </div>
-  );
+  </div>;
 }
 
 function HardwareDeviceEditor(
