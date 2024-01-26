@@ -768,6 +768,20 @@ export interface components {
       /** Format: uuid */
       attendee: string;
     };
+    DestinyTeamUpdate: {
+      /** Format: uuid */
+      id: string;
+      table: components["schemas"]["TableNumber"];
+      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      round: number;
+      hardware_hack?: boolean;
+      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+      attendees?: string[];
+    };
     /**
      * @description * `1` - Nut allergy
      * * `2` - Shellfish allergy
@@ -1451,10 +1465,18 @@ export interface components {
       participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
       sponsor_company?: string | null;
     };
-    PatchedDestinyTeam: {
+    PatchedDestinyTeamAttendeeVibe: {
       /** Format: uuid */
       id?: string;
-      attendees?: components["schemas"]["AttendeeName"][];
+      vibe?: number;
+      /** Format: uuid */
+      destiny_team?: string;
+      /** Format: uuid */
+      attendee?: string;
+    };
+    PatchedDestinyTeamUpdate: {
+      /** Format: uuid */
+      id?: string;
       table?: components["schemas"]["TableNumber"];
       track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
       round?: number;
@@ -1464,15 +1486,7 @@ export interface components {
       created_at?: string;
       /** Format: date-time */
       updated_at?: string;
-    };
-    PatchedDestinyTeamAttendeeVibe: {
-      /** Format: uuid */
-      id?: string;
-      vibe?: number;
-      /** Format: uuid */
-      destiny_team?: string;
-      /** Format: uuid */
-      attendee?: string;
+      attendees?: string[];
     };
     PatchedFileUpload: {
       /** Format: uuid */
@@ -2921,15 +2935,15 @@ export interface operations {
   destinyteams_create: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["DestinyTeam"];
-        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeam"];
-        "multipart/form-data": components["schemas"]["DestinyTeam"];
+        "application/json": components["schemas"]["DestinyTeamUpdate"];
+        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeamUpdate"];
+        "multipart/form-data": components["schemas"]["DestinyTeamUpdate"];
       };
     };
     responses: {
       201: {
         content: {
-          "application/json": components["schemas"]["DestinyTeam"];
+          "application/json": components["schemas"]["DestinyTeamUpdate"];
         };
       };
     };
@@ -2960,15 +2974,15 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["DestinyTeam"];
-        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeam"];
-        "multipart/form-data": components["schemas"]["DestinyTeam"];
+        "application/json": components["schemas"]["DestinyTeamUpdate"];
+        "application/x-www-form-urlencoded": components["schemas"]["DestinyTeamUpdate"];
+        "multipart/form-data": components["schemas"]["DestinyTeamUpdate"];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["DestinyTeam"];
+          "application/json": components["schemas"]["DestinyTeamUpdate"];
         };
       };
     };
@@ -2998,15 +3012,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        "application/json": components["schemas"]["PatchedDestinyTeam"];
-        "application/x-www-form-urlencoded": components["schemas"]["PatchedDestinyTeam"];
-        "multipart/form-data": components["schemas"]["PatchedDestinyTeam"];
+        "application/json": components["schemas"]["PatchedDestinyTeamUpdate"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedDestinyTeamUpdate"];
+        "multipart/form-data": components["schemas"]["PatchedDestinyTeamUpdate"];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["DestinyTeam"];
+          "application/json": components["schemas"]["DestinyTeamUpdate"];
         };
       };
     };
