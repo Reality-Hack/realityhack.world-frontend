@@ -76,20 +76,18 @@ export default function HardwareEditor({
           .map((item: any, i: number) => (
             <EditableHardwareCard
               item={item}
-              setItem={newItem => {
-                const newList = [...hardwareList];
-                newList[i] = newItem;
-                setHardwareList(newList);
-              }}
+              setItem={newItem => setHardwareList(hardwareList.map(
+                item => (item.id ? item.id === newItem.id : item.name === newItem.name) ? newItem : item))}
               removeItem={() =>
-                setHardwareList(hardwareList.filter((_, idx) => idx !== i))
+                setHardwareList(hardwareList.filter(
+                  it => (it.id ? it.id !== item.id : it.name !== item.name)))
               }
-              key={item.id || (i + 1).toString()}
+              key={item.id || item.name}
               hardwareCategories={hardwareCategories}
               topLevelProps={{
                 'data-testid': `hardware-request-hardware-${i}`
               }}
-            ></EditableHardwareCard>
+            />
           ))}
       </div>
     </div>
@@ -337,13 +335,13 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
 
   function addNew() {
     setDevices([
+      ...devices,
       {
         id: "",
-        serial: "",
+        serial: Math.random().toString(36).substring(7),
         checked_out_to: null,
         hardware: hardware
-      },
-      ...devices
+      }
     ])
   }
 
@@ -356,10 +354,10 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
       >+ add new</button>
     </p>
     <div className="content flex flex-col max-h-64 overflow-scroll mt-4">
-      {loading ? <CircularProgress /> : devices.map((device, i) => (
-      <HardwareDeviceEditor key={device.id} device={device} access_token={session?.access_token}
-      deleteDevice={() => setDevices(devices.filter((_, idx) => idx !== i))}
-      setDevice={(device) => setDevices(devices.map((_, idx) => idx === i ? device : _))}
+      {loading ? <CircularProgress /> : devices.toReversed().map((device, i) => (
+      <HardwareDeviceEditor key={device.id + device.serial!} device={device} access_token={session?.access_token}
+      deleteDevice={() => setDevices(devices.filter((dev, ind) => (dev.id + dev.serial!) !== ((dev.id ? device.id : "") + device.serial!)))}
+      setDevice={(device) => setDevices(devices.map((dev, ind) =>  (dev.id + dev.serial!) !== ((dev.id ? device.id : "") + device.serial!) ? dev : device))}
       index={i+1}
       />))}
     </div>

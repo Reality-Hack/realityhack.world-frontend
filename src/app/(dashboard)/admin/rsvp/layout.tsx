@@ -34,6 +34,11 @@ export default function ApplicationLayout({
             title="Volunteers"
           />
           <Tab
+            href="/admin/rsvp/sponsors"
+            isSelected={pathname === '/admin/rsvp/sponsors'}
+            title="Sponsors"
+          />
+          <Tab
             href="/admin/rsvp/organizers"
             isSelected={pathname === '/admin/rsvp/organizers'}
             title="Organizers"
