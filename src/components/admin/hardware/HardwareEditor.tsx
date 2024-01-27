@@ -354,7 +354,7 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
       >+ add new</button>
     </p>
     <div className="content flex flex-col max-h-64 overflow-scroll mt-4">
-      {loading ? <CircularProgress /> : devices.toReversed().map((device, i) => (
+      {loading ? <CircularProgress /> : devices.slice().reverse().map((device, i) => (
       <HardwareDeviceEditor key={device.id + device.serial!} device={device} access_token={session?.access_token}
       deleteDevice={() => setDevices(devices.filter((dev, ind) => (dev.id + dev.serial!) !== ((dev.id ? device.id : "") + device.serial!)))}
       setDevice={(device) => setDevices(devices.map((dev, ind) =>  (dev.id + dev.serial!) !== ((dev.id ? device.id : "") + device.serial!) ? dev : device))}
