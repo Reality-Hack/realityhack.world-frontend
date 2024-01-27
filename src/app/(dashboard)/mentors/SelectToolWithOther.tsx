@@ -154,7 +154,7 @@ const SelectToolWithOther: React.FC<SelectToolWithOtherProps> = ({
         placeholder={`${placeholder}`}
         dropdownRender={menu => (
           <div>
-            <Space style={{ padding: '0 8px 4px' }}>
+            {/* <Space style={{ padding: '0 8px 4px' }}>
               <Input
                 placeholder="Please enter item"
                 ref={inputRef}
@@ -170,8 +170,8 @@ const SelectToolWithOther: React.FC<SelectToolWithOtherProps> = ({
               >
                 Add item
               </Button>
-            </Space>
-            <Divider style={{ margin: '8px 0' }} />
+            </Space> */}
+            {/* <Divider style={{ margin: '8px 0' }} /> */}
             {menu}
           </div>
         )}
@@ -208,7 +208,7 @@ const SkillTag: React.FC<SkillTagProps> = ({ skill, color, onDelete }) => {
       className={`p-1 rounded-lg flex gap-1 items-center border border-[#1677FF]`}
       // style={{ backgroundColor: `light${randomColor}`, color: randomColor }}
     >
-      <div className="text-xs text-[#1677FF]">{skill}</div>
+      <div className="text-xs text-[#1677FF] whitespace-nowrap">{skill}</div>
       <div
         onClick={onDelete}
         className="p-1 text-[10px] font-bold text-white bg-gray-300 rounded-lg hover:cursor-pointer leading-[8px]"

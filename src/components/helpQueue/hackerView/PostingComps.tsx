@@ -1,5 +1,10 @@
-import { DateTime } from 'luxon';
+import {
+  editMentorHelpRequest,
+  deleteMentorHelpRequest
+} from '@/app/api/helpqueue';
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { DateTime } from 'luxon';
 
 interface CompletedPostingProps {
   requestTitle: string;
@@ -24,6 +29,17 @@ export function CompletedPosting({
   );
 }
 
+const statusCodeMap = {
+  R: 'Requested',
+  A: 'Acknowledged',
+  E: 'En Route',
+  F: 'Resolved'
+};
+
+const getStatusLabel = (statusCode: any) => {
+  return statusCodeMap[statusCode as keyof typeof statusCodeMap] || statusCode;
+};
+
 interface PostingProps {
   status?: string;
   completed?: boolean;
@@ -35,6 +51,8 @@ interface PostingProps {
   description: string;
   created?: string;
   team?: string;
+  requestId?: string;
+  setShowCompletedRequests?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export function Posting({
@@ -47,21 +65,25 @@ export function Posting({
   skillList,
   description,
   created,
-  team
+  team,
+  requestId,
+  setShowCompletedRequests
 }: PostingProps) {
+  const { data: session } = useSession();
+
   const bannerColor = (status: string | void) => {
     const green = 'bg-[#8FC382] text-white';
     const yellow = 'bg-[#F9C34A] text-black';
     const gray = 'bg-[#D1D5DB] text-black';
     const offwhite = 'bg-[#fff9e8] text-grey';
     switch (status) {
-      case 'REQUESTED':
+      case 'R':
         return gray;
-      case 'ACKNOWLEDGED':
+      case 'A':
         return yellow;
-      case 'EN_ROUTE':
+      case 'E':
         return green;
-      case 'RESOLVED':
+      case 'F':
         return offwhite;
     }
     return offwhite;
@@ -70,39 +92,78 @@ export function Posting({
   const [remainingTime, setRemainingTime] = useState<string | null>(null);
 
   useEffect(() => {
-    // Calculate the initial remaining time
-    const initialRemainingTime = calculateTimeDifference(created ?? '');
+    // Function to update the remaining time
+    const updateRemainingTime = () => {
+      const updatedRemainingTime = calculateTimeDifference(created ?? '');
+      setRemainingTime(updatedRemainingTime);
+    };
 
-    // Update the state with the initial remaining time
-    setRemainingTime(initialRemainingTime);
+    // Calculate and set the initial remaining time
+    updateRemainingTime();
 
     // Set up an interval to update the remaining time every second
-    const intervalId = setInterval(() => {
-      const updatedRemainingTime = calculateTimeDifference(created ?? '');
-
-      // Update the state with the latest remaining time
-      setRemainingTime(updatedRemainingTime);
-    }, 1000);
+    const intervalId = setInterval(updateRemainingTime, 1000);
 
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
-  }, [created]);
+  }, [created]); // Dependency on 'created'
+
+  function formatTime(datetimeString: string): string {
+    const dateTime = DateTime.fromISO(datetimeString);
+
+    if (!dateTime.isValid) {
+      return 'Invalid date';
+    }
+
+    // Format the time in AM/PM format
+    return dateTime.toLocaleString(DateTime.TIME_SIMPLE);
+  }
+
+  function handleDelete() {
+    if (!session?.access_token || !requestId) return;
+
+    deleteMentorHelpRequest(session.access_token, requestId)
+      .then(response => {})
+      .catch(error => {
+        console.error('Error deleting request:', error);
+      })
+      .finally(() => {
+        if (setShowCompletedRequests) {
+          setShowCompletedRequests(trigger => (trigger ?? 0) + 1);
+        }
+      });
+  }
+
+  function handleStatusUpdate(status: string) {
+    if (!session?.access_token || !requestId) return;
+
+    const updateData = {
+      status: status
+    };
+    editMentorHelpRequest(session.access_token, requestId, updateData)
+      .then(response => {})
+      .catch(error => {
+        console.error('Error updating request:', error);
+      })
+      .finally(() => {
+        if (setShowCompletedRequests) {
+          setShowCompletedRequests(trigger => (trigger ?? 0) + 1);
+        }
+      });
+  }
 
   return (
-    <div className="flex flex-col bg-white border-black rounded-lg shadow-md w-[300px]">
-      <div className="h-2 w-full bg-[#4D97E8] rounded-t-lg" />
-      {/* {team} */}
+    <div className="flex flex-col bg-white border-black rounded-lg shadow-md w-[300px] max-h-[360px]">
       {mentorFirstName && (
         <div className="bg-[#8FC382] w-full p-0 text-white flex flex-row justify-center">
           {mentorFirstName} {mentorLastName && mentorLastName[0]}. is on their
           way
         </div>
       )}
-
       <div
-        className={`${bannerColor(status)} w-full p-0 mt-4 flex flex-row justify-center`}
+        className={`${bannerColor(status)} w-full p-0 flex flex-row justify-center transition-all rounded-t-lg`}
       >
-        Status: {status}
+        Status: {getStatusLabel(status)}
       </div>
 
       <div className="flex flex-row gap-4 p-4 mx-auto">
@@ -116,9 +177,10 @@ export function Posting({
           </div>
         )}
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col justify-end gap-2">
         <div className="mx-auto text-xs">
-          {created && `Submitted at ${formatTime(created)}`}
+          {created &&
+            `Submitted at ${DateTime.fromISO(created).toLocaleString(DateTime.DATETIME_SHORT)}`}
         </div>
         <div className="mx-auto">
           {created && calculateTimeDifference(created)}
@@ -128,17 +190,23 @@ export function Posting({
             <Skill key={index} skill={skill} />
           ))}
         </div>
-        <div className="flex px-4">{description}</div>
-        {placeInQueue && (
-          <div className="flex flex-col items-center">
-            <div className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] cursor-pointer transition-all">
-              {`I've been helped`}
-            </div>
-            <div className="gap-1.5s flex mt-0 mb-4 border border-[#0066F5] px-4 py-[6px] text-[#0066F5] rounded-md shadow my-4 font-light text-sm cursor-pointer transition-all">
-              Cancel Request
-            </div>
-          </div>
-        )}
+        <div className="flex px-4 h-[65px] overflow-y-auto break-all">
+          {description}
+        </div>
+      </div>
+      <div className="flex flex-col items-center mt-auto align-bottom">
+        <div
+          onClick={() => handleStatusUpdate(status === 'F' ? 'R' : 'F')}
+          className="flex mt-0 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] cursor-pointer transition-all"
+        >
+          {status !== 'F' ? `I've been helped` : 'I still need help'}
+        </div>
+        <div
+          onClick={handleDelete}
+          className="flex mt-0  border border-[#0066F5] px-4 py-[6px] text-[#0066F5] rounded-md shadow my-4 font-light text-sm cursor-pointer transition-all"
+        >
+          Cancel Request
+        </div>
       </div>
     </div>
   );
@@ -156,18 +224,30 @@ function formatTime(datetimeString: string): string {
 }
 
 function calculateTimeDifference(dateTimeString: string): string {
-  const currentDate = new Date();
-  const targetDate = new Date(dateTimeString);
+  const currentDate = DateTime.now();
+  const targetDate = DateTime.fromISO(dateTimeString);
 
-  // Calculate the time difference in milliseconds
-  const timeDifference = targetDate.getTime() - currentDate.getTime();
+  if (!targetDate.isValid) {
+    return 'Invalid date';
+  }
 
-  // Convert milliseconds to hours, minutes, and seconds
-  const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-  const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+  let timeDifference;
+  if (currentDate < targetDate) {
+    timeDifference = targetDate.diff(currentDate, [
+      'hours',
+      'minutes',
+      'seconds'
+    ]);
+  } else {
+    timeDifference = currentDate.diff(targetDate, [
+      'hours',
+      'minutes',
+      'seconds'
+    ]);
+  }
 
-  return `${hours}: ${minutes}: ${seconds}`;
+  const formattedTimeDifference = timeDifference.toFormat('hh:mm:ss');
+  return formattedTimeDifference;
 }
 
 interface SkillProps {
@@ -183,6 +263,21 @@ export function Skill({ skill }: SkillProps) {
       {skill}
     </div>
   );
+}
+
+interface MentorPostingProps {
+  requestId: string;
+  status: string;
+  onHandleUpdateStatus: (status: string) => void;
+  completed?: boolean;
+  mentorFirstName?: string;
+  mentorLastName?: string;
+  requestTitle: string;
+  placeInQueue?: number;
+  topicList?: string[];
+  description: string;
+  created?: string;
+  team?: string;
 }
 
 interface MentorPostingProps {
@@ -219,13 +314,13 @@ export function MentorPosting({
     const gray = 'bg-[#D1D5DB] text-black';
     const offwhite = 'bg-[#fff9e8] text-grey';
     switch (status) {
-      case 'REQUESTED':
+      case 'Requested':
         return gray;
-      case 'ACKNOWLEDGED':
+      case 'Acknowledged':
         return yellow;
-      case 'EN_ROUTE':
+      case 'En Route':
         return green;
-      case 'RESOLVED':
+      case 'Resolved':
         return offwhite;
     }
   };
@@ -271,12 +366,12 @@ export function MentorPosting({
         <div className="flex px-4  h-[100px] overflow-y-auto break-all">
           {description}
         </div>
-        {status == 'REQUESTED' && (
+        {status == 'Requested' && (
           <div className="flex flex-col gap-2 mb-2">
             <div className="flex flex-col items-center justify-center gap-2">
               <div
                 onClick={() => onHandleUpdateStatus('A')}
-                className="flex px-4 font-semibold bg-[#F9C34A] text-black rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer"
+                className="flex px-4 text-sm bg-[#F9C34A] text-black rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer"
               >
                 Acknowledge
               </div>
@@ -284,19 +379,19 @@ export function MentorPosting({
             <div className="flex flex-col items-center justify-center gap-2">
               <div
                 onClick={() => onHandleUpdateStatus('E')}
-                className={`flex px-4 font-semibold bg-[#8FC382] text-white rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}
+                className={`flex px-4 text-sm bg-[#8FC382] text-white rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}
               >
                 On My Way
               </div>
             </div>
           </div>
         )}
-        {status == 'ACKNOWLEDGED' && (
+        {status == 'Acknowledged' && (
           <div className="flex flex-col gap-2 mb-2">
             <div className="flex flex-col items-center justify-center gap-2">
               <div
                 onClick={() => onHandleUpdateStatus('R')}
-                className="flex px-4 font-semibold bg-[#D1D5DB] text-black rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer"
+                className="flex px-4 text-sm bg-[#D1D5DB] text-black rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer"
               >
                 Unacknowledge
               </div>
@@ -304,19 +399,19 @@ export function MentorPosting({
             <div className="flex flex-col items-center justify-center gap-2">
               <div
                 onClick={() => onHandleUpdateStatus('E')}
-                className={`flex px-4 font-semibold bg-[#8FC382] text-white rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}
+                className={`flex px-4 text-sm bg-[#8FC382] text-white rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}
               >
                 On My Way
               </div>
             </div>
           </div>
         )}
-        {status == 'EN_ROUTE' && (
+        {status == 'En Route' && (
           <div className="flex flex-col gap-2 mb-2">
             <div className="flex flex-col items-center justify-center gap-2">
               <div
                 onClick={() => onHandleUpdateStatus('R')}
-                className="flex p-1 px-4 font-semibold bg-white border-2 border-black rounded-lg hover:opacity-60 drop-shadow-lg hover:cursor-pointer"
+                className="flex p-1 px-4 text-sm bg-white border border-black rounded-lg font-sm hover:opacity-60 drop-shadow-lg hover:cursor-pointer"
               >
                 Let Question Go
               </div>
@@ -324,7 +419,7 @@ export function MentorPosting({
             <div className="flex flex-col items-center justify-center gap-2">
               <div
                 onClick={() => onHandleUpdateStatus('F')}
-                className={`flex px-4 font-semibold bg-[#fff9e8] text-grey rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}
+                className={`flex px-4 text-sm bg-[#fff9e8] text-grey rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}
               >
                 Resolve
               </div>

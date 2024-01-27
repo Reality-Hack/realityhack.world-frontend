@@ -91,26 +91,32 @@ export default function Page() {
     } else if (selectedTab === 3) {
       result = allHelpRequests.filter(r => r.status === 'F');
     }
-    // return result.filter(r => {
-    //   for (let item in selectedItems) {
-    //     if ((r.topics ?? []).length === 0) {
-    //       return true;
-    //     }
-    //     if (r.topics?.includes(item)) {
-    //       return true;
-    //     }
-    //   }
-    //   return false;
-    // });
-    return result;
   }, [selectedTab, selectedItems, user, allHelpRequests]);
+
+  console.log('filteredHelpRequests', filteredHelpRequests);
 
   if (!isMentorOrAdmin) {
     return <div>Access Denied</div>;
   }
 
+  function formatStatus(status: string) {
+    return status
+      .toLowerCase()
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  const getTopicLabels = (topicIds: any) => {
+    return topicIds.map((id: string) => {
+      const option = formattedOptions.find(
+        (option: any) => option.value === id
+      );
+      return option ? option.label : 'Unknown';
+    });
+  };
+
   return (
-    <div className="h-full flex flex-col gap-4w-full overflow-y-auto p-2 rounded-lg">
+    <div className="flex flex-col h-full p-2 overflow-y-auto rounded-lg gap-4w-full">
       <div className="text-3xl">Mentor Help Queue</div>
       <Tabs
         value={selectedTab}
@@ -126,7 +132,7 @@ export default function Page() {
               label={
                 <span
                   className={`text-purple-900 text-xs transition-all ${
-                    selectedTab === index ? 'font-semibold' : 'font-medium'
+                    selectedTab === index ? 'font-medium' : 'font-medium'
                   }`}
                 >
                   {tabName}
@@ -147,19 +153,22 @@ export default function Page() {
       <div>
         <div className="p-4">
           <div className="flex flex-wrap w-20"></div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             {filteredHelpRequests?.map((req, idx) => {
               return (
                 <MentorPosting
                   requestId={req.id}
-                  status={
-                    getKeyByValue(mentor_help_status, req.status) as string
-                  }
+                  status={formatStatus(
+                    getKeyByValue(
+                      mentor_help_status,
+                      req.status ?? ''
+                    ) as string
+                  )}
                   key={`posting-${idx}`}
                   requestTitle={req.title}
                   description={req.description}
-                  placeInQueue={idx}
-                  topicList={req.topics}
+                  placeInQueue={idx + 1}
+                  topicList={getTopicLabels(req.topic)}
                   created={req.created_at}
                   team={req.team}
                   onHandleUpdateStatus={handleUpdateStatus(req.id)}

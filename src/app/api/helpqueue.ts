@@ -17,7 +17,7 @@ export type HelpRequest = {
   team: string;
   title: string;
   updated_at: string;
-  topics: string[];
+  topic: string[];
 };
 export type CreateHelpRequest = {
   team: string;
@@ -89,7 +89,6 @@ export type Team = {
 export async function getAllHelpRequests(
   accessToken: string
 ): Promise<HelpRequest[]> {
-  // console.log(accessToken)
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/`;
 
   const resp = await fetch(url, {
@@ -123,8 +122,7 @@ export async function getAllMyTeamsHelpRequests(
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken,
-      teamId: teamId
+      Authorization: 'JWT ' + accessToken
     }
   });
   const result = await resp.json();
@@ -283,6 +281,33 @@ export async function addMentorHelpRequest(
   } else {
     throw new Error(
       `Failed to add mentor help request. Status: ${
+        response.status
+      }\n Result: ${JSON.stringify(data)}`
+    );
+  }
+}
+
+export async function deleteMentorHelpRequest(
+  accessToken: string,
+  requestId: string
+): Promise<HelpRequest> {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/${requestId}/`;
+
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + accessToken
+    }
+  });
+
+  const data: HelpRequest = await response.json();
+
+  if (response.ok) {
+    return data;
+  } else {
+    throw new Error(
+      `Failed to delete mentor help request. Status: ${
         response.status
       }\n Result: ${JSON.stringify(data)}`
     );

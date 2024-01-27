@@ -37,25 +37,28 @@ export function Dialog({ isOpen, onClose, children }: DialogProps) {
   const handleDialogClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Close the dialog only if the click is outside the inner dialog content
     if (e.target === e.currentTarget) {
+      e.stopPropagation();
       onClose();
     }
   };
 
   return (
-    <div
-      className="fixed inset-0 flex items-center justify-center z-[1001]"
-      onClick={handleDialogClick}
-    >
-      <div className="w-1/2 p-4 overflow-y-auto bg-white rounded-md shadow-md h-1/2 z-[2000]">
-        <div className="flex">
-          <button className="ml-auto " onClick={onClose}>
-            Close
-          </button>
+    <>
+      <div
+        className="fixed inset-0 flex items-center justify-center z-[1002]"
+        onClick={handleDialogClick}
+      >
+        <div className="relative w-[720px] h-[400px] p-4 bg-white rounded-md shadow-md">
+          <div className="flex">
+            <button className="ml-auto " onClick={onClose}>
+              Close
+            </button>
+          </div>
+          <div>{children}</div>
         </div>
-        <div>{children}</div>
       </div>
-      <div className="fixed inset-0 bg-black/30 z-[1002]"></div>
-    </div>
+      <div className="fixed inset-0 bg-black/30 z-[1001]" aria-hidden="true" />
+    </>
   );
 }
 
@@ -70,6 +73,7 @@ interface QuestionDialogProps {
     category?: string,
     category_specialty?: string
   ) => void;
+  setShowCompletedRequests: any;
 }
 
 export function QuestionDialog({
@@ -107,8 +111,22 @@ export function QuestionDialog({
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]); // New state variable
 
-  // console.log('selectedItems: ', selectedItems);
-
+  const handleOnSubmit = async () => {
+    if (!user || !user.team) {
+      console.error('User or team is null');
+      return;
+    }
+    if (textareaValue.trim() !== '' && canSubmit) {
+      try {
+        // Assuming onSubmit is a Promise. If not, adjust accordingly.
+        await onSubmit(selectedItems, user?.team?.id, textareaValue);
+        closeNewRequestDialog(); // Close the dialog on successful submission
+      } catch (error) {
+        // Handle any errors here
+        console.error('Error submitting the request:', error);
+      }
+    }
+  };
   return (
     <ThemeProvider theme={theme}>
       <Dialog
@@ -118,13 +136,13 @@ export function QuestionDialog({
         }}
       >
         <div className="flex flex-col gap-4">
-          <div className="text-md md:text-2xl font-bold whitespace-nowrap">
+          <div className="text-md md:text-xl whitespace-nowrap">
             New Help Request
           </div>
           <div className="flex flex-col gap-4">
             <div className="font-medium">
               What do you need help with
-              <span className="text-lg md:text-2xl text-red-400">*</span>?
+              <span className="text-lg text-red-400 md:text-2xl">*</span>?
             </div>
             <div className="w-40">
               {/* tag renderer with a custom dropdown */}
@@ -149,16 +167,8 @@ export function QuestionDialog({
             />
           </div>
           <div
-            onClick={() => {
-              if (!user || !user.team) {
-                console.error('User or team is null');
-                return;
-              }
-              if (textareaValue.trim() !== '' && canSubmit) {
-                onSubmit(selectedItems, user?.team?.id, textareaValue);
-              }
-            }}
-            className={`gap-1.5s mr-6 flex mt-0 mb-4  text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm cursor-pointer transition-all w-fit ${
+            onClick={handleOnSubmit}
+            className={`gap-1.5s mr-6 flex mt-0 mb-4  text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm cursor-pointer transition-all w-fit whitespace-nowrap ${
               textareaValue.trim() !== '' && canSubmit
                 ? 'hover:bg-[#0066F5] bg-[#1677FF] cursor-pointer'
                 : 'bg-gray-300 cursor-not-allowed'
