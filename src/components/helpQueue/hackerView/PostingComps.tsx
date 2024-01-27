@@ -1,4 +1,4 @@
-import { editMentorHelpRequest } from '@/app/api/helpqueue';
+import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
 
 interface CompletedPostingProps {
@@ -186,22 +186,21 @@ export function Skill({ skill }: SkillProps) {
 }
 
 interface MentorPostingProps {
-  access_token: string;
   requestId: string;
-  status?: string;
+  status: string;
+  onHandleUpdateStatus: (status: string) => void;
   completed?: boolean;
   mentorFirstName?: string;
   mentorLastName?: string;
   requestTitle: string;
   placeInQueue?: number;
-  topicList: string[];
+  topicList?: string[];
   description: string;
   created?: string;
   team?: string;
 }
 
 export function MentorPosting({
-  access_token,
   requestId,
   status,
   completed,
@@ -212,7 +211,7 @@ export function MentorPosting({
   topicList,
   description,
   created,
-  team
+  onHandleUpdateStatus
 }: MentorPostingProps) {
   const bannerColor = (status: string) => {
     const green = 'bg-[#8FC382] text-white';
@@ -230,25 +229,8 @@ export function MentorPosting({
         return offwhite;
     }
   };
-
-  function handleUpdate(status: string) {
-    console.log(status);
-    const updateData = {
-      team: team,
-      topic: topicList,
-      status: status
-    };
-    const apiReturn = editMentorHelpRequest(
-      access_token,
-      requestId,
-      updateData
-    );
-    console.log(apiReturn, 'heyyyyyyy');
-  }
-
   return (
-    <div className="flex flex-col bg-white border-2 border-black rounded-lg w-fit">
-      {/* {team} */}
+    <div className="flex flex-col bg-white border-black rounded-lg shadow-md w-[300px]">
       {mentorFirstName && (
         <div className="bg-[#8FC382] w-full p-0 text-white flex flex-row justify-center">
           {mentorFirstName} {mentorLastName && mentorLastName[0]}. is on their
@@ -256,19 +238,17 @@ export function MentorPosting({
         </div>
       )}
 
-      {status && (
-        <div
-          className={`${bannerColor(status)} flex flex-row justify-center overflow-hidden mt-1`}
-        >
-          Status: {status}
-        </div>
-      )}
+      <div
+        className={`${bannerColor(status)} w-full p-0 flex flex-row justify-center rounded-t-lg`}
+      >
+        Status: {status}
+      </div>
 
-      <div className="flex flex-row gap-4 p-4">
-        <div className="font-semibold">{requestTitle}</div>
+      <div className="flex flex-row gap-4 p-4 mx-auto">
+        {/* <div className="font-semibold">{requestTitle}</div> */}
         {placeInQueue && (
           <div>
-            {placeInQueue == 0 && <span className="font-bold">NEXT</span>}
+            {placeInQueue === 0 && <span className="font-bold">NEXT</span>}
             {placeInQueue !== 0 && (
               <span className="font-bold">Place in Queue: {placeInQueue}</span>
             )}
@@ -276,23 +256,26 @@ export function MentorPosting({
         )}
       </div>
       <div className="flex flex-col gap-2">
-        <div className="ml-4">
-          {created && `Submitted at ${formatTime(created)}`}
+        <div className="mx-auto text-xs">
+          {created &&
+            `Submitted at ${DateTime.fromISO(created).toLocaleString(DateTime.DATETIME_SHORT)}`}
         </div>
-        <div className="ml-4">
+        <div className="mx-auto">
           {created && calculateTimeDifference(created)}
         </div>
-        <div className="flex gap-2 px-4">
+        <div className="flex flex-wrap items-center justify-center w-full gap-2 px-4">
           {topicList?.map((skill, index) => (
             <Skill key={index} skill={skill} />
           ))}
         </div>
-        <div className="flex px-4">{description}</div>
+        <div className="flex px-4  h-[100px] overflow-y-auto break-all">
+          {description}
+        </div>
         {status == 'REQUESTED' && (
           <div className="flex flex-col gap-2 mb-2">
             <div className="flex flex-col items-center justify-center gap-2">
               <div
-                onClick={() => handleUpdate('A')}
+                onClick={() => onHandleUpdateStatus('A')}
                 className="flex px-4 font-semibold bg-[#F9C34A] text-black rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer"
               >
                 Acknowledge
@@ -300,7 +283,7 @@ export function MentorPosting({
             </div>
             <div className="flex flex-col items-center justify-center gap-2">
               <div
-                onClick={() => handleUpdate('E')}
+                onClick={() => onHandleUpdateStatus('E')}
                 className={`flex px-4 font-semibold bg-[#8FC382] text-white rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}
               >
                 On My Way
@@ -312,7 +295,7 @@ export function MentorPosting({
           <div className="flex flex-col gap-2 mb-2">
             <div className="flex flex-col items-center justify-center gap-2">
               <div
-                onClick={() => handleUpdate('R')}
+                onClick={() => onHandleUpdateStatus('R')}
                 className="flex px-4 font-semibold bg-[#D1D5DB] text-black rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer"
               >
                 Unacknowledge
@@ -320,7 +303,7 @@ export function MentorPosting({
             </div>
             <div className="flex flex-col items-center justify-center gap-2">
               <div
-                onClick={() => handleUpdate('E')}
+                onClick={() => onHandleUpdateStatus('E')}
                 className={`flex px-4 font-semibold bg-[#8FC382] text-white rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}
               >
                 On My Way
@@ -332,15 +315,15 @@ export function MentorPosting({
           <div className="flex flex-col gap-2 mb-2">
             <div className="flex flex-col items-center justify-center gap-2">
               <div
-                onClick={() => handleUpdate('R')}
+                onClick={() => onHandleUpdateStatus('R')}
                 className="flex p-1 px-4 font-semibold bg-white border-2 border-black rounded-lg hover:opacity-60 drop-shadow-lg hover:cursor-pointer"
               >
-                Let question go
+                Let Question Go
               </div>
             </div>
             <div className="flex flex-col items-center justify-center gap-2">
               <div
-                onClick={() => handleUpdate('F')}
+                onClick={() => onHandleUpdateStatus('F')}
                 className={`flex px-4 font-semibold bg-[#fff9e8] text-grey rounded-lg p-1 hover:opacity-60 drop-shadow-lg hover:cursor-pointer`}
               >
                 Resolve
@@ -348,21 +331,6 @@ export function MentorPosting({
             </div>
           </div>
         )}
-        {/* {placeInQueue && (
-            <div className="flex flex-col items-center">
-              <div className="flex p-1 px-4 font-semibold bg-red-200 rounded-lg hover:cursor-pointer">
-              Acknowledge
-              </div>
-            
-            </div>
-          )}
-          {placeInQueue && (
-            <div className="flex flex-col items-center mb-2">
-              <div className="flex p-1 px-4 font-semibold bg-red-200 rounded-lg hover:cursor-pointer">
-              On my way
-              </div>
-            </div>
-          )} */}
       </div>
     </div>
   );

@@ -184,7 +184,6 @@ export async function getAllHelpRequestsFromHistory(
   });
   const result = await resp.json();
   if (resp.ok) {
-    console.log(result);
     return result;
   }
   throw new Error(
@@ -193,24 +192,6 @@ export async function getAllHelpRequestsFromHistory(
     )}`
   );
 }
-
-// export async function getAllTeams(): Promise<Team> {
-//   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams/`;
-//   const resp = await fetch(url, {
-//     headers: {
-//       'Content-Type': 'application/json'
-//     }
-//   });
-//   const result = await resp.json();
-//   if (resp.ok) {
-//     return result;
-//   }
-//   throw new Error(
-//     `Failed to get all teams' information Status: ${resp.status}\n Result: ${JSON.stringify(
-//       result
-//     )}`
-//   );
-// }
 
 /**
  *
@@ -263,7 +244,7 @@ export async function editMentorHelpRequest(
   accessToken: string,
   requestId: string,
   updatedData: Partial<EditHelpRequest>
-): Promise<EditHelpRequest> {
+): Promise<HelpRequest> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/${requestId}/`;
   const resp = await fetch(url, {
     method: 'PATCH',
@@ -274,7 +255,7 @@ export async function editMentorHelpRequest(
     body: JSON.stringify(updatedData)
   });
   if (resp.ok) {
-    return await resp.json();
+    return resp.json();
   }
 
   throw new Error('Failed to fetch data. Status: ' + resp.status);
