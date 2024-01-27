@@ -142,7 +142,7 @@ export async function patchHardwareRequest(
   }
   const content = JSON.stringify({
     ...request,
-    hardware_device: request.hardware_device?.id
+    hardware_device: !request.hardware_device ? null : request.hardware_device?.id
   });
   const resp = await fetch(url, {
     method: 'PATCH',

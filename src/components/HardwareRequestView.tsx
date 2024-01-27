@@ -185,16 +185,18 @@ export default function HardwareRequestView({
                           session.access_token,
                           info.row.original.id,
                           {
+                            id: info.row.original.id,
                             status: hardware_request_status.approved,
-                            hardware_device: null
+                            hardware_device: ""
                           }
                         ),
                         updateHardwareDevice(session.access_token, {
                           id: hardwareDevice.id,
                           checked_out_to: null
                         })
-                      ])
-                          .then(([newApp, _newDevice]) => {
+                      ]).then(([newApp, newDevice]) => {
+                            console.log("new app:", newApp)
+                            console.log("new device:", newDevice)
                             if (
                               newApp.status != hardware_request_status.approved
                             ) {
