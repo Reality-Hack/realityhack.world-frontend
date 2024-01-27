@@ -187,7 +187,7 @@ export default function HardwareRequestView({
                           {
                             id: info.row.original.id,
                             status: hardware_request_status.approved,
-                            hardware_device: ""
+                            hardware_device: null
                           }
                         ),
                         updateHardwareDevice(session.access_token, {
