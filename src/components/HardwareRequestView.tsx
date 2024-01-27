@@ -309,7 +309,7 @@ export default function HardwareRequestView({
       cell: info =>
         info.getValue() == null
           ? null
-          : info.getValue()?.serial?.slice(0, 12)?.concat('...')
+          : info.getValue()?.serial?.slice(0, 12)?.concat(info.getValue()?.serial?.length > 12 ? '...' : "")
     }),
     columnHelper.accessor('status', {
       header: () => 'Status',
