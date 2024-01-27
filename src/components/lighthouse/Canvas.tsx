@@ -1,7 +1,7 @@
 'use client';
 import { LightHouseMessage, MentorRequestStatus } from '@/app/api/lighthouse';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import useImage from 'use-image';
 import { TableCoordinates } from './LighthouseFloorView';
@@ -49,54 +49,172 @@ export default function Canvas({
   disableMultiSelect,
   viewOnly
 }: CanvasProps) {
-  const [image] = useImage(img);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasBottomRef = useRef<HTMLCanvasElement>(null);
+  const divRef = useRef<HTMLDivElement>(null);
 
-  const [rectangle, setRectangle] = useState<Rectangle | null>();
-  const [startPosition, setStartPosition] = useState<{ x: number; y: number }>({
-    x: 0,
-    y: 0
-  });
-  const [isDrawing, setIsDrawing] = useState(false);
-  const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    if (viewOnly || disableMultiSelect) {
-      return;
+  const startPosition = useRef<{ x: number; y: number } | null>(null);
+  const rectangle = useRef<Rectangle | null>(null);
+  const onTable = useRef(-1);
+  const update = useRef<() => void>(() => {});
+  const setStartPosition = (pos: { x: number; y: number } | null) => { startPosition.current = pos; };
+  const setRectangle = (rect: Rectangle | null) => { rectangle.current = rect; };
+  const setOnTable = (onTableNew: number) => {
+    onTable.current = onTableNew;
+    if(!!divRef.current) {
+      divRef.current.style.cursor = onTableNew >= 0 ? 'pointer' : 'default';
     }
-    const stage = e.target.getStage();
-    setStartPosition({
-      x: stage?.getPointerPosition()?.x ?? 0,
-      y: stage?.getPointerPosition()?.y ?? 0
+  };
+
+  useEffect(() => {
+    const canvas = canvasBottomRef.current;
+    if(!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if(!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    tableCoordinates.forEach(table => {
+      const isSelected =
+        selected.findIndex(num => num === table.number) !== -1;
+      const lighthouse = lighthouses.find(l => l.table === table.number);
+
+      ctx.fillStyle = lighthouse ? getRectColor(lighthouse) : 'cyan';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = "black";
+      ctx.fillRect(table.canvasPosition.x, table.canvasPosition.y, 20, 20);
+      ctx.shadowBlur = 0;
+      if (isSelected) {
+        ctx.strokeStyle = 'yellow';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(table.canvasPosition.x, table.canvasPosition.y, 20, 20);
+      }
+      ctx.font = "12px Arial";
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(table.number), table.canvasPosition.x + 10, table.canvasPosition.y + 10);
+
+      return (
+          <Rect
+            fill={lighthouse ? getRectColor(lighthouse) : 'cyan'}
+            width={20}
+            height={20}
+            shadowBlur={10}
+            stroke={isSelected ? 'yellow' : 'cyan'}
+            strokeWidth={isSelected ? 2 : 1}
+          />
+      );
     });
-    setIsDrawing(true);
-  };
 
-  const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
+    if (!viewOnly) {
+      const canvas = canvasRef.current;
+      if(!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if(!ctx) return;
+      update.current = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (rectangle.current) {
+          ctx.fillStyle = "rgba(0,0,0,0.5)";
+          ctx.fillRect(
+            rectangle.current.x,
+            rectangle.current.y,
+            rectangle.current.width,
+            rectangle.current.height
+            );
+        }
+      }
+      update.current();
+    }
+  }, [selected, lighthouses, tableCoordinates, viewOnly, disableMultiSelect])
+
+  const doPointAndRectangleOverlap = (point: { x: number; y: number }, rect: Rectangle) => {
+    return (
+      point.x >= rect.x && point.x <= rect.x + rect.width &&
+      point.y >= rect.y && point.y <= rect.y + rect.height
+    );
+  }
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     if (viewOnly || disableMultiSelect) {
       return;
     }
-    if (!isDrawing) return;
 
-    const stage = e.target.getStage();
-    const endPosition = {
-      x: stage?.getPointerPosition()?.x ?? 0,
-      y: stage?.getPointerPosition()?.y ?? 0
-    };
+    if (onTable.current >= 0) {
+      const table = tableCoordinates[onTable.current];
+      if (e.shiftKey && !disableMultiSelect) {
+        let newSelected = selected.slice();
+        const selectedIdx = selected.findIndex(
+          num => num === table.number
+        );
+        if (selectedIdx != -1) {
+          newSelected.splice(selectedIdx, 1);
+        } else {
+          newSelected.push(table.number);
+        }
+        setSelectedTables(newSelected);
+      } else {
+        setSelectedTables([table.number]);
+      }
+    }
 
-    const newRectangle: Rectangle = {
-      x: Math.min(startPosition.x, endPosition.x),
-      y: Math.min(startPosition.y, endPosition.y),
-      width:
-        Math.max(startPosition.x, endPosition.x) -
-        Math.min(startPosition.x, endPosition.x),
-      height:
-        Math.max(startPosition.y, endPosition.y) -
-        Math.min(startPosition.y, endPosition.y)
-    };
-
-    setRectangle(newRectangle);
+    setStartPosition({
+      x: e.nativeEvent.offsetX,
+      y: e.nativeEvent.offsetY
+    });
+    setRectangle({
+      x: e.nativeEvent.offsetX,
+      y: e.nativeEvent.offsetY,
+      width: 0,
+      height: 0
+    });
+    update.current();
   };
 
-  const handleMouseUp = (e: KonvaEventObject<MouseEvent>) => {
-    setIsDrawing(false);
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    if (viewOnly || disableMultiSelect) {
+      return;
+    }
+
+    if (!startPosition.current) {
+      const table = tableCoordinates.findIndex(table => {
+        const tableRect: Rectangle = {
+          x: table.canvasPosition.x,
+          y: table.canvasPosition.y,
+          width: 20,
+          height: 20
+        };
+
+        return doPointAndRectangleOverlap({
+          x: e.nativeEvent.offsetX,
+          y: e.nativeEvent.offsetY
+        }, tableRect);
+      })
+      setOnTable(table);
+      return;
+    }
+
+    const endPosition = {
+      x: e.nativeEvent.offsetX,
+      y: e.nativeEvent.offsetY
+    };
+    setRectangle({
+      x: Math.min(startPosition.current.x, endPosition.x),
+      y: Math.min(startPosition.current.y, endPosition.y),
+      width: Math.abs(startPosition.current.x - endPosition.x),
+      height: Math.abs(startPosition.current.y - endPosition.y)
+    });
+    update.current();
+  };
+
+  const handleMouseUp = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    if (viewOnly) {
+      return;
+    }
+
+    if (!startPosition || disableMultiSelect) {
+      return;
+    }
+
     const overlappingElements: TableCoordinates[] = [];
     tableCoordinates.forEach(tableCoordinate => {
       const tableRect: Rectangle = {
@@ -105,17 +223,19 @@ export default function Canvas({
         width: 20,
         height: 20
       };
-      if (rectangle && doRectanglesOverlap(rectangle, tableRect)) {
+      if (rectangle.current && doRectanglesOverlap(rectangle.current, tableRect)) {
         overlappingElements.push(tableCoordinate);
       }
     });
     const tablesToAdd = overlappingElements.map(t => t.number);
-    if (e.evt.shiftKey) {
+    if (e.shiftKey) {
       setSelectedTables(Array.from(new Set(selected.concat(tablesToAdd))));
     } else {
       setSelectedTables(tablesToAdd);
     }
+    setStartPosition(null);
     setRectangle(null);
+    update.current();
   };
 
   const doRectanglesOverlap = (rect1: Rectangle, rect2: Rectangle) => {
@@ -126,80 +246,17 @@ export default function Canvas({
       rect1.y + rect1.height > rect2.y
     );
   };
-  return (
-    <Stage
-      width={width}
-      height={height}
-      className="border-solid border-2 border-gray-300 rounded-[10px] w-fit"
+  
+  return <div className="relative" ref={divRef} style={{
+    width: width,
+    height: height
+  }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-    >
-      <Layer>
-        <Image x={0} y={0} image={image} alt="background" />
-        {tableCoordinates.map(table => {
-          const isSelected =
-            selected.findIndex(num => num === table.number) !== -1;
-          const lighthouse = lighthouses.find(l => l.table === table.number);
-          return (
-            <Group
-              x={table.canvasPosition.x}
-              y={table.canvasPosition.y}
-              key={table.number}
-              onClick={(event: KonvaEventObject<MouseEvent>) => {
-                if (viewOnly) {
-                  return;
-                }
-                if (event.evt.shiftKey && !disableMultiSelect) {
-                  let newSelected = selected.slice();
-                  const selectedIdx = selected.findIndex(
-                    num => num === table.number
-                  );
-                  if (selectedIdx != -1) {
-                    newSelected.splice(selectedIdx, 1);
-                  } else {
-                    newSelected.push(table.number);
-                  }
-                  setSelectedTables(newSelected);
-                } else {
-                  setSelectedTables([table.number]);
-                }
-              }}
-              onMouseEnter={e => {
-                if (viewOnly) {
-                  return;
-                }
-                const container = e.target!.getStage()!.container();
-                container.style.cursor = 'pointer';
-              }}
-              onMouseLeave={e => {
-                if (viewOnly) {
-                  return;
-                }
-                const container = e.target!.getStage()!.container();
-                container.style.cursor = 'default';
-              }}
-            >
-              <Rect
-                fill={lighthouse ? getRectColor(lighthouse) : 'cyan'}
-                width={20}
-                height={20}
-                shadowBlur={10}
-                stroke={isSelected ? 'yellow' : 'cyan'}
-                strokeWidth={isSelected ? 2 : 1}
-              />
-              <Text
-                text={String(table.number)}
-                fontSize={12}
-                padding={String(table.number).length > 2 ? 1 : 4}
-              />
-            </Group>
-          );
-        })}
-        {rectangle && (
-          <Rect {...rectangle} stroke="black" fill="blue" opacity={0.5} />
-        )}
-      </Layer>
-    </Stage>
-  );
+      onMouseUp={handleMouseUp}>
+    <img className="absolute z-0" src={img} width={width} height={height} />
+    <canvas ref={canvasBottomRef} width={width} height={height} className="absolute z-10"></canvas>
+    <canvas ref={canvasRef} width={width} height={height}
+      className="absolute border-solid border-2 border-gray-300 rounded-[10px] w-fit z-20"></canvas>
+  </div>;
 }
