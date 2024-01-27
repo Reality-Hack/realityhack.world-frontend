@@ -8,6 +8,7 @@ import {
   addMentorHelpRequest,
   getAllHelpRequests,
   getAllHelpRequestsFromHistory,
+  getAllMyTeamsHelpRequests,
   getAllTables
   // getTeamIdFromAttendeeId
 } from '@/app/api/helpqueue';
@@ -49,10 +50,9 @@ export default function Help2() {
   const [allHistoricalHelpRequests, setHistoricalHelpRequests] = useState<
     HelpRequestHistory[]
   >([]);
-  const exampleSkillList = ['React', 'JavaScript', 'CSS', 'Node.js'];
 
   //layout logic
-  const [showCompletedRequests, setShowCompletedRequests] = useState(true);
+  const [showCompletedRequests, setShowCompletedRequests] = useState(0);
   const [isNewRequestDialogOpen, setNewRequestDialogOpen] = useState(false);
 
   //websocket state/hooks
@@ -66,11 +66,12 @@ export default function Help2() {
   const [tables, setTables] = useState<Table[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // console.log(session?.access_token)
   //layout components logic
   const toggleCompletedRequests = () => {
-    setShowCompletedRequests(prev => !prev);
+    // setShowCompletedRequests(prev => !prev);
   };
 
   const completedRequestsArrow = showCompletedRequests ? '▼' : '▶';
@@ -85,14 +86,21 @@ export default function Help2() {
 
   // get our help requests
   useEffect(() => {
-    if (session?.access_token) {
-      getAllHelpRequests(session.access_token).then(helpReqs => {
-        // setTables(tables);
-        setHelpRequests(helpReqs);
-        console.log('helpReqs: ', helpReqs);
-      });
+    if (session?.access_token && user?.team?.id) {
+      getAllMyTeamsHelpRequests(session.access_token, user?.team?.id).then(
+        helpReqs => {
+          const sortedHelpReqs = helpReqs.sort(
+            (a, b) =>
+              new Date(a.created_at).getTime() -
+              new Date(b.created_at).getTime()
+          );
+          setHelpRequests(sortedHelpReqs);
+        }
+      );
     }
-  }, [session]);
+  }, [session, user, showCompletedRequests]);
+
+  // console.log('user team: ', user.team.id);
 
   //get tables
   useEffect(() => {
@@ -119,12 +127,12 @@ export default function Help2() {
       const payload: LightHouseMessage[] | { message: LightHouseMessage } =
         JSON.parse(lastMessage.data);
       if (Array.isArray(payload)) {
-        console.log(
-          'lighthouse messages: ',
-          JSON.parse(lastMessage.data).filter(
-            (el: LightHouseMessage) => el.mentor_requested
-          )
-        );
+        // console.log(
+        //   'lighthouse messages: ',
+        //   JSON.parse(lastMessage.data).filter(
+        //     (el: LightHouseMessage) => el.mentor_requested
+        //   )
+        // );
 
         const myLighthouse = payload.find(l => l.table == myTable?.number);
         if (myLighthouse) {
@@ -168,11 +176,20 @@ export default function Help2() {
       // category_specialty:category_specialty,
     };
     if (session) {
-      addMentorHelpRequest(session?.access_token, newHelpRequest);
+      addMentorHelpRequest(session?.access_token, newHelpRequest)
+        .then(response => {})
+        .catch(error => {
+          console.error('Error deleting request:', error);
+        })
+        .finally(() => {
+          if (setShowCompletedRequests) {
+            setShowCompletedRequests(trigger => (trigger ?? 0) + 1);
+          }
+        });
     }
   }
 
-  const formattedOptions: { label: string; value: string }[] = [];
+  const formattedOptions: any = [];
 
   for (const key in MentorTopics) {
     formattedOptions.push({
@@ -183,7 +200,9 @@ export default function Help2() {
 
   const getTopicLabels = (topicIds: any) => {
     return topicIds?.map((id: string) => {
-      const option = formattedOptions.find(option => option.value === id);
+      const option = formattedOptions.find(
+        (option: any) => option.value === id
+      );
       return option ? option.label : 'Unknown';
     });
   };
@@ -191,20 +210,21 @@ export default function Help2() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-4">
-        <StatBox
+        {/* <StatBox
           src="/icons/dashboard/mentee_1.png"
           label="Active Requests"
           stat="9"
-        />
+        /> */}
       </div>
       <div className="flex justify-between mb-2">
-        <div className="text-3xl"> Open Help Requests</div>
-        <div
-          className="gap-1.5s mr-6 flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] cursor-pointer transition-all"
-          onClick={openNewRequestDialog}
-        >
-          New Help Request
-        </div>
+        <div className="text-2xl"> Open Help Requests</div>
+      </div>
+      <hr />
+      <div
+        className="gap-1.5s mr-6 flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] cursor-pointer transition-all w-fit ml-auto"
+        onClick={openNewRequestDialog}
+      >
+        New Help Request
       </div>
 
       <div className="flex flex-wrap justify-center gap-2 ">
@@ -212,46 +232,26 @@ export default function Help2() {
           .filter(el => el.team == user?.team?.id)
           .map((req, idx) => (
             <Posting
-              status={myLighthouse?.mentor_requested}
+              key={req.id}
+              status={req.status}
               requestTitle={req.title}
-              description={req.description?.slice(0, 5)}
+              description={req.description}
               placeInQueue={idx}
-              skillList={getTopicLabels(req.topics) ?? []}
+              skillList={getTopicLabels(req.topic)}
               created={req.created_at}
               team={req.team}
+              requestId={req.id}
+              setShowCompletedRequests={setShowCompletedRequests}
             />
           ))}
       </div>
 
       <div>
-        <div className="text-3xl"> HISTORICAL</div>
-        <div className="font-medium">
-          Show/Hide Completed Requests{' '}
-          <span
-            onClick={toggleCompletedRequests}
-            className="transition-transform transform cursor-pointer hover:rotate-90"
-          >
-            {completedRequestsArrow}
-          </span>
-        </div>
-        {showCompletedRequests && (
-          <div className="flex flex-wrap gap-2">
-            {allHistoricalHelpRequests
-              .filter(el => el.team == user.team.id)
-              .map(req => (
-                <CompletedPosting
-                  requestTitle={req.title}
-                  description={req.description?.slice(0, 5)}
-                  skillList={exampleSkillList}
-                  created={req.created_at}
-                />
-              ))}
-          </div>
-        )}
         <QuestionDialog
           isNewRequestDialogOpen={isNewRequestDialogOpen}
           closeNewRequestDialog={closeNewRequestDialog}
           onSubmit={onNewHelpRequest}
+          setShowCompletedRequests={setShowCompletedRequests}
         />{' '}
       </div>
     </div>
