@@ -91,9 +91,8 @@ export default function Page() {
     } else if (selectedTab === 3) {
       result = allHelpRequests.filter(r => r.status === 'F');
     }
+    return result;
   }, [selectedTab, selectedItems, user, allHelpRequests]);
-
-  console.log('filteredHelpRequests', filteredHelpRequests);
 
   if (!isMentorOrAdmin) {
     return <div>Access Denied</div>;
