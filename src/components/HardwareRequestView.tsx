@@ -128,7 +128,145 @@ export default function HardwareRequestView({
     })();
   }, [session, requester]);
   const columnHelper = createColumnHelper<HardwareRequestBrief>();
-  const columns: ColumnDef<HardwareRequestBrief, any>[] = [
+  const columns: ColumnDef<HardwareRequestBrief, any>[] = ((
+      !isAdmin
+        ? []
+        : [
+            columnHelper.display({
+              id: 'check out',
+              header: () => '',
+              cell: info =>
+                hardwareDevice == null ? null : info.row.original.status ==
+                    hardware_request_status.approved &&
+                  hardwareDevice.checked_out_to == null &&
+                  info.row.original.hardware_device == null &&
+                  info.row.original.hardware == hardwareDevice.hardware.id ? (
+                  <button
+                    className="cursor-pointer text-white bg-[#2FCC32] px-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end"
+                    onClick={() => {
+                      if (session?.access_token) {
+                        setRequestsLoading(true);
+                        (async () => {
+                          const newApp: HardwareRequestBrief = await patchHardwareRequest(
+                            session.access_token,
+                            info.row.original.id,
+                            {
+                              status: hardware_request_status.checked_out,
+                              hardware_device: hardwareDevice
+                            }
+                          )
+                          const newRequests = [...requests];
+                          newRequests[info.row.index].status = newApp.status;
+                          if(typeof newApp.hardware_device === 'string' || newApp.hardware_device instanceof String) {
+                            //@ts-ignore
+                            const newDevice = await getHardwareDevice(session.access_token, {id: newApp.hardware_device});
+                            const newRequests = [...requests];
+                            newRequests[info.row.index].hardware_device = newDevice;
+                          } else {
+                            newRequests[info.row.index].hardware_device = newApp.hardware_device;
+                          }
+                          setRequests(newRequests);
+                          setCheckedOutTo(newApp);
+                        })().finally(() => setRequestsLoading(false));
+                      }
+                    }}
+                  >
+                    Check Out
+                  </button>
+                ) : info.row.original.status ==
+                    hardware_request_status.checked_out &&
+                  info.row.original.hardware_device?.id == hardwareDevice.id ? (
+                  <button
+                    className="cursor-pointer text-white bg-[#CCAA2F] px-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end"
+                    onClick={() => {
+                      if (session?.access_token) {
+                        setRequestsLoading(true);
+                        Promise.all([patchHardwareRequest(
+                          session.access_token,
+                          info.row.original.id,
+                          {
+                            status: hardware_request_status.approved,
+                            hardware_device: null
+                          }
+                        ),
+                        updateHardwareDevice(session.access_token, {
+                          id: hardwareDevice.id,
+                          checked_out_to: null
+                        })
+                      ])
+                          .then(([newApp, _newDevice]) => {
+                            if (
+                              newApp.status != hardware_request_status.approved
+                            ) {
+                              return;
+                            }
+                            const newRequests = [...requests];
+                            newRequests[info.row.index].status = hardware_request_status.approved;
+                            newRequests[info.row.index].hardware_device = null;
+                            setRequests(newRequests);
+                            setCheckedOutTo(null);
+                          })
+                          .finally(() => {
+                            setRequestsLoading(false);
+                          });
+                      }
+                    }}
+                  >
+                    Return
+                  </button>
+                ) : null
+            })
+          ]
+    ) as ColumnDef<HardwareRequestBrief, any>[]).concat(
+      !deletable
+        ? []
+        : [
+            columnHelper.display({
+              id: 'delete',
+              header: () => '',
+              cell: info =>
+                [
+                  hardware_request_status.rejected,
+                  hardware_request_status.checked_out
+                ].includes(info.row.original.status) ? null : (
+                  <button
+                    className="cursor-pointer text-white bg-[#CC2F34] px-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end"
+                    onClick={() => {
+                      if (session?.access_token) {
+                        setRequestsLoading(true);
+                        deleteHardwareRequest(
+                          session.access_token,
+                          info.row.original.id
+                        )
+                          .then(() => {
+                            if (
+                              info.row.original.status ==
+                              hardware_request_status.approved
+                            ) {
+                              hardware[
+                                info.row.original.hardware
+                              ].available += 1;
+                            }
+                            setRequests(
+                              requests
+                                .slice(0, info.row.index)
+                                .concat(requests.slice(info.row.index + 1))
+                            );
+                          })
+                          .finally(() => {
+                            // TODO: .catch
+                            setRequestsLoading(false);
+                          });
+                      }
+                    }}
+                  >
+                    Delete
+                  </button>
+                )
+            })
+          ]
+    ).concat(
+    [
     // excessively deep type instantiation
     // @ts-ignore
     columnHelper.accessor('team', {
@@ -235,149 +373,7 @@ export default function HardwareRequestView({
           </Box>
         )
     })
-  ]
-    .concat(
-      !deletable
-        ? []
-        : [
-            columnHelper.display({
-              id: 'delete',
-              header: () => '',
-              cell: info =>
-                [
-                  hardware_request_status.rejected,
-                  hardware_request_status.checked_out
-                ].includes(info.row.original.status) ? null : (
-                  <button
-                    className="cursor-pointer text-white bg-[#CC2F34] px-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end"
-                    onClick={() => {
-                      if (session?.access_token) {
-                        setRequestsLoading(true);
-                        deleteHardwareRequest(
-                          session.access_token,
-                          info.row.original.id
-                        )
-                          .then(() => {
-                            if (
-                              info.row.original.status ==
-                              hardware_request_status.approved
-                            ) {
-                              hardware[
-                                info.row.original.hardware
-                              ].available += 1;
-                            }
-                            setRequests(
-                              requests
-                                .slice(0, info.row.index)
-                                .concat(requests.slice(info.row.index + 1))
-                            );
-                          })
-                          .finally(() => {
-                            // TODO: .catch
-                            setRequestsLoading(false);
-                          });
-                      }
-                    }}
-                  >
-                    Delete
-                  </button>
-                )
-            })
-          ]
-    )
-    .concat(
-      !isAdmin
-        ? []
-        : [
-            columnHelper.display({
-              id: 'check out',
-              header: () => '',
-              cell: info =>
-                hardwareDevice == null ? null : info.row.original.status ==
-                    hardware_request_status.approved &&
-                  hardwareDevice.checked_out_to == null &&
-                  info.row.original.hardware_device == null &&
-                  info.row.original.hardware == hardwareDevice.hardware.id ? (
-                  <button
-                    className="cursor-pointer text-white bg-[#2FCC32] px-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end"
-                    onClick={() => {
-                      if (session?.access_token) {
-                        setRequestsLoading(true);
-                        patchHardwareRequest(
-                          session.access_token,
-                          info.row.original.id,
-                          {
-                            status: hardware_request_status.checked_out,
-                            hardware_device: hardwareDevice
-                          }
-                        )
-                          .then((newApp: HardwareRequestBrief) => {
-                            const newRequests = [...requests];
-                            newRequests[info.row.index].status = newApp.status;
-                            if(!newApp?.hardware_device?.id) {
-                              //@ts-ignore
-                              getHardwareDevice(session.access_token, {id: newApp.hardware_device}).then((newDevice: HardwareDevice) => {
-                                newRequests[info.row.index].hardware_device = newDevice
-                              });
-                            } else {
-                              newRequests[info.row.index].hardware_device = newApp.hardware_device;
-                            }
-                            setRequests(newRequests);
-                            setCheckedOutTo(newApp);
-                          })
-                          .finally(() => {
-                            setRequestsLoading(false);
-                          });
-                      }
-                    }}
-                  >
-                    Check Out
-                  </button>
-                ) : info.row.original.status ==
-                    hardware_request_status.checked_out &&
-                  info.row.original.hardware_device?.id == hardwareDevice.id ? (
-                  <button
-                    className="cursor-pointer text-white bg-[#CCAA2F] px-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end"
-                    onClick={() => {
-                      if (session?.access_token) {
-                        setRequestsLoading(true);
-                        Promise.all([patchHardwareRequest(
-                          session.access_token,
-                          info.row.original.id,
-                          {
-                            status: hardware_request_status.approved,
-                            hardware_device: null
-                          }
-                        ),
-                        updateHardwareDevice(session.access_token, {
-                          id: hardwareDevice.id,
-                          checked_out_to: null
-                        })
-                      ])
-                          .then(([newApp, _newDevice]) => {
-                            if (
-                              newApp.status != hardware_request_status.approved
-                            ) {
-                              return;
-                            }
-                            const newRequests = [...requests];
-                            newRequests[info.row.index].status = hardware_request_status.approved;
-                            newRequests[info.row.index].hardware_device = null;
-                            setRequests(newRequests);
-                            setCheckedOutTo(null);
-                          })
-                          .finally(() => {
-                            setRequestsLoading(false);
-                          });
-                      }
-                    }}
-                  >
-                    Return
-                  </button>
-                ) : null
-            })
-          ]
-    );
+  ]);
 
   return (
     <>

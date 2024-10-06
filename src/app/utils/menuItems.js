@@ -15,6 +15,11 @@ export const menuItems = [
     icon: '/icons/dashboard/hardware.svg'
   },
   {
+    href: '/mentors',
+    title: 'Mentor Help Queue',
+    icon: '/icons/dashboard/help.svg'
+  },
+  {
     href: '/schedule',
     title: 'Schedule',
     icon: '/icons/dashboard/schedule.svg'

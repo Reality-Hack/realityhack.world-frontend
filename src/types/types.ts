@@ -174,6 +174,114 @@ export interface Application {
   updated_at: Date;
 }
 
+export enum MentorTopics {
+  Development_and_Programming = '1',
+  Unity_Timeline_Animations = '2',
+  Embedded_Systems_C = '3',
+  Embedded_Systems_Python = '4',
+  Cpp_Android_JavaScript = '5',
+  Backend_Development = '6',
+  Unreal_App_Development = '7',
+  Unreal_Blueprints = '8',
+  Unity_AR_Foundation = '9',
+  WebXR = '10',
+  Lens_Studio = '11',
+  Meta_Spark = '12',
+  Virtual_Reality = '13',
+  Augmented_Reality = '14',
+  Mixed_Reality = '15',
+  Mixed_Reality_Toolkit = '16',
+  Meta_XR_SDK = '17',
+  C_Sharp = '18',
+  Regression_Testing = '19',
+  OOP_Design_Patterns = '20',
+  Distributed_Computing = '21',
+  Cybersecurity = '22',
+  Swift_SwiftUI_ARKit = '23',
+  Software_Builds = '24',
+  Containers = '25',
+  Deployment_Automation = '26',
+  Site_reliability_engineering_SRE_Work = '27',
+  Python_Shell_Scripting = '28',
+  Search_Implementation = '29',
+  Generative_AI = '30',
+  IoT = '31',
+  ThreeD_Rendering = '32',
+  Video_Encoding = '33',
+  Linux_OS_Configuration = '34',
+  Cross_platform_Work = '35',
+  Web_Frontend_Backend = '36',
+  Project_Scope = '37',
+  Technical_Approach = '38',
+  App_driven_Architecture = '39',
+  Problem_solving = '40',
+  Design_and_Prototyping = '41',
+  ShapesXR = '42',
+  Figma = '43',
+  Miro = '44',
+  Adobe_Creative_Suite = '45',
+  Mocap = '46',
+  ThreeD_Stereoscopic_Recording = '47',
+  Mobile_AR = '48',
+  ThreeD_Modeling = '49',
+  Animation = '50',
+  Motion_Capture = '51',
+  XR_Design_Execution = '52',
+  Interactive_Learning_Programs = '53',
+  Computer_Vision = '54',
+  Graphics_Shaders = '55',
+  Git = '56',
+  XR_AR_VR_Expert = '57',
+  Storytelling = '58',
+  Visual_Design = '59',
+  Prototyping = '60',
+  Analog_Painting = '61',
+  Drawing = '62',
+  Sculpture = '63',
+  Project_Management_and_Leadership = '64',
+  Producer = '65',
+  Peace_maker_Conflict_Resolution = '66',
+  Storyteller = '67',
+  Project_Management = '68',
+  Agile_Scrum = '69',
+  Conflict_Resolution = '70',
+  Communication = '71',
+  Digital_Experience_Production = '72',
+  User_Flow_Design = '73',
+  Hardware_Development_Arduino = '74',
+  Hardware_Development_Esp32 = '75',
+  Hardware_Development_Raspberry_Pi = '76',
+  Innovation_and_Specialized_Expertise = '77',
+  Biometrics_in_VR = '78',
+  Brain_Computer_Interface_BCI = '79',
+  Game_Design = '80',
+  Lens_Studio_Projects = '81',
+  Snap_Lens = '82',
+  Eighth_Wall_Expertise = '83',
+  Web_Development = '84',
+  Blockchain = '85',
+  Networking = '86',
+  Dot_NET = '87',
+  Other = 'O'
+}
+
+export function getKeyByValue(enumObj: any, value: string): string | null {
+  for (const [key, val] of Object.entries(enumObj)) {
+      if (val === value) {
+          return key;
+      }
+  }
+  return null; // return null if no matching key is found
+}
+
+
+export enum mentor_help_status {
+  REQUESTED = 'R',
+  ACKNOWLEDGED = 'A',
+  EN_ROUTE = 'E',
+  RESOLVED = 'F'
+}
+
 export enum hardware_request_status {
   pending = 'P',
   approved = 'A',
@@ -256,7 +364,7 @@ export interface HardwareDeviceForSending {
   id?: string;
   serial: string;
   hardware: string;
-  checked_out_to?: string | null
+  checked_out_to?: string | null;
 }
 
 export type hardware_requester = string | 'me' | null;

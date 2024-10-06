@@ -1,11 +1,26 @@
 'use client';
 import { fileUpload } from '@/app/api/application';
-import { createHardware, createHardwareDevice, deleteHardware, deleteHardwareDevice, getHardwareDevice, sendHardwareRequest, updateHardware, updateHardwareDevice } from '@/app/api/hardware';
+import {
+  createHardware,
+  createHardwareDevice,
+  deleteHardware,
+  deleteHardwareDevice,
+  getHardwareDevice,
+  sendHardwareRequest,
+  updateHardware,
+  updateHardwareDevice
+} from '@/app/api/hardware';
 import CloseIcon from '@mui/icons-material/Close';
 import { PlusOne, Save } from '@mui/icons-material';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-import { Hardware, HardwareCategory, HardwareDevice, UploadedFile, hardware_categories } from '@/types/types';
+import {
+  Hardware,
+  HardwareCategory,
+  HardwareDevice,
+  UploadedFile,
+  hardware_categories
+} from '@/types/types';
 import Dropzone from '@/components/Dropzone';
 import { fixFileLink } from '@/app/api/uploaded_files';
 import HardwareCategoryFilter from '@/components/HardwareCategoryFilter';
@@ -76,20 +91,32 @@ export default function HardwareEditor({
           .map((item: any, i: number) => (
             <EditableHardwareCard
               item={item}
-              setItem={newItem => {
-                const newList = [...hardwareList];
-                newList[i] = newItem;
-                setHardwareList(newList);
-              }}
-              removeItem={() =>
-                setHardwareList(hardwareList.filter((_, idx) => idx !== i))
+              setItem={newItem =>
+                setHardwareList(
+                  hardwareList.map(item =>
+                    (
+                      item.id
+                        ? item.id === newItem.id
+                        : item.name === newItem.name
+                    )
+                      ? newItem
+                      : item
+                  )
+                )
               }
-              key={item.id || (i + 1).toString()}
+              removeItem={() =>
+                setHardwareList(
+                  hardwareList.filter(it =>
+                    it.id ? it.id !== item.id : it.name !== item.name
+                  )
+                )
+              }
+              key={item.id || item.name}
               hardwareCategories={hardwareCategories}
               topLevelProps={{
                 'data-testid': `hardware-request-hardware-${i}`
               }}
-            ></EditableHardwareCard>
+            />
           ))}
       </div>
     </div>
@@ -124,12 +151,10 @@ function EditableHardwareCard({
     image?.id !== item.image?.id ||
     tags !== item.tags;
   const [addTagOpen, setAddTagOpen] = useState(false);
-  const [hardwareDevicesEditorOpen, setHardwareDevicesEditorOpen] = useState(false);
-  const isReady = 
-    name.length > 0 &&
-    quantity > 0 &&
-    description.length > 0 &&
-    image != null;
+  const [hardwareDevicesEditorOpen, setHardwareDevicesEditorOpen] =
+    useState(false);
+  const isReady =
+    name.length > 0 && quantity > 0 && description.length > 0 && image != null;
   const [sending, setSending] = useState(false);
 
   if (!session) return null;
@@ -169,13 +194,15 @@ function EditableHardwareCard({
         })
         .finally(() => setSending(false));
     } else {
-      createHardware(session!.access_token, data).then(res => {
-        console.log(res);
-        setItem({
-          ...newItem,
-          id: res.id
-        });
-      }).finally(() => setSending(false));
+      createHardware(session!.access_token, data)
+        .then(res => {
+          console.log(res);
+          setItem({
+            ...newItem,
+            id: res.id
+          });
+        })
+        .finally(() => setSending(false));
     }
   }
 
@@ -341,39 +368,79 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
 
   function addNew() {
     setDevices([
+      ...devices,
       {
         id: '',
-        serial: '',
+        serial: Math.random().toString(36).substring(7),
         checked_out_to: null,
         hardware: hardware
-      },
-      ...devices
+      }
     ]);
   }
 
-  return <div className="w-56 px-5 py-4 my-4 mr-4">
-    <p>{loading ? "Loading..." : `${devices.length} devices.`}</p>
-    <p className='mt-1'>
-      <button
-        className="cursor-pointer text-white bg-[#493B8A] py-1 px-2 rounded-full disabled:opacity-50 transition-all h-15"
-        onClick={() => addNew()}
-      >+ add new</button>
-    </p>
-    <div className="content flex flex-col max-h-64 overflow-scroll mt-4">
-      {loading ? <CircularProgress /> : devices.map((device, i) => (
-      <HardwareDeviceEditor key={device.id} device={device} access_token={session?.access_token}
-      deleteDevice={() => setDevices(devices.filter((_, idx) => idx !== i))}
-      setDevice={(device) => setDevices(devices.map((_, idx) => idx === i ? device : _))}
-      index={i+1}
-      />))}
+  return (
+    <div className="w-56 px-5 py-4 my-4 mr-4">
+      <p>{loading ? 'Loading...' : `${devices.length} devices.`}</p>
+      <p className="mt-1">
+        <button
+          className="cursor-pointer text-white bg-[#493B8A] py-1 px-2 rounded-full disabled:opacity-50 transition-all h-15"
+          onClick={() => addNew()}
+        >
+          + add new
+        </button>
+      </p>
+      <div className="content flex flex-col max-h-64 overflow-scroll mt-4">
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          devices
+            .reverse()
+            .map((device, i) => (
+              <HardwareDeviceEditor
+                key={device.id + device.serial!}
+                device={device}
+                access_token={session?.access_token}
+                deleteDevice={() =>
+                  setDevices(
+                    devices.filter(
+                      (dev, ind) =>
+                        dev.id + dev.serial! !==
+                        (dev.id ? device.id : '') + device.serial!
+                    )
+                  )
+                }
+                setDevice={device =>
+                  setDevices(
+                    devices.map((dev, ind) =>
+                      dev.id + dev.serial! !==
+                      (dev.id ? device.id : '') + device.serial!
+                        ? dev
+                        : device
+                    )
+                  )
+                }
+                index={i + 1}
+              />
+            ))
+        )}
+      </div>
     </div>
-  </div>;
+  );
 }
 
-function HardwareDeviceEditor(
-  { device, access_token, deleteDevice, setDevice, index }:
-  { device: Partial<HardwareDevice>, access_token?: string,
-    deleteDevice: () => void, setDevice: (device: Partial<HardwareDevice>) => void, index?: number}) {
+function HardwareDeviceEditor({
+  device,
+  access_token,
+  deleteDevice,
+  setDevice,
+  index
+}: {
+  device: Partial<HardwareDevice>;
+  access_token?: string;
+  deleteDevice: () => void;
+  setDevice: (device: Partial<HardwareDevice>) => void;
+  index?: number;
+}) {
   const [loading, setLoading] = useState(false);
   const isOriginal = !device.id;
   const [serial, setSerial] = useState(device.serial || '');
@@ -426,14 +493,23 @@ function HardwareDeviceEditor(
     }
   }
 
-  return (<div className='flex'>
-    {index}.
-    <button className='text-[#CC2F34]' onClick={remove} disabled={loading}><CloseIcon /></button>
-    {hasChanged || isOriginal ? <button className='text-[#493B8A]'
-    onClick={save} disabled={loading}
-    ><Save /></button> : null}
-    <input value={serial} onChange={e => setSerial(e.target.value)} disabled={loading}
-                className="m-0.5 shadow-md rounded-md px-1 border"
-    ></input>
-  </div>);
+  return (
+    <div className="flex">
+      {index}.
+      <button className="text-[#CC2F34]" onClick={remove} disabled={loading}>
+        <CloseIcon />
+      </button>
+      {hasChanged || isOriginal ? (
+        <button className="text-[#493B8A]" onClick={save} disabled={loading}>
+          <Save />
+        </button>
+      ) : null}
+      <input
+        value={serial}
+        onChange={e => setSerial(e.target.value)}
+        disabled={loading}
+        className="m-0.5 shadow-md rounded-md px-1 border"
+      ></input>
+    </div>
+  );
 }
