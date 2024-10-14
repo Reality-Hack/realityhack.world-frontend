@@ -9,6 +9,10 @@ type AcceptedFile = {
   size: number;
 };
 
+export interface AcceptedFileTypes {
+  [key: string]: string[];
+}
+
 interface FormProps {
   setFormData?: React.Dispatch<React.SetStateAction<Partial<form_data>>>;
   acceptedFiles: File[];
@@ -16,6 +20,7 @@ interface FormProps {
   rejectedFiles: File[];
   setRejectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
   extraInputProps?: object;
+  acceptedFileTypes?: AcceptedFileTypes;
 }
 
 const Dropzone: React.FC<FormProps> = ({
@@ -24,7 +29,10 @@ const Dropzone: React.FC<FormProps> = ({
   setAcceptedFiles,
   rejectedFiles,
   setRejectedFiles,
-  extraInputProps = {}
+  extraInputProps = {},
+  acceptedFileTypes = {
+    'image/*': ['.png', '.jpeg', '.gif']
+  }
 }) => {
   function handleUpload(data: File[]) {
     const file = data[0];
@@ -43,10 +51,15 @@ const Dropzone: React.FC<FormProps> = ({
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: {
-      'image/*': []
-    }
+    accept: acceptedFileTypes
   });
+
+  // Convert acceptedFileTypes to a string for the HTML input
+  const acceptString = acceptedFileTypes
+    ? Object.entries(acceptedFileTypes)
+        .map(([_, value]) => `${value.join(', ')}`)
+        .join(', ')
+    : undefined;
 
   const acceptedFileItems = (acceptedFiles ? acceptedFiles : []).map(file => {
     const customFile: AcceptedFile = {
@@ -80,7 +93,7 @@ const Dropzone: React.FC<FormProps> = ({
         {...getRootProps()}
         className="flex justify-center px-8 py-16 my-4 mt-2 align-middle transition border border-gray-300 border-dashed rounded-lg outline-none focus:border-themePrimary align-center"
       >
-        <input {...getInputProps()} {...extraInputProps} />
+        <input {...getInputProps()} accept={acceptString} />
         <div className="text-center cursor-default">
           <div className="mx-auto">
             <svg
@@ -104,7 +117,7 @@ const Dropzone: React.FC<FormProps> = ({
           <span className="font-semibold text-[#4D97E8]">Click to upload </span>
           <span>or drag and drop</span>
           <br />
-          <span>.png, .jpeg, .gif</span>
+          <span>{acceptString}</span>
         </div>
       </div>
       <div className="mb-4 ">

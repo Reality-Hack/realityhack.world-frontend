@@ -506,6 +506,15 @@ const Application: NextPage = ({}: any) => {
     </div>
   );
 
+  const acceptedFileTypes = {
+    'application/pdf': ['.pdf'],
+    'application/msword': ['.doc'],
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [
+      '.docx'
+    ],
+    'text/plain': ['.txt']
+  };
+
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
       <p>{`Thank you for applying to MIT Reality Hack 2024, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
@@ -529,6 +538,7 @@ const Application: NextPage = ({}: any) => {
       setRejectedFiles={setRejectedFiles}
       countries={countries}
       nationalities={nationalities}
+      acceptedFileTypes={acceptedFileTypes}
     />,
     <DiversityInclusionForm
       key={3}
