@@ -49,7 +49,7 @@ export default function Nav({
     if (user?.profile_image) {
       return (
         <img
-          src={process.env.NEXT_PUBLIC_BACKEND_URL + user?.profile_image.file}
+          src={user?.profile_image.file}
           alt=""
           className="object-cover object-center w-10 h-10 rounded-full"
         />
