@@ -1,9 +1,10 @@
 import {
   age_group,
   digital_designer_skills,
-  disabilities,
+  theme_interest_track_choice,
   gender_identity,
   hardware_hack_interest,
+  hardware_hack_detail,
   heard_about_us,
   participation_capacity,
   previous_participation,
@@ -15,16 +16,20 @@ import { useSession } from 'next-auth/react';
 import { CheckboxInput } from '../Inputs';
 import { heardAboutUsLabels } from '../applications/ClosingForm';
 import {
-  disabilitiesLabels,
   genderIdentityLabels,
   raceEthnicGroupLabels
 } from '../applications/DiversityInclusionForm';
 import {
   DesignSkillsLabels,
-  previousParticipationLabels
+  previousParticipationLabels,
 } from '../applications/ExperienceInterestForm';
 import { ageGroupLabels } from '../applications/PersonalInformationForm';
-import { hardwareHackLabels } from '../applications/ThematicForm';
+import {
+  hardwareHackDetailLabels,
+  hardwareHackLabels
+} from '../applications/ThematicForm';
+// TODO: move to RSVP
+//   disabilitiesLabels,
 
 export default function ReviewPage({
   allInfo,
@@ -118,6 +123,10 @@ export default function ReviewPage({
       key => enumObject[key] === enumValue
     );
     return enumKey ? labelsObject[enumKey] : enumValue;
+  };
+
+  const themeInterestTrackLabel = (choice: theme_interest_track_choice) => {
+    return 
   };
 
   const Disclaimers = () => {
@@ -279,7 +288,7 @@ export default function ReviewPage({
           value={allInfo.current_city}
         />
         <LabelAndValue
-          label={'What age will you be as of January 25, 2024?'}
+          label={'What age will you be as of January 25, 2025?'}
           value={
             allInfo.age_group
               ? getLabelFromEnumValue(
@@ -326,7 +335,7 @@ export default function ReviewPage({
               : allInfo.race_ethnic_group
           }
         />
-        {(allInfo.participation_class === 'P' ||
+        {/* {(allInfo.participation_class === 'P' ||
           allInfo.participation_class === 'Participant' ||
           !allInfo.participation_class) && (
           <LabelAndValue
@@ -343,7 +352,7 @@ export default function ReviewPage({
                 : allInfo.disabilities
             }
           />
-        )}
+        )} */}
       </div>
     );
   };
@@ -447,18 +456,31 @@ export default function ReviewPage({
               />
             )}
             <br />
-            {allInfo.participation_role === participation_role.specialist && (
+            {(allInfo.participation_role === participation_role.specialist ||
+              allInfo.participation_role === participation_role.developer) && (
               <LabelAndValue
-                label={'What are your areas or skills of expertise?'}
+                label={
+                  allInfo.participation_role === participation_role.specialist
+                    ? 'What are your areas or skills of expertise?'
+                    : 'List what programming languages and platforms you are proficient with.'
+                }
                 value={allInfo.specialized_expertise}
               />
             )}
+            <br />
             <div className="flex flex-col gap-2">
               <LabelAndValue
                 label={
                   'Can you demonstrate familiarity with any tools related to design or development for XR? If so, please list.'
                 }
                 value={allInfo.experience_with_xr}
+              />
+              <br />
+              <LabelAndValue
+                label={
+                  'MIT Reality Hack is a fast-paced event that harness a variety of talents from participants to create something entirely new in a very short period of time. How do you envision your role in this environment and how will you contribute to your team?'
+                }
+                value={allInfo.experience_contribution}
               />
               <br />
               <br />
@@ -568,16 +590,48 @@ export default function ReviewPage({
       <div className="flex flex-col gap-4">
         <LabelAndValue
           label={
-            'Our theme for 2024 is “Connection”. From letting people embody avatars that they connect with or even giving people the ability to feel closer to friends and family at great distance, Connection can mean different things to different people. What does Connection mean to you?'
+            'At MIT Reality Hack, teamwork and communication are critical to success. How do you see yourself supporting your team in this respect?'
           }
           value={allInfo.theme_essay}
         />
-        <LabelAndValue
+        {/* <LabelAndValue
           label={
             'How do you think XR technologies can help us with “Connection”? (Long answer)'
           }
           value={allInfo.theme_essay_follow_up}
+        /> */}
+        <LabelAndValue
+          label={
+            'Are you interested in participating in programming focused on startups and entrepreneurship? Please indicate your interest here and we will follow up.'
+          }
+          value={allInfo.theme_interest_track_one === 'Y' ? 'Yes' : 'No'}
         />
+        <LabelAndValue
+          label={'Are you interested in hacking on Apple Vision Pro?'}
+          value={allInfo.theme_interest_track_two === 'Y' ? 'Yes' : 'No'}
+        />
+        {allInfo.theme_interest_track_two === 'Y' && (
+          <>
+            <LabelAndValue
+              label={
+                "Do you meet all of the minimum system requirements? This means you MUST have an Apple silicon Mac (M1, M2, etc.) to develop for visionOS. Please note that this is a hard requirement for being on a Vision Pro team. These requirements are set by Apple and we unfortunately won't have Mac hardware to check out."
+              }
+              value={allInfo.theme_detail_one === 'Y' ? 'Yes' : 'No'}
+            />
+            <LabelAndValue
+              label={
+                'If your team decides to develop using Unity, are you willing to sign up for a 30-Day Unity Pro Trial? CRITICAL: You MUST cancel the trial before the 30 days is up or you will be charged $2,040 USD. This is true even if you choose the monthly payment plan, since the subscription is for one year and the payment plan just spreads the cost over one year. The 30 day trial can be cancelled the moment you activate it and you will still have access for 30 days. Unity allows only one 30 day trial per account. Please ensure your trial period will cover the event days from January 23 - 27, 2025. Unity Pro is required to develop for Apple Vision Pro.'
+              }
+              value={allInfo.theme_detail_two === 'Y' ? 'Yes' : 'No'}
+            />
+            <LabelAndValue
+              label={
+                'Do you own a Vision Pro that you are willing to bring to support your team? You will not be expected to allow your teammates to use your device if you are uncomfortable doing so. We will set this expectation during opening ceremony.'
+              }
+              value={allInfo.theme_detail_three === 'Y' ? 'Yes' : 'No'}
+            />
+          </>
+        )}
         <LabelAndValue
           label={
             'Would you be interested in participating in the hardware hack this year?'
@@ -590,6 +644,22 @@ export default function ReviewPage({
                   hardwareHackLabels
                 )
               : '[none]'
+          }
+        />
+        <LabelAndValue
+          label={
+            'If you are interested in the hardware hack, please list the areas in which you have experience.'
+          }
+          value={
+            Array.isArray(allInfo.hardware_hack_detail)
+              ? allInfo.hardware_hack_detail.map((enumValue: string) =>
+                  getLabelFromEnumValue(
+                    enumValue,
+                    hardware_hack_detail,
+                    hardwareHackDetailLabels
+                  )
+                )
+              : allInfo.hardware_hack_detail
           }
         />
       </div>

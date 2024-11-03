@@ -56,8 +56,9 @@ const MentorApp: NextPage = ({}: any) => {
     current_country: [],
     nationality: [],
     digital_designer_skills: [],
-    disabilities: []
   });
+  // TODO: move to RSVP
+  // disabilities: []
 
   const [options, setOptions] = useState<any>(null);
   const [requiredFields, _setRequiredFields] = useState<

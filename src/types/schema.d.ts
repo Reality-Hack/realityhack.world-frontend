@@ -445,6 +445,10 @@ export interface components {
      * @enum {string}
      */
     AnnouncementPendingEnum: "S" | "A" | "F";
+    // TODO: move to RSVP
+    // disabilities: components["schemas"]["DisabilitiesEnum"][];
+    // disabilities_other?: string | null;
+    // disability_accommodations?: string | null;
     Application: {
       /** Format: uuid */
       id: string;
@@ -452,7 +456,6 @@ export interface components {
       nationality: components["schemas"]["UsVisaSupportCitizenshipEnum"][];
       current_country: components["schemas"]["UsVisaSupportCitizenshipEnum"][];
       race_ethnic_group: components["schemas"]["RaceEthnicGroupEnum"][];
-      disabilities: components["schemas"]["DisabilitiesEnum"][];
       previous_participation: components["schemas"]["PreviousParticipationEnum"][];
       heard_about_us: components["schemas"]["HeardAboutUsEnum"][];
       digital_designer_skills: components["schemas"]["DigitalDesignerSkillsEnum"][];
@@ -474,8 +477,6 @@ export interface components {
       gender_identity_other?: string | null;
       race_ethnic_group_other?: string | null;
       disability_identity?: components["schemas"]["DisabilityIdentityEnum"] | components["schemas"]["NullEnum"] | null;
-      disabilities_other?: string | null;
-      disability_accommodations?: string | null;
       participation_capacity?: components["schemas"]["ParticipationCapacityEnum"] | components["schemas"]["NullEnum"] | null;
       student_school?: string | null;
       student_field_of_study?: string | null;
@@ -487,9 +488,16 @@ export interface components {
       previously_participated?: boolean | null;
       participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
       experience_with_xr?: string | null;
+      experience_contribution?: string | null;
       theme_essay?: string | null;
-      theme_essay_follow_up?: string | null;
+    //   theme_essay_follow_up?: string | null;
+      theme_interest_track_one?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
+      theme_interest_track_two?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
+      theme_detail_one?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
+      theme_detail_two?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
+      theme_detail_three?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
       hardware_hack_interest?: components["schemas"]["HardwareHackInterestEnum"];
+      hardware_hack_detail?: components["schemas"]["HardwareHackDetailEnum"];
       heard_about_us_other?: string | null;
       digital_designer_skills_other?: string | null;
       communications_platform_username?: string | null;
@@ -657,7 +665,7 @@ export interface components {
       us_visa_support_national_identification_document_type?: components["schemas"]["UsVisaSupportNationalIdentificationDocumentTypeEnum"] | components["schemas"]["NullEnum"] | null;
       us_visa_support_citizenship?: components["schemas"]["UsVisaSupportCitizenshipEnum"] | components["schemas"]["NullEnum"] | null;
       us_visa_support_address?: string | null;
-      /** @description Will you be under 18 on January 25, 2024 */
+      /** @description Will you be under 18 on January 23, 2025 */
       under_18_by_date?: boolean | null;
       parental_consent_form_signed?: boolean | null;
       agree_to_media_release?: boolean;
@@ -710,7 +718,7 @@ export interface components {
       us_visa_support_national_identification_document_type?: components["schemas"]["UsVisaSupportNationalIdentificationDocumentTypeEnum"] | components["schemas"]["NullEnum"] | null;
       us_visa_support_citizenship?: components["schemas"]["UsVisaSupportCitizenshipEnum"] | components["schemas"]["NullEnum"] | null;
       us_visa_support_address?: string | null;
-      /** @description Will you be under 18 on January 25, 2024 */
+      /** @description Will you be under 18 on January 23, 2025 */
       under_18_by_date?: boolean | null;
       parental_consent_form_signed?: boolean | null;
       agree_to_media_release?: boolean;
@@ -953,6 +961,19 @@ export interface components {
      * @enum {string}
      */
     HardwareHackInterestEnum: "A" | "B" | "C" | "D";
+    /**
+     * @description * `A` - 3D Printing
+     * * `B` - Soldering
+     * * `C` - Circuits
+     * * `D` - Arduino
+     * * `E` - ESP32
+     * * `F` - Unity
+     * * `G` - Physical Prototyping 
+     * * `H` - I have no prior experience
+     * * `O` - Other
+     * @enum {string}
+     */
+    HardwareHackDetailEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "O";
     HardwareRequest: {
       /** Format: uuid */
       id: string;
@@ -1295,7 +1316,11 @@ export interface components {
      * * `I` - Instructor
      * * `V` - Volunteer
      * @enum {string}
-     */
+    */
+    // TODO: move to RSVP
+    // disabilities?: components["schemas"]["DisabilitiesEnum"][];
+    // disabilities_other?: string | null;
+    // disability_accommodations?: string | null;
     ParticipationEnum: "R" | "C" | "I" | "V";
     /**
      * @description * `A` - Digital Designer
@@ -1312,7 +1337,6 @@ export interface components {
       nationality?: components["schemas"]["UsVisaSupportCitizenshipEnum"][];
       current_country?: components["schemas"]["UsVisaSupportCitizenshipEnum"][];
       race_ethnic_group?: components["schemas"]["RaceEthnicGroupEnum"][];
-      disabilities?: components["schemas"]["DisabilitiesEnum"][];
       previous_participation?: components["schemas"]["PreviousParticipationEnum"][];
       heard_about_us?: components["schemas"]["HeardAboutUsEnum"][];
       digital_designer_skills?: components["schemas"]["DigitalDesignerSkillsEnum"][];
@@ -1334,8 +1358,6 @@ export interface components {
       gender_identity_other?: string | null;
       race_ethnic_group_other?: string | null;
       disability_identity?: components["schemas"]["DisabilityIdentityEnum"] | components["schemas"]["NullEnum"] | null;
-      disabilities_other?: string | null;
-      disability_accommodations?: string | null;
       participation_capacity?: components["schemas"]["ParticipationCapacityEnum"] | components["schemas"]["NullEnum"] | null;
       student_school?: string | null;
       student_field_of_study?: string | null;
@@ -1347,8 +1369,14 @@ export interface components {
       previously_participated?: boolean | null;
       participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
       experience_with_xr?: string | null;
+      experience_contribution?: string | null;
       theme_essay?: string | null;
-      theme_essay_follow_up?: string | null;
+    //   theme_essay_follow_up?: string | null;
+      theme_interest_track_one?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
+      theme_interest_track_two?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
+      theme_detail_one?: string | null;
+      theme_detail_two?: string | null;
+      theme_detail_three?: string | null;
       hardware_hack_interest?: components["schemas"]["HardwareHackInterestEnum"];
       heard_about_us_other?: string | null;
       digital_designer_skills_other?: string | null;
@@ -1441,7 +1469,7 @@ export interface components {
       us_visa_support_national_identification_document_type?: components["schemas"]["UsVisaSupportNationalIdentificationDocumentTypeEnum"] | components["schemas"]["NullEnum"] | null;
       us_visa_support_citizenship?: components["schemas"]["UsVisaSupportCitizenshipEnum"] | components["schemas"]["NullEnum"] | null;
       us_visa_support_address?: string | null;
-      /** @description Will you be under 18 on January 25, 2024 */
+      /** @description Will you be under 18 on January 23, 2025 */
       under_18_by_date?: boolean | null;
       parental_consent_form_signed?: boolean | null;
       agree_to_media_release?: boolean;
@@ -1706,6 +1734,7 @@ export interface components {
      * * `E` - 2020
      * * `F` - 2022
      * * `G` - 2023
+     * * `H` - 2024
      * @enum {string}
      */
     PreviousParticipationEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G";
@@ -1734,7 +1763,8 @@ export interface components {
       updated_at: string;
     };
     /**
-     * @description * `A` - Asian, Asian American, or of Asian descent
+     * `A` - Asian, Asian American, or of Asian descent
+     * @description * 
      * * `B` - Black, African American, or of African descent
      * * `C` - Hispanic, Latino, Latina, Latinx, or of Latinx or Spanish-speaking descent
      * * `D` - Middle Eastern, North African, or of North African descent
@@ -1743,10 +1773,14 @@ export interface components {
      * * `G` - White or of European descent
      * * `H` - Multi-racial or multi-ethnic
      * * `I` - I prefer not to say
+     * * `J` - East Asian
+     * * `K` - South Asian
+     * * `L` - Southeast Asian
+     * * `M` - Central Asian
      * * `O` - Other
      * @enum {string}
      */
-    RaceEthnicGroupEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "O";
+    RaceEthnicGroupEnum: "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "O" | "J" | "K" | "L" | "M";
     /**
      * @description * `A` - Digital Designer
      * * `D` - Developer

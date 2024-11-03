@@ -28,8 +28,8 @@ export enum gender_identities {
   prefer_not_to_say = 'H'
 }
 
+//   asian = 'A',
 export enum race_ethnic_groups {
-  asian = 'A',
   black = 'B',
   hispanic = 'C',
   middle_eastern_north_african = 'D',
@@ -37,6 +37,10 @@ export enum race_ethnic_groups {
   pacific_islander = 'F',
   white = 'G',
   multi_racial_or_multi_ethnic = 'H',
+  east_asian = 'J',
+  south_asian = 'K',
+  southeast_asian = 'L',
+  central_asian = 'M',
   other = 'I',
   prefer_not_to_say = 'J'
 }
@@ -70,7 +74,8 @@ export enum previous_participation {
   _2019 = 'D',
   _2020 = 'E',
   _2022 = 'F',
-  _2023 = 'G'
+  _2023 = 'G',
+  _2024 = 'H'
 }
 
 export enum participation_role {
@@ -109,6 +114,14 @@ export enum heard_about_us {
 
 export type uploaded_file_reference = string;
 
+export enum theme_interest_track_choice {
+  yes = 'Y',
+  no = 'N'
+}
+
+// TODO: move to RSVP
+//   disabilities?: disabilities[] | null;
+//   disability_accommodations?: string | null;
 export interface Application {
   disclaimer_groups: boolean | null;
   disclaimer_open_source: boolean | null;
@@ -132,8 +145,6 @@ export interface Application {
   gender_identity: gender_identities[] | null;
   race_ethnic_group: race_ethnic_groups[];
   disability_identity: disability_identity | null;
-  disabilities?: disabilities[] | null;
-  disability_accommodations?: string | null;
   participation_capacity: participation_capacity | null;
   student_school?: string | null;
   student_field_of_study?: string | null;
@@ -141,13 +152,19 @@ export interface Application {
   employer?: string | null;
   status?: status | null;
   experience_with_xr?: string | null;
+  experience_contribution?: string | null;
   additional_skills: string | null;
   previously_participated?: boolean | null;
   previous_participation: previous_participation[] | null;
   proficient_languages: string | null;
   participation_role?: participation_role | null;
   theme_essay?: string | null;
-  theme_essay_follow_up?: string | null;
+  // theme_essay_follow_up?: string | null;
+  theme_interest_track_one?: theme_interest_track_choice | null;
+  theme_interest_track_two?: theme_interest_track_choice | null;
+  theme_detail_one?: theme_interest_track_choice | null;
+  theme_detail_two?: theme_interest_track_choice | null;
+  theme_detail_three?: theme_interest_track_choice | null;
   heard_about_us?: heard_about_us[] | null;
   shirt_size?: string | null;
   dietary_restrictions?: string | null;
@@ -267,9 +284,9 @@ export enum MentorTopics {
 
 export function getKeyByValue(enumObj: any, value: string): string | null {
   for (const [key, val] of Object.entries(enumObj)) {
-      if (val === value) {
-          return key;
-      }
+    if (val === value) {
+      return key;
+    }
   }
   return null; // return null if no matching key is found
 }

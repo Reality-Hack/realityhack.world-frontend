@@ -182,7 +182,7 @@ export default function Dashboard() {
               <div className="ml-2 text-xl">CONGRATS!</div>
             </div>
             <div className="p-6">
-              Now that you’ve RSVP’d to MIT Reality Hack 2024, make sure you
+              Now that you’ve RSVP’d to MIT Reality Hack 2025, make sure you
               join our Discord to start chatting with other accepted
               participants, coordinate housing, share resources, and get to know
               each other! We&apos;ll also be running the event and posting

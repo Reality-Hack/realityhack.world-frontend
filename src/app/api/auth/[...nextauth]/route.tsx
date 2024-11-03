@@ -16,7 +16,10 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
   const resp = await fetch(
     `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
     {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Forwarded-Host': `${process.env.NEXTAUTH_URL || ''}`
+      },
       body: new URLSearchParams({
         client_id: process.env.KEYCLOAK_ID || '',
         client_secret: process.env.KEYCLOAK_SECRET || '',

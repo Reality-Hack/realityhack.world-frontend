@@ -35,8 +35,8 @@ export const genderIdentityLabels = {
   prefer_not_to_say: 'I prefer not to say'
 };
 
+// asian: 'Asian, Asian American, or of Asian descent',
 export const raceEthnicGroupLabels = {
-  asian: 'Asian, Asian American, or of Asian descent',
   black: 'Black, African American, or of African descent',
   hispanic:
     'Hispanic, Latino, Latina, Latinx, or of Latinx or Spanish-speaking descent',
@@ -47,6 +47,10 @@ export const raceEthnicGroupLabels = {
   pacific_islander: 'Pacific Islander or Native Hawaiian',
   white: 'White or of European descent',
   multi_racial_or_multi_ethnic: 'Multi-racial or multi-ethnic',
+  east_asian: 'East Asian',
+  south_asian: 'South Asian',
+  southeast_asian: 'Southeast Asian',
+  central_asian: 'Central Asian',
   other: 'Other',
   prefer_not_to_say: 'I prefer not to say'
 };
@@ -127,9 +131,14 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
       </div>
 
       <div className="mb-8">
-        <p className="mb-4">
+        <p className="mb-2">
           What race or ethnic group do you belong to? Select all that apply.{' '}
           <span className="font-bold text-themeSecondary">*</span>
+        </p>
+        <p className="text-xs italic max-w-[520px] -mt-2 mb-4">
+          If you would like to provide a more specific answer (e.g. East Asian,
+          South Asian, Cherokee, Métis, Maori), you may use the “Other” box to
+          provide an answer.
         </p>
         {Object.keys(race_ethnic_group).map(key => (
           <CheckboxInput
@@ -183,7 +192,8 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
               )
             )}
           </div>
-          {formData.disability_identity === disability_identity.yes && (
+          {/* TODO: move to RSVP */}
+          {/* {formData.disability_identity === disability_identity.yes && (
             <>
               <div className="mb-8">
                 <p className="mb-4">
@@ -235,7 +245,7 @@ const DiversityInclusionForm: React.FC<FormProps> = ({
                 you to attend the event? (Optional)
               </TextAreaInput>
             </>
-          )}
+          )} */}
         </>
       )}
     </div>

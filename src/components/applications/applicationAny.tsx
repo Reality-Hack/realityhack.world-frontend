@@ -43,14 +43,16 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
     if (
       updatedPayload.participation_class === 'P' &&
       acceptedFiles &&
-      acceptedFiles?.length > 0 &&
-      !!session
+      acceptedFiles?.length > 0
     ) {
       try {
         fileUploadResponse = await fileUpload(
-          session.access_token,
+        // during the application process, the user is not logged in
+        //   session.access_token,
+          undefined,
           acceptedFiles[0]
         );
+
         updatedPayload.resume = fileUploadResponse.id;
       } catch (error) {
         setIsUploading(false);
@@ -73,6 +75,10 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
     updatedPayload.hardware_hack_interest =
       updatedPayload.hardware_hack_interest || 'A';
 
+    // if hardware_hack_detail has no values, set to H
+    updatedPayload.hardware_hack_detail =
+      updatedPayload.hardware_hack_detail || 'H';
+
     // Assuming updatedPayload.middle_name may contain a "blank" character like a space
     if (updatedPayload.middle_name) {
       // Trim the value to remove leading and trailing spaces
@@ -90,6 +96,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
     [
       'disability_accommodations',
       'experience_with_xr',
+      'experience_contribution',
       'outreach_groups'
     ].forEach(field => {
       if (updatedPayload[field] && updatedPayload[field].length > 1000) {
@@ -139,7 +146,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
           <div className="w-[250px] h-[250px] mt-8 mx-auto bg-logocolor dark:bg-logobw bg-contain bg-no-repeat bg-center" />
           <div className="pb-8">
             <h1 className="py-1 text-2xl leading-8 text-center text-themeSecondary drop-shadow-md font-ethnocentric">
-              MIT Reality Hack 2024
+              MIT Reality Hack 2025
             </h1>
             <h2 className="text-2xl font-bold leading-8 text-center text-themeYellow drop-shadow-md">
               {' '}
@@ -209,10 +216,18 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
               </button>
               <button
                 onClick={handleNextTab}
-                className="cursor-pointer text-white bg-[#493B8A] px-4 py-2 rounded-lg disabled:opacity-50 transition-all"
-                disabled={!isTabValid(tabNames[selectedTab])}
+                className={`cursor-pointer text-white px-4 py-2 rounded-lg disabled:opacity-50 transition-all ${
+                  isUploading
+                    ? 'opacity-50 bg-green-400'
+                    : 'opacity-100 bg-[#493B8A]'
+                }`}
+                disabled={!isTabValid(tabNames[selectedTab]) || isUploading}
               >
-                {isOnSubmitTab ? 'Submit' : 'Next'}
+                {isUploading
+                  ? 'Submitting...'
+                  : isOnSubmitTab
+                    ? 'Submit'
+                    : 'Next'}
               </button>
 
               {DEBUG && (

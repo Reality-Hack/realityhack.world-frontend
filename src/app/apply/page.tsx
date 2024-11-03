@@ -13,10 +13,11 @@ import ThematicForm from '@/components/applications/ThematicForm';
 import AnyApp from '@/components/applications/applicationAny';
 import {
   digital_designer_skills,
-  disabilities,
+  //   disabilities,
   disability_identity,
   form_data,
   gender_identity,
+  theme_interest_track_choice,
   participation_capacity,
   participation_role,
   race_ethnic_group
@@ -63,7 +64,11 @@ const Application: NextPage = ({}: any) => {
       'participation_role',
       'previously_participated'
     ],
-    THEMATIC: ['theme_essay', 'theme_essay_follow_up'],
+    THEMATIC: [
+      'theme_essay',
+      'theme_interest_track_one',
+      'theme_interest_track_two'
+    ],
     CLOSING: [''],
     'REVIEW & SUBMIT': ['']
   });
@@ -90,8 +95,6 @@ const Application: NextPage = ({}: any) => {
     gender_identity: [],
     race_ethnic_group: [],
     disability_identity: null,
-    disabilities: [],
-    disability_accommodations: '',
     participation_capacity: null,
     student_school: null,
     student_field_of_study: null,
@@ -107,19 +110,29 @@ const Application: NextPage = ({}: any) => {
     experience_with_xr: '',
     additional_skills: '',
     theme_essay: '',
-    theme_essay_follow_up: '',
+    // theme_essay_follow_up: '',
+    theme_interest_track_one: null,
+    theme_interest_track_two: null,
+    theme_detail_one: null,
+    theme_detail_two: null,
+    theme_detail_three: null,
     hardware_hack_interest: null,
+    hardware_hack_detail: [],
     heard_about_us: [],
     outreach_groups: null,
     gender_identity_other: null,
     race_ethnic_group_other: null,
-    disabilities_other: null,
     digital_designer_skills_other: null,
     heard_about_us_other: null,
     current_country_option: null,
     nationality_option: null,
     industry_option: null
   });
+  // TODO: move to RSVP
+  // disability_accommodations: '',
+  // disabilities_other: null,
+  // disabilities: [],
+
   useEffect(() => {
     let updatedFormData = { ...formData };
 
@@ -133,7 +146,10 @@ const Application: NextPage = ({}: any) => {
   useEffect(() => {
     let updatedFormData = { ...formData };
 
-    if (formData.participation_role === participation_role.designer) {
+    if (
+      formData.participation_role ===
+      participation_role.digital_creative_designer
+    ) {
       updatedFormData.digital_designer_skills = [];
     } else if (formData.participation_role === participation_role.developer) {
       updatedFormData.proficient_languages = '';
@@ -236,7 +252,7 @@ const Application: NextPage = ({}: any) => {
         } else if (
           // RADIO
           type === 'radio' &&
-          (value === 'true' || value === 'false')
+          !['true', 'false', 'Y', 'N'].includes(value)
         ) {
           return {
             ...prev,
@@ -302,7 +318,6 @@ const Application: NextPage = ({}: any) => {
 
   const isTabValid = (tabName: string): boolean => {
     const required_fields = requiredFields[tabName];
-
     if (!required_fields) return false;
 
     if (required_fields.every(field => field === '')) {
@@ -350,6 +365,7 @@ const Application: NextPage = ({}: any) => {
       'participation_capacity',
       'participation_role',
       'previously_participated',
+      'experience_contribution',
       ...(formData.participation_capacity === participation_capacity.student
         ? ['student_school', 'student_field_of_study']
         : formData.participation_capacity
@@ -358,7 +374,7 @@ const Application: NextPage = ({}: any) => {
       ...(formData.previously_participated === 'true'
         ? ['previous_participation']
         : []),
-      ...(formData.participation_role === participation_role.designer
+      ...(formData.participation_role === participation_role.digital_creative_designer
         ? ['digital_designer_skills']
         : []),
       ...(formData.participation_role === participation_role.specialist
@@ -370,6 +386,16 @@ const Application: NextPage = ({}: any) => {
         : [])
     ];
 
+    const updatedThematic = [
+      ...(formData.theme_interest_track_two &&
+        formData.theme_interest_track_two === theme_interest_track_choice.yes
+        ? ['theme_detail_one', 'theme_detail_two', 'theme_detail_three']
+        : []),
+      'theme_essay',
+      'theme_interest_track_one',
+      'theme_interest_track_two'
+    ];
+
     const updatedDiversityInclusion = [
       ...(formData.gender_identity &&
       formData.gender_identity.includes(gender_identity.other)
@@ -379,23 +405,26 @@ const Application: NextPage = ({}: any) => {
       formData.race_ethnic_group.includes(race_ethnic_group.other)
         ? ['race_ethnic_group_other']
         : []),
-      ...(formData.disability_identity &&
-      formData.disability_identity === disability_identity.yes
-        ? ['disabilities']
-        : []),
-      ...(formData.disabilities &&
-      formData.disabilities.includes(disabilities.other)
-        ? ['disabilities_other']
-        : []),
       'gender_identity',
       'race_ethnic_group',
       'disability_identity'
     ];
 
+    // TODO: move to RSVP
+    // ...(formData.disability_identity &&
+    //   formData.disability_identity === disability_identity.yes
+    //     ? ['disabilities']
+    //     : []),
+    //   ...(formData.disabilities &&
+    //   formData.disabilities.includes(disabilities.other)
+    //     ? ['disabilities_other']
+    //     : []),
+
     setRequiredFields(current => ({
       ...current,
       'DIVERSITY & INCLUSION': updatedDiversityInclusion,
-      EXPERIENCE: updatedExperience
+      EXPERIENCE: updatedExperience,
+      THEMATIC: updatedThematic
     }));
   }, [
     formData.participation_capacity,
@@ -404,7 +433,8 @@ const Application: NextPage = ({}: any) => {
     formData.gender_identity,
     formData.race_ethnic_group,
     formData.heard_about_us,
-    formData.disability_identity
+    formData.disability_identity,
+    formData.theme_interest_track_two
   ]);
 
   const WelcomeTab = () => (
@@ -412,8 +442,8 @@ const Application: NextPage = ({}: any) => {
       <div className="text-xl font-bold text-purple-900">Welcome</div>
       <div className="flex flex-col gap-4">
         <div className="pt-8">
-          Welcome to the Reality Hack 2024 participant application form. Please
-          fill out this form to apply for a spot at Reality Hack 2024. For all
+          Welcome to the Reality Hack 2025 participant application form. Please
+          fill out this form to apply for a spot at Reality Hack 2025. For all
           applications-related questions, contact{' '}
           <Link href="mailto:apply@mitrealityhack.com">
             <span className="text-themePrimary">apply@mitrealityhack.com</span>
@@ -430,7 +460,7 @@ const Application: NextPage = ({}: any) => {
         </div>
         <div className="pb-4">
           Please note that this form is not a commitment to attend Reality Hack
-          2024. You will be notified of your acceptance status by email.
+          2025. You will be notified of your acceptance status by email.
         </div>
         <div>
           You will receive a confirmation email when you complete the
@@ -506,9 +536,18 @@ const Application: NextPage = ({}: any) => {
     </div>
   );
 
+  const acceptedFileTypes = {
+    'application/pdf': ['.pdf'],
+    'application/msword': ['.doc'],
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [
+      '.docx'
+    ],
+    'text/plain': ['.txt']
+  };
+
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
-      <p>{`Thank you for applying to MIT Reality Hack 2024, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+      <p>{`Thank you for applying to MIT Reality Hack 2025, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 
@@ -529,6 +568,7 @@ const Application: NextPage = ({}: any) => {
       setRejectedFiles={setRejectedFiles}
       countries={countries}
       nationalities={nationalities}
+      acceptedFileTypes={acceptedFileTypes}
     />,
     <DiversityInclusionForm
       key={3}

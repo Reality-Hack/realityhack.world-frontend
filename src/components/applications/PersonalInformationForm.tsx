@@ -5,7 +5,7 @@ import {
   age_group,
   option_value
 } from '@/types/application_form_types';
-import Dropzone from '../Dropzone';
+import Dropzone, { AcceptedFileTypes } from '../Dropzone';
 
 interface FormProps {
   formData: Partial<form_data>;
@@ -23,6 +23,7 @@ interface FormProps {
   setRejectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
   countries: option_value[];
   nationalities: option_value[];
+  acceptedFileTypes: AcceptedFileTypes;
 }
 
 export const ageGroupLabels = {
@@ -47,7 +48,8 @@ const PersonalInformationForm: React.FC<FormProps> = ({
   rejectedFiles,
   setRejectedFiles,
   countries,
-  nationalities
+  nationalities,
+  acceptedFileTypes
 }) => {
   const handleSelectChange = (
     value: string[],
@@ -167,6 +169,7 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         setAcceptedFiles={setAcceptedFiles}
         rejectedFiles={rejectedFiles}
         setRejectedFiles={setRejectedFiles}
+        acceptedFileTypes={acceptedFileTypes}
       />
       <SelectInput
         name="nationality"
@@ -210,7 +213,7 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
       <label className="mb-2">
-        As of January 25, 2024, I will fall under this age group:{' '}
+        As of January 23, 2025, I will fall under this age group:{' '}
       </label>
       <span className="font-bold text-themeSecondary">*</span>
       <div className="mb-8">

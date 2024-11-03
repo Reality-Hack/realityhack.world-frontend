@@ -28,14 +28,18 @@ export enum gender_identity {
   other = 'O'
 }
 
+// asian = 'A',
 export enum race_ethnic_group {
-  asian = 'A',
   black = 'B',
   hispanic = 'C',
   middle_eastern_north_african = 'D',
   native_american = 'E',
   pacific_islander = 'F',
   white = 'G',
+  east_asian = 'J',
+  south_asian = 'K',
+  southeast_asian = 'L',
+  central_asian = 'M',
   multi_racial_or_multi_ethnic = 'H',
   prefer_not_to_say = 'I',
   other = 'O'
@@ -77,15 +81,26 @@ export enum previous_participation {
   _2019 = 'D',
   _2020 = 'E',
   _2022 = 'F',
-  _2023 = 'G'
+  _2023 = 'G',
+  _2024 = 'H'
 }
 
 export enum participation_role {
-  designer = 'A',
+  digital_creative_designer = 'A',
   developer = 'D',
   specialist = 'S',
   project_manager = 'P'
 }
+
+export const participation_role_display_name: Record<
+  keyof typeof participation_role,
+  string
+> = {
+  digital_creative_designer: 'Digital/Creative Designer',
+  developer: 'Developer',
+  specialist: 'Domain or other Specialized Skill Expert',
+  project_manager: 'Project Manager'
+};
 
 export enum digital_designer_skills {
   digital_art = 'A',
@@ -103,6 +118,23 @@ export enum hardware_hack_interest {
   certain = 'D'
 }
 
+export enum hardware_hack_detail {
+  _3d__printing = 'A',
+  soldering = 'B',
+  circuits = 'C',
+  arduino = 'D',
+  esp32 = 'E',
+  unity = 'F',
+  physical__prototyping = 'G',
+  no__experience = 'H',
+  other = 'O'
+}
+
+export enum theme_interest_track_choice {
+  yes = 'Y',
+  no = 'N'
+}
+
 export enum heard_about_us {
   friend = 'F',
   volunteer = 'V',
@@ -113,18 +145,20 @@ export enum heard_about_us {
   other = 'O'
 }
 
+// TODO: move to RSVP
+// ...disabilities,
 export const Enums = {
   ...status,
   ...age_group,
   ...gender_identity,
   ...race_ethnic_group,
   ...disability_identity,
-  ...disabilities,
   ...participation_capacity,
   ...previous_participation,
   ...participation_role,
   ...digital_designer_skills,
   ...hardware_hack_interest,
+  ...hardware_hack_detail,
   ...heard_about_us
 };
 
@@ -142,6 +176,10 @@ export type option_value = {
   display_name: string;
 };
 
+// TODO: move to RSVP
+// disabilities?: disabilities[] | null;
+// disability_accommodations?: string | null;
+// disabilities_other?: string | null;
 export interface form_data {
   disclaimer_groups: boolean | null;
   disclaimer_open_source: boolean | null;
@@ -174,8 +212,6 @@ export interface form_data {
   gender_identity: gender_identity[] | null;
   race_ethnic_group: race_ethnic_group[] | null;
   disability_identity: disability_identity | null;
-  disabilities?: disabilities[] | null;
-  disability_accommodations?: string | null;
   participation_capacity: participation_capacity | null;
   participation_class: string | null;
   student_school?: string | null;
@@ -187,22 +223,28 @@ export interface form_data {
   employer?: string | null;
   status?: status | null;
   experience_with_xr?: string | null;
+  experience_contribution?: string | null;
   additional_skills: string | null;
   previously_participated?: string | null;
   previous_participation: previous_participation[] | null;
   proficient_languages: string | null;
   participation_role?: participation_role | null;
   theme_essay?: string | null;
-  theme_essay_follow_up?: string | null;
+  // theme_essay_follow_up?: string | null;
+  theme_interest_track_one?: theme_interest_track_choice | null;
+  theme_interest_track_two?: theme_interest_track_choice | null;
+  theme_detail_one?: theme_interest_track_choice | null;
+  theme_detail_two?: theme_interest_track_choice | null;
+  theme_detail_three?: theme_interest_track_choice | null;
   heard_about_us?: heard_about_us[] | '';
   digital_designer_skills?: digital_designer_skills[] | null;
   specialized_expertise?: string | null;
   industry: string[];
   hardware_hack_interest?: hardware_hack_interest[] | null;
+  hardware_hack_detail?: hardware_hack_detail[] | null;
   outreach_groups?: string | null;
   gender_identity_other?: string | null;
   race_ethnic_group_other?: string | null;
-  disabilities_other?: string | null;
   digital_designer_skills_other?: string | null;
   heard_about_us_other?: string | null;
   submitted_at: Date;

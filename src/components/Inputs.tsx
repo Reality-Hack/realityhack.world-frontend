@@ -54,6 +54,11 @@ export const validateField = (
         return 'Invalid URL.';
       }
       break;
+    case 'radio':
+      if (!['true', 'false', 'Y', 'N'].includes(value)) {
+        return 'This field is required.';
+      }
+      break;
     default:
       break;
   }
@@ -458,18 +463,25 @@ export const RadioInput: React.FC<{
   checked: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   label: string;
-}> = ({ name, value, checked, onChange, label }) => (
-  <div className="mb-2">
-    <label>
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+}> = ({ name, value, checked, onChange, label, onBlur }) => {
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (onBlur) onBlur(e);
+  };
+  return (
+    <div className="mb-2">
+      <label>
       <input
         type="radio"
         name={name}
         value={value}
         checked={checked}
         onChange={onChange}
+        onBlur={handleBlur}
         className="mr-2 text-black accent-themePrimary rounded-xl w-fit"
       />
       {label}
     </label>
   </div>
-);
+  );
+};

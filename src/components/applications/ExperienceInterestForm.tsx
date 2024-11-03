@@ -12,7 +12,8 @@ import {
   previous_participation,
   participation_role,
   digital_designer_skills,
-  option_value
+  option_value,
+  participation_role_display_name
 } from '@/types/application_form_types';
 
 interface FormProps {
@@ -40,7 +41,8 @@ export const previousParticipationLabels = {
   _2020: '2020',
   _2021: '2021',
   _2022: '2022',
-  _2023: '2023'
+  _2023: '2023',
+  _2024: '2024'
 };
 
 export const DesignSkillsLabels = {
@@ -74,6 +76,16 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
       [`${name}_option`]: displayName
     }));
   };
+
+  const specializedExpertiseText =
+    formData.participation_role === participation_role.specialist
+      ? 'What are your areas or skills of expertise?'
+      : 'What platforms and programming languages are you already proficient with?';
+
+  const specializedExpertisePlaceholder =
+    formData.participation_role === participation_role.specialist
+      ? 'List your domain areas or skills of expertise.'
+      : 'List what programming languages and platforms you are proficient with.';
 
   return (
     <div className="px-6">
@@ -189,7 +201,7 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
             required={true}
             valid={!errors.industry}
           >
-            What industry represents your expertise?{' '}
+            What industry best represents your expertise?{' '}
             <span className="font-bold text-themeSecondary">*</span>
           </SelectInput>
           <hr className="my-4" />
@@ -197,13 +209,14 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
       )}
 
       <p className="py-4">
-        Have you ever participated in the MIT XR Hackathon before?{' '}
+        Have you ever participated in the MIT Reality Hack before?{' '}
         <span className="font-bold text-themeSecondary">*</span>
       </p>
 
       <RadioInput
         name="previously_participated"
         value="true"
+        key="previously_participated_true"
         checked={formData.previously_participated === 'true'}
         onChange={handleChange}
         label="Yes"
@@ -211,6 +224,7 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
       <RadioInput
         name="previously_participated"
         value="false"
+        key="previously_participated_false"
         checked={formData.previously_participated === 'false'}
         onChange={handleChange}
         label="No"
@@ -253,30 +267,38 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
         <span className="font-bold text-themeSecondary">*</span>
       </p>
       <div className="mb-4">
-        {Object.keys(participation_role).map(key => (
-          <RadioInput
-            key={key}
-            name="participation_role"
-            value={participation_role[key as keyof typeof participation_role]}
-            checked={
-              formData.participation_role ===
-              participation_role[key as keyof typeof participation_role]
-            }
-            onChange={handleChange}
-            label={key
-              .split('_')
-              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(' ')}
-          />
+        {(
+          Object.keys(participation_role) as Array<
+            keyof typeof participation_role
+          >
+        ).map(key => (
+          <>
+            <RadioInput
+              key={key}
+              name="participation_role"
+              value={participation_role[key]}
+              checked={formData.participation_role === participation_role[key]}
+              onChange={handleChange}
+              label={participation_role_display_name[key]}
+            />
+            {key === 'specialist' && (
+              <p className="ml-4 text-xs italic max-w-[520px] -mt-2 mb-2">
+                Specialized skills and domain expertise includes fields like AI,
+                machine learning, robotics, edge computing, etc.
+              </p>
+            )}
+            {key === 'project_manager' && (
+              <p className="ml-4 text-xs italic max-w-[520px] -mt-2 mb-2">
+                Recommended for management students and others experienced in
+                business, marketing, and project management. Project managers
+                help their team by doing market research, refining concepts,
+                guiding the project pitch, and preparing presentation materials.
+              </p>
+            )}
+          </>
         ))}
-        <p className="ml-4 text-xs italic max-w-[520px]">
-          Recommended for management students and others experienced in
-          business, marketing, and project management. Project managers help
-          their team by doing market research, refining concepts, guiding the
-          project pitch, and preparing presentation materials.
-        </p>
       </div>
-      {formData.participation_role === participation_role.designer && (
+      {formData.participation_role === participation_role.digital_creative_designer && (
         <div className="py-4">
           <hr className="mb-4" />
           <p className="mb-4">
@@ -330,24 +352,40 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
           <hr />
         </div>
       )}
-      {formData.participation_role === participation_role.specialist && (
+      {(formData.participation_role === participation_role.specialist ||
+        formData.participation_role === participation_role.developer) && (
         <div className="py-4">
           <hr className="mb-4" />
           <TextAreaInput
             name="specialized_expertise"
-            placeholder="List your domain areas or skills of expertise."
+            placeholder={specializedExpertisePlaceholder}
             value={formData.specialized_expertise || ''}
             onChange={handleChange}
             error={errors.specialized_expertise}
             valid={!errors.specialized_expertise}
             onBlur={handleBlur}
           >
-            What are your areas or skills of expertise?{' '}
+            {specializedExpertiseText}
             <span className="font-bold text-themeSecondary">*</span>
           </TextAreaInput>
           <br />
         </div>
       )}
+      <TextAreaInput
+        name="experience_contribution"
+        placeholder="Describe how you envision yourself contributing to your team."
+        value={formData.experience_contribution || ''}
+        onChange={handleChange}
+        error={errors.experience_contribution}
+        valid={!errors.experience_contribution}
+        onBlur={handleBlur}
+      >
+        MIT Reality Hack is a fast-paced event that harness a variety of talents
+        from participants to create something entirely new in a very short
+        period of time. How do you envision your role in this environment and
+        how will you contribute to your team?
+        <span className="font-bold text-themeSecondary">*</span>
+      </TextAreaInput>
       <TextAreaInput
         name="experience_with_xr"
         placeholder="List tools you are familiar with (Optional)"
