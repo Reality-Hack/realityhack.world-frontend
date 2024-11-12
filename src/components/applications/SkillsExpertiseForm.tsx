@@ -167,6 +167,20 @@ const SkillsExpertiseForm: React.FC<FormProps> = ({
         <>
           <div className="mb-8">
             <TextAreaInput
+              name="mentor_qualified_fields"
+              placeholder="Please describe your expertise with the above areas."
+              value={formData.mentor_qualified_fields || ''}
+              onChange={handleChange}
+              error={errors.mentor_qualified_fields}
+              valid={!errors.mentor_qualified_fields}
+              onBlur={handleBlur}
+            >
+              Please describe your expertise with the above areas.{' '}
+              <span className="font-bold text-themeSecondary">*</span>
+            </TextAreaInput>
+          </div>
+          <div className="mb-8">
+            <TextAreaInput
               name="judge_judging_steps"
               placeholder="List the areas you are most qualified"
               value={formData.judge_judging_steps || ''}

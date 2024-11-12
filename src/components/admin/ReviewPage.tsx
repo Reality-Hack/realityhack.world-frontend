@@ -569,6 +569,12 @@ export default function ReviewPage({
           </div>
           <div>
             <LabelAndValue
+              label={'Please describe your expertise with the above areas.'}
+              value={allInfo.mentor_qualified_fields}
+            />
+          </div>
+          <div>
+            <LabelAndValue
               label={'Walk us through how you would judge a hackathon project.'}
               value={allInfo.judge_judging_steps}
             />

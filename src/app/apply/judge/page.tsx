@@ -50,6 +50,7 @@ const JudgeApp: NextPage = ({}: any) => {
     heard_about_us_other: null,
     industry_option: null,
     hardware_hack_interest: null,
+    hardware_hack_detail: [],
     current_country: [],
     nationality: [],
     digital_designer_skills: [],
@@ -291,7 +292,7 @@ const JudgeApp: NextPage = ({}: any) => {
         <div className="pt-8">
           Before you begin, please be advised that Judges only need to attend on 
           January 26, 2025 from about 12pm Eastern and be available until 6pm at 
-          the latest.
+          the latest. We will also need a phone number to be in touch with you during the hackathon.
         </div>
       </div>
     </div>
