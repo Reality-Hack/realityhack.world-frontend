@@ -47,6 +47,7 @@ const MentorApp: NextPage = ({}: any) => {
     proficient_languages: '',
     additional_skills: '',
     hardware_hack_interest: null,
+    hardware_hack_detail: [],
     heard_about_us: [],
     outreach_groups: null,
     gender_identity_other: null,
@@ -307,10 +308,12 @@ const MentorApp: NextPage = ({}: any) => {
         </div>
         <div className="border border-gray-200 border-1"></div>
         <div>
-          Is willing to work on a hackers schedule. Our participants are so
-          committed XR innovation, that they often work well into the night.
-          We&apos;d love mentors to be with them on that journey - especially
-          the evening before the deadline.
+          Is willing to work on a hackers schedule and is available to attend 
+          from January 23-26, 2025 (attending on January 27 is optional for 
+          mentors). Our participants are so committed experiential technology 
+          innovation, that they often work well into the night. We&apos;d love 
+          mentors to be with them on that journey - especially the evening 
+          before the deadline.
         </div>
         <div className="pt-4">
           <CheckboxInput
@@ -340,7 +343,9 @@ const MentorApp: NextPage = ({}: any) => {
           />
         </div>
         <div className="border border-gray-200 border-1"></div>
-        <div>Has a contagious passion for spatial computing</div>
+        <div>Has a contagious passion for experiential technology, including 
+             spatial computing, AI, ML, edge computing, etc.
+        </div>
         <div className="pt-4 mb-8">
           <CheckboxInput
             name="disclaimer_passion"

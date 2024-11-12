@@ -112,6 +112,21 @@ const SkillsExpertiseForm: React.FC<FormProps> = ({
           </div>
           <div className="mb-8">
             <TextAreaInput
+              name="theme_essay_follow_up"
+              placeholder="List the devices"
+              value={formData.theme_essay_follow_up || ''}
+              onChange={handleChange}
+              error={errors.theme_essay_follow_up}
+              valid={!errors.theme_essay_follow_up}
+              onBlur={handleBlur}
+            >
+              Do you have related hardware (such as headsets) that you may be 
+              willing to bring to troubleshoot their applications? If so, 
+              please list the devices. (optional) {' '}
+            </TextAreaInput>
+          </div>
+          <div className="mb-8">
+            <TextAreaInput
               name="mentor_mentoring_steps"
               placeholder="Discuss your debug process"
               value={formData.mentor_mentoring_steps || ''}

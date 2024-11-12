@@ -283,8 +283,15 @@ const JudgeApp: NextPage = ({}: any) => {
           Form submission.
         </div>
 
-        <div className="py-4">
+        <div className="py-4 pb-8">
           All fields are required unless marked as optional.
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 py-4 mt-8">
+        <div className="pt-8">
+          Before you begin, please be advised that Judges only need to attend on 
+          January 26, 2025 from about 12pm Eastern and be available until 6pm at 
+          the latest.
         </div>
       </div>
     </div>

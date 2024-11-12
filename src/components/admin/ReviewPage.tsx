@@ -206,10 +206,12 @@ export default function ReviewPage({
               name={'name'}
               value=""
               onChange={() => {}}
-              label="Is willing to work on a hackers schedule. Our participants are so
-              committed XR innovation, that they often work well into the night.
-              We'd love mentors to be with them on that journey - especially the
-              evening before the deadline."
+              label="Is willing to work on a hackers schedule and is available 
+              to attend from January 23-26, 2025 (attending on January 27 is 
+              optional for mentors). Our participants are so committed to 
+              experiential technology innovation, that they often work well 
+              into the night. We&apos;d love mentors to be with them on that journey 
+              - especially the evening before the deadline."
             />
           </div>
           <div className="border border-gray-200 border-1"></div>
@@ -230,7 +232,8 @@ export default function ReviewPage({
               name={'name'}
               value=""
               onChange={() => {}}
-              label="Has a contagious passion for spatial computing"
+              label="Has a contagious passion for experiential technology, including 
+             spatial computing, AI, ML, edge computing, etc."
             />
           </div>
         </div>
@@ -514,6 +517,12 @@ export default function ReviewPage({
             <LabelAndValue
               label={'List the areas you are most qualified to mentor in.'}
               value={allInfo.mentor_qualified_fields}
+            />
+          </div>
+          <div>
+            <LabelAndValue
+              label={'Any related hardware that you may be willing to bring?'}
+              value={allInfo.theme_essay_follow_up}
             />
           </div>
           <div>

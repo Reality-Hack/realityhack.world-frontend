@@ -230,7 +230,7 @@ export interface form_data {
   proficient_languages: string | null;
   participation_role?: participation_role | null;
   theme_essay?: string | null;
-  // theme_essay_follow_up?: string | null;
+  theme_essay_follow_up?: string | null;
   theme_interest_track_one?: theme_interest_track_choice | null;
   theme_interest_track_two?: theme_interest_track_choice | null;
   theme_detail_one?: theme_interest_track_choice | null;
