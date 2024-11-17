@@ -273,7 +273,7 @@ const MentorApp: NextPage = ({}: any) => {
       <div className="text-xl font-bold text-purple-900">Welcome</div>
       <div className="flex flex-col gap-4">
         <div className="pt-8">
-          Thank you for your interest to be a Mentor at MIT Reality Hack 2024.
+          Thank you for your interest to be a Mentor at MIT Reality Hack 2025.
           For all mentor-related questions, contact{' '}
           <Link href="mailto:jared@mitrealityhack.com">
             <span className="text-themePrimary">jared@mitrealityhack.com</span>
@@ -283,7 +283,7 @@ const MentorApp: NextPage = ({}: any) => {
 
         <div className="pb-4">
           Please note that this form is not a commitment to attend MIT Reality
-          Hack 2024 as a mentor. Our team will reach out to you about your
+          Hack 2025 as a mentor. Our team will reach out to you about your
           interest to confirm your participation.
         </div>
         <div>
@@ -363,7 +363,7 @@ const MentorApp: NextPage = ({}: any) => {
 
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
-      <p>{`Thank you for submitting your interest to be a Mentor at MIT Reality Hack 2024, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+      <p>{`Thank you for submitting your interest to be a Mentor at MIT Reality Hack 2025, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 
