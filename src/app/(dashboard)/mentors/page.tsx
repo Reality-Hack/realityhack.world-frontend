@@ -169,7 +169,7 @@ export default function Page() {
                   placeInQueue={idx + 1}
                   topicList={getTopicLabels(req.topic)}
                   created={req.created_at}
-                  team={req.team}
+                  team={req.team?.id}
                   onHandleUpdateStatus={handleUpdateStatus(req.id)}
                 />
               );
