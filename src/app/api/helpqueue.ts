@@ -7,18 +7,37 @@ export type Location = {
   updated_at: string;
 };
 
+export type HelpRequestTable = {
+  id: string;
+  number: number;
+  location: string;
+};
+
+export type HelpRequestTeam = {
+  id: string;
+  name: string;
+  table: HelpRequestTable;
+};
+
+export type HelpRequestReporter = {
+  id: string;
+  first_name: string;
+  last_name: string;
+};
+
 export type HelpRequest = {
   created_at: string;
   description: string;
   id: string;
   mentor: string;
-  reporter: string;
+  reporter: HelpRequestReporter;
   status: string;
-  team: string;
+  team: HelpRequestTeam;
   title: string;
   updated_at: string;
   topic: string[];
 };
+
 export type CreateHelpRequest = {
   team: string;
   topic: string[];

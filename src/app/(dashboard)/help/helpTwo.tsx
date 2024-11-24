@@ -209,7 +209,7 @@ export default function Help2() {
 
       <div className="flex flex-wrap justify-center gap-2 ">
         {allHelpRequests
-          .filter(el => el.team == user?.team?.id)
+          .filter(el => el.team?.id || el.team == user?.team?.id)
           .map((req, idx) => (
             <Posting
               key={req.id}
@@ -219,7 +219,7 @@ export default function Help2() {
               placeInQueue={idx + 1}
               skillList={getTopicLabels(req.topic)}
               created={req.created_at}
-              team={req.team}
+              team={req.team.id}
               requestId={req.id}
               setShowCompletedRequests={setShowCompletedRequests}
             />
