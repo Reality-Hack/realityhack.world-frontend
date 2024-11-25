@@ -34,8 +34,6 @@ export default function Team() {
           </ul>
           <p className="text-lg font-bold">Table Number: </p>
           <div className="text-lg">{team?.table?.number}</div>
-          <p className="text-lg font-bold">Table Location: </p>
-          <p className="text-lg">Building {team?.table?.location?.building}, Room {team?.table?.location?.room}</p>
       </div>
     </div>
   );
