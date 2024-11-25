@@ -49,7 +49,7 @@ export const validateField = (
         return `URL should not exceed 50 characters. consider using a URL shortener like bit.ly.`;
       }
       const urlPattern =
-        /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
+        /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?(@[\w.-]+)?$/;
       if (!urlPattern.test(value)) {
         return 'Invalid URL.';
       }
