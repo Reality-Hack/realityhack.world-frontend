@@ -385,7 +385,9 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
         }
       };
 
-      discordLookup();
+    // TODO: recover Discord username validation capabilities
+    setDiscordValidationResult('success');
+    //   discordLookup();
     },
     [requiredFields]
   );
