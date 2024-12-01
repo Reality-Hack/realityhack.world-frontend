@@ -14,6 +14,7 @@ type Props = {
 const defaultTeam: SerializedTeam = {
   id: '',
   name: '',
+  number: undefined,
   attendees: [],
   table: undefined,
   created_at: '',

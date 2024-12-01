@@ -41,7 +41,7 @@ export default function TeamPage({ params }: { params: { id: string } }) {
     if (isAdmin && session?.access_token && !!team) {
       const data: any = {
         name: team.name,
-        table: team.table?.id,
+        table: team.table?.id || null,
         attendees: team.attendees.map(attendee => attendee.id)
       };
       const result = await updateTeam(params.id, data, session?.access_token);

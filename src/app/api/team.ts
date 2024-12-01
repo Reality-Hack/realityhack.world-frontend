@@ -7,6 +7,7 @@ export type SerializedTeam = {
   id: string;
   name: string;
   attendees: Attendee[];
+  number: number | undefined; // should not be undefined but accounts for legacy data
   table?: components['schemas']['Table'];
   created_at: string;
   updated_at: string;

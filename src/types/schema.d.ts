@@ -209,10 +209,6 @@ export interface paths {
     /** @description API endpoint that allows Reality Kits to be viewed or edited. */
     post: operations["lighthouses_create"];
   };
-  "/lighthouses/{table__number}/": {
-    /** @description API endpoint that allows Reality Kits to be viewed or edited. */
-    get: operations["lighthouses_retrieve"];
-  };
   "/locations/": {
     /** @description API endpoint that allows locations to be viewed or edited. */
     get: operations["locations_list"];
@@ -445,10 +441,6 @@ export interface components {
      * @enum {string}
      */
     AnnouncementPendingEnum: "S" | "A" | "F";
-    // TODO: move to RSVP
-    // disabilities: components["schemas"]["DisabilitiesEnum"][];
-    // disabilities_other?: string | null;
-    // disability_accommodations?: string | null;
     Application: {
       /** Format: uuid */
       id: string;
@@ -460,6 +452,7 @@ export interface components {
       heard_about_us: components["schemas"]["HeardAboutUsEnum"][];
       digital_designer_skills: components["schemas"]["DigitalDesignerSkillsEnum"][];
       industry: components["schemas"]["IndustryEnum"][];
+      hardware_hack_detail: components["schemas"]["HardwareHackDetailEnum"][];
       first_name: string;
       middle_name?: string | null;
       last_name: string;
@@ -490,14 +483,13 @@ export interface components {
       experience_with_xr?: string | null;
       experience_contribution?: string | null;
       theme_essay?: string | null;
-    //   theme_essay_follow_up?: string | null;
-      theme_interest_track_one?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
-      theme_interest_track_two?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
-      theme_detail_one?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
-      theme_detail_two?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
-      theme_detail_three?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
+      theme_essay_follow_up?: string | null;
+      theme_interest_track_one?: components["schemas"]["ThemeInterestTrackOneEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_interest_track_two?: components["schemas"]["ThemeInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_one?: components["schemas"]["ThemeDetailOneEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_two?: components["schemas"]["ThemeDetailTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_three?: components["schemas"]["ThemeDetailThreeEnum"] | components["schemas"]["NullEnum"] | null;
       hardware_hack_interest?: components["schemas"]["HardwareHackInterestEnum"];
-      hardware_hack_detail?: components["schemas"]["HardwareHackDetailEnum"];
       heard_about_us_other?: string | null;
       digital_designer_skills_other?: string | null;
       communications_platform_username?: string | null;
@@ -625,7 +617,7 @@ export interface components {
     AttendeePreference: {
       /** Format: uuid */
       id: string;
-      preference: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"];
+      preference: components["schemas"]["PreferenceEnum"];
       /** Format: uuid */
       preferer: string;
       /** Format: uuid */
@@ -677,7 +669,7 @@ export interface components {
       /** Format: email */
       emergency_contact_email: string;
       emergency_contact_relationship: string;
-      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
       special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
       /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
       app_in_store?: string | null;
@@ -730,7 +722,7 @@ export interface components {
       /** Format: email */
       emergency_contact_email: string;
       emergency_contact_relationship: string;
-      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
       special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
       /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
       app_in_store?: string | null;
@@ -820,18 +812,6 @@ export interface components {
      * @enum {string}
      */
     DigitalDesignerSkillsEnum: "A" | "B" | "C" | "D" | "E" | "F";
-    /**
-     * @description * `A` - Hearing difficulty - Deaf or having serious difficulty hearing (DEAR).
-     * * `B` - Vision difficulty - Blind or having serious difficulty seeing, even when wearing glasses (DEYE).
-     * * `C` - Cognitive difficulty - Because of a physical, mental, or emotional problem, having difficulty remembering, concentrating, or making decisions (DREM).
-     * * `D` - Ambulatory difficulty - Having serious difficulty walking or climbing stairs (DPHY).
-     * * `E` - Self-care difficulty - Having difficulty bathing or dressing (DDRS).
-     * * `F` - Independent living difficulty - Because of a physical, mental, or emotional problem, having difficulty doing errands alone such as visiting a doctor's office or shopping (DOUT).
-     * * `G` - I prefer not to say
-     * * `O` - Other
-     * @enum {string}
-     */
-    DisabilitiesEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "O";
     /**
      * @description * `A` - Yes
      * * `B` - No
@@ -954,6 +934,19 @@ export interface components {
       updated_at: string;
     };
     /**
+     * @description * `A` - 3D Printing
+     * * `B` - Soldering
+     * * `C` - Circuits
+     * * `D` - Arduino
+     * * `E` - ESP32
+     * * `F` - Unity
+     * * `G` - Physical Prototyping
+     * * `H` - I have no prior experience
+     * * `O` - Other
+     * @enum {string}
+     */
+    HardwareHackDetailEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "O";
+    /**
      * @description * `A` - Not at all interested; I'll pass
      * * `B` - Some mild interest
      * * `C` - Most likely
@@ -961,19 +954,6 @@ export interface components {
      * @enum {string}
      */
     HardwareHackInterestEnum: "A" | "B" | "C" | "D";
-    /**
-     * @description * `A` - 3D Printing
-     * * `B` - Soldering
-     * * `C` - Circuits
-     * * `D` - Arduino
-     * * `E` - ESP32
-     * * `F` - Unity
-     * * `G` - Physical Prototyping 
-     * * `H` - I have no prior experience
-     * * `O` - Other
-     * @enum {string}
-     */
-    HardwareHackDetailEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "O";
     HardwareRequest: {
       /** Format: uuid */
       id: string;
@@ -1058,6 +1038,31 @@ export interface components {
      * @enum {string}
      */
     HeardAboutUsEnum: "F" | "V" | "N" | "S" | "C" | "P" | "O";
+    HelpRequestReporter: {
+      /** Format: uuid */
+      id: string;
+      first_name?: string;
+      last_name?: string;
+    };
+    HelpRequestTable: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int64 */
+      number: number;
+      location: components["schemas"]["HelpRequestTeamLocation"];
+    };
+    HelpRequestTeam: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      table: components["schemas"]["HelpRequestTable"];
+    };
+    HelpRequestTeamLocation: {
+      /** Format: uuid */
+      id: string;
+      building: string;
+      room?: components["schemas"]["RoomEnum"];
+    };
     /**
      * @description * `Industry` - Industry
      * * `Accounting ` - Accounting
@@ -1258,6 +1263,7 @@ export interface components {
       created_at: string;
       /** Format: date-time */
       updated_at: string;
+      reporter_location?: string | null;
     };
     MentorHelpRequestHistory: {
       history_id: number;
@@ -1280,6 +1286,26 @@ export interface components {
       created_at: string;
       /** Format: date-time */
       updated_at: string;
+    };
+    MentorHelpRequestRead: {
+      /** Format: uuid */
+      id: string;
+      title?: string | null;
+      description?: string | null;
+      team: components["schemas"]["HelpRequestTeam"];
+      category?: components["schemas"]["CategoryEnum"] | components["schemas"]["NullEnum"] | null;
+      topic: components["schemas"]["TopicEnum"][];
+      reporter: components["schemas"]["HelpRequestReporter"];
+      /** Format: uuid */
+      mentor?: string | null;
+      status?: components["schemas"]["Status130Enum"];
+      category_specialty?: string | null;
+      topic_other?: string | null;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+      reporter_location?: string | null;
     };
     /**
      * @description * `R` - Requested
@@ -1316,14 +1342,10 @@ export interface components {
      * * `I` - Instructor
      * * `V` - Volunteer
      * @enum {string}
-    */
-    // TODO: move to RSVP
-    // disabilities?: components["schemas"]["DisabilitiesEnum"][];
-    // disabilities_other?: string | null;
-    // disability_accommodations?: string | null;
+     */
     ParticipationEnum: "R" | "C" | "I" | "V";
     /**
-     * @description * `A` - Digital Designer
+     * @description * `A` - Digital/Creative Designer
      * * `D` - Developer
      * * `S` - Domain or other Specialized Skill Expert
      * * `P` - Project Manager
@@ -1341,6 +1363,7 @@ export interface components {
       heard_about_us?: components["schemas"]["HeardAboutUsEnum"][];
       digital_designer_skills?: components["schemas"]["DigitalDesignerSkillsEnum"][];
       industry?: components["schemas"]["IndustryEnum"][];
+      hardware_hack_detail?: components["schemas"]["HardwareHackDetailEnum"][];
       first_name?: string;
       middle_name?: string | null;
       last_name?: string;
@@ -1371,12 +1394,12 @@ export interface components {
       experience_with_xr?: string | null;
       experience_contribution?: string | null;
       theme_essay?: string | null;
-    //   theme_essay_follow_up?: string | null;
-      theme_interest_track_one?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
-      theme_interest_track_two?: components["schemas"]["ThemeInterestTrackChoiceEnum"];
-      theme_detail_one?: string | null;
-      theme_detail_two?: string | null;
-      theme_detail_three?: string | null;
+      theme_essay_follow_up?: string | null;
+      theme_interest_track_one?: components["schemas"]["ThemeInterestTrackOneEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_interest_track_two?: components["schemas"]["ThemeInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_one?: components["schemas"]["ThemeDetailOneEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_two?: components["schemas"]["ThemeDetailTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_three?: components["schemas"]["ThemeDetailThreeEnum"] | components["schemas"]["NullEnum"] | null;
       hardware_hack_interest?: components["schemas"]["HardwareHackInterestEnum"];
       heard_about_us_other?: string | null;
       digital_designer_skills_other?: string | null;
@@ -1429,7 +1452,7 @@ export interface components {
     PatchedAttendeePreference: {
       /** Format: uuid */
       id?: string;
-      preference?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"];
+      preference?: components["schemas"]["PreferenceEnum"];
       /** Format: uuid */
       preferer?: string;
       /** Format: uuid */
@@ -1481,7 +1504,7 @@ export interface components {
       /** Format: email */
       emergency_contact_email?: string;
       emergency_contact_relationship?: string;
-      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
       special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
       /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
       app_in_store?: string | null;
@@ -1615,6 +1638,7 @@ export interface components {
       created_at?: string;
       /** Format: date-time */
       updated_at?: string;
+      reporter_location?: string | null;
     };
     PatchedMentorHelpRequestHistory: {
       history_id?: number;
@@ -1683,11 +1707,13 @@ export interface components {
     PatchedTeam: {
       /** Format: uuid */
       id?: string;
+      number?: number | null;
       name?: string;
-      attendees?: components["schemas"]["AttendeeName"][];
-      table?: components["schemas"]["TableNumber"];
+      attendees?: string[];
+      /** Format: uuid */
+      table?: string | null;
       track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
-      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"][];
+      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
       /** Format: date-time */
       created_at?: string;
       /** Format: date-time */
@@ -1727,6 +1753,12 @@ export interface components {
       attendee?: string;
     };
     /**
+     * @description * `Y` - Yay
+     * * `N` - Nay
+     * @enum {string}
+     */
+    PreferenceEnum: "Y" | "N";
+    /**
      * @description * `A` - 2016
      * * `B` - 2017
      * * `C` - 2018
@@ -1737,7 +1769,7 @@ export interface components {
      * * `H` - 2024
      * @enum {string}
      */
-    PreviousParticipationEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G";
+    PreviousParticipationEnum: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
     /**
      * @description * `N` - Novice
      * * `C` - Competent
@@ -1763,9 +1795,7 @@ export interface components {
       updated_at: string;
     };
     /**
-     * `A` - Asian, Asian American, or of Asian descent
-     * @description * 
-     * * `B` - Black, African American, or of African descent
+     * @description * `B` - Black, African American, or of African descent
      * * `C` - Hispanic, Latino, Latina, Latinx, or of Latinx or Spanish-speaking descent
      * * `D` - Middle Eastern, North African, or of North African descent
      * * `E` - Native American, American Indian, Alaska Native, or Indigenous
@@ -1780,9 +1810,9 @@ export interface components {
      * * `O` - Other
      * @enum {string}
      */
-    RaceEthnicGroupEnum: "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "O" | "J" | "K" | "L" | "M";
+    RaceEthnicGroupEnum: "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "O";
     /**
-     * @description * `A` - Digital Designer
+     * @description * `A` - Digital/Creative Designer
      * * `D` - Developer
      * * `S` - Domain or other Specialized Skill Expert
      * * `P` - Project Manager
@@ -1853,11 +1883,17 @@ export interface components {
       updated_at: string;
     };
     /**
-     * @description * `Y` - Yay
-     * * `N` - Nay
+     * @description * `Y` - Yes
+     * * `N` - No
      * @enum {string}
      */
     SpecialTrackFutureConstructorsInterestEnum: "Y" | "N";
+    /**
+     * @description * `Y` - Yes
+     * * `N` - No
+     * @enum {string}
+     */
+    SpecialTrackSnapdragonSpacesInterestEnum: "Y" | "N";
     /**
      * @description * `R` - Requested
      * * `A` - Acknowledged
@@ -1894,6 +1930,17 @@ export interface components {
       /** Format: uuid */
       location?: string | null;
     };
+    TableDetail: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int64 */
+      number: number;
+      location: components["schemas"]["Location"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
     TableNumber: {
       /** Format: uuid */
       id: string;
@@ -1917,11 +1964,13 @@ export interface components {
     Team: {
       /** Format: uuid */
       id: string;
+      number?: number | null;
       name: string;
-      attendees: components["schemas"]["AttendeeName"][];
-      table: components["schemas"]["TableNumber"];
+      attendees?: string[];
+      /** Format: uuid */
+      table?: string | null;
       track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
-      destiny_hardware: components["schemas"]["RelatesToDestinyHardwareEnum"][];
+      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
@@ -1935,6 +1984,75 @@ export interface components {
       /** Format: uuid */
       table?: string | null;
     };
+    TeamDetail: {
+      /** Format: uuid */
+      id: string;
+      number?: number | null;
+      name: string;
+      attendees: components["schemas"]["AttendeeName"][];
+      table: components["schemas"]["TableDetail"];
+      project: components["schemas"]["TeamProject"];
+      lighthouse: components["schemas"]["TeamLightHouse"];
+      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    TeamLightHouse: {
+      /** Format: uuid */
+      id: string;
+      announcement_pending?: components["schemas"]["AnnouncementPendingEnum"];
+      mentor_requested?: components["schemas"]["MentorRequestedEnum"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    TeamProject: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      /** Format: uri */
+      repository_location: string;
+      /** Format: uri */
+      submission_location: string;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    /**
+     * @description * `Y` - Yes
+     * * `N` - No
+     * @enum {string}
+     */
+    ThemeDetailOneEnum: "Y" | "N";
+    /**
+     * @description * `Y` - Yes
+     * * `N` - No
+     * @enum {string}
+     */
+    ThemeDetailThreeEnum: "Y" | "N";
+    /**
+     * @description * `Y` - Yes
+     * * `N` - No
+     * @enum {string}
+     */
+    ThemeDetailTwoEnum: "Y" | "N";
+    /**
+     * @description * `Y` - Yes
+     * * `N` - No
+     * @enum {string}
+     */
+    ThemeInterestTrackOneEnum: "Y" | "N";
+    /**
+     * @description * `Y` - Yes
+     * * `N` - No
+     * @enum {string}
+     */
+    ThemeInterestTrackTwoEnum: "Y" | "N";
     TokenObtainPair: {
       username: string;
       password: string;
@@ -2368,7 +2486,7 @@ export interface operations {
          */
         participation_capacity?: "H" | "P" | "S" | null;
         /**
-         * @description * `A` - Digital Designer
+         * @description * `A` - Digital/Creative Designer
          * * `D` - Developer
          * * `S` - Domain or other Specialized Skill Expert
          * * `P` - Project Manager
@@ -2618,7 +2736,7 @@ export interface operations {
          */
         participation_class?: "E" | "G" | "J" | "M" | "O" | "P" | "S" | "V";
         /**
-         * @description * `A` - Digital Designer
+         * @description * `A` - Digital/Creative Designer
          * * `D` - Developer
          * * `S` - Domain or other Specialized Skill Expert
          * * `P` - Project Manager
@@ -2827,9 +2945,7 @@ export interface operations {
     parameters: {
       query?: {
         attendee?: string;
-        destiny_team?: string;
         destiny_team__round?: number;
-        destiny_team__table__number?: number;
         /** @description A search term. */
         search?: string;
         vibe?: number;
@@ -3700,21 +3816,6 @@ export interface operations {
       };
     };
   };
-  /** @description API endpoint that allows Reality Kits to be viewed or edited. */
-  lighthouses_retrieve: {
-    parameters: {
-      path: {
-        table__number: string;
-      };
-    };
-    responses: {
-      200: {
-        content: {
-          "application/json": components["schemas"]["LightHouse"];
-        };
-      };
-    };
-  };
   /** @description API endpoint that allows locations to be viewed or edited. */
   locations_list: {
     parameters: {
@@ -3865,7 +3966,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["MentorHelpRequest"][];
+          "application/json": components["schemas"]["MentorHelpRequestRead"][];
         };
       };
     };
@@ -4217,7 +4318,7 @@ export interface operations {
          */
         participation_class?: "E" | "G" | "J" | "M" | "O" | "P" | "S" | "V";
         /**
-         * @description * `A` - Digital Designer
+         * @description * `A` - Digital/Creative Designer
          * * `D` - Developer
          * * `S` - Domain or other Specialized Skill Expert
          * * `P` - Project Manager
@@ -4739,7 +4840,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["Team"];
+          "application/json": components["schemas"]["TeamDetail"];
         };
       };
     };
@@ -5043,7 +5144,7 @@ export interface operations {
         hardware?: string[];
         location?: string;
         /**
-         * @description * `A` - Digital Designer
+         * @description * `A` - Digital/Creative Designer
          * * `D` - Developer
          * * `S` - Domain or other Specialized Skill Expert
          * * `P` - Project Manager
