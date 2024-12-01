@@ -125,9 +125,6 @@ export default function ReviewPage({
     return enumKey ? labelsObject[enumKey] : enumValue;
   };
 
-  const themeInterestTrackLabel = (choice: theme_interest_track_choice) => {
-    return 
-  };
 
   const Disclaimers = () => {
     if (
@@ -291,7 +288,7 @@ export default function ReviewPage({
           value={allInfo.current_city}
         />
         <LabelAndValue
-          label={'What age will you be as of January 25, 2025?'}
+          label={'What age will you be as of January 23, 2025?'}
           value={
             allInfo.age_group
               ? getLabelFromEnumValue(

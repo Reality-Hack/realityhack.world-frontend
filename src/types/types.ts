@@ -1,3 +1,5 @@
+import { hardware_hack_detail } from './application_form_types';
+
 export enum status {
   accepted_in_person = 'AI',
   accepted_online = 'AO',
@@ -165,6 +167,7 @@ export interface Application {
   theme_detail_one?: theme_interest_track_choice | null;
   theme_detail_two?: theme_interest_track_choice | null;
   theme_detail_three?: theme_interest_track_choice | null;
+  hardware_hack_detail?: hardware_hack_detail[] | null;
   heard_about_us?: heard_about_us[] | null;
   shirt_size?: string | null;
   dietary_restrictions?: string | null;

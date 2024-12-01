@@ -54,6 +54,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const { data: session } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
+  const [dataTransformFinished, setDataTransformFinished] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
@@ -98,7 +99,8 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
   }, []);
 
   function transformApplications(apps: any, options: any) {
-    return apps.map((app: any) => {
+    setDataTransformFinished(false);
+    const transformedApps = apps.map((app: any) => {
       const transformedApp = { ...app };
 
       Object.keys(transformedApp).forEach(key => {
@@ -107,16 +109,29 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
         }
 
         if (options.actions?.POST[key]?.choices) {
-          const currentValue = transformedApp[key]?.[0];
-          const choice = options.actions.POST[key].choices.find(
-            (c: any) => c.value === currentValue
-          );
-          transformedApp[key] = choice ? choice.display_name : null;
+          if (transformedApp[key]?.length < 1) {
+            transformedApp[key] = '';
+          }
+          const choices = options.actions.POST[key].choices;
+          if (Array.isArray(transformedApp[key])) {
+            const mappedValues = transformedApp[key].map((value: any) => {
+              const choice = choices.find((c: any) => c.value === value);
+              return choice ? choice.display_name : '';
+            });
+            transformedApp[key] = mappedValues.join(', ');
+          } else {
+            const choice = choices.find(
+              (c: any) => c.value === transformedApp[key]
+            );
+            transformedApp[key] = choice ? choice.display_name : null;
+          }
         }
       });
 
       return transformedApp;
     });
+    setDataTransformFinished(true);
+    return transformedApps;
   }
 
   const onStatusChange = useCallback(
@@ -357,7 +372,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             columns={columns}
             search={true}
             pagination={true}
-            loading={loading}
+            loading={loading || !dataTransformFinished}
           />
         </div>
       </div>

@@ -298,7 +298,8 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
           </>
         ))}
       </div>
-      {formData.participation_role === participation_role.digital_creative_designer && (
+      {formData.participation_role ===
+        participation_role.digital_creative_designer && (
         <div className="py-4">
           <hr className="mb-4" />
           <p className="mb-4">
