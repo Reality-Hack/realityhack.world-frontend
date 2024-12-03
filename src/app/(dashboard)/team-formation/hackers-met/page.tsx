@@ -23,12 +23,12 @@ interface Attendee {
 }
 interface Preference {
   id: string;
-  preference: 'Y' | 'N';
+  preference: 'Y' | 'N' | 'T';
   preferee: string;
   preferer: string;
 }
 interface PreferenceInput {
-  preference: 'Y' | 'N';
+  preference: 'Y' | 'N' | 'T';
   preferee: string;
   preferer: string;
 }
@@ -48,7 +48,7 @@ export default function HackersMet({}) {
   const [availableAttendeeOptions, setAvailableAttendeeOptions] = useState<
     { label: string; value: string }[] | undefined
   >(undefined);
-  
+
   useEffect(() => {
     if (session?.access_token) {
       setAttendeesLoading(true);
@@ -58,7 +58,7 @@ export default function HackersMet({}) {
           const filteredAttendees = apps.filter(
             (attendees: any) =>
               (attendees.participation_class === 'P' ||
-              typeof attendees.participation_class === 'undefined') &&
+                typeof attendees.participation_class === 'undefined') &&
               attendees.id != user?.id
           );
           setAttendeeInfo(filteredAttendees);
@@ -81,11 +81,15 @@ export default function HackersMet({}) {
         .catch(error => {
           // Handle error if necessary
           console.error('Error fetching attendees:', error);
-        }).finally(() => setPreferencesLoading(false));
+        })
+        .finally(() => setPreferencesLoading(false));
     }
   }, [session, user]);
 
-  async function addPreferences(preferee: string, preferenceStatus: 'Y' | 'N') {
+  async function addPreferences(
+    preferee: string,
+    preferenceStatus: 'Y' | 'N' | 'T'
+  ) {
     //HOW DO I GET THE ATTENDEE ID
     if (session) {
       const pref: PreferenceInput = {
@@ -169,7 +173,7 @@ export default function HackersMet({}) {
       <div className="flex flex-wrap items-center justify-center">
         <div className="text-blue-400 text-3xl">{`Hackers I've Met`}</div>
         <button className='ml-auto p-2 rounded-lg bg-blue-300 text-white hover:opacity-60 drop-shadow-lg'
-        onClick={handleOpenDialog} disabled={attendeesLoading || preferencesLoading}>My Personal Contacts</button>{' '}
+        onClick={handleOpenDialog} disabled={attendeesLoading || preferencesLoading}>Team Formation Preferences</button>{' '}
       </div>
 
       <PreferenceRowForm
@@ -266,30 +270,50 @@ function ModalPersonRow({
   id
 }: ModalPersonRowProps) {
   if (!preferee) return <></>;
-
+  const connectionRowValues = () => {
+    if (status == 'T') {
+      return {
+        textColor: 'text-gray-500',
+        statusText: 'Connected',
+      }
+    } else if (status == 'Y') {
+      return {
+        textColor: 'text-green-600',
+        statusText: 'Preferred',
+      }
+    } else {
+      return {
+        textColor: 'text-red-400',
+        statusText: 'Excluded'
+      }
+    }
+  }
+  const {textColor, statusText} = connectionRowValues();
   return (
     <div className={`flex flex-row pb-2 my-2 border-b-2 border-black`}>
       <div className="flex flex-row mr-auto gap-2 items-center">
         {/* <img src={"profilePicSrc"} width={20} height={20} alt="person" /> */}
         <div className='flex flex-col'>
           <div className="text-lg font-semibold">{`${preferee.first_name} ${preferee.last_name}`}</div>
-          <div className={`${status=="Y"?`text-green-600`:`text-red-400`}`}>{status == 'Y' ? 'Favorite' : 'Block'}</div>
-
+          <div className={`${textColor} text-center drop-shadow-lg p-2 rounded-lg`}>{statusText}</div>
         </div>
-      
       </div>
       <div className="flex flex-col ml-auto gap-2">
         <div
-          className={`${
-            status === 'Y' ? 'text-green-600' : 'text-red-400'
-          } p-2 rounded-lg text-white text-center`}
+          className={`${textColor} text-center drop-shadow-lg p-2 rounded-lg hover:cursor-pointer`}
         >
         </div>
         <div
-          onClick={() => updatePref(status == 'Y' ? 'N' : 'Y', id)}
-          className={`${status=="Y"?`bg-red-400`:`bg-green-600`} text-white text-center drop-shadow-lg p-2 rounded-lg hover:cursor-pointer`}
+          onClick={() => updatePref('Y', id)}
+          className={`bg-green-500 text-white text-center drop-shadow-lg p-2 rounded-lg hover:cursor-pointer`}
         >
-           {status == 'Y' ? 'Block' : 'Favorite'}
+          Favorite
+        </div>
+        <div
+          onClick={() => updatePref('N', id)}
+          className={`bg-red-500 text-white text-center drop-shadow-lg p-2 rounded-lg hover:cursor-pointer`}
+        >
+          Exclude
         </div>
         <div
           onClick={deletePref}
@@ -307,7 +331,7 @@ interface PreferenceFormRow {
   src?: string;
   status?: string;
   options: { label: string; value: string }[];
-  addToPreferences: (preferee: string, preferenceStatus: 'Y' | 'N') => void;
+  addToPreferences: (preferee: string, preferenceStatus: 'Y' | 'N' | 'T') => void;
   enabled: boolean;
 }
 
@@ -318,7 +342,6 @@ function PreferenceRowForm({
   options,
   addToPreferences,
   enabled
-
 }: PreferenceFormRow) {
   // const { user } = useAuthContext();
   const [fellowAttendee, setFellowAttendee] = useState('');
@@ -327,7 +350,7 @@ function PreferenceRowForm({
     setFellowAttendee(value);
   }
 
-  function handlePreferenceSelection(preference: 'Y' | 'N') {
+  function handlePreferenceSelection(preference: 'Y' | 'N' | 'T') {
     addToPreferences(fellowAttendee, preference);
     setFellowAttendee('');
   }
@@ -348,26 +371,15 @@ function PreferenceRowForm({
           <QRCodeReader />
         </div> */}
           <div
-            onClick={() => handlePreferenceSelection('Y')}
-            className={`bg-green-500 text-white ${
+            onClick={() => handlePreferenceSelection('T')}
+            className={`text-white ${
               fellowAttendee === ''
-                ? `cursor-not-allowed`
-                : `hover:cursor-pointer hover:opacity-60`
+                ? `cursor-not-allowed bg-gray-500`
+                : `hover:cursor-pointer hover:opacity-60 bg-green-500`
             }
                p-2 h-10 rounded-lg w-24 md:w-32 text-center drop-shadow-lg`}
           >
-            Yay
-          </div>
-          <div
-            onClick={() => handlePreferenceSelection('N')}
-            className={`bg-red-500 text-white  ${
-              fellowAttendee === ''
-                ? `cursor-not-allowed`
-                : `hover:cursor-pointer hover:opacity-60`
-            }
-             p-2 h-10 rounded-lg w-24 md:w-32 text-center drop-shadow-`}
-          >
-            Nay
+            Connect
           </div>
         </div>
       </div>

@@ -1755,9 +1755,10 @@ export interface components {
     /**
      * @description * `Y` - Yay
      * * `N` - Nay
+     * * `T` - TBD
      * @enum {string}
      */
-    PreferenceEnum: "Y" | "N";
+    PreferenceEnum: "Y" | "N" | "T";
     /**
      * @description * `A` - 2016
      * * `B` - 2017

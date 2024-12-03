@@ -26,6 +26,11 @@ export default function TeamFormationLayout({
             isSelected={pathname === '/team-formation/interests'}
             title="My Interests"
           />
+          <Tab
+            href="/team-formation/profile"
+            isSelected={pathname === '/team-formation/profile'}
+            title="My Reality Hack Profile"
+          />
           {TEAM_FORMATION_STAGE === '1' && (
             <Tab
               href="/team-formation/round-one"

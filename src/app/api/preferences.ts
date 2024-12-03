@@ -35,7 +35,7 @@ export async function getAllPreferences(
 }
 
 interface AttendeePreferenceInput {
-    preference: "Y" | "N";
+    preference: "Y" | "N" | "T";
     preferer: string;
     preferee: string;
 }
@@ -71,7 +71,7 @@ interface UpdateRequestBody {
   export async function updatePreference(
     accessToken: string,
     preferenceId: string,
-    preference?: "Y" | "N",
+    preference?: "Y" | "N" | "T",
     preferee?: string
   ) {
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/attendeepreferences/${preferenceId}/`;
