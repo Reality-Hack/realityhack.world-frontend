@@ -61,16 +61,6 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
       }
     }
 
-    // Add https:// prefix if missing
-    ['communications_platform_username', 'portfolio'].forEach(field => {
-      if (
-        updatedPayload[field] &&
-        !updatedPayload[field].startsWith('https://')
-      ) {
-        updatedPayload[field] = `https://${updatedPayload[field]}`;
-      }
-    });
-
     // if hardware_hack_interest has no values, set to A
     updatedPayload.hardware_hack_interest =
       updatedPayload.hardware_hack_interest || 'A';

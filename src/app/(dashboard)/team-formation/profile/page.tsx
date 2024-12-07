@@ -22,7 +22,7 @@ export default function RoundOne() {
     <div className="flex flex-col gap-2">
       {status === 'loading' && <Loader />}
       {status === 'authenticated' && (
-        <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
             <div className="mx-auto h-2 bg-[#4D97E8] rounded-t-lg" />
             <div className="flex flex-col gap-2 rounded-lg shadow-md p-4">

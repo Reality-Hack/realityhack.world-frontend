@@ -13,7 +13,7 @@ type SetupModalProps = {
   toggleOverlay: () => void;
 };
 
-interface AttendeeData {
+export interface AttendeeData {
   id: string;
   first_name: string;
   last_name: string;
@@ -82,7 +82,6 @@ export default function Dashboard() {
           last_name: lastName,
           initial_setup: true
         };
-
         if (acceptedFiles && acceptedFiles.length > 0) {
           try {
             profileImageUpload = await fileUpload(

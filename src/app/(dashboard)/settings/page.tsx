@@ -5,6 +5,8 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { patchMe } from '../../api/attendee';
 import { fileUpload } from '../../api/application';
+// this lazy but let's use the same type
+import { AttendeeData } from '../../page';
 
 export default function Settings() {
   const { data: session, status } = useSession();
@@ -31,12 +33,11 @@ export default function Settings() {
     let profileImageUpload;
 
     if (session) {
-      const data = {
+      let data: AttendeeData = {
         id: user.id,
         first_name: firstName,
         last_name: lastName,
-        initial_setup: 'True',
-        profile_image: null
+        initial_setup: false
       };
 
       if (acceptedFiles && acceptedFiles.length > 0) {
