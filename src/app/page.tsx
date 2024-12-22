@@ -24,6 +24,7 @@ export interface AttendeeData {
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const { user } = useAuthContext();
+  const localInitialSetup = localStorage.getItem('initial_setup');
 
   const [_isOverlayVisible, setOverlayVisible] = useState(false);
 
@@ -98,6 +99,7 @@ export default function Dashboard() {
 
         try {
           await patchMe(session.access_token, data);
+          localStorage.setItem('initial_setup', 'true');
           window.location.reload();
         } catch (error) {
           console.error('Error updating attendee:', error);
@@ -107,7 +109,7 @@ export default function Dashboard() {
 
     return (
       <div>
-        {user?.initial_setup === false && (
+        {user?.initial_setup === false  && localInitialSetup !== 'true' && (
           <Modal toggleOverlay={toggleOverlay}>
             {
               <div className="p-6">
@@ -189,7 +191,7 @@ export default function Dashboard() {
             </div>
             <div className="flex justify-center">
               <a
-                href="https://discord.gg/tc7tUstQxn"
+                href="https://discord.gg/uHyVvCQmdc"
                 className="mx-auto mt-4 bg-[#4D97E8] px-7 py-2 rounded-full text-white"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -226,8 +228,9 @@ export default function Dashboard() {
           </div>
 
           {user?.participation_class === 'P' && (
-            <div className="w-full pb-6 mb-6 rounded-lg shadow-md">
-              <div className="h-2 w-full bg-[#4D97E8] rounded-t-lg" />
+            <div className="">
+            {/* <div className="w-full pb-6 mb-6 rounded-lg shadow-md"> */}
+              {/* <div className="h-2 w-full bg-[#4D97E8] rounded-t-lg" />
               <div className="flex items-center pt-6 pl-6">
                 <img src="icons/dashboard/forms.svg" alt="congrats!" />
                 <div className="ml-2 text-xl">FORMS</div>
@@ -244,7 +247,7 @@ export default function Dashboard() {
                 >
                   Apply
                 </a>
-              </div>
+              </div> */}
               {/* <div className="grid grid-cols-1 px-4 divide-x divide-y md:grid-cols-2">
             <div className="flex flex-col items-center justify-center p-6">
               Travel Scholarship
@@ -304,7 +307,7 @@ export default function Dashboard() {
             </div>
             <div className="flex justify-center">
               <a
-                href="https://discord.gg/tc7tUstQxn"
+                href="https://discord.gg/uHyVvCQmdc"
                 className="mx-auto mt-4 bg-[#4D97E8] px-7 py-2 rounded-full text-white"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -324,103 +327,32 @@ export default function Dashboard() {
               <div className="p-6">
                 Have you booked travel and accommodations yet? <br /> <br />
                 <span className="font-bold">
-                  You should plan to be in Boston on the evening of January 24th
-                  as we begin bright and early on the 25th.
+                  You should plan to be in Boston on the evening of January 22nd
+                  as we begin at 8am on the 23rd.
                 </span>{' '}
-                You can also plan to wrap up by around 5pm EST on the 29th.
+                You can also plan to wrap up by around 5pm EST on the 27th.
                 We’ll release our full schedule later but you can use our
                 guidelines right now to plan travel. <br /> <br />
+              </div>
+              <div className="p-6 border-t md:border-l md:border-t-0">
                 <span className="font-bold">
-                  We recommend booking early to get the best prices.
+                  We recommend booking now to get the best prices and take advantage of our discounts.
                 </span>
                 The longer you wait, the more expensive it may become. You can
                 even coordinate with other participants through our Discord to
                 lower your costs.
-              </div>
-              <div className="p-6 border-t md:border-l md:border-t-0">
-                <p>Here are some suggested places to look:</p>
-                <ul className="pl-10 mt-4 mb-4 list-disc">
-                  <li className="mb-2">
-                    <a
-                      href="https://www.marriott.com/en-us/hotels/boscb-boston-marriott-cambridge/overview/"
-                      className="block pt-4 pb-2 text-sm text-[#4d97e8] hover:text-[#3f7ec1] w-fit"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Boston Marriott Cambridge
-                    </a>
-                  </li>
-                  <li className="mb-2">
-                    <a
-                      href="https://www.marriott.com/en-us/hotels/bosbm-le-meridien-boston-cambridge/overview/"
-                      className="block pb-2 text-sm text-[#4d97e8] hover:text-[#3f7ec1] w-fit"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Le Méridien Boston Cambridge
-                    </a>
-                  </li>
-                  <li className="mb-2">
-                    <a
-                      href="https://www.marriott.com/en-us/hotels/boscm-residence-inn-boston-cambridge/overview/?scid=f2ae0541-1279-4f24-b197-a979c79310b0"
-                      className="block pb-2 text-sm text-[#4d97e8] hover:text-[#3f7ec1] w-fit"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Residence Inn Boston Cambridge
-                    </a>
-                  </li>
-                  <li className="mb-2">
-                    <a
-                      href="https://kendallhotel.com/"
-                      className="block pb-2 text-sm text-[#4d97e8] hover:text-[#3f7ec1] w-fit"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      The Kendall Hotel
-                    </a>
-                  </li>
-                  <li className="mb-2">
-                    <a
-                      href="https://www.hyatt.com/en-US/hotel/massachusetts/hyatt-regency-boston-cambridge/bosrc"
-                      className="block pb-2 text-sm text-[#4d97e8] hover:text-[#3f7ec1] w-fit"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Hyatt Regency Boston / Cambridge
-                    </a>
-                  </li>
-                  <li className="mb-2">
-                    <a
-                      href="https://www.hiusa.org/find-hostels/massachusetts/boston-19-stuart-street"
-                      className="block pb-2 text-sm text-[#4d97e8] hover:text-[#3f7ec1] w-fit"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      HI Boston Hostel
-                    </a>
-                  </li>
-                  <li className="mb-2">
-                    <a
-                      href="https://www.sonder.com/destinations/cambridge/907-main/c31633?sleeps=1"
-                      className="block pb-2 text-sm text-[#4d97e8] hover:text-[#3f7ec1] w-fit"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Sonder 907 Main
-                    </a>
-                  </li>
-                  <li className="mb-2">
-                    <a
-                      href="https://www.airbnb.com/?locale=en"
-                      className="block pb-2 text-sm text-[#4d97e8] hover:text-[#3f7ec1] w-fit "
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Check listings on Airbnb near MIT or near the Red Line
-                    </a>
-                  </li>
-                </ul>
+                <br /> <br />
+                <span className="font-bold">
+                  We have discounts!  
+                </span>{' '}
+                 <a
+                   href="https://mitrealityhack.notion.site/MIT-Reality-Hack-2025-Group-Accommodation-Rates-0d315005f79942a8abf09cb23336be99"
+                   className="text-[#4D97E8] hover:underline"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                 >
+                   Check this Notion page
+                 </a> to keep up to date on all of our available accommodations discounts
               </div>
             </div>
           </div>

@@ -267,12 +267,15 @@ export interface rsvp_data {
   additional_accommodations?: string | null;
   us_visa_support_is_required: boolean | null;
   us_visa_support_full_name?: string | null;
+  visa_support_form_confirmation: boolean | null;
   us_visa_letter_of_invitation_required: boolean | null;
   us_visa_support_national_identification_document_type:
     | us_visa_support_national_identification_document_type
     | null
     | string;
   us_visa_support_document_number?: string | null;
+  breakthrough_hacks_interest?: string | null;
+  loaner_headset_preference?: string | null;
   us_visa_support_citizenship?: string | null;
   us_visa_support_address?: string | null;
   under_18_by_date: boolean | null;
@@ -286,8 +289,8 @@ export interface rsvp_data {
   emergency_contact_phone_number: string;
   emergency_contact_email: string;
   emergency_contact_relationship: string;
-  special_track_snapdragon_spaces_interest?: string | null;
-  special_track_future_constructors_interest: string | null;
+  special_interest_track_one?: string | null;
+  special_interest_track_two: string | null;
   app_in_store: string | null;
   currently_build_for_xr: string | null;
   currently_use_xr: string | null;

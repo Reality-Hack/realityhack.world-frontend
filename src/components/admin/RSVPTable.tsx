@@ -161,12 +161,12 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
       }),
       ...(type === 'P'
         ? [
-            columnHelper.accessor('special_track_snapdragon_spaces_interest', {
-              header: () => 'Snapdragon Spaces Interest',
+            columnHelper.accessor('special_interest_track_one', {
+              header: () => 'Founders Lab Interest',
               cell: info => (info.getValue() === true ? 'Yes' : 'No')
             }),
             columnHelper.accessor(
-              'special_track_future_constructors_interest',
+              'special_interest_track_two',
               {
                 header: () => 'Future Constructors Interest',
                 cell: info => (info.getValue() === true ? 'Yes' : 'No')
@@ -200,13 +200,13 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
 
         <div className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
           <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-            Future Constructors
+            Founders Lab Interest
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
             {
               RSVP.filter((app: any) => {
                 return (
-                  app?.special_track_future_constructors_interest === 'Yes'
+                  app?.special_interest_track_two === 'Yes'
                 );
               }).length
             }
@@ -215,12 +215,12 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
 
         <div className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
           <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-            Snapdragon Spaces
+            Hardware Hack
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
             {
               RSVP.filter((app: any) => {
-                return app?.special_track_snapdragon_spaces_interest === 'Yes';
+                return app?.special_interest_track_one === 'Yes';
               }).length
             }
           </span>

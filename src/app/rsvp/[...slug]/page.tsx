@@ -6,7 +6,7 @@ import {
   CheckboxInput,
   RadioInput,
   validateField,
-  SelectInput
+  TextAreaInput
 } from '@/components/Inputs';
 import {
   rsvp_data,
@@ -61,12 +61,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
     allergies_other: null,
     additional_accommodations: null,
     us_visa_support_is_required: null,
-    us_visa_support_full_name: null,
-    us_visa_letter_of_invitation_required: null,
-    us_visa_support_national_identification_document_type: 'P',
-    us_visa_support_document_number: null,
-    us_visa_support_citizenship: null,
-    us_visa_support_address: null,
+    visa_support_form_confirmation: null,
     agree_to_media_release: null,
     under_18_by_date: null,
     parential_consent_form_signed: null,
@@ -76,8 +71,10 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
     emergency_contact_phone_number: '',
     emergency_contact_email: '',
     emergency_contact_relationship: '',
-    special_track_snapdragon_spaces_interest: null,
-    special_track_future_constructors_interest: null,
+    special_interest_track_one: null,
+    special_interest_track_two: null,
+    breakthrough_hacks_interest: null,
+    loaner_headset_preference: null,
     app_in_store: null,
     currently_build_for_xr: null,
     currently_use_xr: null,
@@ -112,8 +109,10 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
       if (isParticipant) {
         [
           'under_18_by_date',
-          'special_track_snapdragon_spaces_interest',
-          'special_track_future_constructors_interest'
+          'special_interest_track_one',
+          'special_interest_track_two',
+          'communications_platform_username',
+          'loaner_headset_preference',
         ].forEach(field => {
           if (!updatedFields.includes(field)) {
             updatedFields.push(field);
@@ -155,11 +154,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
 
   useEffect(() => {
     const visaRelatedFields = [
-      'us_visa_support_full_name',
-      'us_visa_letter_of_invitation_required',
-      'us_visa_support_document_number',
-      'us_visa_support_citizenship',
-      'us_visa_support_address'
+      'visa_support_form_confirmation'
     ];
 
     setRequiredFields((prevFields: any) => {
@@ -414,7 +409,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
     requiredFields.forEach((field: keyof rsvp_data) => {
       const value = formData[field] as any;
 
-      if (field !== 'communications_platform_username') {
+      // if (field !== 'communications_platform_username') {
         let validationError = '';
 
         if (
@@ -423,8 +418,8 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
           value === '' ||
           (value === false &&
             field !== 'us_visa_support_is_required' &&
-            field !== 'us_visa_letter_of_invitation_required' &&
-            field !== 'under_18_by_date')
+            field !== 'under_18_by_date' &&
+            field !== 'visa_support_form_confirmation')
         ) {
           validationError = 'This field is required.';
           isValid = false;
@@ -433,13 +428,13 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
         if (validationError) {
           newErrors = { ...newErrors, [field]: validationError };
         }
-      } else {
-        if (discordValidationResult === 'error') {
-          newErrors['communications_platform_username'] =
-            'Invalid Discord username.';
-          isValid = false;
-        }
-      }
+      // } else {
+      //   if (discordValidationResult === 'error') {
+      //     newErrors['communications_platform_username'] =
+      //       'Invalid Discord username.';
+      //     isValid = false;
+      //   }
+      // }
     });
 
     setErrors(newErrors);
@@ -488,7 +483,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
       case 'us_visa_support_is_required':
         setVisaRequired(value);
         break;
-      case 'us_visa_letter_of_invitation_required':
+      case 'visa_support_form_confirmation':
         setLetterOfSupport(value);
         break;
       default:
@@ -519,7 +514,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
           <div className="w-[250px] h-[250px] mt-8 mx-auto bg-logocolor dark:bg-logobw bg-contain bg-no-repeat bg-center" />
           <div className="pb-8">
             <h1 className="py-1 text-2xl leading-8 text-center text-themeSecondary drop-shadow-md font-ethnocentric">
-              MIT Reality Hack 2024
+              MIT Reality Hack 2025
             </h1>
             <h2 className="text-2xl font-bold leading-8 text-center text-themeYellow drop-shadow-md">
               {isParticipant
@@ -630,7 +625,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                   {renderDiscordError && (
                     <p className="absolute ml-1 text-xs text-themeSecondary bottom-2">
                       Invalid Discord username. for more information on
-                      Discord’s new usernames, go to{' '}
+                      Discord's new usernames, go to{' '}
                       <a
                         className="underline cursor-pointer"
                         href="https://support.discord.com/hc/en-us/articles/12620128861463-New-Usernames-Display-Names#h_01GZHKGNP2FYNFSAJB3DW2E4PN"
@@ -643,29 +638,10 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                     </p>
                   )}
                   <div className="absolute right-[-24px] bottom-[32px]">
-                    {discordValidationLoading && <CircularProgress size={12} />}
-                    {!discordValidationLoading &&
-                      discordValidationResult === 'success' && (
-                        <CheckCircleOutlineIcon
-                          style={{
-                            color: 'green',
-                            fontSize: '14px'
-                          }}
-                        />
-                      )}
-                    {!discordValidationLoading &&
-                      discordValidationResult === 'error' && (
-                        <ErrorOutlineIcon
-                          style={{
-                            color: '#dc4c88',
-                            fontSize: '14px'
-                          }}
-                        />
-                      )}
+
                   </div>
                 </div>
               )}
-
               <div className="">
                 Please describe any dietary restrcitions you have.
                 <div className="pb-8">
@@ -978,7 +954,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
               {isParticipant && (
                 <>
                   <div className="pb-4">
-                    Will you be under 18 on January 25, 2024?{' '}
+                    Will you be under  18 on January 23, 2025?{' '}
                     <span className="text-red-700">*</span>
                     <div className="flex flex-col mt-[10px]">
                       <RadioInput
@@ -1006,12 +982,12 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                           <div className="relative flex flex-col mb-0 ml-4 cursor-default items-left">
                             <div>
                               As you will be under 18 when the event starts on
-                              January 25, 2024, we require the completion of a
+                              January 23, 2025, we require the completion of a
                               Parental Consent and Release Form. If your
                               parent/guardian has not already done so, please
                               have your parent/guardian{' '}
                               <a
-                                href="https://na4.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhD-XwHm6fxjR8TIMgcXkRfaqpDSzPoo8O6xNLa28V7V1ZoQ7FsQbbS1pFTaECUetkk"
+                                href="https://na1.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhDHzrXhxSW2uEcg6EoLG5EwP07XTkmO4ztmqfZdkQfJB0kXbcn5IpJiNGVY8CH9Hq0*"
                                 target="_blank"
                                 className="underline cursor-pointer text-themePrimary"
                               >
@@ -1090,51 +1066,109 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 <>
                   <hr className="my-4" />
                   <div className="mb-4 text-xl font-bold text-purple-900">
-                    Special XR and non-XR expertise
+                    Equipment Interest
                   </div>
 
-                  <div>
-                    Do you currently build for XR, and if so what platforms do
-                    you build for? (optional)
-                    <TextInput
-                      name="currently_build_for_xr"
-                      placeholder=""
-                      value={formData.currently_build_for_xr || ''}
-                      type="text"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    Do you currently use XR, and if so what platforms are you
-                    using? (optional)
-                    <TextInput
-                      name="currently_use_xr"
-                      placeholder=""
-                      value={formData.currently_use_xr || ''}
-                      type="text"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    Do you have any non-XR talents or expertise you&apos;d like
-                    to share? (Example: teacher, musician, etc.) (optional)
-                    <TextInput
-                      name="non_xr_talents"
-                      placeholder=""
-                      value={formData.non_xr_talents || ''}
-                      type="text"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    Do you already have an AR or VR app in any store? And if so,
-                    which store(s)? (Optional)
-                    <TextInput
-                      name="ar_vr_app_in_store"
-                      placeholder=""
-                      value={formData.ar_vr_app_in_store || ''}
-                      type="text"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
+                  <div className="pb-8">
+                    <div>
+                    If you had to choose one loaner headset to work with, which would be your preference?{' '}
+                    <span className="text-red-700">*</span>
+                    </div>
+                    <div>
+                      <RadioInput
+                        name="loaner_headset_preference"
+                        value="META"
+                        onChange={handleChange}
+                        label="Meta Quest 3"
+                        checked={formData.loaner_headset_preference === 'META'}
+                      />
+                      <RadioInput
+                        name="loaner_headset_preference"
+                        value="SNAP" 
+                        onChange={handleChange}
+                        label="Snap Spectacles"
+                        checked={formData.loaner_headset_preference === 'SNAP'}
+                      />
+                      <RadioInput
+                        name="loaner_headset_preference"
+                        value="BYOD"
+                        onChange={handleChange}
+                        label="I am bringing my own XR device to work with."
+                        checked={formData.loaner_headset_preference === 'BYOD'}
+                      />
+                      <RadioInput
+                        name="loaner_headset_preference"
+                        value="HWHACK"
+                        onChange={handleChange}
+                        label="I've chosen the Hardware Hack, so I will probably not need a headset."
+                        checked={formData.loaner_headset_preference === 'HWHACK'}
+                      />
+                      <RadioInput
+                        name="loaner_headset_preference"
+                        value="TBD"
+                        onChange={handleChange}
+                        label="I'm not sure yet"
+                        checked={formData.loaner_headset_preference === 'TBD'}
+                      />
+                      {errors.loaner_headset_preference && (
+                        <p className="text-red-500 text-sm">{errors.loaner_headset_preference}</p>
+                      )}
+                    </div>
+                </div>
+                <div className="pb-8">
+                    <div>
+                      <strong>Breakthrough Hacks Opportunity:</strong> This year, select teams will be given 
+                      the opportunity to be some of the FIRST hackers ever to work with technology from the 
+                      following companies:
+                      
+                      <ul className="ml-4 list-disc">
+                        <li>
+                          <a href="https://galea.co/#home" className="underline cursor-pointer text-themePrimary">
+                            Galea
+                          </a>
+                        </li>
+                        <li>
+                          <a href="https://www.maradin.co.il/" className="underline cursor-pointer text-themePrimary">
+                            Maradin
+                          </a> (dev kit includes monocle display glass)
+                        </li>
+                        <li>
+                          <a href="https://distance.tech/" className="underline cursor-pointer text-themePrimary">
+                            Distance
+                          </a>
+                        </li>
+                        <li>
+                          Advanced haptic gloves (We will reveal who it is at the Hack!)
+                        </li>
+                        <li>
+                          <a href="https://shop.openbci.com/collections/frontpage?_gl=1*1pykcxm*_gcl_au*NjU1MDkxNDY1LjE3MzQzMDY3MTE.*_ga*NTQ3MjAxNTAuMTczNDMwNjcxMQ..*_ga_HVMLC0ZWWS*MTczNDMwNjcxMC4xLjAuMTczNDMwNjcxMC42MC4wLjA." className="underline cursor-pointer text-themePrimary">
+                            OpenBCI Biometric Sensors
+                          </a>
+                        </li>
+                        <li>
+                          <a href="https://www.qualcomm.com/developer/hardware/rb3-gen-2-development-kit" className="underline cursor-pointer text-themePrimary">
+                            Qualcomm RB3 Gen2
+                          </a>
+                        </li>
+                      </ul>
+
+                      <br/>
+                      If you're interested in any of these, please let us know which one and why.
+                    </div>
+                    <TextAreaInput
+                        name="breakthrough_hacks_interest" 
+                        placeholder="Please describe your interest..."
+                        value={formData.breakthrough_hacks_interest || ''}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={errors.breakthrough_hacks_interest}
+                        valid={!errors.breakthrough_hacks_interest}
+                        rows={4}
+                    >
+                        Enter your interest here.
+                    </TextAreaInput>
                   </div>
+
                   <hr className="my-4" />
                   <div className="mb-4 text-xl font-bold text-purple-900">
                     Special Interests
@@ -1145,67 +1179,67 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                       indicate your interest below.
                     </div>
                     <div className="pb-4">
-                      Are you interested in Snapdragon Spaces hack?
+                      Would you like to register for the Hardware Hack at this time? *
                       <RadioInput
-                        name="special_track_snapdragon_spaces_interest"
+                        name="special_interest_track_one"
                         value="Y"
                         onChange={handleChange}
                         label="Yes"
                         checked={
-                          formData.special_track_snapdragon_spaces_interest ===
+                          formData.special_interest_track_one ===
                           'Y'
                         }
                       />
                       <RadioInput
-                        name="special_track_snapdragon_spaces_interest"
+                        name="special_interest_track_one"
                         value="N"
                         onChange={handleChange}
                         label="No"
                         checked={
-                          formData.special_track_snapdragon_spaces_interest ===
+                          formData.special_interest_track_one ===
                           'N'
                         }
                       />
                       <p
                         className={`ml-1 text-xs text-themeSecondary ${
-                          errors.special_track_snapdragon_spaces_interest
+                          errors.special_interest_track_one
                             ? 'visible'
                             : 'invisible'
                         }`}
                       >
-                        {errors.special_track_snapdragon_spaces_interest || ''}
+                        {errors.special_interest_track_one || ''}
                       </p>
                     </div>
                     <div>
-                      Are you interested in the Future Constructors hack?
+                    Would you like to register for the MIT Reality Hack Founders Lab at this time? *
                       <RadioInput
-                        name="special_track_future_constructors_interest"
+                        name="special_interest_track_two"
                         value="Y"
                         onChange={handleChange}
                         label="Yes"
                         checked={
-                          formData.special_track_future_constructors_interest ===
+                          formData.special_interest_track_two ===
                           'Y'
                         }
                       />
                       <RadioInput
-                        name="special_track_future_constructors_interest"
+                        name="special_interest_track_two"
                         value="N"
                         onChange={handleChange}
                         label="No"
                         checked={
-                          formData.special_track_future_constructors_interest ===
+                          formData.special_interest_track_two ===
                           'N'
                         }
                       />
                       <p
                         className={`ml-1 text-xs text-themeSecondary ${
-                          errors.special_track_future_constructors_interest
+                          errors.special_interest_track_two
                             ? 'visible'
                             : 'invisible'
                         }`}
                       >
-                        {errors.special_track_future_constructors_interest ||
+                        {errors.special_interest_track_two ||
                           ''}
                       </p>
                     </div>
@@ -1216,12 +1250,16 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
               <div className="mb-4 text-xl font-bold text-purple-900">
                 International Visitors
               </div>
-
               <div>
                 <div className="pb-3">
-                  Do you require a visa to attend the event? (If you have
-                  already recieved a visa support letter from us, please select
-                  &quot;No&quot;)
+                  If you need to apply for a temporary B2 tourist visa to visit
+                  the US for MIT Reality Hack and require a letter of invitation
+                  to supplement your visa application, please let us know by
+                  filling out{' '}
+                  <a href=" https://forms.gle/1kjZbYidRFGXmjnE6" target="_blank" className="underline cursor-pointer text-themePrimary">
+                    this Google Form
+                  </a>{' '}
+                  if you haven&apos;t already done so.
                   <RadioInput
                     name="us_visa_support_is_required"
                     value="true"
@@ -1256,17 +1294,16 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 {formData.us_visa_support_is_required === true && (
                   <div>
                     <div className="pb-3">
-                      Do you require a visa as a supplementary circumstance to
-                      enter the US?
+                      Check this box if you require a visa letter and have filled out the form.
                       <RadioInput
-                        name="us_visa_letter_of_invitation_required"
+                        name="visa_support_form_confirmation"
                         value="true"
                         checked={letterOfSupport === 'true'}
                         onChange={handleBooleanInputChange}
                         label="I need a supplementary invitation letter for my US tourist visa application."
                       />
                       <RadioInput
-                        name="us_visa_letter_of_invitation_required"
+                        name="visa_support_form_confirmation"
                         value="false"
                         checked={letterOfSupport === 'false'}
                         onChange={handleBooleanInputChange}
@@ -1274,164 +1311,18 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                       />
                       <p
                         className={`ml-1 text-xs text-themeSecondary ${
-                          errors.us_visa_letter_of_invitation_required
+                          errors.visa_support_form_confirmation
                             ? 'visible'
                             : 'invisible'
                         }`}
                       >
-                        {errors.us_visa_letter_of_invitation_required || ''}
-                      </p>
-                    </div>
-                    <div>
-                      <SelectInput
-                        name="us_visa_support_citizenship"
-                        placeholder="Select your citizenship"
-                        options={citizenship}
-                        value={
-                          formData.us_visa_support_citizenship_option || ''
-                        }
-                        onChange={handleSelectChange}
-                        onBlur={handleBlur}
-                        error={errors.us_visa_support_citizenship}
-                        required={true}
-                        valid={!errors.us_visa_support_citizenship}
-                      >
-                        Citizenship (Country issuing your passport){' '}
-                        <span className="font-bold text-themeSecondary">*</span>
-                      </SelectInput>
-                    </div>
-                    <div className="pb-3">
-                      What document type would you prefer to use?
-                      <RadioInput
-                        name="us_visa_support_national_identification_document_type"
-                        label="Passport"
-                        value="P"
-                        checked={
-                          formData.us_visa_support_national_identification_document_type ===
-                          'P'
-                        }
-                        onChange={handleChange}
-                      />
-                      <RadioInput
-                        name="us_visa_support_national_identification_document_type"
-                        label="Identification number"
-                        value="N"
-                        checked={
-                          formData.us_visa_support_national_identification_document_type ===
-                          'N'
-                        }
-                        onChange={handleChange}
-                      />
-                      {/* <p
-                        className={`ml-1 mt-[-24px] text-xs text-themeSecondary ${
-                          errors.us_visa_support_national_identification_document_type
-                            ? 'visible'
-                            : 'invisible'
-                        }`}
-                      >
-                        {errors.us_visa_support_national_identification_document_type ||
-                          ''}
-                      </p> */}
-                    </div>
-                    <div
-                      className={`transition-all duration-300 ${
-                        formData.us_visa_support_national_identification_document_type ===
-                          'P' || 'N'
-                          ? 'max-h-96'
-                          : 'max-h-0'
-                      } mb-4`}
-                    >
-                      {(formData.us_visa_support_national_identification_document_type ===
-                        'P' ||
-                        formData.us_visa_support_national_identification_document_type ===
-                          'N') && (
-                        <div>
-                          <TextInput
-                            value={
-                              formData.us_visa_support_document_number || ''
-                            }
-                            placeholder="e.g. 84757UIH97GG"
-                            type="text"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            name="us_visa_support_document_number"
-                            error={errors.us_visa_support_document_number}
-                            valid={!errors.us_visa_support_document_number}
-                          >
-                            Enter your{' '}
-                            {formData.us_visa_support_national_identification_document_type ===
-                            'P'
-                              ? 'passport'
-                              : 'identification'}{' '}
-                            number here
-                            <span className="font-bold text-themeSecondary">
-                              *
-                            </span>
-                          </TextInput>
-                          <p
-                            className={`ml-1 text-xs mt-[-24px] text-themeSecondary ${
-                              errors.us_visa_support_document_number
-                                ? 'visible'
-                                : 'invisible'
-                            }`}
-                          >
-                            {errors.us_visa_support_document_number || ''}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <TextInput
-                        value={formData.us_visa_support_full_name || ''}
-                        placeholder="e.g. Alan Turing"
-                        type="text"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        name="us_visa_support_full_name"
-                        error={errors.us_visa_support_full_name}
-                        valid={!errors.us_visa_support_full_name}
-                      >
-                        Full name as it appears on the document above
-                        <span className="font-bold text-themeSecondary">*</span>
-                      </TextInput>
-                      <p
-                        className={`ml-1 text-xs mt-[-24px] text-themeSecondary ${
-                          errors.us_visa_support_full_name
-                            ? 'visible'
-                            : 'invisible'
-                        }`}
-                      >
-                        {errors.us_visa_support_full_name || ''}
-                      </p>
-                    </div>
-                    <div>
-                      <TextInput
-                        value={formData.us_visa_support_address || ''}
-                        placeholder="e.g. 1 North Drive, Montreal, Quebec, H4W, Canada"
-                        type="text"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        name="us_visa_support_address"
-                        error={errors.us_visa_support_address}
-                        valid={!errors.us_visa_support_address}
-                      >
-                        Full address (include all the information including
-                        street number, street name, city, state/province, postal
-                        code, country etc.)
-                        <span className="font-bold text-themeSecondary">*</span>
-                      </TextInput>
-                      <p
-                        className={`ml-1 text-xs mt-[-24px] text-themeSecondary ${
-                          errors.us_visa_support_address
-                            ? 'visible'
-                            : 'invisible'
-                        }`}
-                      >
-                        {errors.us_visa_support_address || ''}
+                        {errors.visa_support_form_confirmation || ''}
                       </p>
                     </div>
                   </div>
                 )}
+                <div> 
+              </div>
               </div>
               <hr className="my-4" />
               <div className="mb-4 text-xl font-bold text-purple-900">
@@ -1493,7 +1384,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 </span>
                 <br></br>I understand that any intellectual property I develop
                 or contribute to during the Reality Hack event, scheduled for
-                January 24 - 29th, 2024, at Massachusetts Institute of
+                January 23 - 27th, 2025, at Massachusetts Institute of
                 Technology in Cambridge, MA, will be subject to specific
                 licensing agreements. All code developed during the hackathon
                 must adhere to open-source licensing, ensuring its source code
@@ -1536,7 +1427,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                   Discrimination
                 </span>
                 <br></br>I acknowledge that harassment or discrimination based
-                on an individual’s race, color, sex, sexual orientation, gender
+                on an individual's race, color, sex, sexual orientation, gender
                 identity, pregnancy, religion, disability, age, genetic
                 information, veteran status, or national or ethnic origin is not
                 only a violation of MIT policy but may also violate federal and
@@ -1559,7 +1450,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 <br></br>
                 <li className="ml-3">
                   Submission to such conduct is made either explicitly or
-                  implicitly a term or condition of an individual’s
+                  implicitly a term or condition of an individual's
                   participation at the event.
                 </li>
                 <li className="ml-3">
@@ -1570,7 +1461,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 <li className="ml-3">
                   The conduct is sufficiently severe or pervasive that a
                   reasonable person would consider it intimidating, hostile, or
-                  abusive and it adversely affects an individual’s educational,
+                  abusive and it adversely affects an individual's educational,
                   work, or living environment.
                 </li>
                 <br></br>
@@ -1625,14 +1516,14 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 Reality Hack, Inc., and VR/AR MIT shall not be held liable or
                 responsible for any accidents, injuries, theft, acts of sexual
                 harassment, instances of self-harm, or any other incidents that
-                occur off the event&apos;s official premises, including but not
+                occur off the event's official premises, including but not
                 limited to areas around, near, or after the conclusion of the
                 event. Participants should exercise caution and common sense
                 when navigating Boston and the City of Cambridge. I hereby
                 release Reality Hack, Inc. and VR/AR MIT from any claims,
                 damages, injuries, losses, or liabilities arising in connection
                 with the event, including those that may occur during the
-                event&apos;s closed hours (12AM-7AM) and after the event&apos;s
+                event's closed hours (11PM-8AM) and after the event's
                 conclusion. This release encompasses, but is not limited to,
                 personal injury, property damage, theft, and any other loss,
                 whether foreseen or unforeseen, associated with their
@@ -1683,7 +1574,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                   <CheckboxInput
                     name="agree_to_media_release"
                     value="true"
-                    label="By checking this box, I confirm that I have read, understood, and voluntarily agree to the terms of this Consent and Release for the 2023-24 MIT Reality Hack."
+                    label="By checking this box, I confirm that I have read, understood, and voluntarily agree to the terms of this Consent and Release for the 2024-25 MIT Reality Hack."
                     checked={formData.agree_to_media_release === true}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -1715,7 +1606,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
             </div>
           ) : (
             <div className="px-6 py-6 h-[256px]">
-              <p>{`Thank you for submitting your RSVP to MIT Reality Hack 2024! You should receive an email to log in to our platform shortly.`}</p>
+              <p>{`Thank you for submitting your RSVP to MIT Reality Hack 2025! You should receive an email to log in to our platform shortly.`}</p>
             </div>
           )}
         </div>

@@ -484,11 +484,11 @@ export interface components {
       experience_contribution?: string | null;
       theme_essay?: string | null;
       theme_essay_follow_up?: string | null;
-      theme_interest_track_one?: components["schemas"]["ThemeInterestTrackOneEnum"] | components["schemas"]["NullEnum"] | null;
-      theme_interest_track_two?: components["schemas"]["ThemeInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
-      theme_detail_one?: components["schemas"]["ThemeDetailOneEnum"] | components["schemas"]["NullEnum"] | null;
-      theme_detail_two?: components["schemas"]["ThemeDetailTwoEnum"] | components["schemas"]["NullEnum"] | null;
-      theme_detail_three?: components["schemas"]["ThemeDetailThreeEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_interest_track_one?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_interest_track_two?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_one?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_two?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_three?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
       hardware_hack_interest?: components["schemas"]["HardwareHackInterestEnum"];
       heard_about_us_other?: string | null;
       digital_designer_skills_other?: string | null;
@@ -669,8 +669,10 @@ export interface components {
       /** Format: email */
       emergency_contact_email: string;
       emergency_contact_relationship: string;
-      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
-      special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_interest_track_one?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      special_interest_track_two?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      breakthrough_hacks_interest?: string | null;
+      loaner_headset_preference?: components["schemas"]["LoanerHeadsetPreferenceEnum"] | components["schemas"]["NullEnum"] | null;
       /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
       app_in_store?: string | null;
       currently_build_for_xr?: string | null;
@@ -722,8 +724,8 @@ export interface components {
       /** Format: email */
       emergency_contact_email: string;
       emergency_contact_relationship: string;
-      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
-      special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_interest_track_one?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      special_interest_track_two?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
       /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
       app_in_store?: string | null;
       currently_build_for_xr?: string | null;
@@ -733,6 +735,8 @@ export interface components {
       reality_hack_project_to_product?: boolean;
       participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
       sponsor_company?: string | null;
+      breakthrough_hacks_interest?: string | null;
+      loaner_headset_preference?: components["schemas"]["LoanerHeadsetPreferenceEnum"] | components["schemas"]["NullEnum"] | null;
     };
     /** @enum {unknown} */
     BlankEnum: "";
@@ -1233,6 +1237,15 @@ export interface components {
       mentor_requested?: components["schemas"]["MentorRequestedEnum"];
       announcement_pending?: components["schemas"]["AnnouncementPendingEnum"];
     };
+    /**
+     * @description * `META` - Meta Quest 3
+     * * `SNAP` - Snap Spectacles
+     * * `BYOD` - I am bringing my own XR device to work with.
+     * * `HWHACK` - I’ve chosen the Hardware Hack, so I will probably not need a headset.
+     * * `TBD` - I’m not sure yet
+     * @enum {string}
+     */
+    LoanerHeadsetPreferenceEnum: "META" | "SNAP" | "BYOD" | "HWHACK" | "TBD";
     Location: {
       /** Format: uuid */
       id: string;
@@ -1395,11 +1408,11 @@ export interface components {
       experience_contribution?: string | null;
       theme_essay?: string | null;
       theme_essay_follow_up?: string | null;
-      theme_interest_track_one?: components["schemas"]["ThemeInterestTrackOneEnum"] | components["schemas"]["NullEnum"] | null;
-      theme_interest_track_two?: components["schemas"]["ThemeInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
-      theme_detail_one?: components["schemas"]["ThemeDetailOneEnum"] | components["schemas"]["NullEnum"] | null;
-      theme_detail_two?: components["schemas"]["ThemeDetailTwoEnum"] | components["schemas"]["NullEnum"] | null;
-      theme_detail_three?: components["schemas"]["ThemeDetailThreeEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_interest_track_one?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_interest_track_two?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_one?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_two?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      theme_detail_three?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
       hardware_hack_interest?: components["schemas"]["HardwareHackInterestEnum"];
       heard_about_us_other?: string | null;
       digital_designer_skills_other?: string | null;
@@ -1504,8 +1517,10 @@ export interface components {
       /** Format: email */
       emergency_contact_email?: string;
       emergency_contact_relationship?: string;
-      special_track_snapdragon_spaces_interest?: components["schemas"]["SpecialTrackSnapdragonSpacesInterestEnum"] | components["schemas"]["NullEnum"] | null;
-      special_track_future_constructors_interest?: components["schemas"]["SpecialTrackFutureConstructorsInterestEnum"] | components["schemas"]["NullEnum"] | null;
+      special_interest_track_one?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      special_interest_track_two?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
+      breakthrough_hacks_interest?: string | null;
+      loaner_headset_preference?: components["schemas"]["LoanerHeadsetPreferenceEnum"] | components["schemas"]["NullEnum"] | null;
       /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
       app_in_store?: string | null;
       currently_build_for_xr?: string | null;
@@ -1755,7 +1770,7 @@ export interface components {
     /**
      * @description * `Y` - Yay
      * * `N` - Nay
-     * * `T` - TBD
+     * * `T` - Tbd
      * @enum {string}
      */
     PreferenceEnum: "Y" | "N" | "T";
@@ -1888,13 +1903,7 @@ export interface components {
      * * `N` - No
      * @enum {string}
      */
-    SpecialTrackFutureConstructorsInterestEnum: "Y" | "N";
-    /**
-     * @description * `Y` - Yes
-     * * `N` - No
-     * @enum {string}
-     */
-    SpecialTrackSnapdragonSpacesInterestEnum: "Y" | "N";
+    SpecialInterestTrackTwoEnum: "Y" | "N";
     /**
      * @description * `R` - Requested
      * * `A` - Acknowledged
@@ -1930,17 +1939,6 @@ export interface components {
       number: number;
       /** Format: uuid */
       location?: string | null;
-    };
-    TableDetail: {
-      /** Format: uuid */
-      id: string;
-      /** Format: int64 */
-      number: number;
-      location: components["schemas"]["Location"];
-      /** Format: date-time */
-      created_at: string;
-      /** Format: date-time */
-      updated_at: string;
     };
     TableNumber: {
       /** Format: uuid */
@@ -1991,7 +1989,7 @@ export interface components {
       number?: number | null;
       name: string;
       attendees: components["schemas"]["AttendeeName"][];
-      table: components["schemas"]["TableDetail"];
+      table: components["schemas"]["TeamTable"];
       project: components["schemas"]["TeamProject"];
       lighthouse: components["schemas"]["TeamLightHouse"];
       track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
@@ -2024,36 +2022,17 @@ export interface components {
       /** Format: date-time */
       updated_at: string;
     };
-    /**
-     * @description * `Y` - Yes
-     * * `N` - No
-     * @enum {string}
-     */
-    ThemeDetailOneEnum: "Y" | "N";
-    /**
-     * @description * `Y` - Yes
-     * * `N` - No
-     * @enum {string}
-     */
-    ThemeDetailThreeEnum: "Y" | "N";
-    /**
-     * @description * `Y` - Yes
-     * * `N` - No
-     * @enum {string}
-     */
-    ThemeDetailTwoEnum: "Y" | "N";
-    /**
-     * @description * `Y` - Yes
-     * * `N` - No
-     * @enum {string}
-     */
-    ThemeInterestTrackOneEnum: "Y" | "N";
-    /**
-     * @description * `Y` - Yes
-     * * `N` - No
-     * @enum {string}
-     */
-    ThemeInterestTrackTwoEnum: "Y" | "N";
+    TeamTable: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int64 */
+      number: number;
+      location: components["schemas"]["Location"];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
     TokenObtainPair: {
       username: string;
       password: string;
@@ -2607,8 +2586,9 @@ export interface operations {
         /**
          * @description * `Y` - Yay
          * * `N` - Nay
+         * * `T` - Tbd
          */
-        preference?: "N" | "Y";
+        preference?: "N" | "T" | "Y";
         preferer?: string;
         /** @description A search term. */
         search?: string;

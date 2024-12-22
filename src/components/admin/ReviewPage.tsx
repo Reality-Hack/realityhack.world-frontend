@@ -704,61 +704,6 @@ export default function ReviewPage({
     );
   };
 
-  const RSVP = () => {
-    return (
-      <div>
-        <LabelAndValue
-          label={'What unisex t-shirt size do you wear?'}
-          value={''}
-        />
-        <LabelAndValue
-          label={
-            'Discord will be our primary communications platform before and during the event. What is your Discord username?'
-          }
-          value={'e'}
-        />
-        <LabelAndValue
-          label={'List any dietary restrictions you may have. (Optional)'}
-          value={'d'}
-        />
-        <LabelAndValue
-          label={
-            'Tell us about any accommodations you may need in order to be able to attend our event. (Optional)'
-          }
-          value={'c'}
-        />
-        <LabelAndValue
-          label={
-            'A phone number we can reach you at during the MIT Reality Hack event:'
-          }
-          value={'b'}
-        />
-        <LabelAndValue
-          label={'Please provide an emergency contact:'}
-          value={'a'}
-        />
-        <LabelAndValue
-          label={
-            '(For those under 18, file upload) As you will be under 18 when the event starts on January 12, 2023, we require the completion of a Parental Consent and Release Form. Please download this form, complete it, and upload it here.'
-          }
-          value={'ues'}
-        />
-        <LabelAndValue
-          label={
-            'Do you require a letter of support for a US visa application?'
-          }
-          value={'Yes'}
-        />
-        <LabelAndValue
-          label={
-            'Please fill out the following information for your US visa application support letter. A member of our team will email you a letter to support your visa application.'
-          }
-          value={'Yes'}
-        />
-      </div>
-    );
-  };
-
   const sections = [
     { label: 'Disclaimers', component: <Disclaimers /> },
     { label: 'Contact and Personal Info ', component: <BasicInfoAndDem /> },
