@@ -1,0 +1,16 @@
+.scrollbar-custom::-webkit-scrollbar {
+    width: 20px;
+    height: 20px;
+  }
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  border-radius: 100vh;
+  background: #f5f5f5;
+  border: lightgrey;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: lightgrey;
+  border-radius: 100vh;
+  border: 5px solid #f5f5f5;
+}
