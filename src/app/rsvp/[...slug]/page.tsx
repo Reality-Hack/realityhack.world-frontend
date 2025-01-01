@@ -112,7 +112,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
           'special_interest_track_one',
           'special_interest_track_two',
           'communications_platform_username',
-          'loaner_headset_preference',
+          'loaner_headset_preference'
         ].forEach(field => {
           if (!updatedFields.includes(field)) {
             updatedFields.push(field);
@@ -153,9 +153,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
   }, [isParticipant, slug]);
 
   useEffect(() => {
-    const visaRelatedFields = [
-      'visa_support_form_confirmation'
-    ];
+    const visaRelatedFields = ['visa_support_form_confirmation'];
 
     setRequiredFields((prevFields: any) => {
       let updatedFields = [...prevFields];
@@ -380,9 +378,9 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
         }
       };
 
-    // TODO: recover Discord username validation capabilities
-    setDiscordValidationResult('success');
-    //   discordLookup();
+      // TODO: recover Discord username validation capabilities
+      setDiscordValidationResult('success');
+      //   discordLookup();
     },
     [requiredFields]
   );
@@ -410,24 +408,24 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
       const value = formData[field] as any;
 
       // if (field !== 'communications_platform_username') {
-        let validationError = '';
+      let validationError = '';
 
-        if (
-          (Array.isArray(value) && value.length === 0) ||
-          value === null ||
-          value === '' ||
-          (value === false &&
-            field !== 'us_visa_support_is_required' &&
-            field !== 'under_18_by_date' &&
-            field !== 'visa_support_form_confirmation')
-        ) {
-          validationError = 'This field is required.';
-          isValid = false;
-        }
+      if (
+        (Array.isArray(value) && value.length === 0) ||
+        value === null ||
+        value === '' ||
+        (value === false &&
+          field !== 'us_visa_support_is_required' &&
+          field !== 'under_18_by_date' &&
+          field !== 'visa_support_form_confirmation')
+      ) {
+        validationError = 'This field is required.';
+        isValid = false;
+      }
 
-        if (validationError) {
-          newErrors = { ...newErrors, [field]: validationError };
-        }
+      if (validationError) {
+        newErrors = { ...newErrors, [field]: validationError };
+      }
       // } else {
       //   if (discordValidationResult === 'error') {
       //     newErrors['communications_platform_username'] =
@@ -625,7 +623,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                   {renderDiscordError && (
                     <p className="absolute ml-1 text-xs text-themeSecondary bottom-2">
                       Invalid Discord username. for more information on
-                      Discord's new usernames, go to{' '}
+                      Discord&apos;s new usernames, go to{' '}
                       <a
                         className="underline cursor-pointer"
                         href="https://support.discord.com/hc/en-us/articles/12620128861463-New-Usernames-Display-Names#h_01GZHKGNP2FYNFSAJB3DW2E4PN"
@@ -637,9 +635,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                       .
                     </p>
                   )}
-                  <div className="absolute right-[-24px] bottom-[32px]">
-
-                  </div>
+                  <div className="absolute right-[-24px] bottom-[32px]"></div>
                 </div>
               )}
               <div className="">
@@ -954,7 +950,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
               {isParticipant && (
                 <>
                   <div className="pb-4">
-                    Will you be under  18 on January 23, 2025?{' '}
+                    Will you be under 18 on January 23, 2025?{' '}
                     <span className="text-red-700">*</span>
                     <div className="flex flex-col mt-[10px]">
                       <RadioInput
@@ -1071,8 +1067,9 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
 
                   <div className="pb-8">
                     <div>
-                    If you had to choose one loaner headset to work with, which would be your preference?{' '}
-                    <span className="text-red-700">*</span>
+                      If you had to choose one loaner headset to work with,
+                      which would be your preference?{' '}
+                      <span className="text-red-700">*</span>
                     </div>
                     <div>
                       <RadioInput
@@ -1084,7 +1081,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                       />
                       <RadioInput
                         name="loaner_headset_preference"
-                        value="SNAP" 
+                        value="SNAP"
                         onChange={handleChange}
                         label="Snap Spectacles"
                         checked={formData.loaner_headset_preference === 'SNAP'}
@@ -1101,7 +1098,9 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                         value="HWHACK"
                         onChange={handleChange}
                         label="I've chosen the Hardware Hack, so I will probably not need a headset."
-                        checked={formData.loaner_headset_preference === 'HWHACK'}
+                        checked={
+                          formData.loaner_headset_preference === 'HWHACK'
+                        }
                       />
                       <RadioInput
                         name="loaner_headset_preference"
@@ -1111,61 +1110,90 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                         checked={formData.loaner_headset_preference === 'TBD'}
                       />
                       {errors.loaner_headset_preference && (
-                        <p className="text-red-500 text-sm">{errors.loaner_headset_preference}</p>
+                        <p className="text-red-500 text-sm">
+                          {errors.loaner_headset_preference}
+                        </p>
                       )}
                     </div>
-                </div>
-                <div className="pb-8">
+                  </div>
+                  <div className="pb-8">
                     <div>
-                      <strong>Breakthrough Hacks Opportunity:</strong> This year, select teams will be given 
-                      the opportunity to be some of the FIRST hackers ever to work with technology from the 
-                      following companies:
-                      
+                      <strong>Breakthrough Hacks Opportunity:</strong> This
+                      year, select teams will be given the opportunity to be
+                      some of the FIRST hackers ever to work with technology
+                      from the following companies:
                       <ul className="ml-4 list-disc">
                         <li>
-                          <a href="https://galea.co/#home" className="underline cursor-pointer text-themePrimary">
+                          <a
+                            href="https://galea.co/#home"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline cursor-pointer text-themePrimary"
+                          >
                             Galea
                           </a>
                         </li>
                         <li>
-                          <a href="https://www.maradin.co.il/" className="underline cursor-pointer text-themePrimary">
+                          <a
+                            href="https://www.maradin.co.il/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline cursor-pointer text-themePrimary"
+                          >
                             Maradin
-                          </a> (dev kit includes monocle display glass)
+                          </a>{' '}
+                          (dev kit includes monocle display glass)
                         </li>
                         <li>
-                          <a href="https://distance.tech/" className="underline cursor-pointer text-themePrimary">
+                          <a
+                            href="https://distance.tech/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline cursor-pointer text-themePrimary"
+                          >
                             Distance
                           </a>
                         </li>
                         <li>
-                          Advanced haptic gloves (We will reveal who it is at the Hack!)
+                          Advanced haptic gloves (We will reveal who it is at
+                          the Hack!)
                         </li>
                         <li>
-                          <a href="https://shop.openbci.com/collections/frontpage?_gl=1*1pykcxm*_gcl_au*NjU1MDkxNDY1LjE3MzQzMDY3MTE.*_ga*NTQ3MjAxNTAuMTczNDMwNjcxMQ..*_ga_HVMLC0ZWWS*MTczNDMwNjcxMC4xLjAuMTczNDMwNjcxMC42MC4wLjA." className="underline cursor-pointer text-themePrimary">
+                          <a
+                            href="https://shop.openbci.com/collections/frontpage?_gl=1*1pykcxm*_gcl_au*NjU1MDkxNDY1LjE3MzQzMDY3MTE.*_ga*NTQ3MjAxNTAuMTczNDMwNjcxMQ..*_ga_HVMLC0ZWWS*MTczNDMwNjcxMC4xLjAuMTczNDMwNjcxMC42MC4wLjA."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline cursor-pointer text-themePrimary"
+                          >
                             OpenBCI Biometric Sensors
                           </a>
                         </li>
                         <li>
-                          <a href="https://www.qualcomm.com/developer/hardware/rb3-gen-2-development-kit" className="underline cursor-pointer text-themePrimary">
+                          <a
+                            href="https://www.qualcomm.com/developer/hardware/rb3-gen-2-development-kit"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline cursor-pointer text-themePrimary"
+                          >
                             Qualcomm RB3 Gen2
                           </a>
                         </li>
                       </ul>
-
-                      <br/>
-                      If you're interested in any of these, please let us know which one and why.
+                      <br />
+                      If you&apos;re interested in any of these, please let us
+                      know which one and why.
                     </div>
                     <TextAreaInput
-                        name="breakthrough_hacks_interest" 
-                        placeholder="Please describe your interest..."
-                        value={formData.breakthrough_hacks_interest || ''}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={errors.breakthrough_hacks_interest}
-                        valid={!errors.breakthrough_hacks_interest}
-                        rows={4}
+                      name="breakthrough_hacks_interest"
+                      placeholder="Please describe your interest..."
+                      value={formData.breakthrough_hacks_interest || ''}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={errors.breakthrough_hacks_interest}
+                      valid={!errors.breakthrough_hacks_interest}
+                      rows={4}
                     >
-                        Enter your interest here.
+                      Enter your interest here.
                     </TextAreaInput>
                   </div>
 
@@ -1179,26 +1207,21 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                       indicate your interest below.
                     </div>
                     <div className="pb-4">
-                      Would you like to register for the Hardware Hack at this time? *
+                      Would you like to register for the Hardware Hack at this
+                      time? *
                       <RadioInput
                         name="special_interest_track_one"
                         value="Y"
                         onChange={handleChange}
                         label="Yes"
-                        checked={
-                          formData.special_interest_track_one ===
-                          'Y'
-                        }
+                        checked={formData.special_interest_track_one === 'Y'}
                       />
                       <RadioInput
                         name="special_interest_track_one"
                         value="N"
                         onChange={handleChange}
                         label="No"
-                        checked={
-                          formData.special_interest_track_one ===
-                          'N'
-                        }
+                        checked={formData.special_interest_track_one === 'N'}
                       />
                       <p
                         className={`ml-1 text-xs text-themeSecondary ${
@@ -1211,26 +1234,21 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                       </p>
                     </div>
                     <div>
-                    Would you like to register for the MIT Reality Hack Founders Lab at this time? *
+                      Would you like to register for the MIT Reality Hack
+                      Founders Lab at this time? *
                       <RadioInput
                         name="special_interest_track_two"
                         value="Y"
                         onChange={handleChange}
                         label="Yes"
-                        checked={
-                          formData.special_interest_track_two ===
-                          'Y'
-                        }
+                        checked={formData.special_interest_track_two === 'Y'}
                       />
                       <RadioInput
                         name="special_interest_track_two"
                         value="N"
                         onChange={handleChange}
                         label="No"
-                        checked={
-                          formData.special_interest_track_two ===
-                          'N'
-                        }
+                        checked={formData.special_interest_track_two === 'N'}
                       />
                       <p
                         className={`ml-1 text-xs text-themeSecondary ${
@@ -1239,8 +1257,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                             : 'invisible'
                         }`}
                       >
-                        {errors.special_interest_track_two ||
-                          ''}
+                        {errors.special_interest_track_two || ''}
                       </p>
                     </div>
                   </div>
@@ -1256,7 +1273,11 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                   the US for MIT Reality Hack and require a letter of invitation
                   to supplement your visa application, please let us know by
                   filling out{' '}
-                  <a href=" https://forms.gle/1kjZbYidRFGXmjnE6" target="_blank" className="underline cursor-pointer text-themePrimary">
+                  <a
+                    href=" https://forms.gle/1kjZbYidRFGXmjnE6"
+                    target="_blank"
+                    className="underline cursor-pointer text-themePrimary"
+                  >
                     this Google Form
                   </a>{' '}
                   if you haven&apos;t already done so.
@@ -1294,7 +1315,8 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 {formData.us_visa_support_is_required === true && (
                   <div>
                     <div className="pb-3">
-                      Check this box if you require a visa letter and have filled out the form.
+                      Check this box if you require a visa letter and have
+                      filled out the form.
                       <RadioInput
                         name="visa_support_form_confirmation"
                         value="true"
@@ -1321,8 +1343,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                     </div>
                   </div>
                 )}
-                <div> 
-              </div>
+                <br />
               </div>
               <hr className="my-4" />
               <div className="mb-4 text-xl font-bold text-purple-900">
@@ -1427,8 +1448,8 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                   Discrimination
                 </span>
                 <br></br>I acknowledge that harassment or discrimination based
-                on an individual's race, color, sex, sexual orientation, gender
-                identity, pregnancy, religion, disability, age, genetic
+                on an individual&apos;s race, color, sex, sexual orientation,
+                gender identity, pregnancy, religion, disability, age, genetic
                 information, veteran status, or national or ethnic origin is not
                 only a violation of MIT policy but may also violate federal and
                 state law, including Title IX of the Education Amendments of
@@ -1450,7 +1471,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 <br></br>
                 <li className="ml-3">
                   Submission to such conduct is made either explicitly or
-                  implicitly a term or condition of an individual's
+                  implicitly a term or condition of an individual&apos;s
                   participation at the event.
                 </li>
                 <li className="ml-3">
@@ -1461,8 +1482,8 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 <li className="ml-3">
                   The conduct is sufficiently severe or pervasive that a
                   reasonable person would consider it intimidating, hostile, or
-                  abusive and it adversely affects an individual's educational,
-                  work, or living environment.
+                  abusive and it adversely affects an individual&apos;s
+                  educational, work, or living environment.
                 </li>
                 <br></br>
                 Examples of sexual harassment include, but are not limited to:
@@ -1516,14 +1537,14 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 Reality Hack, Inc., and VR/AR MIT shall not be held liable or
                 responsible for any accidents, injuries, theft, acts of sexual
                 harassment, instances of self-harm, or any other incidents that
-                occur off the event's official premises, including but not
+                occur off the event&apos;s official premises, including but not
                 limited to areas around, near, or after the conclusion of the
                 event. Participants should exercise caution and common sense
                 when navigating Boston and the City of Cambridge. I hereby
                 release Reality Hack, Inc. and VR/AR MIT from any claims,
                 damages, injuries, losses, or liabilities arising in connection
                 with the event, including those that may occur during the
-                event's closed hours (11PM-8AM) and after the event's
+                event&apos;s closed hours (11PM-8AM) and after the event&apos;s
                 conclusion. This release encompasses, but is not limited to,
                 personal injury, property damage, theft, and any other loss,
                 whether foreseen or unforeseen, associated with their
