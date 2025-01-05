@@ -1,0 +1,13 @@
+/* Example for styling the close button inside the dialog */
+.CustomDialog .close-button {
+  margin: 0; /* Remove any margin */
+  padding: 0; /* Remove padding */
+  position: absolute; /* Make sure it's positioned correctly */
+  top: 10px; /* Adjust to where you want the button */
+  right: 10px; /* Adjust to where you want the button */
+}
+
+.dialog .close-button {
+  display: none;
+}
+

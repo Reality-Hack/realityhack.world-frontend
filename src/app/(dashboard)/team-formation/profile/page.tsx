@@ -7,6 +7,7 @@ import './profile.css';
 export default function RoundOne() {
   const { data: session, status } = useSession();
   const { user } = useAuthContext();
+  {/*Variable Initialization for Destiny Profile: Basic Info, About Me, Current Project, Social Links*/}
   const [basicInfo, setBasicInfo] = useState({
     name: 'Alex Johnson',
     title: 'Full Stack Developer & UX Enthusiast',
@@ -37,8 +38,19 @@ export default function RoundOne() {
   const [profileCustomization, setProfileCustomization] = useState({
     theme: 'Light'
   });
+  
+  
+  {/*Variable Initialization for Communication*/}
+  const [communication, setCommunicationMedium] = useState({
+    name: basicInfo.name,
+    phone: '123-456-7890',
+    email: basicInfo.email,
+    communicationMedium: '',
+    responseTimes: '',
+    directness: ''
+  });
 
-  // Handle the change event when a radio button is selected
+  {/*Handle change events when a radio button is selected*/}
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value); // Update selected option based on radio button value
   };
@@ -77,6 +89,7 @@ export default function RoundOne() {
         <div className="grid grid-cols-1 md:grid-cols-1 gap-1 flex-grow">
           <div>
             <div className="mx-auto h-2 bg-[#4D97E8] rounded-t-lg" />
+            {/*Destiny Profile Form, featuring: Basic Info, About Me, Current Project, Social Links, Profile Customization, Preview*/}
             <div className="container-fluid ml-0 mr-0 py-5 md:ml-20 md:mr-20">
               <h1 className="text-center text-xl font-bold mb-4">
                 Create Your Destiny Profile
@@ -187,7 +200,7 @@ export default function RoundOne() {
                         </label>
                         <div className="flex justify-between gap-4">
                           <textarea
-                            className="scrollbar-custom border rounded-md p-2 overflow-y-scroll"
+                            className="scrollbar-custom border rounded-md p-2 overflow-y-scroll w-full"
                             rows={4}
                             cols={37}
                             value={aboutMe.bio}
@@ -280,7 +293,7 @@ export default function RoundOne() {
                       </h2>
                       <div className="flex justify-between gap-4">
                         <textarea
-                          className="scrollbar-custom border rounded-md p-2 overflow-y-scroll"
+                          className="scrollbar-custom border rounded-md p-2 overflow-y-scroll w-full"
                           rows={4}
                           cols={37}
                           value={currentProject}
@@ -536,6 +549,188 @@ export default function RoundOne() {
                   </div>
                 </div>
               </form>
+            </div>
+            {/*Communication Medium Form, featuring Preferecens and Preview*/}
+            <div className="container-fluid ml-0 mr-0 py-5 md:ml-20 md:mr-20">
+              <h1 className="text-center text-xl font-bold mb-4">
+                The best way to communicate with me during the hackathon is...
+              </h1>
+              <div className="flex flex-col gap-8 justify-evenly md:flex-row md:ml-20 md:mr-20">
+                {/*COMMUNICATION PROFILE DIV*/}
+                <div className="flex flex-col w-full justify-content gap-6">
+                  {/* Edit Your Profile */}
+                  <section className="card shadow p-4 rounded-md">
+                    <form>
+                      <h2 className="text-sm font-bold mb-4">
+                        Edit Your Profile
+                      </h2>
+                      <div className="mb-3">
+                        <label
+                          htmlFor="name"
+                          className="text-xs block font-medium"
+                        >
+                          Name
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          className="w-full border rounded-md p-2"
+                          value={communication.name}
+                          onChange={e =>
+                            handleInputChange(e, 'communication', 'name')
+                          }
+                        />
+                      </div>
+                      <div className="mb-3">
+                        <label
+                          htmlFor="title"
+                          className="text-xs block font-medium"
+                        >
+                          Phone
+                        </label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          className="w-full border rounded-md p-2"
+                          value={communication.phone}
+                          onChange={e =>
+                            handleInputChange(e, 'communication', 'phone')
+                          }
+                        />
+                      </div>
+                      <div className="flex items-center mb-3">
+                        <div className="flex-grow">
+                          <label
+                            htmlFor="email"
+                            className="text-xs block font-medium"
+                          >
+                            Email
+                          </label>
+                          <input
+                            type="email"
+                            id="email"
+                            className="w-full border rounded-md p-2"
+                            value={communication.email}
+                            onChange={e =>
+                              handleInputChange(e, 'communication', 'email')
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div className="flex-grow">
+                        <label
+                          htmlFor="communicationMedium"
+                          className="text-xs block font-medium"
+                        >
+                          Personal Communication Medium
+                        </label>
+                        <textarea
+                          id="communicationMedium"
+                          placeholder="How do you prefer your teammates to communication with you?"
+                          className="text-xs w-full border rounded-md p-2"
+                          rows={4}
+                          onChange={e =>
+                            handleInputChange(
+                              e,
+                              'communication',
+                              'communicationMedium'
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="flex-grow">
+                        <label
+                          htmlFor="responseTimes"
+                          className="text-xs block font-medium"
+                        >
+                          Response Times
+                        </label>
+                        <textarea
+                          id="responseTimes"
+                          placeholder="When do you typically respond to messages?"
+                          className="text-xs w-full border rounded-md p-2"
+                          rows={4}
+                          onChange={e =>
+                            handleInputChange(
+                              e,
+                              'communication',
+                              'responseTimes'
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="flex-grow">
+                        <label
+                          htmlFor="directness"
+                          className="text-xs block font-medium"
+                        >
+                          Directness
+                        </label>
+                        <textarea
+                          id="directness"
+                          placeholder="Do you prefer direct communication or a more nuanced approach?"
+                          className="text-xs w-full text-xs border rounded-md p-2"
+                          rows={4}
+                          onChange={e =>
+                            handleInputChange(e, 'communication', 'directness')
+                          }
+                        />
+                      </div>
+                      <button
+                        className="bg-black text-xs text-white font-bold p-3 rounded-md"
+                        type="submit"
+                      >
+                        Add Custom Field
+                      </button>
+                    </form>
+                  </section>
+                </div>
+                {/*PREVIEW SECTION DIV*/} 
+                <div className="flex flex-col w-full">
+                  {/* Preview */}
+                  <section className="card shadow p-4 rounded-md mb-3">
+                    <h1 className="text-sm font-bold mb-6">
+                      The best to communicate with me during the hackathon is...
+                    </h1>
+                    <div className="text-left">
+                      <div className="mb-4">
+                        <h6 className=" font-bold">Name</h6>
+                        <p>{communication.name}</p>
+                      </div>
+                      <div className="mb-4">
+                        <h6 className=" font-bold">Phone</h6>
+                        <p>{communication.phone}</p>
+                      </div>
+                      <div className="mb-4">
+                        <h6 className=" font-bold">Email</h6>
+                        <p>{communication.email}</p>
+                      </div>
+                      <div className="mb-4">
+                        <h6 className=" font-bold">
+                          Preferred Communication Medium
+                        </h6>
+                        <p>{communication.communicationMedium}</p>
+                      </div>
+                      <div className="mb-4">
+                        <h6 className=" font-bold">Response Times</h6>
+                        <p>{communication.responseTimes}</p>
+                      </div>
+                      <div className="mb-4">
+                        <h6 className=" font-bold">Directness</h6>
+                        <p>{communication.directness}</p>
+                      </div>
+                    </div>
+                  </section>
+                  <div className="flex-inline">
+                    <button className="bg-black text-xs text-white font-bold p-3 rounded-md mr-2">
+                      Share Profile
+                    </button>
+                    <button className="bg-black text-xs text-white font-bold p-3 rounded-md">
+                      Export as PDF
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
