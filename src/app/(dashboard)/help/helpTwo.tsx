@@ -145,12 +145,14 @@ export default function Help2() {
     description?: string,
     reporter?: string,
     category?: string,
-    category_specialty?: string
+    category_specialty?: string,
+    reporter_location?: string
   ) {
     const newHelpRequest: CreateHelpRequest = {
       description: description,
       topic: topics,
-      team: team
+      team: team,
+      reporter_location: reporter_location
       // reporter: reporter,
       // category: category,
       // category_specialty:category_specialty,
@@ -219,9 +221,12 @@ export default function Help2() {
               placeInQueue={idx + 1}
               skillList={getTopicLabels(req.topic)}
               created={req.created_at}
-              team={req.team.id}
+              teamId={req.team.id}
+              teamName={req.team.name}
+              teamLocation={`${req.team.location?.building} ${req.team.location?.room}`}
               requestId={req.id}
               setShowCompletedRequests={setShowCompletedRequests}
+              showAdditionalFields={true}
             />
           ))}
       </div>

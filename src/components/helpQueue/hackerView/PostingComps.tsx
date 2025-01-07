@@ -50,8 +50,11 @@ interface PostingProps {
   skillList: string[];
   description: string;
   created?: string;
-  team?: string;
+  teamId?: string;
+  teamName?: string;
+  teamLocation?: string;
   requestId?: string;
+  showAdditionalFields?: boolean;
   setShowCompletedRequests?: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -65,9 +68,12 @@ export function Posting({
   skillList,
   description,
   created,
-  team,
+  teamId,
+  teamName,
+  teamLocation,
   requestId,
-  setShowCompletedRequests
+  setShowCompletedRequests,
+  showAdditionalFields
 }: PostingProps) {
   const { data: session } = useSession();
 
@@ -292,7 +298,11 @@ interface MentorPostingProps {
   topicList?: string[];
   description: string;
   created?: string;
-  team?: string;
+  teamId?: string;
+  teamName?: string;
+  teamLocation?: string;
+  showAdditionalFields?: boolean;
+  reporterLocation?: string;
 }
 
 export function MentorPosting({
@@ -306,7 +316,11 @@ export function MentorPosting({
   topicList,
   description,
   created,
-  onHandleUpdateStatus
+  onHandleUpdateStatus,
+  teamId,
+  teamName,
+  teamLocation,
+  reporterLocation
 }: MentorPostingProps) {
   const bannerColor = (status: string) => {
     const green = 'bg-[#8FC382] text-white';
@@ -356,8 +370,24 @@ export function MentorPosting({
             `Submitted at ${DateTime.fromISO(created).toLocaleString(DateTime.DATETIME_SHORT)}`}
         </div>
         <div className="mx-auto">
-          {created && calculateTimeDifference(created)}
+            {teamName || teamLocation ? (
+            <div>
+                Team {teamName} at {teamLocation}
+            </div>
+            ) : (
+            <div>No team information available</div>
+            )}
         </div>
+        <div className="mx-auto">
+            {reporterLocation ? (
+            <div>
+                {reporterLocation}
+            </div>
+            ) : (
+            <div>No Additional Location information available</div>
+            )}
+        </div>
+
         <div className="flex flex-wrap items-center justify-center w-full gap-2 px-4">
           {topicList?.map((skill, index) => (
             <Skill key={index} skill={skill} />

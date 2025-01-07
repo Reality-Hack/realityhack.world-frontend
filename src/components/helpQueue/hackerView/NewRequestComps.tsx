@@ -48,7 +48,7 @@ export function Dialog({ isOpen, onClose, children }: DialogProps) {
         className="fixed inset-0 flex items-center justify-center z-[1002]"
         onClick={handleDialogClick}
       >
-        <div className="relative w-[720px] h-[400px] p-4 bg-white rounded-md shadow-md">
+        <div className="relative w-[720px] h-[480px] p-4 bg-white rounded-md shadow-md">
           <div className="flex">
             <button className="ml-auto " onClick={onClose}>
               Close
@@ -69,6 +69,7 @@ interface QuestionDialogProps {
     topics: string[],
     team: string,
     description?: string,
+    reporter_location?: string,
     reporter?: string,
     category?: string,
     category_specialty?: string
@@ -81,7 +82,8 @@ export function QuestionDialog({
   closeNewRequestDialog,
   onSubmit
 }: QuestionDialogProps) {
-  const [textareaValue, setTextareaValue] = useState<string>('');
+  const [descriptionText, setDescriptionText] = useState<string>('');
+  const [locationText, setLocationText] = useState<string>('');
   //this is to see if you can submit the question or not
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
 
@@ -116,10 +118,13 @@ export function QuestionDialog({
       console.error('User or team is null');
       return;
     }
-    if (textareaValue.trim() !== '' && canSubmit) {
+    if (descriptionText.trim() !== '' && canSubmit) {
       try {
         // Assuming onSubmit is a Promise. If not, adjust accordingly.
-        await onSubmit(selectedItems, user?.team?.id, textareaValue);
+        await onSubmit(selectedItems, user?.team?.id, descriptionText, locationText);
+        setDescriptionText('');
+        setSelectedItems([]);
+        setCanSubmit(false);
         closeNewRequestDialog(); // Close the dialog on successful submission
       } catch (error) {
         // Handle any errors here
@@ -162,14 +167,26 @@ export function QuestionDialog({
             <textarea
               className="w-full h-20 p-2 border border-[#d9d9d9] rounded-md focus:outline-none focus:border-[#4096ff] hover:border-[#4096ff] transition-all"
               placeholder="Type your description here"
-              value={textareaValue}
-              onChange={e => setTextareaValue(e.target.value)}
+              value={descriptionText}
+              onChange={e => setDescriptionText(e.target.value)}
+            />
+          {/* </div> */}
+            <div className="font-medium">
+              Where can mentors find you if not at your table? 
+              <span className="mb-2 text-red-400 text-md">*</span>
+            </div>
+            <input
+              type="text"
+              className="w-full p-2 border border-[#d9d9d9] rounded-md focus:outline-none focus:border-[#4096ff] hover:border-[#4096ff] transition-all"
+              placeholder="E.g. Table 42, or Lobby Area near entrance"
+              value={locationText}
+              onChange={e => setLocationText(e.target.value)}
             />
           </div>
           <div
             onClick={handleOnSubmit}
             className={`gap-1.5s mr-6 flex mt-0 mb-4  text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm cursor-pointer transition-all w-fit whitespace-nowrap ${
-              textareaValue.trim() !== '' && canSubmit
+              descriptionText.trim() !== '' && canSubmit
                 ? 'hover:bg-[#0066F5] bg-[#1677FF] cursor-pointer'
                 : 'bg-gray-300 cursor-not-allowed'
             }`}

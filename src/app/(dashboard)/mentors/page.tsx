@@ -171,6 +171,9 @@ export default function Page() {
                   created={req.created_at}
                   team={req.team?.id}
                   onHandleUpdateStatus={handleUpdateStatus(req.id)}
+                  teamId={req.team?.id}
+                  teamName={req.team?.name}
+                  teamLocation={`${req.team?.table?.location?.building} ${req.team?.table?.location?.room}`}
                 />
               );
             })}

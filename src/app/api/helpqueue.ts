@@ -10,13 +10,14 @@ export type Location = {
 export type HelpRequestTable = {
   id: string;
   number: number;
-  location: string;
+  location: Location;
 };
 
 export type HelpRequestTeam = {
   id: string;
   name: string;
   table: HelpRequestTable;
+  location: Location;
 };
 
 export type HelpRequestReporter = {
@@ -36,6 +37,7 @@ export type HelpRequest = {
   title: string;
   updated_at: string;
   topic: string[];
+  reporter_location?: string;
 };
 
 export type CreateHelpRequest = {
@@ -45,7 +47,7 @@ export type CreateHelpRequest = {
   mentor?: string;
   reporter?: string; //an attendee
   title?: string;
-
+  reporter_location?: string;
   // category?: string; //dapms
   // category_specialty?: string;
   topic_other?: string;
