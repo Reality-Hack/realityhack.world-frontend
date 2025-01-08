@@ -20,6 +20,7 @@ import { MentorTopics } from '@/types/types';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 const LighthousesSocketURL = `${process.env.NEXT_PUBLIC_BACKEND_WS_URL}/ws/lighthouses/`;
 
+
 type LighthouseInfo = {
   location?: Location;
 } & LightHouseMessage;
@@ -143,10 +144,10 @@ export default function Help2() {
     topics: string[],
     team: string,
     description?: string,
+    reporter_location?: string,
     reporter?: string,
     category?: string,
     category_specialty?: string,
-    reporter_location?: string
   ) {
     const newHelpRequest: CreateHelpRequest = {
       description: description,

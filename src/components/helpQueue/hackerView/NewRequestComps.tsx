@@ -125,6 +125,7 @@ export function QuestionDialog({
         setDescriptionText('');
         setSelectedItems([]);
         setCanSubmit(false);
+        setLocationText('');
         closeNewRequestDialog(); // Close the dialog on successful submission
       } catch (error) {
         // Handle any errors here
@@ -173,7 +174,6 @@ export function QuestionDialog({
           {/* </div> */}
             <div className="font-medium">
               Where can mentors find you if not at your table? 
-              <span className="mb-2 text-red-400 text-md">*</span>
             </div>
             <input
               type="text"

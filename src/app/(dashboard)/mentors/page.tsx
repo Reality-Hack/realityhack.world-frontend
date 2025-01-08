@@ -174,6 +174,7 @@ export default function Page() {
                   teamId={req.team?.id}
                   teamName={req.team?.name}
                   teamLocation={`${req.team?.table?.location?.building} ${req.team?.table?.location?.room}`}
+                  reporterLocation={req.reporter_location}
                 />
               );
             })}

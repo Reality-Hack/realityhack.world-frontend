@@ -2047,97 +2047,109 @@ export interface components {
       token: string;
     };
     /**
-     * @description * `1` - Development and Programming
-     * * `2` - Unity Timeline Animations
-     * * `3` - Embedded Systems (C)
-     * * `4` - Embedded Systems (Python)
-     * * `5` - C++ Android JavaScript
-     * * `6` - Backend Development
-     * * `7` - Unreal App Development
-     * * `8` - Unreal Blueprints
-     * * `9` - Unity AR Foundation
-     * * `10` - WebXR
-     * * `11` - Lens Studio
-     * * `12` - Meta Spark
-     * * `13` - Virtual Reality
-     * * `14` - Augmented Reality
-     * * `15` - Mixed Reality
-     * * `16` - Mixed Reality Toolkit
-     * * `17` - Meta XR SDK
-     * * `18` - C#
-     * * `19` - Regression Testing
-     * * `20` - OOP Design Patterns
-     * * `21` - Distributed Computing
-     * * `22` - Cybersecurity
-     * * `23` - Swift SwiftUI ARKit
-     * * `24` - Software Builds
-     * * `25` - Containers
-     * * `26` - Deployment Automation
-     * * `27` - Site-reliability engineering (SRE) Work
-     * * `28` - Python Shell Scripting
-     * * `29` - Search Implementation
-     * * `30` - Generative AI
-     * * `31` - IoT
-     * * `32` - 3D Rendering
-     * * `33` - Video Encoding
-     * * `34` - Linux OS Configuration
-     * * `35` - Cross-platform Work
-     * * `36` - Web Frontend/Backend
-     * * `37` - Project Scope
-     * * `38` - Technical Approach
-     * * `39` - App-driven Architecture
-     * * `40` - Problem-solving
-     * * `41` - Design and Prototyping
-     * * `42` - ShapesXR
-     * * `43` - Figma
-     * * `44` - Miro
-     * * `45` - Adobe Creative Suite
-     * * `46` - Mocap
-     * * `47` - 3D Stereoscopic Recording
-     * * `48` - Mobile AR
-     * * `49` - 3D Modeling
-     * * `50` - Animation
-     * * `51` - Motion Capture
-     * * `52` - XR Design Execution
-     * * `53` - Interactive Learning Programs
-     * * `54` - Computer Vision
-     * * `55` - Graphics Shaders
-     * * `56` - Git
-     * * `57` - XR/AR VR Expert
-     * * `58` - Storytelling
-     * * `59` - Visual Design
-     * * `60` - Prototyping
-     * * `61` - Analog Painting
-     * * `62` - Drawing
-     * * `63` - Sculpture
-     * * `64` - Project Management and Leadership
-     * * `65` - Producer
-     * * `66` - Peace-maker Conflict Resolution
-     * * `67` - Storyteller
-     * * `68` - Project Management
-     * * `69` - Agile Scrum
-     * * `70` - Conflict Resolution
-     * * `71` - Communication
-     * * `72` - Digital Experience Production
-     * * `73` - User Flow Design
-     * * `74` - Hardware Development (Arduino)
-     * * `75` - Hardware Development (Esp32)
-     * * `76` - Hardware Development (Raspberry Pi)
-     * * `77` - Innovation and Specialized Expertise
-     * * `78` - Biometrics in VR
-     * * `79` - Brain-Computer Interface (BCI)
-     * * `80` - Game Design
-     * * `81` - Lens Studio Projects
-     * * `82` - Snap Lens
-     * * `83` - 8thWall Expertise
-     * * `84` - Web Development
-     * * `85` - Blockchain
-     * * `86` - Networking
-     * * `87` - .NET
+     * @description * `1` - AI - Chat
+     * * `2` - AI - GenAI
+     * * `3` - AI - Other
+     * * `4` - AI - Vision and Sensing
+     * * `5` - Audio - Music
+     * * `6` - Audio - Other
+     * * `7` - Audio - Spatial Audio
+     * * `8` - AVP - ARKit
+     * * `9` - AVP - Other
+     * * `10` - AVP - Reality Composer
+     * * `11` - AVP - SharePlay
+     * * `12` - AVP - SwiftUI
+     * * `13` - AVP - UIKit
+     * * `14` - AVP - Unity PolySpatial
+     * * `15` - Backend - API Design
+     * * `16` - Backend - Database
+     * * `17` - Blockchain
+     * * `18` - Cognitive3D
+     * * `19` - Design - 3DS Max
+     * * `20` - Design - Blender
+     * * `21` - Design - Figma
+     * * `22` - Design - GIMP
+     * * `23` - Design - Illustrator
+     * * `24` - Design - Maya
+     * * `25` - Design - Other
+     * * `26` - Design - Photoshop
+     * * `27` - Design - ShapesXR
+     * * `28` - Founders Lab
+     * * `29` - Godot - C# Script
+     * * `30` - Godot - GDScript
+     * * `31` - Godot - Other
+     * * `32` - Godot - Shaders
+     * * `33` - Hardware - Arduino
+     * * `34` - Hardware - Esp32
+     * * `35` - Hardware - GPIO
+     * * `36` - Hardware - Raspberry Pi
+     * * `37` - Hardware - Sensors
+     * * `38` - Langage - JavaScript
+     * * `39` - Language - C and C++
+     * * `40` - Language - C#
+     * * `41` - Language - Java
+     * * `42` - Language - Other
+     * * `43` - Language - Python
+     * * `44` - Meta - Anchors
+     * * `45` - Meta - Avatars
+     * * `46` - Meta - Devices
+     * * `47` - Meta - Interactions
+     * * `48` - Meta - MRUK
+     * * `49` - Meta - Other
+     * * `50` - Meta - Scene
+     * * `51` - Mixed Reality Toolkit (MRTK)
+     * * `52` - Networking
+     * * `53` - OS - Android
+     * * `54` - OS - iOS
+     * * `55` - OS - Linux Unix
+     * * `56` - OS - Mac
+     * * `57` - OS - Other
+     * * `58` - OS - Windows
      * * `O` - Other
+     * * `60` - PICO - Devices
+     * * `61` - PICO - SDKs
+     * * `62` - Presentation - Other
+     * * `63` - Presentation - Pitch
+     * * `64` - Presentation - Research
+     * * `65` - Presentation - Storytelling
+     * * `66` - Project - Advice
+     * * `67` - Project - Management
+     * * `68` - Project - Other
+     * * `69` - Project - Scope
+     * * `70` - Qualcomm - Devices
+     * * `71` - Qualcomm - Robotics
+     * * `72` - Qualcomm - SDKs
+     * * `73` - Snap - AI
+     * * `74` - Snap - Lens Studio
+     * * `75` - Snap - Other
+     * * `76` - Snap - Spectacles
+     * * `77` - Source Control - Codeberg
+     * * `78` - Source Control - Git
+     * * `79` - Source Control - Other
+     * * `80` - STYLY
+     * * `81` - Unity - Animations
+     * * `82` - Unity - AR Foundation
+     * * `83` - Unity - C# Scripting
+     * * `84` - Unity - Other
+     * * `85` - Unity - Shaders
+     * * `86` - Unity - Visual Scripting
+     * * `87` - Unity - XRI
+     * * `88` - Unreal - Animations
+     * * `89` - Unreal - Blueprints
+     * * `90` - Unreal - C++
+     * * `91` - Unreal - Other
+     * * `92` - Unreal - Shaders
+     * * `93` - Video Editing - After Effects
+     * * `94` - Video Editing - DaVinci
+     * * `95` - Video Editing - Other
+     * * `96` - Video Editing - Premiere
+     * * `97` - Web - HTML
+     * * `98` - Web - Libraries
+     * * `99` - Web - Other
+     * * `100` - WebXR
      * @enum {string}
      */
-    TopicEnum: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32" | "33" | "34" | "35" | "36" | "37" | "38" | "39" | "40" | "41" | "42" | "43" | "44" | "45" | "46" | "47" | "48" | "49" | "50" | "51" | "52" | "53" | "54" | "55" | "56" | "57" | "58" | "59" | "60" | "61" | "62" | "63" | "64" | "65" | "66" | "67" | "68" | "69" | "70" | "71" | "72" | "73" | "74" | "75" | "76" | "77" | "78" | "79" | "80" | "81" | "82" | "83" | "84" | "85" | "86" | "87" | "O";
+    TopicEnum: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32" | "33" | "34" | "35" | "36" | "37" | "38" | "39" | "40" | "41" | "42" | "43" | "44" | "45" | "46" | "47" | "48" | "49" | "50" | "51" | "52" | "53" | "54" | "55" | "56" | "57" | "58" | "O" | "60" | "61" | "62" | "63" | "64" | "65" | "66" | "67" | "68" | "69" | "70" | "71" | "72" | "73" | "74" | "75" | "76" | "77" | "78" | "79" | "80" | "81" | "82" | "83" | "84" | "85" | "86" | "87" | "88" | "89" | "90" | "91" | "92" | "93" | "94" | "95" | "96" | "97" | "98" | "99" | "100";
     /**
      * @description * `F` - Future Constructors
      * * `L` - Learning
