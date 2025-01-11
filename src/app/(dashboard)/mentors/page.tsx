@@ -173,7 +173,7 @@ export default function Page() {
                   onHandleUpdateStatus={handleUpdateStatus(req.id)}
                   teamId={req.team?.id}
                   teamName={req.team?.name}
-                  teamLocation={`${req.team?.table?.location?.building} ${req.team?.table?.location?.room}`}
+                  teamLocation={`${req.team?.table?.location?.building}, Room ${req.team?.table?.location?.room}, Table ${req.team?.table?.number}`}
                   reporterLocation={req.reporter_location}
                 />
               );

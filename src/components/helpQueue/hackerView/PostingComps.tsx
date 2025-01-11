@@ -372,17 +372,18 @@ export function MentorPosting({
         </div>
         <div className="mx-auto">
             {teamName || teamLocation ? (
-            <div>
-                Team {teamName} at {teamLocation}
+            <div className="flex flex-col">
+                <div className="font-semibold">Team {teamName}</div>
+                <div className="font-normal">{teamLocation}</div>
             </div>
             ) : (
             <div>No team information available</div>
             )}
         </div>
-        <div className="mx-auto">
+        <div className="mx-auto text-lg font-semibold">
             {reporterLocation ? (
             <div>
-                {reporterLocation}
+                Reporter Location: <span className="font-normal">{reporterLocation}</span>
             </div>
             ) : (
             <div>No Additional Location information available</div>

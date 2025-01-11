@@ -19,8 +19,6 @@ export default function Team() {
     }
   }, [user]);
 
-  console.log(team?.table);
-
   return (
     <div className="h-screen p-6 flex flex-row justify-center items-start">
       <div className="grid grid-cols-2 gap-4 mx-8 mt-12">
