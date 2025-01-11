@@ -10,6 +10,7 @@ import {
   HardwareDevice,
   HardwareDeviceForSending
 } from '@/types/types';
+import { toast } from 'sonner';
 
 export async function getAllHardware(accessToken: string) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/hardware/`;
@@ -110,9 +111,10 @@ export async function sendHardwareRequest(
 
   if (resp.ok) {
     const data = await resp.json();
+    toast.success('Hardware request sent successfully');
     return data;
   }
-
+  toast.error('Failed to send data. Status: ' + resp.status);
   throw new Error('Failed to send data. Status: ' + resp.status);
 }
 

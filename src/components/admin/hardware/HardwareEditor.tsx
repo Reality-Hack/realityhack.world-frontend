@@ -26,6 +26,7 @@ import { fixFileLink } from '@/app/api/uploaded_files';
 import HardwareCategoryFilter from '@/components/HardwareCategoryFilter';
 import { CircularProgress, LinearProgress } from '@mui/material';
 import { TrashIcon } from '@heroicons/react/20/solid';
+import { toast } from 'sonner';
 
 export default function HardwareEditor({
   hardware,
@@ -190,17 +191,25 @@ function EditableHardwareCard({
     if (!isOriginal) {
       updateHardware(session!.access_token, data)
         .then(res => {
+          toast.success('Hardware updated successfully');
           setItem(newItem);
+        })
+        .catch(err => {
+          toast.error('Failed to update hardware');
         })
         .finally(() => setSending(false));
     } else {
       createHardware(session!.access_token, data)
         .then(res => {
           console.log(res);
+          toast.success('Hardware created successfully');
           setItem({
             ...newItem,
             id: res.id
           });
+        })
+        .catch(err => {
+          toast.error('Failed to create hardware');
         })
         .finally(() => setSending(false));
     }
@@ -209,6 +218,7 @@ function EditableHardwareCard({
   return (
     <div
       {...topLevelProps}
+      key={item?.id || item?.name}
       className="flex-col gap-2 w-[355px] bg-gradient-to-t from-[#FFFFFF] to-[#FFFFFF] border border-blue-500 rounded-[10px] shadow flex justify-center items-center p-2"
     >
       {editingImage ? (
@@ -222,12 +232,12 @@ function EditableHardwareCard({
           ></Dropzone>
         </>
       ) : (
-        <>
+        <div className="flex flex-col items-center" key={item?.id || item?.name}>
           {/* we know image is not null when there is no editing */}
           <img src={fixFileLink(image!.file)} className="rounded-xl" />
           {/* <Image src={image!.file} width={512} height={512} className="rounded-xl" ></Image> */}
           <button onClick={() => setEditingImage(true)}>Replace image</button>
-        </>
+        </div>
       )}
       <div className="flex justify-between w-full">
         <span className="text-xl">
@@ -273,8 +283,8 @@ function EditableHardwareCard({
         onChange={event => setDescription(event.target.value)}
       ></textarea>
       <div className="flex w-full flex-wrap flex-initial">
-        {tags.map(tag => (
-          <span className="bg-gray-200 rounded-full px-2 py-1 m-1">
+        {tags.map((tag, idx) => (
+          <span className="bg-gray-200 rounded-full px-2 py-1 m-1" key={`item-${item.id}-tag-${idx}-${tag.value}`}>
             {hardware_categories[tag.value] /*tag.display_name*/}
             <button
               onClick={() =>
@@ -298,7 +308,7 @@ function EditableHardwareCard({
                 {hardwareCategories
                   .filter(cat => !tags.includes(cat))
                   .map((cat: HardwareCategory, idx: number) => (
-                    <div className="m-1" key={idx}>
+                    <div className="m-1" key={`item-${item.id}-tag-${idx}-${cat.value}`}>
                       <button
                         className="cursor-pointer text-white bg-[#493B8A] px-4 rounded-full disabled:opacity-50 transition-all flex-shrink h-10 self-end"
                         onClick={() => setTags([...tags, cat])}
@@ -397,7 +407,7 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
             .reverse()
             .map((device, i) => (
               <HardwareDeviceEditor
-                key={device.id + device.serial!}
+                key={`item-${hardware.id}-device-${i}-${device.id}-${device.serial}`}
                 device={device}
                 access_token={session?.access_token}
                 deleteDevice={() =>
@@ -460,6 +470,10 @@ function HardwareDeviceEditor({
               serial: serial,
               hardware: device.hardware
             });
+            toast.success('Hardware device created successfully');
+          })
+          .catch(err => {
+            toast.error('Failed to create hardware device');
           })
           .finally(() => setLoading(false));
       } else {
@@ -474,6 +488,10 @@ function HardwareDeviceEditor({
               ...device,
               serial: res.serial
             });
+            toast.success('Hardware device updated successfully');
+          })
+          .catch(err => {
+            toast.error('Failed to update hardware device');
           })
           .finally(() => setLoading(false));
       }

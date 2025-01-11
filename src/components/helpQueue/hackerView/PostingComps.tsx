@@ -172,9 +172,10 @@ export function Posting({
         Status: {getStatusLabel(status)}
       </div>
 
-      <div className="flex flex-row gap-4 p-4 mx-auto">
+      {/* Place in Queue doesn't reflect all tickets */}
+      {/* <div className="flex flex-row gap-4 p-4 mx-auto"> */}
         {/* <div className="font-semibold">{requestTitle}</div> */}
-        {placeInQueue && (
+        {/* {placeInQueue && (
           <div>
             {placeInQueue === 0 && <span className="font-bold">NEXT</span>}
             {placeInQueue !== 0 && (
@@ -182,7 +183,7 @@ export function Posting({
             )}
           </div>
         )}
-      </div>
+      </div> */}
       <div className="flex flex-col justify-end gap-2">
         <div className="mx-auto text-xs">
           {created &&

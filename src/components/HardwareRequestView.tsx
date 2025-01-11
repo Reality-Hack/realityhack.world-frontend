@@ -271,7 +271,7 @@ export default function HardwareRequestView({
     // @ts-ignore
     columnHelper.accessor('team', {
       header: () => 'Team',
-      cell: info => info.getValue()
+      cell: info => info.getValue().name
     }),
     columnHelper.accessor('requester', {
       header: () => 'Requested by',

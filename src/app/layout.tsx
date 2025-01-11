@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 import './globals.css';
 import SessionProviderWrapper from './utils/SessionProviderWrapper';
+import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,6 +22,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
       <link rel="shortcut icon" href="/images/favicon.ico" />
       <html lang="en">
         <body className={inter.className}>
+          <Toaster position="top-left" />
           <AuthContent>{children}</AuthContent>
         </body>
       </html>
