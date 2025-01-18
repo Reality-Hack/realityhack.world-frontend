@@ -294,11 +294,11 @@ export default function HardwareRequestView({
           ></ReasonEditor>
         )
     }),
-    columnHelper.accessor('hardware', {
+    columnHelper.accessor('hardware_in_stock', {
       header: () => 'In Stock',
       cell: info => hardware[info.getValue()]?.available
     }),
-    columnHelper.accessor('hardware', {
+    columnHelper.accessor('hardware_total', {
       header: () => 'Total',
       cell: info => hardware[info.getValue()]?.total
     }),

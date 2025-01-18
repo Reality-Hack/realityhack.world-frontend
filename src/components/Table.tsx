@@ -81,7 +81,8 @@ export default function Table<T>({
     onGlobalFilterChange: setGlobalFilter,
     getRowId: getRowId,
     debugTable: false,
-    autoResetPageIndex: false
+    autoResetPageIndex: false,
+    globalFilterFn: 'includesString'
   });
 
   return (

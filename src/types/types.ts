@@ -369,6 +369,8 @@ export interface HardwareRequestBrief {
   id: string;
   hardware: string;
   hardware_device: HardwareDevice | null;
+  hardware_in_stock: number;
+  hardware_total: number;
   requester: Attendee;
   team: string | null;
   status: hardware_request_status;

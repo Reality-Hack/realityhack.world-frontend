@@ -81,7 +81,10 @@ export default function Page() {
   const filteredHelpRequests = useMemo<HelpRequest[]>(() => {
     let result: HelpRequest[] = [];
     if (selectedTab === 0) {
-      result = allHelpRequests.filter(r => r.status === 'R');
+      result = allHelpRequests.filter(r => r.status === 'R')
+      if (selectedItems.length > 0) {
+        result = result.filter(r => selectedItems.includes(r.topic[0]))
+      }
     } else if (selectedTab === 1) {
       result = allHelpRequests.filter(r => r.mentor === user?.id);
     } else if (selectedTab === 2) {

@@ -117,14 +117,14 @@ export default function TeamForm({ team, onChange }: TeamFormProps) {
               checked={selected}
               key={option.id}
             />
-            {`${option.first_name} ${option.last_name}`}
+            {`${option.first_name} ${option.last_name} (${option.checked_in_at ? 'Checked In' : 'Not Checked In'})`}
           </li>
         )}
         renderTags={(value: readonly Attendee[], getTagProps) =>
           value.map((option: Attendee, index: number) => (
             <Chip
               {...getTagProps({ index })}
-              label={`${option.first_name} ${option.last_name}`}
+              label={`${option.first_name} ${option.last_name} `}
               key={option.id}
             />
           ))
