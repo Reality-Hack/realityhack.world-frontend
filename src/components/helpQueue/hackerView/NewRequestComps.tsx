@@ -3,7 +3,7 @@ import { useAuthContext } from '@/hooks/AuthContext';
 import { MentorTopics } from '@/types/types';
 import { ThemeProvider, createTheme } from '@mui/material';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface StatBoxProps {
   src: string;
@@ -48,7 +48,7 @@ export function Dialog({ isOpen, onClose, children }: DialogProps) {
         className="fixed inset-0 flex items-center justify-center z-[1002]"
         onClick={handleDialogClick}
       >
-        <div className="relative w-[720px] h-[480px] p-4 bg-white rounded-md shadow-md">
+        <div className="relative w-[720px] max-h-[600px] p-4 bg-white rounded-md shadow-md">
           <div className="flex">
             <button className="ml-auto " onClick={onClose}>
               Close
@@ -82,13 +82,15 @@ export function QuestionDialog({
   closeNewRequestDialog,
   onSubmit
 }: QuestionDialogProps) {
-  const [descriptionText, setDescriptionText] = useState<string>('');
-  const [locationText, setLocationText] = useState<string>('');
-  //this is to see if you can submit the question or not
-  const [canSubmit, setCanSubmit] = useState<boolean>(false);
-
   const { user } = useAuthContext();
   const formattedOptions = [];
+  const [descriptionText, setDescriptionText] = useState<string>('');
+  const [locations, setLocations] = useState<string>(
+    JSON.stringify(user?.team?.table?.location)
+  );
+  const [searchVal, setSearchVal] = useState('');
+  const [canSubmit, setCanSubmit] = useState<boolean>(false);
+  const tableId = user?.team?.table;
 
   for (const key in MentorTopics) {
     formattedOptions.push({
@@ -121,11 +123,16 @@ export function QuestionDialog({
     if (descriptionText.trim() !== '' && canSubmit) {
       try {
         // Assuming onSubmit is a Promise. If not, adjust accordingly.
-        await onSubmit(selectedItems, user?.team?.id, descriptionText, locationText);
+        await onSubmit(
+          selectedItems,
+          user?.team?.id,
+          descriptionText,
+          locations
+        ); // Pass locations
         setDescriptionText('');
         setSelectedItems([]);
         setCanSubmit(false);
-        setLocationText('');
+        setLocations(''); // Clear location text after submission
         closeNewRequestDialog(); // Close the dialog on successful submission
       } catch (error) {
         // Handle any errors here
@@ -133,6 +140,7 @@ export function QuestionDialog({
       }
     }
   };
+
   return (
     <ThemeProvider theme={theme}>
       <Dialog
@@ -146,11 +154,13 @@ export function QuestionDialog({
             New Help Request
           </div>
           <div className="flex flex-col gap-4">
+            {/* Select Help Topic */}
+
             <div className="font-medium">
-              What do you need help with
-              <span className="text-lg text-red-400 md:text-2xl">*</span>?
+              What do you need help with?
+              <span className="mb-2 text-red-400 text-md">&nbsp;*</span>
             </div>
-            <div className="w-40">
+            <div className="w-full">
               {/* tag renderer with a custom dropdown */}
               <SelectToolWithOther
                 canSubmit={setCanSubmit}
@@ -161,9 +171,11 @@ export function QuestionDialog({
                 formattedOptions={formattedOptions}
               />
             </div>
+            {/* Description */}
+
             <div className="font-medium">
-              Describe your request in detail
-              <span className="mb-2 text-red-400 text-md">*</span>:
+              Describe your request in detail:
+              <span className="mb-2 text-red-400 text-md">&nbsp;*</span>
             </div>
             <textarea
               className="w-full h-20 p-2 border border-[#d9d9d9] rounded-md focus:outline-none focus:border-[#4096ff] hover:border-[#4096ff] transition-all"
@@ -171,21 +183,23 @@ export function QuestionDialog({
               value={descriptionText}
               onChange={e => setDescriptionText(e.target.value)}
             />
-          {/* </div> */}
+            {/* Pre-filled location */}
             <div className="font-medium">
-              Where can mentors find you if not at your table? 
+              Where can mentors find you if not at your table?
+              <span className="mb-2 text-red-400 text-md">&nbsp;*</span>
             </div>
             <input
               type="text"
+              value={locations}
+              onChange={e => setLocations(e.target.value)} // Allow user to overwrite
+              placeholder="Building, Room, Table"
               className="w-full p-2 border border-[#d9d9d9] rounded-md focus:outline-none focus:border-[#4096ff] hover:border-[#4096ff] transition-all"
-              placeholder="E.g. Table 42, or Lobby Area near entrance"
-              value={locationText}
-              onChange={e => setLocationText(e.target.value)}
             />
           </div>
+          {/*Submit*/}
           <div
             onClick={handleOnSubmit}
-            className={`gap-1.5s mr-6 flex mt-0 mb-4  text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm cursor-pointer transition-all w-fit whitespace-nowrap ${
+            className={`gap-1.5s mr-6 flex mt-0 mb-4 text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm cursor-pointer transition-all w-fit whitespace-nowrap ${
               descriptionText.trim() !== '' && canSubmit
                 ? 'hover:bg-[#0066F5] bg-[#1677FF] cursor-pointer'
                 : 'bg-gray-300 cursor-not-allowed'

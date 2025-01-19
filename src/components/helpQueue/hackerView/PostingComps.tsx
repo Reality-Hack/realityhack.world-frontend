@@ -381,12 +381,10 @@ export function MentorPosting({
             )}
         </div>
         <div className="mx-auto text-lg font-semibold">
-            {reporterLocation ? (
+            {reporterLocation && (
             <div>
                 Reporter Location: <span className="font-normal">{reporterLocation}</span>
             </div>
-            ) : (
-            <div>No Additional Location information available</div>
             )}
         </div>
 
