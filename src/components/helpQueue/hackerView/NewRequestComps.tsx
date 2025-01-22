@@ -4,6 +4,7 @@ import { MentorTopics } from '@/types/types';
 import { ThemeProvider, createTheme } from '@mui/material';
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 interface StatBoxProps {
   src: string;
@@ -117,7 +118,11 @@ export function QuestionDialog({
 
   const handleOnSubmit = async () => {
     if (!user || !user.team) {
-      console.error('User or team is null');
+      toast.error('User or team is null');
+      return;
+    }
+    if (selectedItems.length < 1) {
+      toast.error('select at least one topic');
       return;
     }
     if (descriptionText.trim() !== '' && canSubmit) {
@@ -186,7 +191,6 @@ export function QuestionDialog({
             {/* Pre-filled location */}
             <div className="font-medium">
               Where can mentors find you if not at your table?
-              <span className="mb-2 text-red-400 text-md">&nbsp;*</span>
             </div>
             <input
               type="text"
@@ -200,7 +204,7 @@ export function QuestionDialog({
           <div
             onClick={handleOnSubmit}
             className={`gap-1.5s mr-6 flex mt-0 mb-4 text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm cursor-pointer transition-all w-fit whitespace-nowrap ${
-              descriptionText.trim() !== '' && canSubmit
+              descriptionText.trim() !== '' && selectedItems.length > 1
                 ? 'hover:bg-[#0066F5] bg-[#1677FF] cursor-pointer'
                 : 'bg-gray-300 cursor-not-allowed'
             }`}

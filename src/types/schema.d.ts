@@ -544,7 +544,7 @@ export interface components {
       communications_platform_username?: string | null;
       /** Format: email */
       email: string;
-      intended_tracks: components["schemas"]["IntendedTracksEnum"][];
+      intended_tracks: components["schemas"]["TracksEnum"][];
       intended_hardware_hack?: boolean;
       sponsor_company?: string | null;
       participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
@@ -570,7 +570,7 @@ export interface components {
       prefers_destiny_hardware: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       /** @description I.e., a Discord username */
       communications_platform_username?: string | null;
-      intended_tracks: components["schemas"]["IntendedTracksEnum"][];
+      intended_tracks: components["schemas"]["TracksEnum"][];
       intended_hardware_hack?: boolean;
       sponsor_company?: string | null;
       participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
@@ -584,6 +584,8 @@ export interface components {
       id: string;
       first_name?: string;
       last_name?: string;
+      participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
+      profile_image: components["schemas"]["FileUpload"];
     };
     AttendeePatch: {
       /** Format: uuid */
@@ -607,7 +609,7 @@ export interface components {
       guardian_of?: string[];
       /** Format: uuid */
       sponsor_handler?: string | null;
-      intended_tracks: components["schemas"]["IntendedTracksEnum"][];
+      intended_tracks: components["schemas"]["TracksEnum"][];
       intended_hardware_hack?: boolean;
       /** Format: date-time */
       created_at: string;
@@ -741,6 +743,12 @@ export interface components {
     /** @enum {unknown} */
     BlankEnum: "";
     /**
+     * @description * `ST` - Stata
+     * * `WK` - Walker
+     * @enum {string}
+     */
+    BuildingEnum: "ST" | "WK";
+    /**
      * @description * `D` - Development
      * * `A` - Design
      * * `P` - Prototyping
@@ -754,7 +762,7 @@ export interface components {
       id: string;
       attendees: components["schemas"]["AttendeeName"][];
       table: components["schemas"]["TableNumber"];
-      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      track?: components["schemas"]["TracksEnum"] | components["schemas"]["NullEnum"] | null;
       round: number;
       hardware_hack?: boolean;
       destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
@@ -776,7 +784,7 @@ export interface components {
       /** Format: uuid */
       id: string;
       table: components["schemas"]["TableNumber"];
-      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      track?: components["schemas"]["TracksEnum"] | components["schemas"]["NullEnum"] | null;
       round: number;
       hardware_hack?: boolean;
       destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
@@ -1016,8 +1024,7 @@ export interface components {
       /** Format: uuid */
       hardware_device?: string | null;
       requester: components["schemas"]["HardwareRequestRequester"];
-      /** Format: uuid */
-      team?: string | null;
+      team: components["schemas"]["Team"];
       reason?: string;
       status?: components["schemas"]["StatusB9cEnum"];
       /** Format: date-time */
@@ -1064,7 +1071,7 @@ export interface components {
     HelpRequestTeamLocation: {
       /** Format: uuid */
       id: string;
-      building: string;
+      building?: components["schemas"]["BuildingEnum"];
       room?: components["schemas"]["RoomEnum"];
     };
     /**
@@ -1219,16 +1226,6 @@ export interface components {
      * @enum {string}
      */
     IndustryEnum: "Industry" | "Accounting " | "Airlines/Aviation" | "Alternative Dispute Resolution" | "Alternative Medicine" | "Animation" | "Apparel/Fashion" | "Architecture/Planning" | "Arts/Crafts" | "Automotive" | "Aviation/Aerospace" | "Banking/Mortgage" | "Biotechnology/Greentech" | "Broadcast Media" | "Building Materials" | "Business Supplies/Equipment" | "Capital Markets/Hedge Fund/Private Equity" | "Chemicals" | "Civic/Social Organization" | "Civil Engineering" | "Commercial Real Estate" | "Computer Games" | "Computer Hardware" | "Computer Networking" | "Computer Software/Engineering" | "Computer/Network Security" | "Construction" | "Consumer Electronics" | "Consumer Goods" | "Consumer Services" | "Cosmetics" | "Dairy" | "Defense/Space" | "Design" | "E-Learning" | "Education Management" | "Electrical/Electronic Manufacturing" | "Entertainment/Movie Production" | "Environmental Services" | "Events Services" | "Executive Office" | "Facilities Services" | "Farming" | "Financial Services" | "Fine Art" | "Fishery" | "Food Production" | "Food/Beverages" | "Fundraising" | "Furniture" | "Gambling/Casinos" | "Glass/Ceramics/Concrete" | "Government Administration" | "Government Relations" | "Graphic Design/Web Design" | "Health/Fitness" | "Higher Education/Acadamia" | "Hospital/Health Care" | "Hospitality" | "Human Resources/HR" | "Import/Export" | "Individual/Family Services" | "Industrial Automation" | "Information Services" | "Information Technology/IT" | "Insurance" | "International Affairs" | "International Trade/Development" | "Internet" | "Investment Banking/Venture" | "Investment Management/Hedge Fund/Private Equity" | "Judiciary" | "Law Enforcement" | "Law Practice/Law Firms" | "Legal Services" | "Legislative Office" | "Leisure/Travel" | "Library" | "Logistics/Procurement" | "Luxury Goods/Jewelry" | "Machinery" | "Management Consulting" | "Maritime" | "Market Research" | "Marketing/Advertising/Sales" | "Mechanical or Industrial Engineering" | "Media Production" | "Medical Equipment" | "Medical Practice" | "Mental Health Care" | "Military Industry" | "Mining/Metals" | "Motion Pictures/Film" | "Museums/Institutions" | "Music" | "Nanotechnology" | "Newspapers/Journalism" | "Non-Profit/Volunteering" | "Oil/Energy/Solar/Greentech" | "Online Publishing" | "Outsourcing/Offshoring" | "Package/Freight Delivery" | "Packaging/Containers" | "Paper/Forest Products" | "Performing Arts" | "Pharmaceuticals" | "Philanthropy" | "Photography" | "Plastics" | "Political Organization" | "Primary/Secondary Education" | "Printing" | "Professional Training" | "Program Development" | "Public Relations/PR" | "Public Safety" | "Publishing Industry" | "Railroad Manufacture" | "Ranching" | "Real Estate/Mortgage" | "Recreational Facilities/Services" | "Religious Institutions" | "Renewables/Environment" | "Research Industry" | "Restaurants" | "Retail Industry" | "Security/Investigations" | "Semiconductors" | "Shipbuilding" | "Sporting Goods" | "Sports" | "Staffing/Recruiting" | "Supermarkets" | "Telecommunications" | "Textiles" | "Think Tanks" | "Tobacco" | "Translation/Localization" | "Transportation" | "Utilities" | "Venture Capital/VC" | "Veterinary" | "Warehousing" | "Wholesale" | "Wine/Spirits" | "Wireless" | "Writing/Editing" | "Other";
-    /**
-     * @description * `F` - Future Constructors
-     * * `L` - Learning
-     * * `W` - Work
-     * * `H` - Health and Well-Being
-     * * `S` - Smart Cities and Sustainability
-     * * `C` - Community Hacks
-     * @enum {string}
-     */
-    IntendedTracksEnum: "F" | "L" | "W" | "H" | "S" | "C";
     LightHouse: {
       /** Format: uuid */
       id: string;
@@ -1249,7 +1246,7 @@ export interface components {
     Location: {
       /** Format: uuid */
       id: string;
-      building: string;
+      building?: components["schemas"]["BuildingEnum"];
       room?: components["schemas"]["RoomEnum"];
       /** Format: date-time */
       created_at: string;
@@ -1455,7 +1452,7 @@ export interface components {
       guardian_of?: string[];
       /** Format: uuid */
       sponsor_handler?: string | null;
-      intended_tracks?: components["schemas"]["IntendedTracksEnum"][];
+      intended_tracks?: components["schemas"]["TracksEnum"][];
       intended_hardware_hack?: boolean;
       /** Format: date-time */
       created_at?: string;
@@ -1544,7 +1541,7 @@ export interface components {
       /** Format: uuid */
       id?: string;
       table?: components["schemas"]["TableNumber"];
-      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      track?: components["schemas"]["TracksEnum"] | components["schemas"]["NullEnum"] | null;
       round?: number;
       hardware_hack?: boolean;
       destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
@@ -1626,7 +1623,7 @@ export interface components {
     PatchedLocation: {
       /** Format: uuid */
       id?: string;
-      building?: string;
+      building?: components["schemas"]["BuildingEnum"];
       room?: components["schemas"]["RoomEnum"];
       /** Format: date-time */
       created_at?: string;
@@ -1719,20 +1716,15 @@ export interface components {
       /** Format: date-time */
       updated_at?: string;
     };
-    PatchedTeam: {
+    PatchedTeamUpdate: {
       /** Format: uuid */
       id?: string;
-      number?: number | null;
       name?: string;
       attendees?: string[];
-      /** Format: uuid */
-      table?: string | null;
-      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
-      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
-      /** Format: date-time */
-      created_at?: string;
-      /** Format: date-time */
-      updated_at?: string;
+      table?: components["schemas"]["Table"];
+      team_description?: string | null;
+      tracks?: components["schemas"]["TracksEnum"] | components["schemas"]["BlankEnum"];
+      project?: components["schemas"]["Project"];
     };
     PatchedWorkshop: {
       /** Format: uuid */
@@ -1806,9 +1798,9 @@ export interface components {
       /** Format: uuid */
       team?: string | null;
       /** Format: date-time */
-      created_at: string;
+      created_at?: string;
       /** Format: date-time */
-      updated_at: string;
+      updated_at?: string;
     };
     /**
      * @description * `B` - Black, African American, or of African descent
@@ -1968,8 +1960,9 @@ export interface components {
       attendees?: string[];
       /** Format: uuid */
       table?: string | null;
-      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      tracks?: components["schemas"]["TracksEnum"] | components["schemas"]["BlankEnum"];
       destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
+      team_description?: string | null;
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
@@ -1982,6 +1975,7 @@ export interface components {
       attendees?: string[];
       /** Format: uuid */
       table?: string | null;
+      team_description?: string | null;
     };
     TeamDetail: {
       /** Format: uuid */
@@ -1992,8 +1986,9 @@ export interface components {
       table: components["schemas"]["TeamTable"];
       project: components["schemas"]["TeamProject"];
       lighthouse: components["schemas"]["TeamLightHouse"];
-      track?: components["schemas"]["TrackEnum"] | components["schemas"]["NullEnum"] | null;
+      tracks?: components["schemas"]["TracksEnum"] | components["schemas"]["BlankEnum"];
       destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"] | components["schemas"]["BlankEnum"];
+      team_description?: string | null;
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
@@ -2017,6 +2012,7 @@ export interface components {
       repository_location: string;
       /** Format: uri */
       submission_location: string;
+      description: string;
       /** Format: date-time */
       created_at: string;
       /** Format: date-time */
@@ -2032,6 +2028,16 @@ export interface components {
       created_at: string;
       /** Format: date-time */
       updated_at: string;
+    };
+    TeamUpdate: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      attendees?: string[];
+      table: components["schemas"]["Table"];
+      team_description?: string | null;
+      tracks?: components["schemas"]["TracksEnum"] | components["schemas"]["BlankEnum"];
+      project: components["schemas"]["Project"];
     };
     TokenObtainPair: {
       username: string;
@@ -2151,15 +2157,18 @@ export interface components {
      */
     TopicEnum: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32" | "33" | "34" | "35" | "36" | "37" | "38" | "39" | "40" | "41" | "42" | "43" | "44" | "45" | "46" | "47" | "48" | "49" | "50" | "51" | "52" | "53" | "54" | "55" | "56" | "57" | "58" | "O" | "60" | "61" | "62" | "63" | "64" | "65" | "66" | "67" | "68" | "69" | "70" | "71" | "72" | "73" | "74" | "75" | "76" | "77" | "78" | "79" | "80" | "81" | "82" | "83" | "84" | "85" | "86" | "87" | "88" | "89" | "90" | "91" | "92" | "93" | "94" | "95" | "96" | "97" | "98" | "99" | "100";
     /**
-     * @description * `F` - Future Constructors
-     * * `L` - Learning
-     * * `W` - Work
-     * * `H` - Health and Well-Being
-     * * `S` - Smart Cities and Sustainability
-     * * `C` - Community Hacks
+     * @description * `F` - Founders Lab
+     * * `C` - Open Lab (AKA Community Hack)
+     * * `S` - Connecting for Change with Social XR
+     * * `E` - Augmented Engineering
+     * * `D` - Digitizing Sustainability
+     * * `A` - AeroSpatial Exploration
+     * * `L` - Augmented Intelligence
+     * * `W` - Hardware hack
+     * * `H` - Healthcare
      * @enum {string}
      */
-    TrackEnum: "F" | "L" | "W" | "H" | "S" | "C";
+    TracksEnum: "F" | "C" | "S" | "E" | "D" | "A" | "L" | "W" | "H";
     /**
      * @description * `AW` - Aruba
      * * `AF` - Afghanistan
@@ -3056,14 +3065,17 @@ export interface operations {
         search?: string;
         table__number?: number;
         /**
-         * @description * `F` - Future Constructors
-         * * `L` - Learning
-         * * `W` - Work
-         * * `H` - Health and Well-Being
-         * * `S` - Smart Cities and Sustainability
-         * * `C` - Community Hacks
+         * @description * `F` - Founders Lab
+         * * `C` - Open Lab (AKA Community Hack)
+         * * `S` - Connecting for Change with Social XR
+         * * `E` - Augmented Engineering
+         * * `D` - Digitizing Sustainability
+         * * `A` - AeroSpatial Exploration
+         * * `L` - Augmented Intelligence
+         * * `W` - Hardware hack
+         * * `H` - Healthcare
          */
-        track?: "C" | "F" | "H" | "L" | "S" | "W" | null;
+        track?: "A" | "C" | "D" | "E" | "F" | "H" | "L" | "S" | "W" | null;
       };
     };
     responses: {
@@ -3827,7 +3839,7 @@ export interface operations {
   };
   /** @description API endpoint that allows locations to be viewed or edited. */
   locations_create: {
-    requestBody: {
+    requestBody?: {
       content: {
         "application/json": components["schemas"]["Location"];
         "application/x-www-form-urlencoded": components["schemas"]["Location"];
@@ -3866,7 +3878,7 @@ export interface operations {
         id: string;
       };
     };
-    requestBody: {
+    requestBody?: {
       content: {
         "application/json": components["schemas"]["Location"];
         "application/x-www-form-urlencoded": components["schemas"]["Location"];
@@ -4886,15 +4898,15 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        "application/json": components["schemas"]["PatchedTeam"];
-        "application/x-www-form-urlencoded": components["schemas"]["PatchedTeam"];
-        "multipart/form-data": components["schemas"]["PatchedTeam"];
+        "application/json": components["schemas"]["PatchedTeamUpdate"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedTeamUpdate"];
+        "multipart/form-data": components["schemas"]["PatchedTeamUpdate"];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["Team"];
+          "application/json": components["schemas"]["TeamUpdate"];
         };
       };
     };

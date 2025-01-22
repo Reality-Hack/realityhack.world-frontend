@@ -371,13 +371,14 @@ export function MentorPosting({
             `Submitted at ${DateTime.fromISO(created).toLocaleString(DateTime.DATETIME_SHORT)}`}
         </div>
         <div className="mx-auto">
-            {teamName || teamLocation ? (
+            {teamName && teamLocation && (
             <div className="flex flex-col">
                 <div className="font-semibold">Team {teamName}</div>
                 <div className="font-normal">{teamLocation}</div>
             </div>
-            ) : (
-            <div>No team information available</div>
+            )}
+            {!teamName && !teamLocation && (
+            <div>Error fetching team information, please refresh and contact support if the issue persists</div>
             )}
         </div>
         <div className="mx-auto text-lg font-semibold">

@@ -21,13 +21,14 @@ type TeamFormProps = {
 };
 
 function getTableLabel(table: number | void) {
+  // TODO: update this
   if (!table) {
     return `Table #${table}`;
   }
-  if (table <= 68) {
-    return `Media Lab: Table #${table}`;
-  } else {
+  if (table <= 48) {
     return `Walker: Table #${table}`;
+  } else {
+    return `Stata: Table #${table}`;
   }
 }
 
@@ -117,7 +118,7 @@ export default function TeamForm({ team, onChange }: TeamFormProps) {
               checked={selected}
               key={option.id}
             />
-            {`${option.first_name} ${option.last_name} (${option.checked_in_at ? 'Checked In' : 'Not Checked In'})`}
+            {`${option.first_name} ${option.last_name} ${option.checked_in_at ? '' : '(Not Checked In)'}`}
           </li>
         )}
         renderTags={(value: readonly Attendee[], getTagProps) =>

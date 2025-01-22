@@ -1,38 +1,18 @@
 'use client';
 import { updateAttendee } from '@/app/api/attendee';
-import { getAvailableTracks } from '@/app/api/teamformation';
+import { useSpecialTracks, Track } from '@/hooks/useSpecialTracks';
 import CustomSelectMultipleTyping from '@/components/CustomSelectMultipleTyping';
 import { useAuthContext } from '@/hooks/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-interface TrackOption {
-  label: string;
-  value: string;
-}
+import { SpecialTrackSelect } from '@/components/SpecialTrackSelect';
+
 export default function Interests() {
   const { data: session } = useSession();
   const { user } = useAuthContext();
 
-  const [tracks, setTracks] = useState<TrackOption[] | undefined>(undefined);
   const [warning, setWarning] = useState<string>();
-
-  useEffect(() => {
-    if (session) {
-      getAvailableTracks(session?.access_token)
-        .then(result => {
-          if (result) {
-            const formattedTracks = result.choices.map(track => {
-              return {
-                label: track.display_name,
-                value: track.value
-              };
-            });
-            setTracks(formattedTracks);
-          }
-        })
-        .catch(error => console.error(error.message));
-    }
-  }, []);
+  const { tracks, isLoading, error } = useSpecialTracks();
 
   const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
   const [isInterested, setIsInterested] = useState(false);
@@ -44,17 +24,6 @@ export default function Interests() {
     }
   }, [user]);
 
-  function handleSelection(value: string[]) {
-    if (value.length > 2) {
-      setWarning('Please Select ONLY 2 Tracks');
-      setTimeout(() => setWarning(''), 5000);
-    } else {
-      setWarning('');
-      if (value !== selectedTracks) {
-        setSelectedTracks(value);
-      }
-    }
-  }
 
   const handleSubmit = () => {
     if (session) {
@@ -73,14 +42,11 @@ export default function Interests() {
         'Loading...'
       ) : (
         <div className="flex flex-col gap-2">
-          <div className="font-semibold">PURPOSE TRACKS (Select. 2)</div>
-          <div className="text-lg text-red-400">{warning}</div>
-          <CustomSelectMultipleTyping
-            width="100%"
-            label="Select a status"
-            options={tracks || []}
-            value={selectedTracks}
-            onChange={handleSelection}
+          <SpecialTrackSelect
+            selectedTracks={selectedTracks}
+            onChange={setSelectedTracks}
+            maxSelections={2}
+            labelClass="font-semibold"
           />
           <div className="flex flex-row gap-2  items-center">
             <input

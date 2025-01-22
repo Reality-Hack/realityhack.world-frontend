@@ -2,7 +2,7 @@ import { components } from '@/types/schema';
 import { Attendee } from './attendee';
 
 export type Team = components['schemas']['Team'];
-
+export type Project = components['schemas']['Project'];
 export type SerializedTeam = {
   id: string;
   name: string;
@@ -11,9 +11,12 @@ export type SerializedTeam = {
   table?: components['schemas']['Table'];
   created_at: string;
   updated_at: string;
+  project: Project | null;
 };
 
-export type PatchedTeam = components['schemas']['PatchedTeam'];
+export type PatchedTeam = components['schemas']['PatchedTeamUpdate'];
+
+export type TrackEnum = components['schemas']['TracksEnum'];
 
 export type TeamCreate = {
   name: string;

@@ -16,6 +16,7 @@ const defaultTeam: SerializedTeam = {
   name: '',
   number: undefined,
   attendees: [],
+  project: null,
   table: undefined,
   created_at: '',
   updated_at: ''
