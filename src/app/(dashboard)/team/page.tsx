@@ -13,6 +13,7 @@ import { useSpecialTracks, Track } from '@/hooks/useSpecialTracks';
 import { SpecialTrackSelect } from '@/components/SpecialTrackSelect';
 import { TextInput, TextAreaInput } from '../../../components/Inputs';
 import { toast } from 'sonner';
+import { components } from '@/types/schema';
 
 interface ProfileImage {
   file: string;
@@ -47,8 +48,9 @@ export default function Team() {
   const [description, setDescription] = useState<string>('');
   const [projectName, setProjectName] = useState<string>('');
   const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
+  const [selectedHardware, setSelectedHardware] = useState<string[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const { tracks, isLoading, error } = useSpecialTracks();
+  const { tracks, hardwareTracks, isLoading, error } = useSpecialTracks();
   // Extract team members from user.team.attendee
   useEffect(() => {
     if (user?.team?.attendee) {
@@ -57,11 +59,9 @@ export default function Team() {
 
     if (session?.access_token && user?.team?.id) {
       getTeam(user.team.id, session.access_token).then(result => {
-        console.log(result);
         setTeam(result);
         setTeamName(result.name);
         setTableNumber(String(result.table?.number));
-        console.log(result.attendees);
         setTeamMembers(
           result.attendees.map((attendee: any) => ({
             id: attendee.id,
@@ -78,27 +78,117 @@ export default function Team() {
           setDescription(result.project.description);
           setProjectName(result.project.name);
         }
+        // Set the selected tracks and hardware from team data
+        if (result.tracks && tracks.length > 0) {
+          // Convert track values to full track objects
+          const trackValues = Array.isArray(result.tracks) ? result.tracks : (result.tracks as string).split(',');
+          const selectedTrackObjects = trackValues
+            .map((trackValue: string) => tracks.find(t => t.value[0] === trackValue))
+            .filter((track: Track | undefined): track is Track => track !== undefined)
+            .map((track: Track) => track.value);
+          setSelectedTracks(selectedTrackObjects);
+        }
+        if (result.destiny_hardware && hardwareTracks.length > 0) {
+          // Convert hardware values to full hardware objects
+          const hardwareValues = Array.isArray(result.destiny_hardware) ? result.destiny_hardware : (result.destiny_hardware as string).split(',');
+          const selectedHardwareObjects = hardwareValues
+            .map((hwValue: string) => hardwareTracks.find(h => h.value[0] === hwValue))
+            .filter((hw: Track | undefined): hw is Track => hw !== undefined)
+            .map((hw: Track) => hw.value);
+          setSelectedHardware(selectedHardwareObjects);
+        }
       });
     }
-  }, [user]);
+  }, [user, tracks, hardwareTracks]); // Add tracks and hardwareTracks to dependencies
 
   const handleSaveChanges = () => {
-    const updatedTeam: PatchedTeam = {
+    console.log('Saving team with:', {
+      tracks: selectedTracks,
+      hardware: selectedHardware,
+      teamName,
+      project: {
+        name: projectName,
+        description,
+        devpost,
+        github
+      }
+    });
+    
+    // Create the update object with proper types
+    const updatedTeam: Partial<PatchedTeam> = {
       name: teamName,
       attendees: teamMembers.map(attendee => attendee.id),
-      // tracks: selectedTracks.map(track => TrackEnum[track]),
-      project: {
+      project: team?.project ? {
+        ...team.project,
         submission_location: devpost,
         name: projectName,
         repository_location: github,
         description: description,
-        id: team?.project?.id || '',
+      } : {
+        submission_location: devpost,
+        name: projectName,
+        repository_location: github,
+        description: description,
+        id: '',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        team: team?.id
       }
     };
+
+    // Create the request body with tracks as comma-separated strings
+    const requestBody = {
+      ...updatedTeam,
+      tracks: selectedTracks,
+      destiny_hardware: selectedHardware
+    };
+
+    // Log the exact data being sent
+    console.log('Sending request body:', JSON.stringify(requestBody, null, 2));
+
     if (session) {
-      updateTeam(user.team.id, updatedTeam, session?.access_token).catch(
-        error => toast.error(`Error updating team: ${error}`)
-      );
+      // Update using JSON
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/teams/${user.team.id}/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'JWT ' + session.access_token
+        },
+        body: JSON.stringify(requestBody)
+      })
+        .then(async response => {
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(JSON.stringify(data));
+          }
+          return data;
+        })
+        .then(result => {
+          toast.success('Team updated successfully');
+          // Refresh the team data to show updated selections
+          getTeam(user.team.id, session.access_token).then(result => {
+            setTeam(result);
+            if (result.tracks && tracks.length > 0) {
+              // Convert track values to full track objects
+              const trackValues = Array.isArray(result.tracks) ? result.tracks : (result.tracks as string).split(',');
+              const selectedTrackObjects = trackValues
+                .map((trackValue: string) => tracks.find(t => t.value[0] === trackValue))
+                .filter((track: Track | undefined): track is Track => track !== undefined)
+                .map((track: Track) => track.value);
+              setSelectedTracks(selectedTrackObjects);
+            }
+            if (result.destiny_hardware && hardwareTracks.length > 0) {
+              // Convert hardware values to full hardware objects
+              const hardwareValues = Array.isArray(result.destiny_hardware) ? result.destiny_hardware : (result.destiny_hardware as string).split(',');
+              const selectedHardwareObjects = hardwareValues
+                .map((hwValue: string) => hardwareTracks.find(h => h.value[0] === hwValue))
+                .filter((hw: Track | undefined): hw is Track => hw !== undefined)
+                .map((hw: Track) => hw.value);
+              setSelectedHardware(selectedHardwareObjects);
+            }
+          });
+        })
+        .catch(error => toast.error(`Error updating team: ${error}`));
     } else toast.error('No user session, please login and try again');
   };
 
@@ -193,6 +283,17 @@ export default function Team() {
           onChange={setSelectedTracks}
           maxSelections={2}
           labelClass="text-xs/8"
+          type="track"
+        />
+      </div>
+
+      <div className="flex flex-col mb-4 w-full md:w-1/2">
+        <SpecialTrackSelect
+          selectedTracks={selectedHardware}
+          onChange={setSelectedHardware}
+          maxSelections={1}
+          labelClass="text-xs/8"
+          type="hardware"
         />
       </div>
 

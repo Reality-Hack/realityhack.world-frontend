@@ -80,7 +80,7 @@ export default function TeamForm({ team, onChange }: TeamFormProps) {
         fullWidth={true}
         size="small"
       />
-      <Autocomplete
+      {/* <Autocomplete
         id="table-select"
         value={team.table}
         loading={loading}
@@ -94,7 +94,7 @@ export default function TeamForm({ team, onChange }: TeamFormProps) {
         renderInput={params => (
           <TextField {...params} label="Table" size="small" />
         )}
-      />
+      /> */}
       <Autocomplete
         multiple
         id="attendees-select"

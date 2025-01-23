@@ -86,12 +86,8 @@ export function QuestionDialog({
   const { user } = useAuthContext();
   const formattedOptions = [];
   const [descriptionText, setDescriptionText] = useState<string>('');
-  const [locations, setLocations] = useState<string>(
-    JSON.stringify(user?.team?.table?.location)
-  );
-  const [searchVal, setSearchVal] = useState('');
+  const [locations, setLocations] = useState<string>('');
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
-  const tableId = user?.team?.table;
 
   for (const key in MentorTopics) {
     formattedOptions.push({
@@ -204,7 +200,7 @@ export function QuestionDialog({
           <div
             onClick={handleOnSubmit}
             className={`gap-1.5s mr-6 flex mt-0 mb-4 text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm cursor-pointer transition-all w-fit whitespace-nowrap ${
-              descriptionText.trim() !== '' && selectedItems.length > 1
+              descriptionText.trim() !== '' && selectedItems.length >= 1
                 ? 'hover:bg-[#0066F5] bg-[#1677FF] cursor-pointer'
                 : 'bg-gray-300 cursor-not-allowed'
             }`}

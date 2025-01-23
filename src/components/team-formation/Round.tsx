@@ -127,7 +127,7 @@ export default function Round({ round }: RoundProps) {
       getAvailableTracks(session?.access_token)
         .then(result => {
           if (result) {
-            const formattedTracks = result.choices.map(track => {
+            const formattedTracks = result.track.choices.map(track => {
               return {
                 label: track.display_name,
                 value: track.value

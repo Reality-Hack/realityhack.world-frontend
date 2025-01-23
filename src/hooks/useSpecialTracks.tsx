@@ -9,6 +9,7 @@ export interface Track {
 
 export function useSpecialTracks() {
   const [tracks, setTracks] = useState<Track[]>([]);
+  const [hardwareTracks, setHardwareTracks] = useState<Track[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
@@ -18,11 +19,18 @@ export function useSpecialTracks() {
       getAvailableTracks(session.access_token)
         .then(result => {
           if (result) {
-            const formattedTracks = result.choices.map(track => ({
+            const formattedTracks = result.track.choices.map(track => ({
               label: track.display_name,
               value: track.value
             }));
+
+            const formattedHardwareTracks = result.destiny_hardware.choices.map(track => ({
+              label: track.display_name,
+              value: track.value
+            }));
+
             setTracks(formattedTracks);
+            setHardwareTracks(formattedHardwareTracks);
           }
           setIsLoading(false);
         })
@@ -33,5 +41,5 @@ export function useSpecialTracks() {
     }
   }, [session]);
 
-  return { tracks, isLoading, error };
+  return { tracks, hardwareTracks, isLoading, error };
 }

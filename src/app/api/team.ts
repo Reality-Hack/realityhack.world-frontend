@@ -12,6 +12,8 @@ export type SerializedTeam = {
   created_at: string;
   updated_at: string;
   project: Project | null;
+  tracks: string[];
+  destiny_hardware: string[];
 };
 
 export type PatchedTeam = components['schemas']['PatchedTeamUpdate'];

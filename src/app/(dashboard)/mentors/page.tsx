@@ -44,13 +44,22 @@ export default function Page() {
     });
   }
 
-  useEffect(() => {
+  // Function to fetch help requests
+  const fetchHelpRequests = async () => {
     if (session?.access_token && isMentorOrAdmin) {
-      getAllHelpRequests(session.access_token).then(helpReqs => {
-        setAllHelpRequests(helpReqs);
-      });
+      const helpReqs = await getAllHelpRequests(session.access_token);
+      setAllHelpRequests(helpReqs);
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    fetchHelpRequests();
+    // Set up periodic refresh every 30 seconds
+    const intervalId = setInterval(fetchHelpRequests, 30000);
+    
+    // Cleanup interval on unmount
+    return () => clearInterval(intervalId);
+  }, [session?.access_token, isMentorOrAdmin]);
 
   const handleUpdateStatus = (requestId: string) => async (status: string) => {
     if (!session || !isMentorOrAdmin) {
@@ -60,22 +69,13 @@ export default function Page() {
       status: status,
       mentor: status === 'A' || status === 'E' ? user!.id : null
     };
-    const result = await editMentorHelpRequest(
+    await editMentorHelpRequest(
       session!.access_token,
       requestId,
       updateData
     );
-    setAllHelpRequests(prevRequests => {
-      let helpRequestIdx = prevRequests.findIndex(r => r.id === result.id);
-      if (helpRequestIdx != -1) {
-        let newRequests = prevRequests.slice();
-        newRequests[helpRequestIdx] = result;
-        return newRequests;
-      } else {
-        console.error('failed to update request');
-        return prevRequests;
-      }
-    });
+    // Fetch fresh data to ensure we have complete information
+    await fetchHelpRequests();
   };
 
   const filteredHelpRequests = useMemo<HelpRequest[]>(() => {

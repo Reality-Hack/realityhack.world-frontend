@@ -19,7 +19,9 @@ const defaultTeam: SerializedTeam = {
   project: null,
   table: undefined,
   created_at: '',
-  updated_at: ''
+  updated_at: '',
+  tracks: [],
+  destiny_hardware: []
 };
 
 export default function TeamDialog({ open, onClose, onSave }: Props) {

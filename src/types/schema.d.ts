@@ -1723,7 +1723,8 @@ export interface components {
       attendees?: string[];
       table?: components["schemas"]["Table"];
       team_description?: string | null;
-      tracks?: components["schemas"]["TracksEnum"] | components["schemas"]["BlankEnum"];
+      tracks?: components["schemas"]["TracksEnum"][];
+      destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       project?: components["schemas"]["Project"];
     };
     PatchedWorkshop: {
@@ -1798,9 +1799,9 @@ export interface components {
       /** Format: uuid */
       team?: string | null;
       /** Format: date-time */
-      created_at?: string;
+      created_at: string;
       /** Format: date-time */
-      updated_at?: string;
+      updated_at: string;
     };
     /**
      * @description * `B` - Black, African American, or of African descent
@@ -1828,14 +1829,17 @@ export interface components {
      */
     RecommendedForEnum: "A" | "D" | "S" | "P";
     /**
-     * @description * `H` - Hardware Hack
-     * * `M` - Meta
-     * * `Q` - Snapdragon Spaces
-     * * `X` - XREAL
-     * * `S` - Snap Spectacles
+     * @description * `M` - Best Lifestyle Experience with Meta Quest
+     * * `Q` - Best in World Building with Horizon Worlds
+     * * `T` - Best use of Haptics
+     * * `S` - Snap Spectacles Challenge
+     * * `N` - Pioneering a Neuroadaptive Future
+     * * `X` - Best Use of ShapesXR
+     * * `Y` - Best use of STYLY
+     * * `L` - Best use of Lambda AI Cloud Services
      * @enum {string}
      */
-    RelatesToDestinyHardwareEnum: "H" | "M" | "Q" | "X" | "S";
+    RelatesToDestinyHardwareEnum: "M" | "Q" | "T" | "S" | "N" | "X" | "Y" | "L";
     /**
      * @description * `MH` - Main Hall
      * * `AT` - Atlantis
@@ -2036,7 +2040,8 @@ export interface components {
       attendees?: string[];
       table: components["schemas"]["Table"];
       team_description?: string | null;
-      tracks?: components["schemas"]["TracksEnum"] | components["schemas"]["BlankEnum"];
+      tracks: components["schemas"]["TracksEnum"][];
+      destiny_hardware: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       project: components["schemas"]["Project"];
     };
     TokenObtainPair: {
@@ -2157,18 +2162,16 @@ export interface components {
      */
     TopicEnum: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32" | "33" | "34" | "35" | "36" | "37" | "38" | "39" | "40" | "41" | "42" | "43" | "44" | "45" | "46" | "47" | "48" | "49" | "50" | "51" | "52" | "53" | "54" | "55" | "56" | "57" | "58" | "O" | "60" | "61" | "62" | "63" | "64" | "65" | "66" | "67" | "68" | "69" | "70" | "71" | "72" | "73" | "74" | "75" | "76" | "77" | "78" | "79" | "80" | "81" | "82" | "83" | "84" | "85" | "86" | "87" | "88" | "89" | "90" | "91" | "92" | "93" | "94" | "95" | "96" | "97" | "98" | "99" | "100";
     /**
-     * @description * `F` - Founders Lab
-     * * `C` - Open Lab (AKA Community Hack)
+     * @description * `C` - Open Lab (AKA Community Hack)
      * * `S` - Connecting for Change with Social XR
      * * `E` - Augmented Engineering
      * * `D` - Digitizing Sustainability
      * * `A` - AeroSpatial Exploration
      * * `L` - Augmented Intelligence
-     * * `W` - Hardware hack
      * * `H` - Healthcare
      * @enum {string}
      */
-    TracksEnum: "F" | "C" | "S" | "E" | "D" | "A" | "L" | "W" | "H";
+    TracksEnum: "C" | "S" | "E" | "D" | "A" | "L" | "H";
     /**
      * @description * `AW` - Aruba
      * * `AF` - Afghanistan
@@ -3065,17 +3068,15 @@ export interface operations {
         search?: string;
         table__number?: number;
         /**
-         * @description * `F` - Founders Lab
-         * * `C` - Open Lab (AKA Community Hack)
+         * @description * `C` - Open Lab (AKA Community Hack)
          * * `S` - Connecting for Change with Social XR
          * * `E` - Augmented Engineering
          * * `D` - Digitizing Sustainability
          * * `A` - AeroSpatial Exploration
          * * `L` - Augmented Intelligence
-         * * `W` - Hardware hack
          * * `H` - Healthcare
          */
-        track?: "A" | "C" | "D" | "E" | "F" | "H" | "L" | "S" | "W" | null;
+        track?: "A" | "C" | "D" | "E" | "H" | "L" | "S" | null;
       };
     };
     responses: {
@@ -3319,13 +3320,16 @@ export interface operations {
     parameters: {
       query?: {
         /**
-         * @description * `H` - Hardware Hack
-         * * `M` - Meta
-         * * `Q` - Snapdragon Spaces
-         * * `X` - XREAL
-         * * `S` - Snap Spectacles
+         * @description * `M` - Best Lifestyle Experience with Meta Quest
+         * * `Q` - Best in World Building with Horizon Worlds
+         * * `T` - Best use of Haptics
+         * * `S` - Snap Spectacles Challenge
+         * * `N` - Pioneering a Neuroadaptive Future
+         * * `X` - Best Use of ShapesXR
+         * * `Y` - Best use of STYLY
+         * * `L` - Best use of Lambda AI Cloud Services
          */
-        relates_to_destiny_hardware?: "H" | "M" | "Q" | "S" | "X" | null;
+        relates_to_destiny_hardware?: "L" | "M" | "N" | "Q" | "S" | "T" | "X" | "Y" | null;
         /** @description A search term. */
         search?: string;
         /**
@@ -3565,13 +3569,16 @@ export interface operations {
         checked_out_to?: string;
         hardware?: string;
         /**
-         * @description * `H` - Hardware Hack
-         * * `M` - Meta
-         * * `Q` - Snapdragon Spaces
-         * * `X` - XREAL
-         * * `S` - Snap Spectacles
+         * @description * `M` - Best Lifestyle Experience with Meta Quest
+         * * `Q` - Best in World Building with Horizon Worlds
+         * * `T` - Best use of Haptics
+         * * `S` - Snap Spectacles Challenge
+         * * `N` - Pioneering a Neuroadaptive Future
+         * * `X` - Best Use of ShapesXR
+         * * `Y` - Best use of STYLY
+         * * `L` - Best use of Lambda AI Cloud Services
          */
-        hardware__relates_to_destiny_hardware?: "H" | "M" | "Q" | "S" | "X" | null;
+        hardware__relates_to_destiny_hardware?: "L" | "M" | "N" | "Q" | "S" | "T" | "X" | "Y" | null;
         /** @description A search term. */
         search?: string;
         serial?: string;

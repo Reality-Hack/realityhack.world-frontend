@@ -85,7 +85,8 @@ export async function setHardwareTrackPreference(
 
 export async function getAvailableTracks(
   accessToken: string
-): Promise<{ choices: { value: string; display_name: string }[] } | undefined> {
+): Promise<{ track: { choices: { value: string; display_name: string }[] }; 
+  destiny_hardware: { choices: { value: string; display_name: string }[] } } | undefined> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteams/`;
 
   try {
@@ -101,11 +102,15 @@ export async function getAvailableTracks(
       const data: {
         actions: {
           POST: {
-            track: { choices: { value: string; display_name: string }[] };
+            track: { choices: { value: string; display_name: string }[] }
+            destiny_hardware: { choices: { value: string; display_name: string }[] };
           };
         };
       } = await response.json();
-      return data?.actions?.POST?.track;
+      return {
+        track: data?.actions?.POST?.track,
+        destiny_hardware: data?.actions?.POST?.destiny_hardware
+      };
     } else {
       throw new Error(`Options request failed: ${response.statusText}`);
     }
