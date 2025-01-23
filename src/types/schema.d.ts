@@ -1927,6 +1927,7 @@ export interface components {
       created_at: string;
       /** Format: date-time */
       updated_at: string;
+      is_claimed: boolean;
     };
     TableCreate: {
       /** Format: uuid */

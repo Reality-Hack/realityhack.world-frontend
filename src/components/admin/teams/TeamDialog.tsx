@@ -53,7 +53,9 @@ export default function TeamDialog({ open, onClose, onSave }: Props) {
               onClick={() => {
                 let payload = {
                   name: team.name,
-                  table: team.table?.id,
+                  table: { 
+                    id: team.table?.id 
+                  },
                   attendees: team.attendees.map(a => a.id)
                 };
                 onSave(payload);

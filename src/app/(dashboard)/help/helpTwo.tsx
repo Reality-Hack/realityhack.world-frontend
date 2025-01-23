@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 
 import { MentorTopics } from '@/types/types';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { toast } from 'sonner';
 const LighthousesSocketURL = `${process.env.NEXT_PUBLIC_BACKEND_WS_URL}/ws/lighthouses/`;
 
 
@@ -205,7 +206,13 @@ export default function Help2() {
       <hr />
       <div
         className="gap-1.5s mr-6 flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] cursor-pointer transition-all w-fit ml-auto"
-        onClick={openNewRequestDialog}
+        onClick={() => {
+          if (user?.team?.table) {
+            openNewRequestDialog();
+          } else {
+            toast.error('Your team must input your team location in "My Team" before requesting help.');
+          }
+        }}
       >
         New Help Request
       </div>

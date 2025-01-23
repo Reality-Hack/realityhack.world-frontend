@@ -14,6 +14,9 @@ import { SpecialTrackSelect } from '@/components/SpecialTrackSelect';
 import { TextInput, TextAreaInput } from '../../../components/Inputs';
 import { toast } from 'sonner';
 import { components } from '@/types/schema';
+import { TextField } from '@mui/material';
+import { Autocomplete } from '@mui/material';
+import { getAllTables, Table } from '@/app/api/table';
 
 interface ProfileImage {
   file: string;
@@ -41,16 +44,30 @@ export default function Team() {
   const [teamName, setTeamName] = useState<string>(team?.name || '');
   const [devpost, setDevpost] = useState<string>('');
   const [github, setGithub] = useState<string>('');
-  const [buildingFloor, setBuildingFloor] = useState<string>('');
-  const [tableNumber, setTableNumber] = useState<string>(
-    String(team?.table?.number) || ''
-  );
+  const [table, setTable] = useState<string | undefined | null>(team?.table?.id || '');
   const [description, setDescription] = useState<string>('');
   const [projectName, setProjectName] = useState<string>('');
   const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
   const [selectedHardware, setSelectedHardware] = useState<string[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const { tracks, hardwareTracks, isLoading, error } = useSpecialTracks();
+  const changeTable = (table: Table | undefined | null) => {
+    setTable(table?.id || '');
+  };
+
+  function getTableLabel(table: number | void) {
+    // TODO: update this
+    if (!table) {
+      return `Table #${table}`;
+    }
+    if (table <= 48) {
+      return `Walker: Table #${table}`;
+    } else {
+      return `Stata: Table #${table}`;
+    }
+  }
+  const [tableOptions, setTableOptions] = useState<Table[]>([]);
+
   // Extract team members from user.team.attendee
   useEffect(() => {
     if (user?.team?.attendee) {
@@ -58,10 +75,14 @@ export default function Team() {
     }
 
     if (session?.access_token && user?.team?.id) {
+      getAllTables(session?.access_token).then(result => {
+        setTableOptions(result.filter(table => table.is_claimed === false));
+      });
       getTeam(user.team.id, session.access_token).then(result => {
         setTeam(result);
         setTeamName(result.name);
-        setTableNumber(String(result.table?.number));
+        setTable(result.table?.id || '');
+        // setTableNumber(String(result.table?.number));
         setTeamMembers(
           result.attendees.map((attendee: any) => ({
             id: attendee.id,
@@ -102,10 +123,15 @@ export default function Team() {
   }, [user, tracks, hardwareTracks]); // Add tracks and hardwareTracks to dependencies
 
   const handleSaveChanges = () => {
+    if (!table) {
+      toast.error('Please select a table');
+      return;
+    }
     console.log('Saving team with:', {
       tracks: selectedTracks,
       hardware: selectedHardware,
       teamName,
+      table: table,
       project: {
         name: projectName,
         description,
@@ -118,6 +144,7 @@ export default function Team() {
     const updatedTeam: Partial<PatchedTeam> = {
       name: teamName,
       attendees: teamMembers.map(attendee => attendee.id),
+      table: tableOptions.find(t => t.id === table),
       project: team?.project ? {
         ...team.project,
         submission_location: devpost,
@@ -198,141 +225,140 @@ export default function Team() {
         <h1 className="text-3xl pb-9 mb-10 font-semibold">Teams</h1>
         <hr className="w-full mt-2 border-t-2 border-gray-300 mt-4" />
       </div>
-      <h1 className="text-md text-[#4D97E8] mb-7 font-semibold">MANAGE TEAM</h1>
+      {user?.team ? (
+        <>
+          <h1 className="text-md text-[#4D97E8] mb-7 font-semibold">MANAGE TEAM</h1>
 
-      <div className="flex flex-col mb-4 w-full md:w-1/2">
-        <label className="text-xs/8">TEAM NAME</label>
-        <TextInput
-          name="team-name"
-          type="text"
-          value={teamName}
-          onChange={e => setTeamName(e.target.value)}
-          placeholder="Team Name"
-        />
-      </div>
+          <div className="flex flex-col mb-4 w-full md:w-1/2">
+            <label className="text-xs/8">TEAM NAME</label>
+            <TextInput
+              name="team-name"
+              type="text"
+              value={teamName}
+              onChange={e => setTeamName(e.target.value)}
+              placeholder="Team Name"
+            />
+          </div>
 
-      <div className="flex flex-col mb-4 w-full md:w-1/2">
-        <label className="text-xs/8">DEVPOST</label>
-        <TextInput
-          name="devpost"
-          type="text"
-          value={devpost}
-          onChange={e => setDevpost(e.target.value)}
-          placeholder="DevPost URL"
-        />
-      </div>
+          <div className="flex flex-col mb-4 w-full md:w-1/2">
+            <label className="text-xs/8">DEVPOST</label>
+            <TextInput
+              name="devpost"
+              type="text"
+              value={devpost}
+              onChange={e => setDevpost(e.target.value)}
+              placeholder="DevPost URL"
+            />
+          </div>
 
-      <div className="flex flex-col mb-4 w-full md:w-1/2">
-        <label className="text-xs/8">GITHUB</label>
-        <TextInput
-          name="github"
-          type="text"
-          value={github}
-          onChange={e => setGithub(e.target.value)}
-          placeholder="GitHub URL"
-        />
-      </div>
+          <div className="flex flex-col mb-4 w-full md:w-1/2">
+            <label className="text-xs/8">GITHUB</label>
+            <TextInput
+              name="github"
+              type="text"
+              value={github}
+              onChange={e => setGithub(e.target.value)}
+              placeholder="GitHub URL"
+            />
+          </div>
 
-      <div className="flex flex-row mb-4 w-full md:w-1/2 gap-3">
-        <div className="flex flex-col w-full md:w-1/2">
-          <label className="text-xs/8">BUILDING/FLOOR</label>
-          {/* this should be a multiselect */}
-          <TextInput
-            name="building-floor"
-            type="text"
-            value={buildingFloor}
-            onChange={e => setBuildingFloor(e.target.value)}
-            placeholder="Table Location"
-          />
-        </div>
+          <div className="flex flex-col mb-4 w-full md:w-1/2 gap-3">
+            <Autocomplete
+              id="table-select"
+              value={team?.table || null}
+              loading={isLoading}
+              onChange={(event: any, newValue: Table | null | undefined) => {
+                changeTable(newValue);
+              }}
+              options={tableOptions}
+              getOptionLabel={option => getTableLabel(option?.number)}
+              getOptionKey={option => option?.id ?? ''}
+              isOptionEqualToValue={(a, b) => a?.id === b?.id}
+              renderInput={params => (
+                <TextField {...params} label="Table" size="small" className="w-1/2" />
+              )}
+            /> 
+          </div>
 
-        <div className="flex flex-col w-full md:w-1/2">
-          <label className="text-xs/8">TABLE NUMBER</label>
-          <TextInput
-            name="table-location"
-            type="text"
-            value={tableNumber}
-            onChange={e => setTableNumber(e.target.value)}
-            placeholder="Table Location"
-          />
-        </div>
-      </div>
+          <div className="flex flex-col mb-4 w-full md:w-1/2">
+            <label className="text-xs/8">PROJECT NAME</label>
+            <TextInput
+              name="project-name"
+              type="text"
+              value={projectName}
+              onChange={e => setProjectName(e.target.value)}
+              placeholder="Project Name"
+            />
+            <TextAreaInput
+              value={description}
+              name="team description"
+              onChange={e => setDescription(e.target.value)}
+              placeholder="Describe your project"
+            >
+              <label className="text-xs/8">PROJECT DESCRIPTION</label>
+            </TextAreaInput>
+          </div>
 
-      <div className="flex flex-col mb-4 w-full md:w-1/2">
-        <label className="text-xs/8">PROJECT NAME</label>
-        <TextInput
-          name="project-name"
-          type="text"
-          value={projectName}
-          onChange={e => setProjectName(e.target.value)}
-          placeholder="Project Name"
-        />
-        <TextAreaInput
-          value={description}
-          name="team description"
-          onChange={e => setDescription(e.target.value)}
-          placeholder="Describe your project"
-        >
-          <label className="text-xs/8">PROJECT DESCRIPTION</label>
-        </TextAreaInput>
-      </div>
+          <div className="flex flex-col mb-4 w-full md:w-1/2">
+            <SpecialTrackSelect
+              selectedTracks={selectedTracks}
+              onChange={setSelectedTracks}
+              maxSelections={2}
+              labelClass="text-xs/8"
+              type="track"
+            />
+          </div>
 
-      <div className="flex flex-col mb-4 w-full md:w-1/2">
-        <SpecialTrackSelect
-          selectedTracks={selectedTracks}
-          onChange={setSelectedTracks}
-          maxSelections={2}
-          labelClass="text-xs/8"
-          type="track"
-        />
-      </div>
+          <div className="flex flex-col mb-4 w-full md:w-1/2">
+            <SpecialTrackSelect
+              selectedTracks={selectedHardware}
+              onChange={setSelectedHardware}
+              maxSelections={1}
+              labelClass="text-xs/8"
+              type="hardware"
+            />
+          </div>
 
-      <div className="flex flex-col mb-4 w-full md:w-1/2">
-        <SpecialTrackSelect
-          selectedTracks={selectedHardware}
-          onChange={setSelectedHardware}
-          maxSelections={1}
-          labelClass="text-xs/8"
-          type="hardware"
-        />
-      </div>
-
-      <div className="flex flex-col mb-4 w-full md:w-1/2">
-        <label className="text-xs/8">TEAM MEMBERS</label>
-        <div className="grid grid-cols-2 gap-4">
-          {teamMembers &&
-            teamMembers.map((attendee: TeamMember) => (
-              <div key={attendee.id} className="flex items-center space-x-4">
-                {attendee.profile_image?.file && (
-                  <img
-                    src={attendee.profile_image?.file}
-                    alt={`${attendee.first_name} ${attendee.last_name}`}
-                    className="w-12 h-12 rounded-full"
-                  />
-                )}
-                <div className="flex flex-row justify-between w-full">
-                  <h3 className="text-sm font-semibold">
-                    {attendee.first_name} {attendee.last_name}
-                  </h3>
-                </div>
-                <a className="text-xs text-blue-500 underline justify-right text-right">
-                  View
-                </a>
-                {/* <div className="text-xs text-gray-500 justify-right text-right">
-                  &nbsp;x
-                </div> */}
-              </div>
-            ))}
-        </div>
-      </div>
-      <div className="flex flex-row justify-between w-full md:w-1/2 pb-8">
-        <button
-          className="bg-blue-400 text-white rounded-2xl p-2 text-xs pl-4 pr-4"
-          onClick={handleSaveChanges}
-        >
-          Save Changes
-        </button>
-      </div>
+          <div className="flex flex-col mb-4 w-full md:w-1/2">
+            <label className="text-xs/8">TEAM MEMBERS</label>
+            <div className="grid grid-cols-2 gap-4">
+              {teamMembers &&
+                teamMembers.map((attendee: TeamMember) => (
+                  <div key={attendee.id} className="flex items-center space-x-4">
+                    {attendee.profile_image?.file && (
+                      <img
+                        src={attendee.profile_image?.file}
+                        alt={`${attendee.first_name} ${attendee.last_name}`}
+                        className="w-12 h-12 rounded-full"
+                      />
+                    )}
+                    <div className="flex flex-row justify-between w-full">
+                      <h3 className="text-sm font-semibold">
+                        {attendee.first_name} {attendee.last_name}
+                      </h3>
+                    </div>
+                    <a className="text-xs text-blue-500 underline justify-right text-right">
+                      View
+                    </a>
+                    {/* <div className="text-xs text-gray-500 justify-right text-right">
+                      &nbsp;x
+                    </div> */}
+                  </div>
+                ))}
+            </div>
+          </div>
+          <div className="flex flex-row justify-between w-full md:w-1/2 pb-8">
+            <button
+              className="bg-blue-400 text-white rounded-2xl p-2 text-xs pl-4 pr-4"
+              onClick={handleSaveChanges}
+            >
+              Save Changes
+            </button>
+          </div>
+        </>
+      ) : (
+        <h1 className="text-xl">Please register your team first</h1>
+      )}
     </div>
   );
 }

@@ -18,6 +18,7 @@ import { Button } from 'antd';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function TeamPage({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
@@ -41,11 +42,16 @@ export default function TeamPage({ params }: { params: { id: string } }) {
     if (isAdmin && session?.access_token && !!team) {
       const data: any = {
         name: team.name,
-        table: team.table?.id || null,
+        table: {
+          id: team.table?.id
+        },
         attendees: team.attendees.map(attendee => attendee.id)
       };
-      const result = await updateTeam(params.id, data, session?.access_token);
+      const result = await updateTeam(params.id, data, session?.access_token).catch(error => {
+        toast.error(`Error updating team: ${error}`);
+      });
       if (result) {
+        toast.success('Team updated successfully');
         setSuccess(true);
         setOrigTeam(team);
       }

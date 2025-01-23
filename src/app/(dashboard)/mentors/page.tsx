@@ -1,6 +1,9 @@
 'use client';
 import {
   HelpRequest,
+  HelpRequestTable,
+  Location,
+  Table,
   editMentorHelpRequest,
   getAllHelpRequests
 } from '@/app/api/helpqueue';
@@ -51,6 +54,33 @@ export default function Page() {
       setAllHelpRequests(helpReqs);
     }
   };
+
+  const RoomsLabelsMap = {
+    'MH': 'Morss Hall',
+    'NE': 'Neptune',
+    '24': '32-124',
+    '44': '32-144',
+    '41': '32-141',
+    'AT': 'Atlantis' // for backwards compat with staging
+  }
+
+  const buildingLabelsMap = {
+    'ST': 'Stata',
+    'WK': 'Walker'
+  }
+
+  const getTableLabel = (table: HelpRequestTable | undefined) => {
+    if (!table || !table.location) {
+      return 'Team has removed their table.';
+    }
+    const building = table.location.building ? buildingLabelsMap[table.location.building as keyof typeof buildingLabelsMap] : 'Unknown';
+    const room = table.location.room ? RoomsLabelsMap[table.location.room as keyof typeof RoomsLabelsMap] : 'Unknown';
+    const number = table?.number ? table?.number : 'Unknown';
+    if (!building || !room || !number) {
+      return `Debug - Building: ${table?.location?.building}, Room: ${table?.location?.room}, Table: ${table?.number}`;
+    }
+    return `${building}, ${room}, Table ${number}`
+  }
 
   useEffect(() => {
     fetchHelpRequests();
@@ -176,7 +206,7 @@ export default function Page() {
                   onHandleUpdateStatus={handleUpdateStatus(req.id)}
                   teamId={req.team?.id}
                   teamName={req.team?.name}
-                  teamLocation={`${req.team?.table?.location?.building}, Room ${req.team?.table?.location?.room}, Table ${req.team?.table?.number}`}
+                  teamLocation={getTableLabel(req.team?.table)}
                   reporterLocation={req.reporter_location}
                 />
               );
