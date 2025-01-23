@@ -78,7 +78,7 @@ export default function Team() {
 
     if (session?.access_token && user?.team?.id) {
       getAllTables(session?.access_token).then(result => {
-        setTableOptions(result.filter(table => table.is_claimed === false));
+        setTableOptions(result.filter(table => table.is_claimed === false || table.id === team?.table?.id));
       });
       getTeam(user.team.id, session.access_token).then(result => {
         setTeam(result);
@@ -162,10 +162,12 @@ export default function Team() {
         id: '',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        team: team?.id
       }
     };
-
+    // Remove project from updatedTeam if it exists
+    if ('project' in updatedTeam) {
+      delete updatedTeam.project;
+    }
     // Create the request body with tracks as comma-separated strings
     const requestBody = {
       ...updatedTeam,
@@ -340,9 +342,9 @@ export default function Team() {
                         {attendee.first_name} {attendee.last_name}
                       </h3>
                     </div>
-                    <a className="text-xs text-blue-500 underline justify-right text-right">
+                    {/* <a className="text-xs text-blue-500 underline justify-right text-right">
                       View
-                    </a>
+                    </a> */}
                     {/* <div className="text-xs text-gray-500 justify-right text-right">
                       &nbsp;x
                     </div> */}
