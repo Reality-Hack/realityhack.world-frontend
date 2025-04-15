@@ -44,7 +44,8 @@ export default function Team() {
   const [teamName, setTeamName] = useState<string>(team?.name || '');
   const [devpost, setDevpost] = useState<string>('');
   const [github, setGithub] = useState<string>('');
-  const [table, setTable] = useState<string | undefined | null>(team?.table?.id || '');
+  const [tableId, setTableId] = useState<string | undefined | null>(team?.table?.id || '');
+  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   const [description, setDescription] = useState<string>('');
   const [projectName, setProjectName] = useState<string>('');
   const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
@@ -52,7 +53,8 @@ export default function Team() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const { tracks, hardwareTracks, isLoading, error } = useSpecialTracks();
   const changeTable = (table: Table | undefined | null) => {
-    setTable(table?.id || '');
+    setTableId(table?.id || '');
+    setSelectedTable(table || null);
   };
 
   function getTableLabel(table: number | void) {
@@ -76,12 +78,13 @@ export default function Team() {
 
     if (session?.access_token && user?.team?.id) {
       getAllTables(session?.access_token).then(result => {
-        setTableOptions(result.filter(table => table.is_claimed === false));
+        setTableOptions(result.filter(table => table.is_claimed === false || table.id === team?.table?.id));
       });
       getTeam(user.team.id, session.access_token).then(result => {
         setTeam(result);
         setTeamName(result.name);
-        setTable(result.table?.id || '');
+        setTableId(result.table?.id || '');
+        setSelectedTable(result.table || null);
         // setTableNumber(String(result.table?.number));
         setTeamMembers(
           result.attendees.map((attendee: any) => ({
@@ -123,7 +126,7 @@ export default function Team() {
   }, [user, tracks, hardwareTracks]); // Add tracks and hardwareTracks to dependencies
 
   const handleSaveChanges = () => {
-    if (!table) {
+    if (!selectedTable) {
       toast.error('Please select a table');
       return;
     }
@@ -131,7 +134,7 @@ export default function Team() {
       tracks: selectedTracks,
       hardware: selectedHardware,
       teamName,
-      table: table,
+      table: selectedTable,
       project: {
         name: projectName,
         description,
@@ -144,7 +147,7 @@ export default function Team() {
     const updatedTeam: Partial<PatchedTeam> = {
       name: teamName,
       attendees: teamMembers.map(attendee => attendee.id),
-      table: tableOptions.find(t => t.id === table),
+      table: selectedTable,
       project: team?.project ? {
         ...team.project,
         submission_location: devpost,
@@ -159,10 +162,12 @@ export default function Team() {
         id: '',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        team: team?.id
       }
     };
-
+    // Remove project from updatedTeam if it exists
+    if ('project' in updatedTeam) {
+      delete updatedTeam.project;
+    }
     // Create the request body with tracks as comma-separated strings
     const requestBody = {
       ...updatedTeam,
@@ -265,7 +270,7 @@ export default function Team() {
           <div className="flex flex-col mb-4 w-full md:w-1/2 gap-3">
             <Autocomplete
               id="table-select"
-              value={team?.table || null}
+              value={selectedTable}
               loading={isLoading}
               onChange={(event: any, newValue: Table | null | undefined) => {
                 changeTable(newValue);
@@ -337,9 +342,9 @@ export default function Team() {
                         {attendee.first_name} {attendee.last_name}
                       </h3>
                     </div>
-                    <a className="text-xs text-blue-500 underline justify-right text-right">
+                    {/* <a className="text-xs text-blue-500 underline justify-right text-right">
                       View
-                    </a>
+                    </a> */}
                     {/* <div className="text-xs text-gray-500 justify-right text-right">
                       &nbsp;x
                     </div> */}
