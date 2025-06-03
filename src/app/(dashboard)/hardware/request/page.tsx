@@ -1,7 +1,7 @@
 import { getAllHardware, getHardwareCategories } from '@/app/api/hardware';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
-import { authOptions } from '../../../api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import FilteredHardwareRequestViewer from '../../../../components/FilteredHardwareRequestViewer';
 
 export default async function HardwareRequest() {
