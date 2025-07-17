@@ -1689,6 +1689,9 @@ export interface components {
       created_at?: string;
       /** Format: date-time */
       updated_at?: string;
+      census_taker_name?: string | null;
+      census_location_override?: string | null;
+      team_primary_contact?: string | null;
     };
     PatchedSkill: {
       /** Format: uuid */
@@ -1715,17 +1718,20 @@ export interface components {
       created_at?: string;
       /** Format: date-time */
       updated_at?: string;
+      is_claimed?: boolean;
     };
     PatchedTeamUpdate: {
       /** Format: uuid */
       id?: string;
       name?: string;
       attendees?: string[];
-      table?: components["schemas"]["Table"];
+      table?: components["schemas"]["Table"] | null;
       team_description?: string | null;
       tracks?: components["schemas"]["TracksEnum"][];
       destiny_hardware?: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       project?: components["schemas"]["Project"];
+      hardware_hack?: boolean;
+      startup_hack?: boolean;
     };
     PatchedWorkshop: {
       /** Format: uuid */
@@ -1802,6 +1808,9 @@ export interface components {
       created_at: string;
       /** Format: date-time */
       updated_at: string;
+      census_taker_name?: string | null;
+      census_location_override?: string | null;
+      team_primary_contact?: string | null;
     };
     /**
      * @description * `B` - Black, African American, or of African descent
@@ -1829,23 +1838,29 @@ export interface components {
      */
     RecommendedForEnum: "A" | "D" | "S" | "P";
     /**
-     * @description * `M` - Best Lifestyle Experience with Meta Quest
-     * * `Q` - Best in World Building with Horizon Worlds
+     * @description * `M` - Best MR Lifestyle App for Meta Quest
+     * * `Q` - Best Lifestyle World with Meta Horizons Worlds
      * * `T` - Best use of Haptics
      * * `S` - Snap Spectacles Challenge
      * * `N` - Pioneering a Neuroadaptive Future
      * * `X` - Best Use of ShapesXR
      * * `Y` - Best use of STYLY
      * * `L` - Best use of Lambda AI Cloud Services
+     * * `U` - Qualcomm IoT
+     * * `V` - Best use of Apple Vision Pro
      * @enum {string}
      */
-    RelatesToDestinyHardwareEnum: "M" | "Q" | "T" | "S" | "N" | "X" | "Y" | "L";
+    RelatesToDestinyHardwareEnum: "M" | "Q" | "T" | "S" | "N" | "X" | "Y" | "L" | "U" | "V";
     /**
-     * @description * `MH` - Main Hall
+     * @description * `MH` - Morss Hall
      * * `AT` - Atlantis
+     * * `NE` - Neptune
+     * * `24` - 32-124
+     * * `44` - 32-144
+     * * `41` - 32-141
      * @enum {string}
      */
-    RoomEnum: "MH" | "AT";
+    RoomEnum: "MH" | "AT" | "NE" | "24" | "44" | "41";
     /**
      * @description * `1` - XS
      * * `2` - S
@@ -1989,6 +2004,8 @@ export interface components {
       name: string;
       attendees: components["schemas"]["AttendeeName"][];
       table: components["schemas"]["TeamTable"];
+      hardware_hack?: boolean;
+      startup_hack?: boolean;
       project: components["schemas"]["TeamProject"];
       lighthouse: components["schemas"]["TeamLightHouse"];
       tracks?: components["schemas"]["TracksEnum"] | components["schemas"]["BlankEnum"];
@@ -2017,6 +2034,9 @@ export interface components {
       repository_location: string;
       /** Format: uri */
       submission_location: string;
+      census_location_override?: string | null;
+      census_taker_name?: string | null;
+      team_primary_contact?: string | null;
       description: string;
       /** Format: date-time */
       created_at: string;
@@ -2039,11 +2059,13 @@ export interface components {
       id: string;
       name: string;
       attendees?: string[];
-      table: components["schemas"]["Table"];
+      table: components["schemas"]["Table"] | null;
       team_description?: string | null;
       tracks: components["schemas"]["TracksEnum"][];
       destiny_hardware: components["schemas"]["RelatesToDestinyHardwareEnum"][];
       project: components["schemas"]["Project"];
+      hardware_hack?: boolean;
+      startup_hack?: boolean;
     };
     TokenObtainPair: {
       username: string;
@@ -2059,114 +2081,114 @@ export interface components {
       token: string;
     };
     /**
-     * @description * `1` - AI - Chat
-     * * `2` - AI - GenAI
-     * * `3` - AI - Other
-     * * `4` - AI - Vision and Sensing
-     * * `5` - Audio - Music
-     * * `6` - Audio - Other
-     * * `7` - Audio - Spatial Audio
-     * * `8` - AVP - ARKit
-     * * `9` - AVP - Other
-     * * `10` - AVP - Reality Composer
-     * * `11` - AVP - SharePlay
-     * * `12` - AVP - SwiftUI
-     * * `13` - AVP - UIKit
-     * * `14` - AVP - Unity PolySpatial
-     * * `15` - Backend - API Design
-     * * `16` - Backend - Database
-     * * `17` - Blockchain
-     * * `18` - Cognitive3D
-     * * `19` - Design - 3DS Max
-     * * `20` - Design - Blender
-     * * `21` - Design - Figma
-     * * `22` - Design - GIMP
-     * * `23` - Design - Illustrator
-     * * `24` - Design - Maya
-     * * `25` - Design - Other
-     * * `26` - Design - Photoshop
-     * * `27` - Design - ShapesXR
-     * * `28` - Founders Lab
-     * * `29` - Godot - C# Script
-     * * `30` - Godot - GDScript
-     * * `31` - Godot - Other
-     * * `32` - Godot - Shaders
-     * * `33` - Hardware - Arduino
-     * * `34` - Hardware - Esp32
-     * * `35` - Hardware - GPIO
-     * * `36` - Hardware - Raspberry Pi
-     * * `37` - Hardware - Sensors
-     * * `38` - Langage - JavaScript
-     * * `39` - Language - C and C++
-     * * `40` - Language - C#
-     * * `41` - Language - Java
-     * * `42` - Language - Other
-     * * `43` - Language - Python
-     * * `44` - Meta - Anchors
-     * * `45` - Meta - Avatars
-     * * `46` - Meta - Devices
-     * * `47` - Meta - Interactions
-     * * `48` - Meta - MRUK
-     * * `49` - Meta - Other
-     * * `50` - Meta - Scene
-     * * `51` - Mixed Reality Toolkit (MRTK)
-     * * `52` - Networking
-     * * `53` - OS - Android
-     * * `54` - OS - iOS
-     * * `55` - OS - Linux Unix
-     * * `56` - OS - Mac
-     * * `57` - OS - Other
-     * * `58` - OS - Windows
-     * * `O` - Other
-     * * `60` - PICO - Devices
-     * * `61` - PICO - SDKs
-     * * `62` - Presentation - Other
-     * * `63` - Presentation - Pitch
-     * * `64` - Presentation - Research
-     * * `65` - Presentation - Storytelling
-     * * `66` - Project - Advice
-     * * `67` - Project - Management
-     * * `68` - Project - Other
-     * * `69` - Project - Scope
-     * * `70` - Qualcomm - Devices
-     * * `71` - Qualcomm - Robotics
-     * * `72` - Qualcomm - SDKs
-     * * `73` - Snap - AI
-     * * `74` - Snap - Lens Studio
-     * * `75` - Snap - Other
-     * * `76` - Snap - Spectacles
-     * * `77` - Source Control - Codeberg
-     * * `78` - Source Control - Git
-     * * `79` - Source Control - Other
-     * * `80` - STYLY
-     * * `81` - Unity - Animations
-     * * `82` - Unity - AR Foundation
-     * * `83` - Unity - C# Scripting
-     * * `84` - Unity - Other
-     * * `85` - Unity - Shaders
-     * * `86` - Unity - Visual Scripting
-     * * `87` - Unity - XRI
-     * * `88` - Unreal - Animations
-     * * `89` - Unreal - Blueprints
-     * * `90` - Unreal - C++
-     * * `91` - Unreal - Other
-     * * `92` - Unreal - Shaders
-     * * `93` - Video Editing - After Effects
-     * * `94` - Video Editing - DaVinci
-     * * `95` - Video Editing - Other
-     * * `96` - Video Editing - Premiere
-     * * `97` - Web - HTML
-     * * `98` - Web - Libraries
-     * * `99` - Web - Other
-     * * `100` - WebXR
+     * @description * `AI_CHAT` - AI - Chat
+     * * `AI_GENAI` - AI - GenAI
+     * * `AI_OTHER` - AI - Other
+     * * `AI_VISION_SENSING` - AI - Vision and Sensing
+     * * `AUDIO_MUSIC` - Audio - Music
+     * * `AUDIO_OTHER` - Audio - Other
+     * * `AUDIO_SPATIAL` - Audio - Spatial Audio
+     * * `AVP_ARKIT` - AVP - ARKit
+     * * `AVP_OTHER` - AVP - Other
+     * * `AVP_REALITY_COMPOSER` - AVP - Reality Composer
+     * * `AVP_SHAREPLAY` - AVP - SharePlay
+     * * `AVP_SWIFTUI` - AVP - SwiftUI
+     * * `AVP_UIKIT` - AVP - UIKit
+     * * `AVP_UNITY_POLYSPATIAL` - AVP - Unity PolySpatial
+     * * `BACKEND_API` - Backend - API Design
+     * * `BACKEND_DATABASE` - Backend - Database
+     * * `BLOCKCHAIN` - Blockchain
+     * * `COGNITIVE3D` - Cognitive3D
+     * * `DESIGN_3DS_MAX` - Design - 3DS Max
+     * * `DESIGN_BLENDER` - Design - Blender
+     * * `DESIGN_FIGMA` - Design - Figma
+     * * `DESIGN_GIMP` - Design - GIMP
+     * * `DESIGN_ILLUSTRATOR` - Design - Illustrator
+     * * `DESIGN_MAYA` - Design - Maya
+     * * `DESIGN_OTHER` - Design - Other
+     * * `DESIGN_PHOTOSHOP` - Design - Photoshop
+     * * `DESIGN_SHAPESXR` - Design - ShapesXR
+     * * `FOUNDERS_LAB` - Founders Lab
+     * * `GODOT_CSHARP` - Godot - C# Script
+     * * `GODOT_GDSCRIPT` - Godot - GDScript
+     * * `GODOT_OTHER` - Godot - Other
+     * * `GODOT_SHADERS` - Godot - Shaders
+     * * `HARDWARE_ARDUINO` - Hardware - Arduino
+     * * `HARDWARE_ESP32` - Hardware - Esp32
+     * * `HARDWARE_GPIO` - Hardware - GPIO
+     * * `HARDWARE_RASPBERRY_PI` - Hardware - Raspberry Pi
+     * * `HARDWARE_SENSORS` - Hardware - Sensors
+     * * `LANG_JAVASCRIPT` - Language - JavaScript
+     * * `LANG_CPP` - Language - C and C++
+     * * `LANG_CSHARP` - Language - C#
+     * * `LANG_JAVA` - Language - Java
+     * * `LANG_OTHER` - Language - Other
+     * * `LANG_PYTHON` - Language - Python
+     * * `META_ANCHORS` - Meta - Anchors
+     * * `META_AVATARS` - Meta - Avatars
+     * * `META_DEVICES` - Meta - Devices
+     * * `META_INTERACTIONS` - Meta - Interactions
+     * * `META_MRUK` - Meta - MRUK
+     * * `META_OTHER` - Meta - Other
+     * * `META_SCENE` - Meta - Scene
+     * * `MRTK` - Mixed Reality Toolkit (MRTK)
+     * * `NETWORKING` - Networking
+     * * `OS_ANDROID` - OS - Android
+     * * `OS_IOS` - OS - iOS
+     * * `OS_LINUX` - OS - Linux Unix
+     * * `OS_MAC` - OS - Mac
+     * * `OS_OTHER` - OS - Other
+     * * `OS_WINDOWS` - OS - Windows
+     * * `OTHER` - Other
+     * * `PICO_DEVICES` - PICO - Devices
+     * * `PICO_SDKS` - PICO - SDKs
+     * * `PRESENTATION_OTHER` - Presentation - Other
+     * * `PRESENTATION_PITCH` - Presentation - Pitch
+     * * `PRESENTATION_RESEARCH` - Presentation - Research
+     * * `PRESENTATION_STORYTELLING` - Presentation - Storytelling
+     * * `PROJECT_ADVICE` - Project - Advice
+     * * `PROJECT_MANAGEMENT` - Project - Management
+     * * `PROJECT_OTHER` - Project - Other
+     * * `PROJECT_SCOPE` - Project - Scope
+     * * `QUALCOMM_DEVICES` - Qualcomm - Devices
+     * * `QUALCOMM_ROBOTICS` - Qualcomm - Robotics
+     * * `QUALCOMM_SDKS` - Qualcomm - SDKs
+     * * `SNAP_AI` - Snap - AI
+     * * `SNAP_LENS_STUDIO` - Snap - Lens Studio
+     * * `SNAP_OTHER` - Snap - Other
+     * * `SNAP_SPECTACLES` - Snap - Spectacles
+     * * `SOURCE_CONTROL_CODEBERG` - Source Control - Codeberg
+     * * `SOURCE_CONTROL_GIT` - Source Control - Git
+     * * `SOURCE_CONTROL_OTHER` - Source Control - Other
+     * * `STYLY` - STYLY
+     * * `UNITY_ANIMATIONS` - Unity - Animations
+     * * `UNITY_AR_FOUNDATION` - Unity - AR Foundation
+     * * `UNITY_CSHARP` - Unity - C# Scripting
+     * * `UNITY_OTHER` - Unity - Other
+     * * `UNITY_SHADERS` - Unity - Shaders
+     * * `UNITY_VISUAL_SCRIPTING` - Unity - Visual Scripting
+     * * `UNITY_XRI` - Unity - XRI
+     * * `UNREAL_ANIMATIONS` - Unreal - Animations
+     * * `UNREAL_BLUEPRINTS` - Unreal - Blueprints
+     * * `UNREAL_CPP` - Unreal - C++
+     * * `UNREAL_OTHER` - Unreal - Other
+     * * `UNREAL_SHADERS` - Unreal - Shaders
+     * * `VIDEO_AFTER_EFFECTS` - Video Editing - After Effects
+     * * `VIDEO_DAVINCI` - Video Editing - DaVinci
+     * * `VIDEO_OTHER` - Video Editing - Other
+     * * `VIDEO_PREMIERE` - Video Editing - Premiere
+     * * `WEB_HTML` - Web - HTML
+     * * `WEB_LIBRARIES` - Web - Libraries
+     * * `WEB_OTHER` - Web - Other
+     * * `WEBXR` - WebXR
      * @enum {string}
      */
-    TopicEnum: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32" | "33" | "34" | "35" | "36" | "37" | "38" | "39" | "40" | "41" | "42" | "43" | "44" | "45" | "46" | "47" | "48" | "49" | "50" | "51" | "52" | "53" | "54" | "55" | "56" | "57" | "58" | "O" | "60" | "61" | "62" | "63" | "64" | "65" | "66" | "67" | "68" | "69" | "70" | "71" | "72" | "73" | "74" | "75" | "76" | "77" | "78" | "79" | "80" | "81" | "82" | "83" | "84" | "85" | "86" | "87" | "88" | "89" | "90" | "91" | "92" | "93" | "94" | "95" | "96" | "97" | "98" | "99" | "100";
+    TopicEnum: "AI_CHAT" | "AI_GENAI" | "AI_OTHER" | "AI_VISION_SENSING" | "AUDIO_MUSIC" | "AUDIO_OTHER" | "AUDIO_SPATIAL" | "AVP_ARKIT" | "AVP_OTHER" | "AVP_REALITY_COMPOSER" | "AVP_SHAREPLAY" | "AVP_SWIFTUI" | "AVP_UIKIT" | "AVP_UNITY_POLYSPATIAL" | "BACKEND_API" | "BACKEND_DATABASE" | "BLOCKCHAIN" | "COGNITIVE3D" | "DESIGN_3DS_MAX" | "DESIGN_BLENDER" | "DESIGN_FIGMA" | "DESIGN_GIMP" | "DESIGN_ILLUSTRATOR" | "DESIGN_MAYA" | "DESIGN_OTHER" | "DESIGN_PHOTOSHOP" | "DESIGN_SHAPESXR" | "FOUNDERS_LAB" | "GODOT_CSHARP" | "GODOT_GDSCRIPT" | "GODOT_OTHER" | "GODOT_SHADERS" | "HARDWARE_ARDUINO" | "HARDWARE_ESP32" | "HARDWARE_GPIO" | "HARDWARE_RASPBERRY_PI" | "HARDWARE_SENSORS" | "LANG_JAVASCRIPT" | "LANG_CPP" | "LANG_CSHARP" | "LANG_JAVA" | "LANG_OTHER" | "LANG_PYTHON" | "META_ANCHORS" | "META_AVATARS" | "META_DEVICES" | "META_INTERACTIONS" | "META_MRUK" | "META_OTHER" | "META_SCENE" | "MRTK" | "NETWORKING" | "OS_ANDROID" | "OS_IOS" | "OS_LINUX" | "OS_MAC" | "OS_OTHER" | "OS_WINDOWS" | "OTHER" | "PICO_DEVICES" | "PICO_SDKS" | "PRESENTATION_OTHER" | "PRESENTATION_PITCH" | "PRESENTATION_RESEARCH" | "PRESENTATION_STORYTELLING" | "PROJECT_ADVICE" | "PROJECT_MANAGEMENT" | "PROJECT_OTHER" | "PROJECT_SCOPE" | "QUALCOMM_DEVICES" | "QUALCOMM_ROBOTICS" | "QUALCOMM_SDKS" | "SNAP_AI" | "SNAP_LENS_STUDIO" | "SNAP_OTHER" | "SNAP_SPECTACLES" | "SOURCE_CONTROL_CODEBERG" | "SOURCE_CONTROL_GIT" | "SOURCE_CONTROL_OTHER" | "STYLY" | "UNITY_ANIMATIONS" | "UNITY_AR_FOUNDATION" | "UNITY_CSHARP" | "UNITY_OTHER" | "UNITY_SHADERS" | "UNITY_VISUAL_SCRIPTING" | "UNITY_XRI" | "UNREAL_ANIMATIONS" | "UNREAL_BLUEPRINTS" | "UNREAL_CPP" | "UNREAL_OTHER" | "UNREAL_SHADERS" | "VIDEO_AFTER_EFFECTS" | "VIDEO_DAVINCI" | "VIDEO_OTHER" | "VIDEO_PREMIERE" | "WEB_HTML" | "WEB_LIBRARIES" | "WEB_OTHER" | "WEBXR";
     /**
      * @description * `C` - Open Lab (AKA Community Hack)
      * * `S` - Connecting for Change with Social XR
-     * * `E` - Augmented Engineering
-     * * `D` - Digitizing Sustainability
+     * * `E` - Augmented Design & Engineering
+     * * `D` - Standing on the Shoulders of Sustainability
      * * `A` - AeroSpatial Exploration
      * * `L` - Augmented Intelligence
      * * `H` - Healthcare
@@ -3071,8 +3093,8 @@ export interface operations {
         /**
          * @description * `C` - Open Lab (AKA Community Hack)
          * * `S` - Connecting for Change with Social XR
-         * * `E` - Augmented Engineering
-         * * `D` - Digitizing Sustainability
+         * * `E` - Augmented Design & Engineering
+         * * `D` - Standing on the Shoulders of Sustainability
          * * `A` - AeroSpatial Exploration
          * * `L` - Augmented Intelligence
          * * `H` - Healthcare
@@ -3321,16 +3343,18 @@ export interface operations {
     parameters: {
       query?: {
         /**
-         * @description * `M` - Best Lifestyle Experience with Meta Quest
-         * * `Q` - Best in World Building with Horizon Worlds
+         * @description * `M` - Best MR Lifestyle App for Meta Quest
+         * * `Q` - Best Lifestyle World with Meta Horizons Worlds
          * * `T` - Best use of Haptics
          * * `S` - Snap Spectacles Challenge
          * * `N` - Pioneering a Neuroadaptive Future
          * * `X` - Best Use of ShapesXR
          * * `Y` - Best use of STYLY
          * * `L` - Best use of Lambda AI Cloud Services
+         * * `U` - Qualcomm IoT
+         * * `V` - Best use of Apple Vision Pro
          */
-        relates_to_destiny_hardware?: "L" | "M" | "N" | "Q" | "S" | "T" | "X" | "Y" | null;
+        relates_to_destiny_hardware?: "L" | "M" | "N" | "Q" | "S" | "T" | "U" | "V" | "X" | "Y" | null;
         /** @description A search term. */
         search?: string;
         /**
@@ -3570,16 +3594,18 @@ export interface operations {
         checked_out_to?: string;
         hardware?: string;
         /**
-         * @description * `M` - Best Lifestyle Experience with Meta Quest
-         * * `Q` - Best in World Building with Horizon Worlds
+         * @description * `M` - Best MR Lifestyle App for Meta Quest
+         * * `Q` - Best Lifestyle World with Meta Horizons Worlds
          * * `T` - Best use of Haptics
          * * `S` - Snap Spectacles Challenge
          * * `N` - Pioneering a Neuroadaptive Future
          * * `X` - Best Use of ShapesXR
          * * `Y` - Best use of STYLY
          * * `L` - Best use of Lambda AI Cloud Services
+         * * `U` - Qualcomm IoT
+         * * `V` - Best use of Apple Vision Pro
          */
-        hardware__relates_to_destiny_hardware?: "L" | "M" | "N" | "Q" | "S" | "T" | "X" | "Y" | null;
+        hardware__relates_to_destiny_hardware?: "L" | "M" | "N" | "Q" | "S" | "T" | "U" | "V" | "X" | "Y" | null;
         /** @description A search term. */
         search?: string;
         serial?: string;

@@ -271,7 +271,7 @@ export default function HardwareRequestView({
     // @ts-ignore
     columnHelper.accessor('team', {
       header: () => 'Team',
-      cell: info => info.getValue().name
+      cell: info => () => info.getValue()?.name
     }),
     columnHelper.accessor('requester', {
       header: () => 'Requested by',
@@ -342,6 +342,7 @@ export default function HardwareRequestView({
                       status
                     }
                   )
+                    // get type from generated typesdz
                     .then((newApp: HardwareRequestBrief) => {
                       const newHardware = Object.fromEntries(
                         Object.entries(hardware)

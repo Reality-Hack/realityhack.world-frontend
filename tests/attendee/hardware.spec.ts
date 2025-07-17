@@ -1,3 +1,4 @@
+import { deleteHardwareRequest } from '@/app/api/hardware';
 import { Locator, Page, expect, test } from '@playwright/test';
 
 async function goToHardware(page: Page) {
@@ -52,6 +53,12 @@ async function getPageHardwareRequests({page, knownElements}: {page: Page, known
     }))
 }
 
+async function deleteHardwareRequest(page: Page, id: number) {
+    // await page.getByRole('button', { name: 'Delete' }).nth(id).click();
+    // await page.getByRole('button', { name: 'Delete' }).click();
+    
+}
+
 test.describe(() => {
   test.use({ storageState: 'playwright/.auth/attendee.json' });
 
@@ -67,10 +74,10 @@ test.describe(() => {
   test('can delete hardware requests', async ({ page }) => {
     await goToHardware(page);
     const request = await requestHardware(page, { reason: "Hardware request deletion test" });
+    const deleteRequest = await deleteHardwareRequest(page, request.id);
     await openOwnHardware(page);
     const hardwareRequestsTable = await getPageHardwareRequests({page, knownElements: 1});
-    console.log(request);
-    console.log(hardwareRequestsTable);
+    // TODO: go to requested hardware tab, delete hardware request
     expect(hardwareRequestsTable.some(tableRequest => (
         tableRequest.reason === request.reason &&
         tableRequest.hardware.name === request.hardware.name

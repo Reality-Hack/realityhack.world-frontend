@@ -2,8 +2,6 @@
 import {
   HelpRequest,
   HelpRequestTable,
-  Location,
-  Table,
   editMentorHelpRequest,
   getAllHelpRequests
 } from '@/app/api/helpqueue';

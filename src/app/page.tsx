@@ -25,7 +25,6 @@ export default function Dashboard() {
   const { data: session, status } = useSession();
   const { user } = useAuthContext();
   const localInitialSetup = localStorage.getItem('initial_setup');
-
   const [_isOverlayVisible, setOverlayVisible] = useState(false);
 
   const toggleOverlay = () => {

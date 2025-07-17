@@ -10,6 +10,8 @@ import {
   HardwareDevice,
   HardwareDeviceForSending
 } from '@/types/types';
+import { HardwareRequestCreate } from '@/types/models';
+import { hardwarerequestsCreate } from '@/types/endpoints';
 import { toast } from 'sonner';
 
 export async function getAllHardware(accessToken: string) {
@@ -96,26 +98,21 @@ export async function getHardwareRequests(
 
 export async function sendHardwareRequest(
   accessToken: string,
-  request: IncompleteHardwareRequest
+  request: HardwareRequestCreate
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/hardwarerequests/`;
-  const content = JSON.stringify(request);
-  const resp = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
-    },
-    body: content
-  });
-
-  if (resp.ok) {
-    const data = await resp.json();
+  try {
+    const response = await hardwarerequestsCreate(request, {
+      headers: {
+        Authorization: `JWT ${accessToken}`
+      }
+    });
+    
     toast.success('Hardware request sent successfully');
-    return data;
+    return response.data;
+  } catch (error) {
+    toast.error('Failed to send hardware request');
+    throw error;
   }
-  toast.error('Failed to send data. Status: ' + resp.status);
-  throw new Error('Failed to send data. Status: ' + resp.status);
 }
 
 export async function patchHardwareRequest(
