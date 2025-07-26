@@ -8,13 +8,13 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "gen-types": "npx openapi-typescript http://localhost:8000/schema/spectacular -o ./src/types/schema.d.ts",
     "gen-orval": "orval --config ./orval.config.js",
     "test-server": "cp .env.test .env.local && npm run build && npm run start",
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@heroicons/react": "^2.2.0",

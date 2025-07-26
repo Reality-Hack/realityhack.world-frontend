@@ -47,7 +47,7 @@ export default function Checkin() {
   };
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin && session?.access_token) {
       const getData = async () => {
         const data = await getAllAttendees(session.access_token);
         setAttendees(data);

@@ -19,11 +19,6 @@ import type {
   AttendeeRequest,
   AttendeepreferencesListParams,
   AttendeesListParams,
-  AuthSchemaRetrieve200Four,
-  AuthSchemaRetrieve200One,
-  AuthSchemaRetrieve200Three,
-  AuthSchemaRetrieve200Two,
-  AuthSchemaRetrieveParams,
   DestinyTeam,
   DestinyTeamAttendeeVibe,
   DestinyTeamAttendeeVibeRequest,
@@ -93,11 +88,6 @@ import type {
   ProjectRequest,
   ProjectsListParams,
   RsvpsListParams,
-  SchemaSpectacularRetrieve200Four,
-  SchemaSpectacularRetrieve200One,
-  SchemaSpectacularRetrieve200Three,
-  SchemaSpectacularRetrieve200Two,
-  SchemaSpectacularRetrieveParams,
   Skill,
   SkillProficiency,
   SkillProficiencyCreate,
@@ -904,72 +894,6 @@ export const attendeesDestroy = async (id: string, options?: RequestInit): Promi
   const data: attendeesDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
   return { data, status: res.status, headers: res.headers } as attendeesDestroyResponse
-}
-
-
-
-/**
- * OpenApi3 schema for this API. Format can be selected via content negotiation.
-
-- YAML: application/vnd.oai.openapi
-- JSON: application/vnd.oai.openapi+json
- */
-export type authSchemaRetrieveResponse200 = {
-  data: AuthSchemaRetrieve200One
-  status: 200
-}
-
-export type authSchemaRetrieveResponse200 = {
-  data: AuthSchemaRetrieve200Two
-  status: 200
-}
-
-export type authSchemaRetrieveResponse200 = {
-  data: AuthSchemaRetrieve200Three
-  status: 200
-}
-
-export type authSchemaRetrieveResponse200 = {
-  data: AuthSchemaRetrieve200Four
-  status: 200
-}
-    
-export type authSchemaRetrieveResponseComposite = authSchemaRetrieveResponse200 | authSchemaRetrieveResponse200 | authSchemaRetrieveResponse200 | authSchemaRetrieveResponse200;
-    
-export type authSchemaRetrieveResponse = authSchemaRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getAuthSchemaRetrieveUrl = (params?: AuthSchemaRetrieveParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/auth/schema/?${stringifiedParams}` : `/backend/auth/schema/`
-}
-
-export const authSchemaRetrieve = async (params?: AuthSchemaRetrieveParams, options?: RequestInit): Promise<authSchemaRetrieveResponse> => {
-  
-  const res = await fetch(getAuthSchemaRetrieveUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: authSchemaRetrieveResponse['data'] = body ? JSON.parse(body) : {}
-
-  return { data, status: res.status, headers: res.headers } as authSchemaRetrieveResponse
 }
 
 
@@ -4448,72 +4372,6 @@ export const rsvpsDestroy = async (id: string, options?: RequestInit): Promise<r
   const data: rsvpsDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
   return { data, status: res.status, headers: res.headers } as rsvpsDestroyResponse
-}
-
-
-
-/**
- * OpenApi3 schema for this API. Format can be selected via content negotiation.
-
-- YAML: application/vnd.oai.openapi
-- JSON: application/vnd.oai.openapi+json
- */
-export type schemaSpectacularRetrieveResponse200 = {
-  data: SchemaSpectacularRetrieve200One
-  status: 200
-}
-
-export type schemaSpectacularRetrieveResponse200 = {
-  data: SchemaSpectacularRetrieve200Two
-  status: 200
-}
-
-export type schemaSpectacularRetrieveResponse200 = {
-  data: SchemaSpectacularRetrieve200Three
-  status: 200
-}
-
-export type schemaSpectacularRetrieveResponse200 = {
-  data: SchemaSpectacularRetrieve200Four
-  status: 200
-}
-    
-export type schemaSpectacularRetrieveResponseComposite = schemaSpectacularRetrieveResponse200 | schemaSpectacularRetrieveResponse200 | schemaSpectacularRetrieveResponse200 | schemaSpectacularRetrieveResponse200;
-    
-export type schemaSpectacularRetrieveResponse = schemaSpectacularRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getSchemaSpectacularRetrieveUrl = (params?: SchemaSpectacularRetrieveParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/schema/spectacular/?${stringifiedParams}` : `/backend/schema/spectacular/`
-}
-
-export const schemaSpectacularRetrieve = async (params?: SchemaSpectacularRetrieveParams, options?: RequestInit): Promise<schemaSpectacularRetrieveResponse> => {
-  
-  const res = await fetch(getSchemaSpectacularRetrieveUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: schemaSpectacularRetrieveResponse['data'] = body ? JSON.parse(body) : {}
-
-  return { data, status: res.status, headers: res.headers } as schemaSpectacularRetrieveResponse
 }
 
 

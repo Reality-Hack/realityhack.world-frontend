@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusIcon } from '@heroicons/react/20/solid';
 import type { InputRef } from 'antd';
 import { Button, Divider, Input, Select, Space, Tag } from 'antd';
 import React, { useRef, useState } from 'react';
@@ -31,7 +31,7 @@ const CustomDropdown: React.FC<{
         onChange={onNameChange}
         onKeyDown={e => e.stopPropagation()}
       />
-      <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+      <Button type="text" icon={<PlusIcon />} onClick={addItem}>
         Add item
       </Button>
     </Space>

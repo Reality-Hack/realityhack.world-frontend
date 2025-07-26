@@ -3,7 +3,11 @@ const { Asap_Condensed } = require("next/font/google");
 module.exports = {
     'realityhack-world-api': {
       input: {
-				target: 'http://localhost:8000/schema/spectacular',
+				target: 'http://localhost:8000/schema/spectacular/',
+        filters: {
+          mode: 'exclude',
+          tags: ['schema'] // Exclude any endpoints tagged with 'schema'
+        }
 			},
       output: {
         client: 'fetch',
@@ -14,4 +18,4 @@ module.exports = {
         schemas: './src/types/models'
 			}
     },
-  };
+};

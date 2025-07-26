@@ -19,7 +19,6 @@ class Project(models.Model):
 `;
     return <Markdown>{markdown}</Markdown>;
   } catch (err) {
-    console.error(err);
 
     return (
       <main>
