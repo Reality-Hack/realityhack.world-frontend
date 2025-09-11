@@ -1,5 +1,3 @@
-const { Asap_Condensed } = require("next/font/google");
-
 module.exports = {
     'realityhack-world-api': {
       input: {
@@ -10,12 +8,17 @@ module.exports = {
         }
 			},
       output: {
-        client: 'fetch',
+        client: 'swr',
 				mode: 'split',
-        httpClient: 'fetch',
+        httpClient: 'axios',
         target: './src/types/endpoints.ts',
-				baseUrl: '/backend',
-        schemas: './src/types/models'
+        schemas: './src/types/models',
+        override: {
+          mutator: {
+            path: './src/lib/custom-axios.ts',
+            name: 'customAxios',
+          },
+        },
 			}
     },
 };

@@ -1,22 +1,24 @@
 'use client';
 import { getAttendee } from '@/app/api/attendee';
-import { getHardware, getHardwareDevice } from '@/app/api/hardware';
 import CustomSelect from '@/components/CustomSelect';
 import HardwareRequestView from '@/components/HardwareRequestView';
 import QRCodeReader from '@/components/admin/QRCodeReader';
-import { Attendee, HardwareDevice } from '@/types/types';
 import { useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
+import { AttendeeList, Hardware, HardwareCountDetail, HardwareDeviceDetail, HardwaredevicesListParams } from '@/types/models';
+import { HardwareWithType } from '@/types/types2';
+import { hardwaredevicesList, hardwaredevicesRetrieve, hardwareRetrieve } from '@/types/endpoints';
+import { toast } from 'sonner';
 
 export default function HardwareCheckout({
   attendees,
   hardware
 }: {
-  attendees: Attendee[];
-  hardware: HardwareDevice[];
+  attendees: AttendeeList[];
+  hardware: HardwareWithType[];
 }) {
-  const [user, setUser] = useState<Attendee | null>(null);
-  const [hardwareDevice, setHardwareDevice] = useState<HardwareDevice | null>(
+  const [user, setUser] = useState<AttendeeList | null>(null);
+  const [hardwareDevice, setHardwareDevice] = useState<HardwareWithType | null>(
     null
   );
   return (
@@ -34,11 +36,12 @@ export default function HardwareCheckout({
         <>
           <HardwareRequestView
             requester={user.id}
-            hardwareDevice={hardwareDevice}
+            userSelectedHardwareDevice={hardwareDevice}
             setCheckedOutTo={request =>
               setHardwareDevice({
                 ...hardwareDevice!,
-                checked_out_to: request
+                checked_out_to: request?.id || null,
+                hardwareType: hardwareDevice!.hardwareType
               })
             }
             statusEditable={true}
@@ -55,7 +58,7 @@ export default function HardwareCheckout({
       {hardwareDevice ? (
         <>
           <p>
-            Device scanned: {hardwareDevice.hardware.name},{' '}
+            Device scanned: {hardwareDevice.hardwareType.name},{' '}
             {hardwareDevice.serial}
           </p>
           <button
@@ -81,9 +84,9 @@ function UserScanner({
   setUser,
   attendees
 }: {
-  user: Attendee | null;
-  setUser: (user: Attendee | null) => void;
-  attendees: Attendee[];
+  user: AttendeeList | null;
+  setUser: (user: AttendeeList | null) => void;
+  attendees: AttendeeList[];
 }) {
   const [selectedValue, setSelectedValue] = useState<string>('');
   const attendeeOptions = useMemo(
@@ -152,9 +155,9 @@ function HardwareDeviceScanner({
   setDevice,
   hardware
 }: {
-  device: HardwareDevice | null;
-  setDevice: (device: HardwareDevice | null) => void;
-  hardware: HardwareDevice[];
+  device: HardwareWithType | null;
+  setDevice: (device: HardwareWithType | null) => void;
+  hardware: HardwareWithType[];
 }) {
   const { data: session, status } = useSession();
   const [selectedValue, setSelectedValue] = useState<string>('');
@@ -176,13 +179,73 @@ function HardwareDeviceScanner({
                 />
               </svg>
             )}
-            {`${hardware.hardware.name}: ${hardware.serial}`}
+            {`${hardware.hardwareType.name}: ${hardware.serial}`}
           </div>
         ),
-        searchLabel: `${hardware.hardware.name}: ${hardware.serial}`
+        searchLabel: `${hardware.hardwareType.name}: ${hardware.serial}`
       })),
     [hardware]
   );
+
+  const fetchHardwareType = async (hardwareTypeId: string | null): Promise<HardwareCountDetail | null> => {
+    if (!hardwareTypeId) {
+      toast.error('Hardware Device is missing hardware type ID');
+      return null;
+    }
+    const hardwareType = await hardwareRetrieve(hardwareTypeId, {
+      headers: {
+        Authorization: `Bearer ${session!.access_token}`
+      }
+    });
+    if (!hardwareType) {
+      toast.error('Hardware Type not found for device');
+      return null;
+    }
+    return hardwareType;
+  }
+  const handleScanSuccess = async (id: string | null, serial: string | null) => {
+    let device: HardwareWithType | null = null;
+    let hardwareType: HardwareCountDetail | null = null;
+    if (id) {
+      const deviceRetrieveResponse = await hardwaredevicesRetrieve(id, {
+        headers: {
+          Authorization: `Bearer ${session!.access_token}`
+        }
+      });
+      if (!deviceRetrieveResponse.hardware) {
+        toast.error('Hardware Type not found for device');
+        return;
+      }
+      hardwareType = await fetchHardwareType(deviceRetrieveResponse.hardware.id || null);
+      if (!hardwareType || !deviceRetrieveResponse.hardware.id) {
+        toast.error('Hardware Type not found for device');
+        return;
+      }
+      device = {
+        ...deviceRetrieveResponse,
+        hardware: deviceRetrieveResponse.hardware.id!,
+        checked_out_to: deviceRetrieveResponse.checked_out_to?.id || null,
+        hardwareType: hardwareType as Hardware
+      }
+    } else if (serial) {
+      const deviceListResponse = await hardwaredevicesList({ serial: serial }, {
+        headers: {
+          Authorization: `Bearer ${session!.access_token}`
+        }
+      });
+      if (deviceListResponse.length > 1) {
+        toast.error('Multiple devices found for serial');
+        return;
+      }
+      const firstDevice = deviceListResponse[0];
+      hardwareType = await fetchHardwareType(firstDevice.hardware || null);
+      device = {
+        ...firstDevice,
+        hardwareType: hardwareType as Hardware
+      }
+    }
+    setDevice(device);
+  }
   return (
     <div>
       <div className="m-4 flex flex-row space-x-2">
@@ -208,28 +271,12 @@ function HardwareDeviceScanner({
           rememberLastUsedCamera: false,
           qrbox: 500
         }}
-        onScanSuccess={(id: string) => {
+        onScanSuccess={async (id: string) => {
           const identifier = id.slice(1);
           const isSerial = id.startsWith('S');
-          const query = isSerial ? { serial: identifier } : { id: identifier };
-          getHardwareDevice(session!.access_token, query).then(device => {
-            if (isSerial) {
-              device = device[0];
-            }
-            if (
-              typeof device.hardware == 'string' ||
-              device.hardware instanceof String
-            ) {
-              getHardware(session!.access_token, device.hardware).then(
-                hardware => {
-                  device.hardware = hardware;
-                  setDevice(device);
-                }
-              );
-            } else {
-              setDevice(device);
-            }
-          });
+          const idParam = !isSerial ? id : null;
+          const serialParam = isSerial ? identifier : null;
+          await handleScanSuccess(idParam, serialParam);
         }}
       ></QRCodeReader>
     </div>

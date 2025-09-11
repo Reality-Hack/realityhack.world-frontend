@@ -7,7 +7,7 @@ import '@/app/globals.css';
 
 const QRCodeReader = ({
   onScanSuccess,
-  displayCheckinText = false,
+  displayCheckinText = false, 
   displayError = false,
   uniquifier = 'default',
   extraConfig = {}

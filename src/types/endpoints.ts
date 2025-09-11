@@ -3,6 +3,18 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
+import useSwr from 'swr';
+import type {
+  Arguments,
+  Key,
+  SWRConfiguration
+} from 'swr';
+
+import useSWRMutation from 'swr/mutation';
+import type {
+  SWRMutationConfiguration
+} from 'swr/mutation';
+
 import type {
   Application,
   ApplicationRequest,
@@ -32,7 +44,8 @@ import type {
   GroupDetail,
   GroupDetailRequest,
   GroupsListParams,
-  Hardware,
+  HardwareCount,
+  HardwareCountDetail,
   HardwareCreate,
   HardwareCreateRequest,
   HardwareDevice,
@@ -123,6074 +136,5767 @@ import type {
   WorkshopsListParams
 } from './models';
 
+import { customAxios } from '../lib/custom-axios';
+import type { ErrorType , BodyType } from '../lib/custom-axios';
+
+
+  
+  type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+
+  
+/**
+ * API endpoint that allows applications to be viewed or edited.
+ */
+export const applicationsList = (
+    params?: ApplicationsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Application[]>(
+    {url: `/applications/`, method: 'GET',
+        params
+    },
+    options);
+  }
+
+
+
+export const getApplicationsListKey = (params?: ApplicationsListParams,) => [`/applications/`, ...(params ? [params]: [])] as const;
+
+export type ApplicationsListQueryResult = NonNullable<Awaited<ReturnType<typeof applicationsList>>>
+export type ApplicationsListQueryError = ErrorType<unknown>
+
+export const useApplicationsList = <TError = ErrorType<unknown>>(
+  params?: ApplicationsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof applicationsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getApplicationsListKey(params) : null);
+  const swrFn = () => applicationsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows applications to be viewed or edited.
  */
-export type applicationsListResponse200 = {
-  data: Application[]
-  status: 200
-}
-    
-export type applicationsListResponseComposite = applicationsListResponse200;
-    
-export type applicationsListResponse = applicationsListResponseComposite & {
-  headers: Headers;
-}
-
-export const getApplicationsListUrl = (params?: ApplicationsListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/applications/?${stringifiedParams}` : `/backend/applications/`
-}
-
-export const applicationsList = async (params?: ApplicationsListParams, options?: RequestInit): Promise<applicationsListResponse> => {
-  
-  const res = await fetch(getApplicationsListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const applicationsCreate = (
+    applicationRequest: BodyType<ApplicationRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Application>(
+    {url: `/applications/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: applicationRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: applicationsListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as applicationsListResponse
+
+export const getApplicationsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: ApplicationRequest }): Promise<Application> => {
+    return applicationsCreate(arg, options);
+  }
 }
+export const getApplicationsCreateMutationKey = () => [`/applications/`] as const;
 
+export type ApplicationsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof applicationsCreate>>>
+export type ApplicationsCreateMutationError = ErrorType<unknown>
 
+export const useApplicationsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationsCreate>>, TError, Key, ApplicationRequest, Awaited<ReturnType<typeof applicationsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationsCreateMutationKey();
+  const swrFn = getApplicationsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows applications to be viewed or edited.
  */
-export type applicationsCreateResponse201 = {
-  data: Application
-  status: 201
-}
-    
-export type applicationsCreateResponseComposite = applicationsCreateResponse201;
-    
-export type applicationsCreateResponse = applicationsCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getApplicationsCreateUrl = () => {
-
-
-  
-
-  return `/backend/applications/`
-}
-
-export const applicationsCreate = async (applicationRequest: ApplicationRequest, options?: RequestInit): Promise<applicationsCreateResponse> => {
-  
-  const res = await fetch(getApplicationsCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      applicationRequest,)
+export const applicationsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Application>(
+    {url: `/applications/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: applicationsCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as applicationsCreateResponse
+
+export const getApplicationsRetrieveKey = (id: string,) => [`/applications/${id}/`] as const;
+
+export type ApplicationsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof applicationsRetrieve>>>
+export type ApplicationsRetrieveQueryError = ErrorType<unknown>
+
+export const useApplicationsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof applicationsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getApplicationsRetrieveKey(id) : null);
+  const swrFn = () => applicationsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows applications to be viewed or edited.
  */
-export type applicationsRetrieveResponse200 = {
-  data: Application
-  status: 200
-}
-    
-export type applicationsRetrieveResponseComposite = applicationsRetrieveResponse200;
-    
-export type applicationsRetrieveResponse = applicationsRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getApplicationsRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/applications/${id}/`
-}
-
-export const applicationsRetrieve = async (id: string, options?: RequestInit): Promise<applicationsRetrieveResponse> => {
-  
-  const res = await fetch(getApplicationsRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const applicationsUpdate = (
+    id: string,
+    applicationRequest: BodyType<ApplicationRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Application>(
+    {url: `/applications/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: applicationRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: applicationsRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as applicationsRetrieveResponse
+
+export const getApplicationsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: ApplicationRequest }): Promise<Application> => {
+    return applicationsUpdate(id, arg, options);
+  }
 }
+export const getApplicationsUpdateMutationKey = (id: string,) => [`/applications/${id}/`] as const;
 
+export type ApplicationsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof applicationsUpdate>>>
+export type ApplicationsUpdateMutationError = ErrorType<unknown>
 
+export const useApplicationsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationsUpdate>>, TError, Key, ApplicationRequest, Awaited<ReturnType<typeof applicationsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationsUpdateMutationKey(id);
+  const swrFn = getApplicationsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows applications to be viewed or edited.
  */
-export type applicationsUpdateResponse200 = {
-  data: Application
-  status: 200
-}
-    
-export type applicationsUpdateResponseComposite = applicationsUpdateResponse200;
-    
-export type applicationsUpdateResponse = applicationsUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getApplicationsUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/applications/${id}/`
-}
-
-export const applicationsUpdate = async (id: string,
-    applicationRequest: ApplicationRequest, options?: RequestInit): Promise<applicationsUpdateResponse> => {
-  
-  const res = await fetch(getApplicationsUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      applicationRequest,)
+export const applicationsPartialUpdate = (
+    id: string,
+    patchedApplicationRequest: BodyType<PatchedApplicationRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Application>(
+    {url: `/applications/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedApplicationRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: applicationsUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as applicationsUpdateResponse
+
+export const getApplicationsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedApplicationRequest }): Promise<Application> => {
+    return applicationsPartialUpdate(id, arg, options);
+  }
 }
+export const getApplicationsPartialUpdateMutationKey = (id: string,) => [`/applications/${id}/`] as const;
 
+export type ApplicationsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof applicationsPartialUpdate>>>
+export type ApplicationsPartialUpdateMutationError = ErrorType<unknown>
 
+export const useApplicationsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationsPartialUpdate>>, TError, Key, PatchedApplicationRequest, Awaited<ReturnType<typeof applicationsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationsPartialUpdateMutationKey(id);
+  const swrFn = getApplicationsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows applications to be viewed or edited.
  */
-export type applicationsPartialUpdateResponse200 = {
-  data: Application
-  status: 200
-}
-    
-export type applicationsPartialUpdateResponseComposite = applicationsPartialUpdateResponse200;
-    
-export type applicationsPartialUpdateResponse = applicationsPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getApplicationsPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/applications/${id}/`
-}
-
-export const applicationsPartialUpdate = async (id: string,
-    patchedApplicationRequest: PatchedApplicationRequest, options?: RequestInit): Promise<applicationsPartialUpdateResponse> => {
-  
-  const res = await fetch(getApplicationsPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedApplicationRequest,)
+export const applicationsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/applications/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: applicationsPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
-
-  return { data, status: res.status, headers: res.headers } as applicationsPartialUpdateResponse
-}
 
 
 
-/**
- * API endpoint that allows applications to be viewed or edited.
- */
-export type applicationsDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type applicationsDestroyResponseComposite = applicationsDestroyResponse204;
-    
-export type applicationsDestroyResponse = applicationsDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getApplicationsDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/applications/${id}/`
-}
-
-export const applicationsDestroy = async (id: string, options?: RequestInit): Promise<applicationsDestroyResponse> => {
-  
-  const res = await fetch(getApplicationsDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const getApplicationsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return applicationsDestroy(id, options);
   }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: applicationsDestroyResponse['data'] = body ? JSON.parse(body) : {}
-
-  return { data, status: res.status, headers: res.headers } as applicationsDestroyResponse
 }
+export const getApplicationsDestroyMutationKey = (id: string,) => [`/applications/${id}/`] as const;
 
+export type ApplicationsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof applicationsDestroy>>>
+export type ApplicationsDestroyMutationError = ErrorType<unknown>
 
+export const useApplicationsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof applicationsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationsDestroyMutationKey(id);
+  const swrFn = getApplicationsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows attendee preferences to be viewed or edited.
  */
-export type attendeepreferencesListResponse200 = {
-  data: AttendeePreference[]
-  status: 200
-}
-    
-export type attendeepreferencesListResponseComposite = attendeepreferencesListResponse200;
-    
-export type attendeepreferencesListResponse = attendeepreferencesListResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeepreferencesListUrl = (params?: AttendeepreferencesListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/attendeepreferences/?${stringifiedParams}` : `/backend/attendeepreferences/`
-}
-
-export const attendeepreferencesList = async (params?: AttendeepreferencesListParams, options?: RequestInit): Promise<attendeepreferencesListResponse> => {
-  
-  const res = await fetch(getAttendeepreferencesListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const attendeepreferencesList = (
+    params?: AttendeepreferencesListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeePreference[]>(
+    {url: `/attendeepreferences/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeepreferencesListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeepreferencesListResponse
+
+export const getAttendeepreferencesListKey = (params?: AttendeepreferencesListParams,) => [`/attendeepreferences/`, ...(params ? [params]: [])] as const;
+
+export type AttendeepreferencesListQueryResult = NonNullable<Awaited<ReturnType<typeof attendeepreferencesList>>>
+export type AttendeepreferencesListQueryError = ErrorType<unknown>
+
+export const useAttendeepreferencesList = <TError = ErrorType<unknown>>(
+  params?: AttendeepreferencesListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof attendeepreferencesList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getAttendeepreferencesListKey(params) : null);
+  const swrFn = () => attendeepreferencesList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows attendee preferences to be viewed or edited.
  */
-export type attendeepreferencesCreateResponse201 = {
-  data: AttendeePreference
-  status: 201
-}
-    
-export type attendeepreferencesCreateResponseComposite = attendeepreferencesCreateResponse201;
-    
-export type attendeepreferencesCreateResponse = attendeepreferencesCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeepreferencesCreateUrl = () => {
-
-
-  
-
-  return `/backend/attendeepreferences/`
-}
-
-export const attendeepreferencesCreate = async (attendeePreferenceRequest: AttendeePreferenceRequest, options?: RequestInit): Promise<attendeepreferencesCreateResponse> => {
-  
-  const res = await fetch(getAttendeepreferencesCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      attendeePreferenceRequest,)
+export const attendeepreferencesCreate = (
+    attendeePreferenceRequest: BodyType<AttendeePreferenceRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeePreference>(
+    {url: `/attendeepreferences/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: attendeePreferenceRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeepreferencesCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeepreferencesCreateResponse
+
+export const getAttendeepreferencesCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: AttendeePreferenceRequest }): Promise<AttendeePreference> => {
+    return attendeepreferencesCreate(arg, options);
+  }
 }
+export const getAttendeepreferencesCreateMutationKey = () => [`/attendeepreferences/`] as const;
 
+export type AttendeepreferencesCreateMutationResult = NonNullable<Awaited<ReturnType<typeof attendeepreferencesCreate>>>
+export type AttendeepreferencesCreateMutationError = ErrorType<unknown>
 
+export const useAttendeepreferencesCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof attendeepreferencesCreate>>, TError, Key, AttendeePreferenceRequest, Awaited<ReturnType<typeof attendeepreferencesCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getAttendeepreferencesCreateMutationKey();
+  const swrFn = getAttendeepreferencesCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows attendee preferences to be viewed or edited.
  */
-export type attendeepreferencesRetrieveResponse200 = {
-  data: AttendeePreference
-  status: 200
-}
-    
-export type attendeepreferencesRetrieveResponseComposite = attendeepreferencesRetrieveResponse200;
-    
-export type attendeepreferencesRetrieveResponse = attendeepreferencesRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeepreferencesRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/attendeepreferences/${id}/`
-}
-
-export const attendeepreferencesRetrieve = async (id: string, options?: RequestInit): Promise<attendeepreferencesRetrieveResponse> => {
-  
-  const res = await fetch(getAttendeepreferencesRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const attendeepreferencesRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeePreference>(
+    {url: `/attendeepreferences/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeepreferencesRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeepreferencesRetrieveResponse
+
+export const getAttendeepreferencesRetrieveKey = (id: string,) => [`/attendeepreferences/${id}/`] as const;
+
+export type AttendeepreferencesRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof attendeepreferencesRetrieve>>>
+export type AttendeepreferencesRetrieveQueryError = ErrorType<unknown>
+
+export const useAttendeepreferencesRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof attendeepreferencesRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getAttendeepreferencesRetrieveKey(id) : null);
+  const swrFn = () => attendeepreferencesRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows attendee preferences to be viewed or edited.
  */
-export type attendeepreferencesUpdateResponse200 = {
-  data: AttendeePreference
-  status: 200
-}
-    
-export type attendeepreferencesUpdateResponseComposite = attendeepreferencesUpdateResponse200;
-    
-export type attendeepreferencesUpdateResponse = attendeepreferencesUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeepreferencesUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/attendeepreferences/${id}/`
-}
-
-export const attendeepreferencesUpdate = async (id: string,
-    attendeePreferenceRequest: AttendeePreferenceRequest, options?: RequestInit): Promise<attendeepreferencesUpdateResponse> => {
-  
-  const res = await fetch(getAttendeepreferencesUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      attendeePreferenceRequest,)
+export const attendeepreferencesUpdate = (
+    id: string,
+    attendeePreferenceRequest: BodyType<AttendeePreferenceRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeePreference>(
+    {url: `/attendeepreferences/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: attendeePreferenceRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeepreferencesUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeepreferencesUpdateResponse
+
+export const getAttendeepreferencesUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: AttendeePreferenceRequest }): Promise<AttendeePreference> => {
+    return attendeepreferencesUpdate(id, arg, options);
+  }
 }
+export const getAttendeepreferencesUpdateMutationKey = (id: string,) => [`/attendeepreferences/${id}/`] as const;
 
+export type AttendeepreferencesUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof attendeepreferencesUpdate>>>
+export type AttendeepreferencesUpdateMutationError = ErrorType<unknown>
 
+export const useAttendeepreferencesUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof attendeepreferencesUpdate>>, TError, Key, AttendeePreferenceRequest, Awaited<ReturnType<typeof attendeepreferencesUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getAttendeepreferencesUpdateMutationKey(id);
+  const swrFn = getAttendeepreferencesUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows attendee preferences to be viewed or edited.
  */
-export type attendeepreferencesPartialUpdateResponse200 = {
-  data: AttendeePreference
-  status: 200
-}
-    
-export type attendeepreferencesPartialUpdateResponseComposite = attendeepreferencesPartialUpdateResponse200;
-    
-export type attendeepreferencesPartialUpdateResponse = attendeepreferencesPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeepreferencesPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/attendeepreferences/${id}/`
-}
-
-export const attendeepreferencesPartialUpdate = async (id: string,
-    patchedAttendeePreferenceRequest: PatchedAttendeePreferenceRequest, options?: RequestInit): Promise<attendeepreferencesPartialUpdateResponse> => {
-  
-  const res = await fetch(getAttendeepreferencesPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedAttendeePreferenceRequest,)
+export const attendeepreferencesPartialUpdate = (
+    id: string,
+    patchedAttendeePreferenceRequest: BodyType<PatchedAttendeePreferenceRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeePreference>(
+    {url: `/attendeepreferences/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedAttendeePreferenceRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeepreferencesPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeepreferencesPartialUpdateResponse
+
+export const getAttendeepreferencesPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedAttendeePreferenceRequest }): Promise<AttendeePreference> => {
+    return attendeepreferencesPartialUpdate(id, arg, options);
+  }
 }
+export const getAttendeepreferencesPartialUpdateMutationKey = (id: string,) => [`/attendeepreferences/${id}/`] as const;
 
+export type AttendeepreferencesPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof attendeepreferencesPartialUpdate>>>
+export type AttendeepreferencesPartialUpdateMutationError = ErrorType<unknown>
 
+export const useAttendeepreferencesPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof attendeepreferencesPartialUpdate>>, TError, Key, PatchedAttendeePreferenceRequest, Awaited<ReturnType<typeof attendeepreferencesPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getAttendeepreferencesPartialUpdateMutationKey(id);
+  const swrFn = getAttendeepreferencesPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows attendee preferences to be viewed or edited.
  */
-export type attendeepreferencesDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type attendeepreferencesDestroyResponseComposite = attendeepreferencesDestroyResponse204;
-    
-export type attendeepreferencesDestroyResponse = attendeepreferencesDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeepreferencesDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/attendeepreferences/${id}/`
-}
-
-export const attendeepreferencesDestroy = async (id: string, options?: RequestInit): Promise<attendeepreferencesDestroyResponse> => {
-  
-  const res = await fetch(getAttendeepreferencesDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const attendeepreferencesDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/attendeepreferences/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeepreferencesDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeepreferencesDestroyResponse
+
+export const getAttendeepreferencesDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return attendeepreferencesDestroy(id, options);
+  }
 }
+export const getAttendeepreferencesDestroyMutationKey = (id: string,) => [`/attendeepreferences/${id}/`] as const;
 
+export type AttendeepreferencesDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof attendeepreferencesDestroy>>>
+export type AttendeepreferencesDestroyMutationError = ErrorType<unknown>
 
+export const useAttendeepreferencesDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof attendeepreferencesDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof attendeepreferencesDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getAttendeepreferencesDestroyMutationKey(id);
+  const swrFn = getAttendeepreferencesDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type attendeesListResponse200 = {
-  data: AttendeeList[]
-  status: 200
-}
-    
-export type attendeesListResponseComposite = attendeesListResponse200;
-    
-export type attendeesListResponse = attendeesListResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeesListUrl = (params?: AttendeesListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/attendees/?${stringifiedParams}` : `/backend/attendees/`
-}
-
-export const attendeesList = async (params?: AttendeesListParams, options?: RequestInit): Promise<attendeesListResponse> => {
-  
-  const res = await fetch(getAttendeesListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const attendeesList = (
+    params?: AttendeesListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeeList[]>(
+    {url: `/attendees/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeesListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeesListResponse
+
+export const getAttendeesListKey = (params?: AttendeesListParams,) => [`/attendees/`, ...(params ? [params]: [])] as const;
+
+export type AttendeesListQueryResult = NonNullable<Awaited<ReturnType<typeof attendeesList>>>
+export type AttendeesListQueryError = ErrorType<unknown>
+
+export const useAttendeesList = <TError = ErrorType<unknown>>(
+  params?: AttendeesListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof attendeesList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getAttendeesListKey(params) : null);
+  const swrFn = () => attendeesList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type attendeesCreateResponse201 = {
-  data: Attendee
-  status: 201
-}
-    
-export type attendeesCreateResponseComposite = attendeesCreateResponse201;
-    
-export type attendeesCreateResponse = attendeesCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeesCreateUrl = () => {
-
-
-  
-
-  return `/backend/attendees/`
-}
-
-export const attendeesCreate = async (attendeeRequest: AttendeeRequest, options?: RequestInit): Promise<attendeesCreateResponse> => {
-  
-  const res = await fetch(getAttendeesCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      attendeeRequest,)
+export const attendeesCreate = (
+    attendeeRequest: BodyType<AttendeeRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Attendee>(
+    {url: `/attendees/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: attendeeRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeesCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeesCreateResponse
+
+export const getAttendeesCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: AttendeeRequest }): Promise<Attendee> => {
+    return attendeesCreate(arg, options);
+  }
 }
+export const getAttendeesCreateMutationKey = () => [`/attendees/`] as const;
 
+export type AttendeesCreateMutationResult = NonNullable<Awaited<ReturnType<typeof attendeesCreate>>>
+export type AttendeesCreateMutationError = ErrorType<unknown>
 
+export const useAttendeesCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof attendeesCreate>>, TError, Key, AttendeeRequest, Awaited<ReturnType<typeof attendeesCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getAttendeesCreateMutationKey();
+  const swrFn = getAttendeesCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type attendeesRetrieveResponse200 = {
-  data: Attendee
-  status: 200
-}
-    
-export type attendeesRetrieveResponseComposite = attendeesRetrieveResponse200;
-    
-export type attendeesRetrieveResponse = attendeesRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeesRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/attendees/${id}/`
-}
-
-export const attendeesRetrieve = async (id: string, options?: RequestInit): Promise<attendeesRetrieveResponse> => {
-  
-  const res = await fetch(getAttendeesRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const attendeesRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Attendee>(
+    {url: `/attendees/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeesRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeesRetrieveResponse
+
+export const getAttendeesRetrieveKey = (id: string,) => [`/attendees/${id}/`] as const;
+
+export type AttendeesRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof attendeesRetrieve>>>
+export type AttendeesRetrieveQueryError = ErrorType<unknown>
+
+export const useAttendeesRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof attendeesRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getAttendeesRetrieveKey(id) : null);
+  const swrFn = () => attendeesRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type attendeesUpdateResponse200 = {
-  data: Attendee
-  status: 200
-}
-    
-export type attendeesUpdateResponseComposite = attendeesUpdateResponse200;
-    
-export type attendeesUpdateResponse = attendeesUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeesUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/attendees/${id}/`
-}
-
-export const attendeesUpdate = async (id: string,
-    attendeeRequest: AttendeeRequest, options?: RequestInit): Promise<attendeesUpdateResponse> => {
-  
-  const res = await fetch(getAttendeesUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      attendeeRequest,)
+export const attendeesUpdate = (
+    id: string,
+    attendeeRequest: BodyType<AttendeeRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Attendee>(
+    {url: `/attendees/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: attendeeRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeesUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeesUpdateResponse
+
+export const getAttendeesUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: AttendeeRequest }): Promise<Attendee> => {
+    return attendeesUpdate(id, arg, options);
+  }
 }
+export const getAttendeesUpdateMutationKey = (id: string,) => [`/attendees/${id}/`] as const;
 
+export type AttendeesUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof attendeesUpdate>>>
+export type AttendeesUpdateMutationError = ErrorType<unknown>
 
+export const useAttendeesUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof attendeesUpdate>>, TError, Key, AttendeeRequest, Awaited<ReturnType<typeof attendeesUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getAttendeesUpdateMutationKey(id);
+  const swrFn = getAttendeesUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type attendeesPartialUpdateResponse200 = {
-  data: AttendeePatch
-  status: 200
-}
-    
-export type attendeesPartialUpdateResponseComposite = attendeesPartialUpdateResponse200;
-    
-export type attendeesPartialUpdateResponse = attendeesPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeesPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/attendees/${id}/`
-}
-
-export const attendeesPartialUpdate = async (id: string,
-    patchedAttendeePatchRequest: PatchedAttendeePatchRequest, options?: RequestInit): Promise<attendeesPartialUpdateResponse> => {
-  
-  const res = await fetch(getAttendeesPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedAttendeePatchRequest,)
+export const attendeesPartialUpdate = (
+    id: string,
+    patchedAttendeePatchRequest: BodyType<PatchedAttendeePatchRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeePatch>(
+    {url: `/attendees/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedAttendeePatchRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeesPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeesPartialUpdateResponse
+
+export const getAttendeesPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedAttendeePatchRequest }): Promise<AttendeePatch> => {
+    return attendeesPartialUpdate(id, arg, options);
+  }
 }
+export const getAttendeesPartialUpdateMutationKey = (id: string,) => [`/attendees/${id}/`] as const;
 
+export type AttendeesPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof attendeesPartialUpdate>>>
+export type AttendeesPartialUpdateMutationError = ErrorType<unknown>
 
+export const useAttendeesPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof attendeesPartialUpdate>>, TError, Key, PatchedAttendeePatchRequest, Awaited<ReturnType<typeof attendeesPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getAttendeesPartialUpdateMutationKey(id);
+  const swrFn = getAttendeesPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type attendeesDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type attendeesDestroyResponseComposite = attendeesDestroyResponse204;
-    
-export type attendeesDestroyResponse = attendeesDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getAttendeesDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/attendees/${id}/`
-}
-
-export const attendeesDestroy = async (id: string, options?: RequestInit): Promise<attendeesDestroyResponse> => {
-  
-  const res = await fetch(getAttendeesDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const attendeesDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/attendees/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: attendeesDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as attendeesDestroyResponse
+
+export const getAttendeesDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return attendeesDestroy(id, options);
+  }
 }
+export const getAttendeesDestroyMutationKey = (id: string,) => [`/attendees/${id}/`] as const;
 
+export type AttendeesDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof attendeesDestroy>>>
+export type AttendeesDestroyMutationError = ErrorType<unknown>
 
+export const useAttendeesDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof attendeesDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof attendeesDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getAttendeesDestroyMutationKey(id);
+  const swrFn = getAttendeesDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * Takes a set of user credentials and returns an access and refresh JSON web
 token pair to prove the authentication of those credentials.
  */
-export type authTokenCreateResponse200 = {
-  data: TokenObtainPair
-  status: 200
-}
-    
-export type authTokenCreateResponseComposite = authTokenCreateResponse200;
-    
-export type authTokenCreateResponse = authTokenCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getAuthTokenCreateUrl = () => {
-
-
-  
-
-  return `/backend/auth/token/`
-}
-
-export const authTokenCreate = async (tokenObtainPairRequest: TokenObtainPairRequest, options?: RequestInit): Promise<authTokenCreateResponse> => {
-  
-  const res = await fetch(getAuthTokenCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      tokenObtainPairRequest,)
+export const authTokenCreate = (
+    tokenObtainPairRequest: BodyType<TokenObtainPairRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<TokenObtainPair>(
+    {url: `/auth/token/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: tokenObtainPairRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: authTokenCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as authTokenCreateResponse
+
+export const getAuthTokenCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: TokenObtainPairRequest }): Promise<TokenObtainPair> => {
+    return authTokenCreate(arg, options);
+  }
 }
+export const getAuthTokenCreateMutationKey = () => [`/auth/token/`] as const;
 
+export type AuthTokenCreateMutationResult = NonNullable<Awaited<ReturnType<typeof authTokenCreate>>>
+export type AuthTokenCreateMutationError = ErrorType<unknown>
 
+export const useAuthTokenCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof authTokenCreate>>, TError, Key, TokenObtainPairRequest, Awaited<ReturnType<typeof authTokenCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getAuthTokenCreateMutationKey();
+  const swrFn = getAuthTokenCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * Takes a refresh type JSON web token and returns an access type JSON web
 token if the refresh token is valid.
  */
-export type authTokenRefreshCreateResponse200 = {
-  data: TokenRefresh
-  status: 200
-}
-    
-export type authTokenRefreshCreateResponseComposite = authTokenRefreshCreateResponse200;
-    
-export type authTokenRefreshCreateResponse = authTokenRefreshCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getAuthTokenRefreshCreateUrl = () => {
-
-
-  
-
-  return `/backend/auth/token/refresh/`
-}
-
-export const authTokenRefreshCreate = async (tokenRefreshRequest: TokenRefreshRequest, options?: RequestInit): Promise<authTokenRefreshCreateResponse> => {
-  
-  const res = await fetch(getAuthTokenRefreshCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      tokenRefreshRequest,)
+export const authTokenRefreshCreate = (
+    tokenRefreshRequest: BodyType<TokenRefreshRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<TokenRefresh>(
+    {url: `/auth/token/refresh/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: tokenRefreshRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: authTokenRefreshCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as authTokenRefreshCreateResponse
+
+export const getAuthTokenRefreshCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: TokenRefreshRequest }): Promise<TokenRefresh> => {
+    return authTokenRefreshCreate(arg, options);
+  }
 }
+export const getAuthTokenRefreshCreateMutationKey = () => [`/auth/token/refresh/`] as const;
 
+export type AuthTokenRefreshCreateMutationResult = NonNullable<Awaited<ReturnType<typeof authTokenRefreshCreate>>>
+export type AuthTokenRefreshCreateMutationError = ErrorType<unknown>
 
+export const useAuthTokenRefreshCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof authTokenRefreshCreate>>, TError, Key, TokenRefreshRequest, Awaited<ReturnType<typeof authTokenRefreshCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getAuthTokenRefreshCreateMutationKey();
+  const swrFn = getAuthTokenRefreshCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * Takes a token and indicates if it is valid.  This view provides no
 information about a token's fitness for a particular use.
  */
-export type authTokenVerifyCreateResponse200 = {
-  data: void
-  status: 200
-}
-    
-export type authTokenVerifyCreateResponseComposite = authTokenVerifyCreateResponse200;
-    
-export type authTokenVerifyCreateResponse = authTokenVerifyCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getAuthTokenVerifyCreateUrl = () => {
-
-
-  
-
-  return `/backend/auth/token/verify/`
-}
-
-export const authTokenVerifyCreate = async (tokenVerifyRequest: TokenVerifyRequest, options?: RequestInit): Promise<authTokenVerifyCreateResponse> => {
-  
-  const res = await fetch(getAuthTokenVerifyCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      tokenVerifyRequest,)
+export const authTokenVerifyCreate = (
+    tokenVerifyRequest: BodyType<TokenVerifyRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/auth/token/verify/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: tokenVerifyRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: authTokenVerifyCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as authTokenVerifyCreateResponse
+
+export const getAuthTokenVerifyCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: TokenVerifyRequest }): Promise<void> => {
+    return authTokenVerifyCreate(arg, options);
+  }
 }
+export const getAuthTokenVerifyCreateMutationKey = () => [`/auth/token/verify/`] as const;
 
+export type AuthTokenVerifyCreateMutationResult = NonNullable<Awaited<ReturnType<typeof authTokenVerifyCreate>>>
+export type AuthTokenVerifyCreateMutationError = ErrorType<unknown>
 
+export const useAuthTokenVerifyCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof authTokenVerifyCreate>>, TError, Key, TokenVerifyRequest, Awaited<ReturnType<typeof authTokenVerifyCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getAuthTokenVerifyCreateMutationKey();
+  const swrFn = getAuthTokenVerifyCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows Detiny team attendee vibes to be viewed or edited.
  */
-export type destinyteamattendeevibesListResponse200 = {
-  data: DestinyTeamAttendeeVibe[]
-  status: 200
-}
-    
-export type destinyteamattendeevibesListResponseComposite = destinyteamattendeevibesListResponse200;
-    
-export type destinyteamattendeevibesListResponse = destinyteamattendeevibesListResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamattendeevibesListUrl = (params?: DestinyteamattendeevibesListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/destinyteamattendeevibes/?${stringifiedParams}` : `/backend/destinyteamattendeevibes/`
-}
-
-export const destinyteamattendeevibesList = async (params?: DestinyteamattendeevibesListParams, options?: RequestInit): Promise<destinyteamattendeevibesListResponse> => {
-  
-  const res = await fetch(getDestinyteamattendeevibesListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const destinyteamattendeevibesList = (
+    params?: DestinyteamattendeevibesListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<DestinyTeamAttendeeVibe[]>(
+    {url: `/destinyteamattendeevibes/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamattendeevibesListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamattendeevibesListResponse
+
+export const getDestinyteamattendeevibesListKey = (params?: DestinyteamattendeevibesListParams,) => [`/destinyteamattendeevibes/`, ...(params ? [params]: [])] as const;
+
+export type DestinyteamattendeevibesListQueryResult = NonNullable<Awaited<ReturnType<typeof destinyteamattendeevibesList>>>
+export type DestinyteamattendeevibesListQueryError = ErrorType<unknown>
+
+export const useDestinyteamattendeevibesList = <TError = ErrorType<unknown>>(
+  params?: DestinyteamattendeevibesListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof destinyteamattendeevibesList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getDestinyteamattendeevibesListKey(params) : null);
+  const swrFn = () => destinyteamattendeevibesList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows Detiny team attendee vibes to be viewed or edited.
  */
-export type destinyteamattendeevibesCreateResponse201 = {
-  data: DestinyTeamAttendeeVibe
-  status: 201
-}
-    
-export type destinyteamattendeevibesCreateResponseComposite = destinyteamattendeevibesCreateResponse201;
-    
-export type destinyteamattendeevibesCreateResponse = destinyteamattendeevibesCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamattendeevibesCreateUrl = () => {
-
-
-  
-
-  return `/backend/destinyteamattendeevibes/`
-}
-
-export const destinyteamattendeevibesCreate = async (destinyTeamAttendeeVibeRequest: DestinyTeamAttendeeVibeRequest, options?: RequestInit): Promise<destinyteamattendeevibesCreateResponse> => {
-  
-  const res = await fetch(getDestinyteamattendeevibesCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      destinyTeamAttendeeVibeRequest,)
+export const destinyteamattendeevibesCreate = (
+    destinyTeamAttendeeVibeRequest: BodyType<DestinyTeamAttendeeVibeRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<DestinyTeamAttendeeVibe>(
+    {url: `/destinyteamattendeevibes/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: destinyTeamAttendeeVibeRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamattendeevibesCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamattendeevibesCreateResponse
+
+export const getDestinyteamattendeevibesCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: DestinyTeamAttendeeVibeRequest }): Promise<DestinyTeamAttendeeVibe> => {
+    return destinyteamattendeevibesCreate(arg, options);
+  }
 }
+export const getDestinyteamattendeevibesCreateMutationKey = () => [`/destinyteamattendeevibes/`] as const;
 
+export type DestinyteamattendeevibesCreateMutationResult = NonNullable<Awaited<ReturnType<typeof destinyteamattendeevibesCreate>>>
+export type DestinyteamattendeevibesCreateMutationError = ErrorType<unknown>
 
+export const useDestinyteamattendeevibesCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof destinyteamattendeevibesCreate>>, TError, Key, DestinyTeamAttendeeVibeRequest, Awaited<ReturnType<typeof destinyteamattendeevibesCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getDestinyteamattendeevibesCreateMutationKey();
+  const swrFn = getDestinyteamattendeevibesCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows Detiny team attendee vibes to be viewed or edited.
  */
-export type destinyteamattendeevibesRetrieveResponse200 = {
-  data: DestinyTeamAttendeeVibe
-  status: 200
-}
-    
-export type destinyteamattendeevibesRetrieveResponseComposite = destinyteamattendeevibesRetrieveResponse200;
-    
-export type destinyteamattendeevibesRetrieveResponse = destinyteamattendeevibesRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamattendeevibesRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/destinyteamattendeevibes/${id}/`
-}
-
-export const destinyteamattendeevibesRetrieve = async (id: string, options?: RequestInit): Promise<destinyteamattendeevibesRetrieveResponse> => {
-  
-  const res = await fetch(getDestinyteamattendeevibesRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const destinyteamattendeevibesRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<DestinyTeamAttendeeVibe>(
+    {url: `/destinyteamattendeevibes/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamattendeevibesRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamattendeevibesRetrieveResponse
+
+export const getDestinyteamattendeevibesRetrieveKey = (id: string,) => [`/destinyteamattendeevibes/${id}/`] as const;
+
+export type DestinyteamattendeevibesRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof destinyteamattendeevibesRetrieve>>>
+export type DestinyteamattendeevibesRetrieveQueryError = ErrorType<unknown>
+
+export const useDestinyteamattendeevibesRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof destinyteamattendeevibesRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getDestinyteamattendeevibesRetrieveKey(id) : null);
+  const swrFn = () => destinyteamattendeevibesRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows Detiny team attendee vibes to be viewed or edited.
  */
-export type destinyteamattendeevibesUpdateResponse200 = {
-  data: DestinyTeamAttendeeVibe
-  status: 200
-}
-    
-export type destinyteamattendeevibesUpdateResponseComposite = destinyteamattendeevibesUpdateResponse200;
-    
-export type destinyteamattendeevibesUpdateResponse = destinyteamattendeevibesUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamattendeevibesUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/destinyteamattendeevibes/${id}/`
-}
-
-export const destinyteamattendeevibesUpdate = async (id: string,
-    destinyTeamAttendeeVibeRequest: DestinyTeamAttendeeVibeRequest, options?: RequestInit): Promise<destinyteamattendeevibesUpdateResponse> => {
-  
-  const res = await fetch(getDestinyteamattendeevibesUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      destinyTeamAttendeeVibeRequest,)
+export const destinyteamattendeevibesUpdate = (
+    id: string,
+    destinyTeamAttendeeVibeRequest: BodyType<DestinyTeamAttendeeVibeRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<DestinyTeamAttendeeVibe>(
+    {url: `/destinyteamattendeevibes/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: destinyTeamAttendeeVibeRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamattendeevibesUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamattendeevibesUpdateResponse
+
+export const getDestinyteamattendeevibesUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: DestinyTeamAttendeeVibeRequest }): Promise<DestinyTeamAttendeeVibe> => {
+    return destinyteamattendeevibesUpdate(id, arg, options);
+  }
 }
+export const getDestinyteamattendeevibesUpdateMutationKey = (id: string,) => [`/destinyteamattendeevibes/${id}/`] as const;
 
+export type DestinyteamattendeevibesUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof destinyteamattendeevibesUpdate>>>
+export type DestinyteamattendeevibesUpdateMutationError = ErrorType<unknown>
 
+export const useDestinyteamattendeevibesUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof destinyteamattendeevibesUpdate>>, TError, Key, DestinyTeamAttendeeVibeRequest, Awaited<ReturnType<typeof destinyteamattendeevibesUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getDestinyteamattendeevibesUpdateMutationKey(id);
+  const swrFn = getDestinyteamattendeevibesUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows Detiny team attendee vibes to be viewed or edited.
  */
-export type destinyteamattendeevibesPartialUpdateResponse200 = {
-  data: DestinyTeamAttendeeVibe
-  status: 200
-}
-    
-export type destinyteamattendeevibesPartialUpdateResponseComposite = destinyteamattendeevibesPartialUpdateResponse200;
-    
-export type destinyteamattendeevibesPartialUpdateResponse = destinyteamattendeevibesPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamattendeevibesPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/destinyteamattendeevibes/${id}/`
-}
-
-export const destinyteamattendeevibesPartialUpdate = async (id: string,
-    patchedDestinyTeamAttendeeVibeRequest: PatchedDestinyTeamAttendeeVibeRequest, options?: RequestInit): Promise<destinyteamattendeevibesPartialUpdateResponse> => {
-  
-  const res = await fetch(getDestinyteamattendeevibesPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedDestinyTeamAttendeeVibeRequest,)
+export const destinyteamattendeevibesPartialUpdate = (
+    id: string,
+    patchedDestinyTeamAttendeeVibeRequest: BodyType<PatchedDestinyTeamAttendeeVibeRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<DestinyTeamAttendeeVibe>(
+    {url: `/destinyteamattendeevibes/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedDestinyTeamAttendeeVibeRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamattendeevibesPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamattendeevibesPartialUpdateResponse
+
+export const getDestinyteamattendeevibesPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedDestinyTeamAttendeeVibeRequest }): Promise<DestinyTeamAttendeeVibe> => {
+    return destinyteamattendeevibesPartialUpdate(id, arg, options);
+  }
 }
+export const getDestinyteamattendeevibesPartialUpdateMutationKey = (id: string,) => [`/destinyteamattendeevibes/${id}/`] as const;
 
+export type DestinyteamattendeevibesPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof destinyteamattendeevibesPartialUpdate>>>
+export type DestinyteamattendeevibesPartialUpdateMutationError = ErrorType<unknown>
 
+export const useDestinyteamattendeevibesPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof destinyteamattendeevibesPartialUpdate>>, TError, Key, PatchedDestinyTeamAttendeeVibeRequest, Awaited<ReturnType<typeof destinyteamattendeevibesPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getDestinyteamattendeevibesPartialUpdateMutationKey(id);
+  const swrFn = getDestinyteamattendeevibesPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows Detiny team attendee vibes to be viewed or edited.
  */
-export type destinyteamattendeevibesDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type destinyteamattendeevibesDestroyResponseComposite = destinyteamattendeevibesDestroyResponse204;
-    
-export type destinyteamattendeevibesDestroyResponse = destinyteamattendeevibesDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamattendeevibesDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/destinyteamattendeevibes/${id}/`
-}
-
-export const destinyteamattendeevibesDestroy = async (id: string, options?: RequestInit): Promise<destinyteamattendeevibesDestroyResponse> => {
-  
-  const res = await fetch(getDestinyteamattendeevibesDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const destinyteamattendeevibesDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/destinyteamattendeevibes/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamattendeevibesDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamattendeevibesDestroyResponse
+
+export const getDestinyteamattendeevibesDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return destinyteamattendeevibesDestroy(id, options);
+  }
 }
+export const getDestinyteamattendeevibesDestroyMutationKey = (id: string,) => [`/destinyteamattendeevibes/${id}/`] as const;
 
+export type DestinyteamattendeevibesDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof destinyteamattendeevibesDestroy>>>
+export type DestinyteamattendeevibesDestroyMutationError = ErrorType<unknown>
 
+export const useDestinyteamattendeevibesDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof destinyteamattendeevibesDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof destinyteamattendeevibesDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getDestinyteamattendeevibesDestroyMutationKey(id);
+  const swrFn = getDestinyteamattendeevibesDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows Destiny teams to be viewed or edited.
  */
-export type destinyteamsListResponse200 = {
-  data: DestinyTeam[]
-  status: 200
-}
-    
-export type destinyteamsListResponseComposite = destinyteamsListResponse200;
-    
-export type destinyteamsListResponse = destinyteamsListResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamsListUrl = (params?: DestinyteamsListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    const explodeParameters = ["attendees"];
-
-    if (value instanceof Array && explodeParameters.includes(key)) {
-      value.forEach((v) => normalizedParams.append(key, v === null ? 'null' : v.toString()));
-      return;
-    }
-      
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/destinyteams/?${stringifiedParams}` : `/backend/destinyteams/`
-}
-
-export const destinyteamsList = async (params?: DestinyteamsListParams, options?: RequestInit): Promise<destinyteamsListResponse> => {
-  
-  const res = await fetch(getDestinyteamsListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const destinyteamsList = (
+    params?: DestinyteamsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<DestinyTeam[]>(
+    {url: `/destinyteams/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamsListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamsListResponse
+
+export const getDestinyteamsListKey = (params?: DestinyteamsListParams,) => [`/destinyteams/`, ...(params ? [params]: [])] as const;
+
+export type DestinyteamsListQueryResult = NonNullable<Awaited<ReturnType<typeof destinyteamsList>>>
+export type DestinyteamsListQueryError = ErrorType<unknown>
+
+export const useDestinyteamsList = <TError = ErrorType<unknown>>(
+  params?: DestinyteamsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof destinyteamsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getDestinyteamsListKey(params) : null);
+  const swrFn = () => destinyteamsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows Destiny teams to be viewed or edited.
  */
-export type destinyteamsCreateResponse201 = {
-  data: DestinyTeamUpdate
-  status: 201
-}
-    
-export type destinyteamsCreateResponseComposite = destinyteamsCreateResponse201;
-    
-export type destinyteamsCreateResponse = destinyteamsCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamsCreateUrl = () => {
-
-
-  
-
-  return `/backend/destinyteams/`
-}
-
-export const destinyteamsCreate = async (destinyTeamUpdateRequest: DestinyTeamUpdateRequest, options?: RequestInit): Promise<destinyteamsCreateResponse> => {
-  
-  const res = await fetch(getDestinyteamsCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      destinyTeamUpdateRequest,)
+export const destinyteamsCreate = (
+    destinyTeamUpdateRequest: BodyType<DestinyTeamUpdateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<DestinyTeamUpdate>(
+    {url: `/destinyteams/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: destinyTeamUpdateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamsCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamsCreateResponse
+
+export const getDestinyteamsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: DestinyTeamUpdateRequest }): Promise<DestinyTeamUpdate> => {
+    return destinyteamsCreate(arg, options);
+  }
 }
+export const getDestinyteamsCreateMutationKey = () => [`/destinyteams/`] as const;
 
+export type DestinyteamsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof destinyteamsCreate>>>
+export type DestinyteamsCreateMutationError = ErrorType<unknown>
 
+export const useDestinyteamsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof destinyteamsCreate>>, TError, Key, DestinyTeamUpdateRequest, Awaited<ReturnType<typeof destinyteamsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getDestinyteamsCreateMutationKey();
+  const swrFn = getDestinyteamsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows Destiny teams to be viewed or edited.
  */
-export type destinyteamsRetrieveResponse200 = {
-  data: DestinyTeam
-  status: 200
-}
-    
-export type destinyteamsRetrieveResponseComposite = destinyteamsRetrieveResponse200;
-    
-export type destinyteamsRetrieveResponse = destinyteamsRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamsRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/destinyteams/${id}/`
-}
-
-export const destinyteamsRetrieve = async (id: string, options?: RequestInit): Promise<destinyteamsRetrieveResponse> => {
-  
-  const res = await fetch(getDestinyteamsRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const destinyteamsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<DestinyTeam>(
+    {url: `/destinyteams/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamsRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamsRetrieveResponse
+
+export const getDestinyteamsRetrieveKey = (id: string,) => [`/destinyteams/${id}/`] as const;
+
+export type DestinyteamsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof destinyteamsRetrieve>>>
+export type DestinyteamsRetrieveQueryError = ErrorType<unknown>
+
+export const useDestinyteamsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof destinyteamsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getDestinyteamsRetrieveKey(id) : null);
+  const swrFn = () => destinyteamsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows Destiny teams to be viewed or edited.
  */
-export type destinyteamsUpdateResponse200 = {
-  data: DestinyTeamUpdate
-  status: 200
-}
-    
-export type destinyteamsUpdateResponseComposite = destinyteamsUpdateResponse200;
-    
-export type destinyteamsUpdateResponse = destinyteamsUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamsUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/destinyteams/${id}/`
-}
-
-export const destinyteamsUpdate = async (id: string,
-    destinyTeamUpdateRequest: DestinyTeamUpdateRequest, options?: RequestInit): Promise<destinyteamsUpdateResponse> => {
-  
-  const res = await fetch(getDestinyteamsUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      destinyTeamUpdateRequest,)
+export const destinyteamsUpdate = (
+    id: string,
+    destinyTeamUpdateRequest: BodyType<DestinyTeamUpdateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<DestinyTeamUpdate>(
+    {url: `/destinyteams/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: destinyTeamUpdateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamsUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamsUpdateResponse
+
+export const getDestinyteamsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: DestinyTeamUpdateRequest }): Promise<DestinyTeamUpdate> => {
+    return destinyteamsUpdate(id, arg, options);
+  }
 }
+export const getDestinyteamsUpdateMutationKey = (id: string,) => [`/destinyteams/${id}/`] as const;
 
+export type DestinyteamsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof destinyteamsUpdate>>>
+export type DestinyteamsUpdateMutationError = ErrorType<unknown>
 
+export const useDestinyteamsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof destinyteamsUpdate>>, TError, Key, DestinyTeamUpdateRequest, Awaited<ReturnType<typeof destinyteamsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getDestinyteamsUpdateMutationKey(id);
+  const swrFn = getDestinyteamsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows Destiny teams to be viewed or edited.
  */
-export type destinyteamsPartialUpdateResponse200 = {
-  data: DestinyTeamUpdate
-  status: 200
-}
-    
-export type destinyteamsPartialUpdateResponseComposite = destinyteamsPartialUpdateResponse200;
-    
-export type destinyteamsPartialUpdateResponse = destinyteamsPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamsPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/destinyteams/${id}/`
-}
-
-export const destinyteamsPartialUpdate = async (id: string,
-    patchedDestinyTeamUpdateRequest: PatchedDestinyTeamUpdateRequest, options?: RequestInit): Promise<destinyteamsPartialUpdateResponse> => {
-  
-  const res = await fetch(getDestinyteamsPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedDestinyTeamUpdateRequest,)
+export const destinyteamsPartialUpdate = (
+    id: string,
+    patchedDestinyTeamUpdateRequest: BodyType<PatchedDestinyTeamUpdateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<DestinyTeamUpdate>(
+    {url: `/destinyteams/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedDestinyTeamUpdateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamsPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamsPartialUpdateResponse
+
+export const getDestinyteamsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedDestinyTeamUpdateRequest }): Promise<DestinyTeamUpdate> => {
+    return destinyteamsPartialUpdate(id, arg, options);
+  }
 }
+export const getDestinyteamsPartialUpdateMutationKey = (id: string,) => [`/destinyteams/${id}/`] as const;
 
+export type DestinyteamsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof destinyteamsPartialUpdate>>>
+export type DestinyteamsPartialUpdateMutationError = ErrorType<unknown>
 
+export const useDestinyteamsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof destinyteamsPartialUpdate>>, TError, Key, PatchedDestinyTeamUpdateRequest, Awaited<ReturnType<typeof destinyteamsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getDestinyteamsPartialUpdateMutationKey(id);
+  const swrFn = getDestinyteamsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows Destiny teams to be viewed or edited.
  */
-export type destinyteamsDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type destinyteamsDestroyResponseComposite = destinyteamsDestroyResponse204;
-    
-export type destinyteamsDestroyResponse = destinyteamsDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getDestinyteamsDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/destinyteams/${id}/`
-}
-
-export const destinyteamsDestroy = async (id: string, options?: RequestInit): Promise<destinyteamsDestroyResponse> => {
-  
-  const res = await fetch(getDestinyteamsDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const destinyteamsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/destinyteams/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: destinyteamsDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as destinyteamsDestroyResponse
+
+export const getDestinyteamsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return destinyteamsDestroy(id, options);
+  }
 }
+export const getDestinyteamsDestroyMutationKey = (id: string,) => [`/destinyteams/${id}/`] as const;
 
+export type DestinyteamsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof destinyteamsDestroy>>>
+export type DestinyteamsDestroyMutationError = ErrorType<unknown>
 
+export const useDestinyteamsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof destinyteamsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof destinyteamsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getDestinyteamsDestroyMutationKey(id);
+  const swrFn = getDestinyteamsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API Endpoint that allows for Discord information to be viewed or edited.
  */
-export type discordListResponse200 = {
-  data: DiscordUsernameRole[]
-  status: 200
-}
+export const discordList = (
     
-export type discordListResponseComposite = discordListResponse200;
-    
-export type discordListResponse = discordListResponseComposite & {
-  headers: Headers;
-}
-
-export const getDiscordListUrl = () => {
-
-
-  
-
-  return `/backend/discord/`
-}
-
-export const discordList = async ( options?: RequestInit): Promise<discordListResponse> => {
-  
-  const res = await fetch(getDiscordListUrl(),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<DiscordUsernameRole[]>(
+    {url: `/discord/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: discordListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as discordListResponse
+
+export const getDiscordListKey = () => [`/discord/`] as const;
+
+export type DiscordListQueryResult = NonNullable<Awaited<ReturnType<typeof discordList>>>
+export type DiscordListQueryError = ErrorType<unknown>
+
+export const useDiscordList = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof discordList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getDiscordListKey() : null);
+  const swrFn = () => discordList(requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API Endpoint that allows for Discord information to be viewed or edited.
  */
-export type discordDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type discordDestroyResponseComposite = discordDestroyResponse204;
-    
-export type discordDestroyResponse = discordDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getDiscordDestroyUrl = (attendeeCommunicationsPlatformUsername: string,) => {
-
-
-  
-
-  return `/backend/discord/${attendeeCommunicationsPlatformUsername}/`
-}
-
-export const discordDestroy = async (attendeeCommunicationsPlatformUsername: string, options?: RequestInit): Promise<discordDestroyResponse> => {
-  
-  const res = await fetch(getDiscordDestroyUrl(attendeeCommunicationsPlatformUsername),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const discordDestroy = (
+    attendeeCommunicationsPlatformUsername: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/discord/${attendeeCommunicationsPlatformUsername}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: discordDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as discordDestroyResponse
+
+export const getDiscordDestroyMutationFetcher = (attendeeCommunicationsPlatformUsername: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return discordDestroy(attendeeCommunicationsPlatformUsername, options);
+  }
 }
+export const getDiscordDestroyMutationKey = (attendeeCommunicationsPlatformUsername: string,) => [`/discord/${attendeeCommunicationsPlatformUsername}/`] as const;
 
+export type DiscordDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof discordDestroy>>>
+export type DiscordDestroyMutationError = ErrorType<unknown>
 
+export const useDiscordDestroy = <TError = ErrorType<unknown>>(
+  attendeeCommunicationsPlatformUsername: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof discordDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof discordDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getDiscordDestroyMutationKey(attendeeCommunicationsPlatformUsername);
+  const swrFn = getDiscordDestroyMutationFetcher(attendeeCommunicationsPlatformUsername, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows groups to be viewed or edited.
  */
-export type groupsListResponse200 = {
-  data: GroupDetail[]
-  status: 200
-}
-    
-export type groupsListResponseComposite = groupsListResponse200;
-    
-export type groupsListResponse = groupsListResponseComposite & {
-  headers: Headers;
-}
-
-export const getGroupsListUrl = (params?: GroupsListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/groups/?${stringifiedParams}` : `/backend/groups/`
-}
-
-export const groupsList = async (params?: GroupsListParams, options?: RequestInit): Promise<groupsListResponse> => {
-  
-  const res = await fetch(getGroupsListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const groupsList = (
+    params?: GroupsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<GroupDetail[]>(
+    {url: `/groups/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: groupsListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as groupsListResponse
+
+export const getGroupsListKey = (params?: GroupsListParams,) => [`/groups/`, ...(params ? [params]: [])] as const;
+
+export type GroupsListQueryResult = NonNullable<Awaited<ReturnType<typeof groupsList>>>
+export type GroupsListQueryError = ErrorType<unknown>
+
+export const useGroupsList = <TError = ErrorType<unknown>>(
+  params?: GroupsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof groupsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getGroupsListKey(params) : null);
+  const swrFn = () => groupsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows groups to be viewed or edited.
  */
-export type groupsCreateResponse201 = {
-  data: GroupDetail
-  status: 201
-}
-    
-export type groupsCreateResponseComposite = groupsCreateResponse201;
-    
-export type groupsCreateResponse = groupsCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getGroupsCreateUrl = () => {
-
-
-  
-
-  return `/backend/groups/`
-}
-
-export const groupsCreate = async (groupDetailRequest: GroupDetailRequest, options?: RequestInit): Promise<groupsCreateResponse> => {
-  
-  const res = await fetch(getGroupsCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      groupDetailRequest,)
+export const groupsCreate = (
+    groupDetailRequest: BodyType<GroupDetailRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<GroupDetail>(
+    {url: `/groups/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: groupDetailRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: groupsCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as groupsCreateResponse
+
+export const getGroupsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: GroupDetailRequest }): Promise<GroupDetail> => {
+    return groupsCreate(arg, options);
+  }
 }
+export const getGroupsCreateMutationKey = () => [`/groups/`] as const;
 
+export type GroupsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof groupsCreate>>>
+export type GroupsCreateMutationError = ErrorType<unknown>
 
+export const useGroupsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof groupsCreate>>, TError, Key, GroupDetailRequest, Awaited<ReturnType<typeof groupsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getGroupsCreateMutationKey();
+  const swrFn = getGroupsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows groups to be viewed or edited.
  */
-export type groupsRetrieveResponse200 = {
-  data: GroupDetail
-  status: 200
-}
-    
-export type groupsRetrieveResponseComposite = groupsRetrieveResponse200;
-    
-export type groupsRetrieveResponse = groupsRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getGroupsRetrieveUrl = (id: number,) => {
-
-
-  
-
-  return `/backend/groups/${id}/`
-}
-
-export const groupsRetrieve = async (id: number, options?: RequestInit): Promise<groupsRetrieveResponse> => {
-  
-  const res = await fetch(getGroupsRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const groupsRetrieve = (
+    id: number,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<GroupDetail>(
+    {url: `/groups/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: groupsRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as groupsRetrieveResponse
+
+export const getGroupsRetrieveKey = (id: number,) => [`/groups/${id}/`] as const;
+
+export type GroupsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof groupsRetrieve>>>
+export type GroupsRetrieveQueryError = ErrorType<unknown>
+
+export const useGroupsRetrieve = <TError = ErrorType<unknown>>(
+  id: number, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof groupsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getGroupsRetrieveKey(id) : null);
+  const swrFn = () => groupsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows groups to be viewed or edited.
  */
-export type groupsUpdateResponse200 = {
-  data: GroupDetail
-  status: 200
-}
-    
-export type groupsUpdateResponseComposite = groupsUpdateResponse200;
-    
-export type groupsUpdateResponse = groupsUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getGroupsUpdateUrl = (id: number,) => {
-
-
-  
-
-  return `/backend/groups/${id}/`
-}
-
-export const groupsUpdate = async (id: number,
-    groupDetailRequest: GroupDetailRequest, options?: RequestInit): Promise<groupsUpdateResponse> => {
-  
-  const res = await fetch(getGroupsUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      groupDetailRequest,)
+export const groupsUpdate = (
+    id: number,
+    groupDetailRequest: BodyType<GroupDetailRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<GroupDetail>(
+    {url: `/groups/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: groupDetailRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: groupsUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as groupsUpdateResponse
+
+export const getGroupsUpdateMutationFetcher = (id: number, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: GroupDetailRequest }): Promise<GroupDetail> => {
+    return groupsUpdate(id, arg, options);
+  }
 }
+export const getGroupsUpdateMutationKey = (id: number,) => [`/groups/${id}/`] as const;
 
+export type GroupsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof groupsUpdate>>>
+export type GroupsUpdateMutationError = ErrorType<unknown>
 
+export const useGroupsUpdate = <TError = ErrorType<unknown>>(
+  id: number, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof groupsUpdate>>, TError, Key, GroupDetailRequest, Awaited<ReturnType<typeof groupsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getGroupsUpdateMutationKey(id);
+  const swrFn = getGroupsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows groups to be viewed or edited.
  */
-export type groupsPartialUpdateResponse200 = {
-  data: GroupDetail
-  status: 200
-}
-    
-export type groupsPartialUpdateResponseComposite = groupsPartialUpdateResponse200;
-    
-export type groupsPartialUpdateResponse = groupsPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getGroupsPartialUpdateUrl = (id: number,) => {
-
-
-  
-
-  return `/backend/groups/${id}/`
-}
-
-export const groupsPartialUpdate = async (id: number,
-    patchedGroupDetailRequest: PatchedGroupDetailRequest, options?: RequestInit): Promise<groupsPartialUpdateResponse> => {
-  
-  const res = await fetch(getGroupsPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedGroupDetailRequest,)
+export const groupsPartialUpdate = (
+    id: number,
+    patchedGroupDetailRequest: BodyType<PatchedGroupDetailRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<GroupDetail>(
+    {url: `/groups/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedGroupDetailRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: groupsPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as groupsPartialUpdateResponse
+
+export const getGroupsPartialUpdateMutationFetcher = (id: number, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedGroupDetailRequest }): Promise<GroupDetail> => {
+    return groupsPartialUpdate(id, arg, options);
+  }
 }
+export const getGroupsPartialUpdateMutationKey = (id: number,) => [`/groups/${id}/`] as const;
 
+export type GroupsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof groupsPartialUpdate>>>
+export type GroupsPartialUpdateMutationError = ErrorType<unknown>
 
+export const useGroupsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: number, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof groupsPartialUpdate>>, TError, Key, PatchedGroupDetailRequest, Awaited<ReturnType<typeof groupsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getGroupsPartialUpdateMutationKey(id);
+  const swrFn = getGroupsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows groups to be viewed or edited.
  */
-export type groupsDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type groupsDestroyResponseComposite = groupsDestroyResponse204;
-    
-export type groupsDestroyResponse = groupsDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getGroupsDestroyUrl = (id: number,) => {
-
-
-  
-
-  return `/backend/groups/${id}/`
-}
-
-export const groupsDestroy = async (id: number, options?: RequestInit): Promise<groupsDestroyResponse> => {
-  
-  const res = await fetch(getGroupsDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const groupsDestroy = (
+    id: number,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/groups/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: groupsDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as groupsDestroyResponse
+
+export const getGroupsDestroyMutationFetcher = (id: number, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return groupsDestroy(id, options);
+  }
 }
+export const getGroupsDestroyMutationKey = (id: number,) => [`/groups/${id}/`] as const;
 
+export type GroupsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof groupsDestroy>>>
+export type GroupsDestroyMutationError = ErrorType<unknown>
 
+export const useGroupsDestroy = <TError = ErrorType<unknown>>(
+  id: number, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof groupsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof groupsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getGroupsDestroyMutationKey(id);
+  const swrFn = getGroupsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware to be viewed or edited.
+ * API endpoint that allows hardware types to be viewed or edited.
  */
-export type hardwareListResponse200 = {
-  data: Hardware[]
-  status: 200
-}
-    
-export type hardwareListResponseComposite = hardwareListResponse200;
-    
-export type hardwareListResponse = hardwareListResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwareListUrl = (params?: HardwareListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/hardware/?${stringifiedParams}` : `/backend/hardware/`
-}
-
-export const hardwareList = async (params?: HardwareListParams, options?: RequestInit): Promise<hardwareListResponse> => {
-  
-  const res = await fetch(getHardwareListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const hardwareList = (
+    params?: HardwareListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareCount[]>(
+    {url: `/hardware/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwareListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwareListResponse
+
+export const getHardwareListKey = (params?: HardwareListParams,) => [`/hardware/`, ...(params ? [params]: [])] as const;
+
+export type HardwareListQueryResult = NonNullable<Awaited<ReturnType<typeof hardwareList>>>
+export type HardwareListQueryError = ErrorType<unknown>
+
+export const useHardwareList = <TError = ErrorType<unknown>>(
+  params?: HardwareListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof hardwareList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getHardwareListKey(params) : null);
+  const swrFn = () => hardwareList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
- * API endpoint that allows hardware to be viewed or edited.
+ * API endpoint that allows hardware types to be viewed or edited.
  */
-export type hardwareCreateResponse201 = {
-  data: HardwareCreate
-  status: 201
-}
-    
-export type hardwareCreateResponseComposite = hardwareCreateResponse201;
-    
-export type hardwareCreateResponse = hardwareCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwareCreateUrl = () => {
-
-
-  
-
-  return `/backend/hardware/`
-}
-
-export const hardwareCreate = async (hardwareCreateRequest: HardwareCreateRequest, options?: RequestInit): Promise<hardwareCreateResponse> => {
-  
-  const res = await fetch(getHardwareCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      hardwareCreateRequest,)
+export const hardwareCreate = (
+    hardwareCreateRequest: BodyType<HardwareCreateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareCreate>(
+    {url: `/hardware/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: hardwareCreateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwareCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwareCreateResponse
+
+export const getHardwareCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: HardwareCreateRequest }): Promise<HardwareCreate> => {
+    return hardwareCreate(arg, options);
+  }
 }
+export const getHardwareCreateMutationKey = () => [`/hardware/`] as const;
 
+export type HardwareCreateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwareCreate>>>
+export type HardwareCreateMutationError = ErrorType<unknown>
 
+export const useHardwareCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwareCreate>>, TError, Key, HardwareCreateRequest, Awaited<ReturnType<typeof hardwareCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwareCreateMutationKey();
+  const swrFn = getHardwareCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware to be viewed or edited.
+ * API endpoint that allows hardware types to be viewed or edited.
  */
-export type hardwareRetrieveResponse200 = {
-  data: Hardware
-  status: 200
-}
-    
-export type hardwareRetrieveResponseComposite = hardwareRetrieveResponse200;
-    
-export type hardwareRetrieveResponse = hardwareRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwareRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardware/${id}/`
-}
-
-export const hardwareRetrieve = async (id: string, options?: RequestInit): Promise<hardwareRetrieveResponse> => {
-  
-  const res = await fetch(getHardwareRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const hardwareRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareCountDetail>(
+    {url: `/hardware/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwareRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwareRetrieveResponse
+
+export const getHardwareRetrieveKey = (id: string,) => [`/hardware/${id}/`] as const;
+
+export type HardwareRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof hardwareRetrieve>>>
+export type HardwareRetrieveQueryError = ErrorType<unknown>
+
+export const useHardwareRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof hardwareRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getHardwareRetrieveKey(id) : null);
+  const swrFn = () => hardwareRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
- * API endpoint that allows hardware to be viewed or edited.
+ * API endpoint that allows hardware types to be viewed or edited.
  */
-export type hardwareUpdateResponse200 = {
-  data: HardwareCreate
-  status: 200
-}
-    
-export type hardwareUpdateResponseComposite = hardwareUpdateResponse200;
-    
-export type hardwareUpdateResponse = hardwareUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwareUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardware/${id}/`
-}
-
-export const hardwareUpdate = async (id: string,
-    hardwareCreateRequest: HardwareCreateRequest, options?: RequestInit): Promise<hardwareUpdateResponse> => {
-  
-  const res = await fetch(getHardwareUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      hardwareCreateRequest,)
+export const hardwareUpdate = (
+    id: string,
+    hardwareCreateRequest: BodyType<HardwareCreateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareCreate>(
+    {url: `/hardware/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: hardwareCreateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwareUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwareUpdateResponse
+
+export const getHardwareUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: HardwareCreateRequest }): Promise<HardwareCreate> => {
+    return hardwareUpdate(id, arg, options);
+  }
 }
+export const getHardwareUpdateMutationKey = (id: string,) => [`/hardware/${id}/`] as const;
 
+export type HardwareUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwareUpdate>>>
+export type HardwareUpdateMutationError = ErrorType<unknown>
 
+export const useHardwareUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwareUpdate>>, TError, Key, HardwareCreateRequest, Awaited<ReturnType<typeof hardwareUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwareUpdateMutationKey(id);
+  const swrFn = getHardwareUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware to be viewed or edited.
+ * API endpoint that allows hardware types to be viewed or edited.
  */
-export type hardwarePartialUpdateResponse200 = {
-  data: HardwareCreate
-  status: 200
-}
-    
-export type hardwarePartialUpdateResponseComposite = hardwarePartialUpdateResponse200;
-    
-export type hardwarePartialUpdateResponse = hardwarePartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwarePartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardware/${id}/`
-}
-
-export const hardwarePartialUpdate = async (id: string,
-    patchedHardwareCreateRequest: PatchedHardwareCreateRequest, options?: RequestInit): Promise<hardwarePartialUpdateResponse> => {
-  
-  const res = await fetch(getHardwarePartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedHardwareCreateRequest,)
+export const hardwarePartialUpdate = (
+    id: string,
+    patchedHardwareCreateRequest: BodyType<PatchedHardwareCreateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareCreate>(
+    {url: `/hardware/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedHardwareCreateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwarePartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwarePartialUpdateResponse
+
+export const getHardwarePartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedHardwareCreateRequest }): Promise<HardwareCreate> => {
+    return hardwarePartialUpdate(id, arg, options);
+  }
 }
+export const getHardwarePartialUpdateMutationKey = (id: string,) => [`/hardware/${id}/`] as const;
 
+export type HardwarePartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwarePartialUpdate>>>
+export type HardwarePartialUpdateMutationError = ErrorType<unknown>
 
+export const useHardwarePartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwarePartialUpdate>>, TError, Key, PatchedHardwareCreateRequest, Awaited<ReturnType<typeof hardwarePartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwarePartialUpdateMutationKey(id);
+  const swrFn = getHardwarePartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware to be viewed or edited.
+ * API endpoint that allows hardware types to be viewed or edited.
  */
-export type hardwareDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type hardwareDestroyResponseComposite = hardwareDestroyResponse204;
-    
-export type hardwareDestroyResponse = hardwareDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwareDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardware/${id}/`
-}
-
-export const hardwareDestroy = async (id: string, options?: RequestInit): Promise<hardwareDestroyResponse> => {
-  
-  const res = await fetch(getHardwareDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const hardwareDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/hardware/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwareDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwareDestroyResponse
+
+export const getHardwareDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return hardwareDestroy(id, options);
+  }
 }
+export const getHardwareDestroyMutationKey = (id: string,) => [`/hardware/${id}/`] as const;
 
+export type HardwareDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof hardwareDestroy>>>
+export type HardwareDestroyMutationError = ErrorType<unknown>
 
+export const useHardwareDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwareDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof hardwareDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwareDestroyMutationKey(id);
+  const swrFn = getHardwareDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows hardware device historical records to be viewed.
  */
-export type hardwaredevicehistoryListResponse200 = {
-  data: HardwareDeviceHistory[]
-  status: 200
-}
-    
-export type hardwaredevicehistoryListResponseComposite = hardwaredevicehistoryListResponse200;
-    
-export type hardwaredevicehistoryListResponse = hardwaredevicehistoryListResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicehistoryListUrl = (params?: HardwaredevicehistoryListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/hardwaredevicehistory/?${stringifiedParams}` : `/backend/hardwaredevicehistory/`
-}
-
-export const hardwaredevicehistoryList = async (params?: HardwaredevicehistoryListParams, options?: RequestInit): Promise<hardwaredevicehistoryListResponse> => {
-  
-  const res = await fetch(getHardwaredevicehistoryListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const hardwaredevicehistoryList = (
+    params?: HardwaredevicehistoryListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareDeviceHistory[]>(
+    {url: `/hardwaredevicehistory/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicehistoryListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicehistoryListResponse
+
+export const getHardwaredevicehistoryListKey = (params?: HardwaredevicehistoryListParams,) => [`/hardwaredevicehistory/`, ...(params ? [params]: [])] as const;
+
+export type HardwaredevicehistoryListQueryResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicehistoryList>>>
+export type HardwaredevicehistoryListQueryError = ErrorType<unknown>
+
+export const useHardwaredevicehistoryList = <TError = ErrorType<unknown>>(
+  params?: HardwaredevicehistoryListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof hardwaredevicehistoryList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getHardwaredevicehistoryListKey(params) : null);
+  const swrFn = () => hardwaredevicehistoryList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows hardware device historical records to be viewed.
  */
-export type hardwaredevicehistoryCreateResponse201 = {
-  data: HardwareDeviceHistory
-  status: 201
-}
-    
-export type hardwaredevicehistoryCreateResponseComposite = hardwaredevicehistoryCreateResponse201;
-    
-export type hardwaredevicehistoryCreateResponse = hardwaredevicehistoryCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicehistoryCreateUrl = () => {
-
-
-  
-
-  return `/backend/hardwaredevicehistory/`
-}
-
-export const hardwaredevicehistoryCreate = async (hardwareDeviceHistoryRequest: HardwareDeviceHistoryRequest, options?: RequestInit): Promise<hardwaredevicehistoryCreateResponse> => {
-  
-  const res = await fetch(getHardwaredevicehistoryCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      hardwareDeviceHistoryRequest,)
+export const hardwaredevicehistoryCreate = (
+    hardwareDeviceHistoryRequest: BodyType<HardwareDeviceHistoryRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareDeviceHistory>(
+    {url: `/hardwaredevicehistory/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: hardwareDeviceHistoryRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicehistoryCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicehistoryCreateResponse
+
+export const getHardwaredevicehistoryCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: HardwareDeviceHistoryRequest }): Promise<HardwareDeviceHistory> => {
+    return hardwaredevicehistoryCreate(arg, options);
+  }
 }
+export const getHardwaredevicehistoryCreateMutationKey = () => [`/hardwaredevicehistory/`] as const;
 
+export type HardwaredevicehistoryCreateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicehistoryCreate>>>
+export type HardwaredevicehistoryCreateMutationError = ErrorType<unknown>
 
+export const useHardwaredevicehistoryCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwaredevicehistoryCreate>>, TError, Key, HardwareDeviceHistoryRequest, Awaited<ReturnType<typeof hardwaredevicehistoryCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwaredevicehistoryCreateMutationKey();
+  const swrFn = getHardwaredevicehistoryCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows hardware device historical records to be viewed.
  */
-export type hardwaredevicehistoryRetrieveResponse200 = {
-  data: HardwareDeviceHistory
-  status: 200
-}
-    
-export type hardwaredevicehistoryRetrieveResponseComposite = hardwaredevicehistoryRetrieveResponse200;
-    
-export type hardwaredevicehistoryRetrieveResponse = hardwaredevicehistoryRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicehistoryRetrieveUrl = (historyId: number,) => {
-
-
-  
-
-  return `/backend/hardwaredevicehistory/${historyId}/`
-}
-
-export const hardwaredevicehistoryRetrieve = async (historyId: number, options?: RequestInit): Promise<hardwaredevicehistoryRetrieveResponse> => {
-  
-  const res = await fetch(getHardwaredevicehistoryRetrieveUrl(historyId),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const hardwaredevicehistoryRetrieve = (
+    historyId: number,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareDeviceHistory>(
+    {url: `/hardwaredevicehistory/${historyId}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicehistoryRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicehistoryRetrieveResponse
+
+export const getHardwaredevicehistoryRetrieveKey = (historyId: number,) => [`/hardwaredevicehistory/${historyId}/`] as const;
+
+export type HardwaredevicehistoryRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicehistoryRetrieve>>>
+export type HardwaredevicehistoryRetrieveQueryError = ErrorType<unknown>
+
+export const useHardwaredevicehistoryRetrieve = <TError = ErrorType<unknown>>(
+  historyId: number, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof hardwaredevicehistoryRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(historyId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getHardwaredevicehistoryRetrieveKey(historyId) : null);
+  const swrFn = () => hardwaredevicehistoryRetrieve(historyId, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows hardware device historical records to be viewed.
  */
-export type hardwaredevicehistoryUpdateResponse200 = {
-  data: HardwareDeviceHistory
-  status: 200
-}
-    
-export type hardwaredevicehistoryUpdateResponseComposite = hardwaredevicehistoryUpdateResponse200;
-    
-export type hardwaredevicehistoryUpdateResponse = hardwaredevicehistoryUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicehistoryUpdateUrl = (historyId: number,) => {
-
-
-  
-
-  return `/backend/hardwaredevicehistory/${historyId}/`
-}
-
-export const hardwaredevicehistoryUpdate = async (historyId: number,
-    hardwareDeviceHistoryRequest: HardwareDeviceHistoryRequest, options?: RequestInit): Promise<hardwaredevicehistoryUpdateResponse> => {
-  
-  const res = await fetch(getHardwaredevicehistoryUpdateUrl(historyId),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      hardwareDeviceHistoryRequest,)
+export const hardwaredevicehistoryUpdate = (
+    historyId: number,
+    hardwareDeviceHistoryRequest: BodyType<HardwareDeviceHistoryRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareDeviceHistory>(
+    {url: `/hardwaredevicehistory/${historyId}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: hardwareDeviceHistoryRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicehistoryUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicehistoryUpdateResponse
+
+export const getHardwaredevicehistoryUpdateMutationFetcher = (historyId: number, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: HardwareDeviceHistoryRequest }): Promise<HardwareDeviceHistory> => {
+    return hardwaredevicehistoryUpdate(historyId, arg, options);
+  }
 }
+export const getHardwaredevicehistoryUpdateMutationKey = (historyId: number,) => [`/hardwaredevicehistory/${historyId}/`] as const;
 
+export type HardwaredevicehistoryUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicehistoryUpdate>>>
+export type HardwaredevicehistoryUpdateMutationError = ErrorType<unknown>
 
+export const useHardwaredevicehistoryUpdate = <TError = ErrorType<unknown>>(
+  historyId: number, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwaredevicehistoryUpdate>>, TError, Key, HardwareDeviceHistoryRequest, Awaited<ReturnType<typeof hardwaredevicehistoryUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwaredevicehistoryUpdateMutationKey(historyId);
+  const swrFn = getHardwaredevicehistoryUpdateMutationFetcher(historyId, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows hardware device historical records to be viewed.
  */
-export type hardwaredevicehistoryPartialUpdateResponse200 = {
-  data: HardwareDeviceHistory
-  status: 200
-}
-    
-export type hardwaredevicehistoryPartialUpdateResponseComposite = hardwaredevicehistoryPartialUpdateResponse200;
-    
-export type hardwaredevicehistoryPartialUpdateResponse = hardwaredevicehistoryPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicehistoryPartialUpdateUrl = (historyId: number,) => {
-
-
-  
-
-  return `/backend/hardwaredevicehistory/${historyId}/`
-}
-
-export const hardwaredevicehistoryPartialUpdate = async (historyId: number,
-    patchedHardwareDeviceHistoryRequest: PatchedHardwareDeviceHistoryRequest, options?: RequestInit): Promise<hardwaredevicehistoryPartialUpdateResponse> => {
-  
-  const res = await fetch(getHardwaredevicehistoryPartialUpdateUrl(historyId),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedHardwareDeviceHistoryRequest,)
+export const hardwaredevicehistoryPartialUpdate = (
+    historyId: number,
+    patchedHardwareDeviceHistoryRequest: BodyType<PatchedHardwareDeviceHistoryRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareDeviceHistory>(
+    {url: `/hardwaredevicehistory/${historyId}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedHardwareDeviceHistoryRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicehistoryPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicehistoryPartialUpdateResponse
+
+export const getHardwaredevicehistoryPartialUpdateMutationFetcher = (historyId: number, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedHardwareDeviceHistoryRequest }): Promise<HardwareDeviceHistory> => {
+    return hardwaredevicehistoryPartialUpdate(historyId, arg, options);
+  }
 }
+export const getHardwaredevicehistoryPartialUpdateMutationKey = (historyId: number,) => [`/hardwaredevicehistory/${historyId}/`] as const;
 
+export type HardwaredevicehistoryPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicehistoryPartialUpdate>>>
+export type HardwaredevicehistoryPartialUpdateMutationError = ErrorType<unknown>
 
+export const useHardwaredevicehistoryPartialUpdate = <TError = ErrorType<unknown>>(
+  historyId: number, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwaredevicehistoryPartialUpdate>>, TError, Key, PatchedHardwareDeviceHistoryRequest, Awaited<ReturnType<typeof hardwaredevicehistoryPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwaredevicehistoryPartialUpdateMutationKey(historyId);
+  const swrFn = getHardwaredevicehistoryPartialUpdateMutationFetcher(historyId, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows hardware device historical records to be viewed.
  */
-export type hardwaredevicehistoryDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type hardwaredevicehistoryDestroyResponseComposite = hardwaredevicehistoryDestroyResponse204;
-    
-export type hardwaredevicehistoryDestroyResponse = hardwaredevicehistoryDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicehistoryDestroyUrl = (historyId: number,) => {
-
-
-  
-
-  return `/backend/hardwaredevicehistory/${historyId}/`
-}
-
-export const hardwaredevicehistoryDestroy = async (historyId: number, options?: RequestInit): Promise<hardwaredevicehistoryDestroyResponse> => {
-  
-  const res = await fetch(getHardwaredevicehistoryDestroyUrl(historyId),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const hardwaredevicehistoryDestroy = (
+    historyId: number,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/hardwaredevicehistory/${historyId}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicehistoryDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicehistoryDestroyResponse
+
+export const getHardwaredevicehistoryDestroyMutationFetcher = (historyId: number, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return hardwaredevicehistoryDestroy(historyId, options);
+  }
 }
+export const getHardwaredevicehistoryDestroyMutationKey = (historyId: number,) => [`/hardwaredevicehistory/${historyId}/`] as const;
 
+export type HardwaredevicehistoryDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicehistoryDestroy>>>
+export type HardwaredevicehistoryDestroyMutationError = ErrorType<unknown>
 
+export const useHardwaredevicehistoryDestroy = <TError = ErrorType<unknown>>(
+  historyId: number, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwaredevicehistoryDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof hardwaredevicehistoryDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwaredevicehistoryDestroyMutationKey(historyId);
+  const swrFn = getHardwaredevicehistoryDestroyMutationFetcher(historyId, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows individual hardware devices to be viewed or edited.
  */
-export type hardwaredevicesListResponse200 = {
-  data: HardwareDevice[]
-  status: 200
-}
-    
-export type hardwaredevicesListResponseComposite = hardwaredevicesListResponse200;
-    
-export type hardwaredevicesListResponse = hardwaredevicesListResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicesListUrl = (params?: HardwaredevicesListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/hardwaredevices/?${stringifiedParams}` : `/backend/hardwaredevices/`
-}
-
-export const hardwaredevicesList = async (params?: HardwaredevicesListParams, options?: RequestInit): Promise<hardwaredevicesListResponse> => {
-  
-  const res = await fetch(getHardwaredevicesListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const hardwaredevicesList = (
+    params?: HardwaredevicesListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareDevice[]>(
+    {url: `/hardwaredevices/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicesListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicesListResponse
+
+export const getHardwaredevicesListKey = (params?: HardwaredevicesListParams,) => [`/hardwaredevices/`, ...(params ? [params]: [])] as const;
+
+export type HardwaredevicesListQueryResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicesList>>>
+export type HardwaredevicesListQueryError = ErrorType<unknown>
+
+export const useHardwaredevicesList = <TError = ErrorType<unknown>>(
+  params?: HardwaredevicesListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof hardwaredevicesList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getHardwaredevicesListKey(params) : null);
+  const swrFn = () => hardwaredevicesList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows individual hardware devices to be viewed or edited.
  */
-export type hardwaredevicesCreateResponse201 = {
-  data: HardwareDevice
-  status: 201
-}
-    
-export type hardwaredevicesCreateResponseComposite = hardwaredevicesCreateResponse201;
-    
-export type hardwaredevicesCreateResponse = hardwaredevicesCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicesCreateUrl = () => {
-
-
-  
-
-  return `/backend/hardwaredevices/`
-}
-
-export const hardwaredevicesCreate = async (hardwareDeviceRequest: HardwareDeviceRequest, options?: RequestInit): Promise<hardwaredevicesCreateResponse> => {
-  
-  const res = await fetch(getHardwaredevicesCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      hardwareDeviceRequest,)
+export const hardwaredevicesCreate = (
+    hardwareDeviceRequest: BodyType<HardwareDeviceRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareDevice>(
+    {url: `/hardwaredevices/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: hardwareDeviceRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicesCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicesCreateResponse
+
+export const getHardwaredevicesCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: HardwareDeviceRequest }): Promise<HardwareDevice> => {
+    return hardwaredevicesCreate(arg, options);
+  }
 }
+export const getHardwaredevicesCreateMutationKey = () => [`/hardwaredevices/`] as const;
 
+export type HardwaredevicesCreateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicesCreate>>>
+export type HardwaredevicesCreateMutationError = ErrorType<unknown>
 
+export const useHardwaredevicesCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwaredevicesCreate>>, TError, Key, HardwareDeviceRequest, Awaited<ReturnType<typeof hardwaredevicesCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwaredevicesCreateMutationKey();
+  const swrFn = getHardwaredevicesCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows individual hardware devices to be viewed or edited.
  */
-export type hardwaredevicesRetrieveResponse200 = {
-  data: HardwareDeviceDetail
-  status: 200
-}
-    
-export type hardwaredevicesRetrieveResponseComposite = hardwaredevicesRetrieveResponse200;
-    
-export type hardwaredevicesRetrieveResponse = hardwaredevicesRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicesRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardwaredevices/${id}/`
-}
-
-export const hardwaredevicesRetrieve = async (id: string, options?: RequestInit): Promise<hardwaredevicesRetrieveResponse> => {
-  
-  const res = await fetch(getHardwaredevicesRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const hardwaredevicesRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareDeviceDetail>(
+    {url: `/hardwaredevices/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicesRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicesRetrieveResponse
+
+export const getHardwaredevicesRetrieveKey = (id: string,) => [`/hardwaredevices/${id}/`] as const;
+
+export type HardwaredevicesRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicesRetrieve>>>
+export type HardwaredevicesRetrieveQueryError = ErrorType<unknown>
+
+export const useHardwaredevicesRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof hardwaredevicesRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getHardwaredevicesRetrieveKey(id) : null);
+  const swrFn = () => hardwaredevicesRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows individual hardware devices to be viewed or edited.
  */
-export type hardwaredevicesUpdateResponse200 = {
-  data: HardwareDevice
-  status: 200
-}
-    
-export type hardwaredevicesUpdateResponseComposite = hardwaredevicesUpdateResponse200;
-    
-export type hardwaredevicesUpdateResponse = hardwaredevicesUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicesUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardwaredevices/${id}/`
-}
-
-export const hardwaredevicesUpdate = async (id: string,
-    hardwareDeviceRequest: HardwareDeviceRequest, options?: RequestInit): Promise<hardwaredevicesUpdateResponse> => {
-  
-  const res = await fetch(getHardwaredevicesUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      hardwareDeviceRequest,)
+export const hardwaredevicesUpdate = (
+    id: string,
+    hardwareDeviceRequest: BodyType<HardwareDeviceRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareDevice>(
+    {url: `/hardwaredevices/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: hardwareDeviceRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicesUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicesUpdateResponse
+
+export const getHardwaredevicesUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: HardwareDeviceRequest }): Promise<HardwareDevice> => {
+    return hardwaredevicesUpdate(id, arg, options);
+  }
 }
+export const getHardwaredevicesUpdateMutationKey = (id: string,) => [`/hardwaredevices/${id}/`] as const;
 
+export type HardwaredevicesUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicesUpdate>>>
+export type HardwaredevicesUpdateMutationError = ErrorType<unknown>
 
+export const useHardwaredevicesUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwaredevicesUpdate>>, TError, Key, HardwareDeviceRequest, Awaited<ReturnType<typeof hardwaredevicesUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwaredevicesUpdateMutationKey(id);
+  const swrFn = getHardwaredevicesUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows individual hardware devices to be viewed or edited.
  */
-export type hardwaredevicesPartialUpdateResponse200 = {
-  data: HardwareDevice
-  status: 200
-}
-    
-export type hardwaredevicesPartialUpdateResponseComposite = hardwaredevicesPartialUpdateResponse200;
-    
-export type hardwaredevicesPartialUpdateResponse = hardwaredevicesPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicesPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardwaredevices/${id}/`
-}
-
-export const hardwaredevicesPartialUpdate = async (id: string,
-    patchedHardwareDeviceRequest: PatchedHardwareDeviceRequest, options?: RequestInit): Promise<hardwaredevicesPartialUpdateResponse> => {
-  
-  const res = await fetch(getHardwaredevicesPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedHardwareDeviceRequest,)
+export const hardwaredevicesPartialUpdate = (
+    id: string,
+    patchedHardwareDeviceRequest: BodyType<PatchedHardwareDeviceRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareDevice>(
+    {url: `/hardwaredevices/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedHardwareDeviceRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicesPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicesPartialUpdateResponse
+
+export const getHardwaredevicesPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedHardwareDeviceRequest }): Promise<HardwareDevice> => {
+    return hardwaredevicesPartialUpdate(id, arg, options);
+  }
 }
+export const getHardwaredevicesPartialUpdateMutationKey = (id: string,) => [`/hardwaredevices/${id}/`] as const;
 
+export type HardwaredevicesPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicesPartialUpdate>>>
+export type HardwaredevicesPartialUpdateMutationError = ErrorType<unknown>
 
+export const useHardwaredevicesPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwaredevicesPartialUpdate>>, TError, Key, PatchedHardwareDeviceRequest, Awaited<ReturnType<typeof hardwaredevicesPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwaredevicesPartialUpdateMutationKey(id);
+  const swrFn = getHardwaredevicesPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows individual hardware devices to be viewed or edited.
  */
-export type hardwaredevicesDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type hardwaredevicesDestroyResponseComposite = hardwaredevicesDestroyResponse204;
-    
-export type hardwaredevicesDestroyResponse = hardwaredevicesDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwaredevicesDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardwaredevices/${id}/`
-}
-
-export const hardwaredevicesDestroy = async (id: string, options?: RequestInit): Promise<hardwaredevicesDestroyResponse> => {
-  
-  const res = await fetch(getHardwaredevicesDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const hardwaredevicesDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/hardwaredevices/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwaredevicesDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwaredevicesDestroyResponse
+
+export const getHardwaredevicesDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return hardwaredevicesDestroy(id, options);
+  }
 }
+export const getHardwaredevicesDestroyMutationKey = (id: string,) => [`/hardwaredevices/${id}/`] as const;
 
+export type HardwaredevicesDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof hardwaredevicesDestroy>>>
+export type HardwaredevicesDestroyMutationError = ErrorType<unknown>
 
+export const useHardwaredevicesDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwaredevicesDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof hardwaredevicesDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwaredevicesDestroyMutationKey(id);
+  const swrFn = getHardwaredevicesDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows hardware device requests from participants to be viewed or edited.
  */
-export type hardwarerequestsListResponse200 = {
-  data: HardwareRequestList[]
-  status: 200
-}
-    
-export type hardwarerequestsListResponseComposite = hardwarerequestsListResponse200;
-    
-export type hardwarerequestsListResponse = hardwarerequestsListResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwarerequestsListUrl = (params?: HardwarerequestsListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/hardwarerequests/?${stringifiedParams}` : `/backend/hardwarerequests/`
-}
-
-export const hardwarerequestsList = async (params?: HardwarerequestsListParams, options?: RequestInit): Promise<hardwarerequestsListResponse> => {
-  
-  const res = await fetch(getHardwarerequestsListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const hardwarerequestsList = (
+    params?: HardwarerequestsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareRequestList[]>(
+    {url: `/hardwarerequests/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwarerequestsListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwarerequestsListResponse
+
+export const getHardwarerequestsListKey = (params?: HardwarerequestsListParams,) => [`/hardwarerequests/`, ...(params ? [params]: [])] as const;
+
+export type HardwarerequestsListQueryResult = NonNullable<Awaited<ReturnType<typeof hardwarerequestsList>>>
+export type HardwarerequestsListQueryError = ErrorType<unknown>
+
+export const useHardwarerequestsList = <TError = ErrorType<unknown>>(
+  params?: HardwarerequestsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof hardwarerequestsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getHardwarerequestsListKey(params) : null);
+  const swrFn = () => hardwarerequestsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows hardware device requests from participants to be viewed or edited.
  */
-export type hardwarerequestsCreateResponse201 = {
-  data: HardwareRequestCreate
-  status: 201
-}
-    
-export type hardwarerequestsCreateResponseComposite = hardwarerequestsCreateResponse201;
-    
-export type hardwarerequestsCreateResponse = hardwarerequestsCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwarerequestsCreateUrl = () => {
-
-
-  
-
-  return `/backend/hardwarerequests/`
-}
-
-export const hardwarerequestsCreate = async (hardwareRequestCreateRequest: HardwareRequestCreateRequest, options?: RequestInit): Promise<hardwarerequestsCreateResponse> => {
-  
-  const res = await fetch(getHardwarerequestsCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      hardwareRequestCreateRequest,)
+export const hardwarerequestsCreate = (
+    hardwareRequestCreateRequest: BodyType<HardwareRequestCreateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareRequestCreate>(
+    {url: `/hardwarerequests/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: hardwareRequestCreateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwarerequestsCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwarerequestsCreateResponse
+
+export const getHardwarerequestsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: HardwareRequestCreateRequest }): Promise<HardwareRequestCreate> => {
+    return hardwarerequestsCreate(arg, options);
+  }
 }
+export const getHardwarerequestsCreateMutationKey = () => [`/hardwarerequests/`] as const;
 
+export type HardwarerequestsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwarerequestsCreate>>>
+export type HardwarerequestsCreateMutationError = ErrorType<unknown>
 
+export const useHardwarerequestsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwarerequestsCreate>>, TError, Key, HardwareRequestCreateRequest, Awaited<ReturnType<typeof hardwarerequestsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwarerequestsCreateMutationKey();
+  const swrFn = getHardwarerequestsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows hardware device requests from participants to be viewed or edited.
  */
-export type hardwarerequestsRetrieveResponse200 = {
-  data: HardwareRequestDetail
-  status: 200
-}
-    
-export type hardwarerequestsRetrieveResponseComposite = hardwarerequestsRetrieveResponse200;
-    
-export type hardwarerequestsRetrieveResponse = hardwarerequestsRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwarerequestsRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardwarerequests/${id}/`
-}
-
-export const hardwarerequestsRetrieve = async (id: string, options?: RequestInit): Promise<hardwarerequestsRetrieveResponse> => {
-  
-  const res = await fetch(getHardwarerequestsRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const hardwarerequestsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareRequestDetail>(
+    {url: `/hardwarerequests/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwarerequestsRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwarerequestsRetrieveResponse
+
+export const getHardwarerequestsRetrieveKey = (id: string,) => [`/hardwarerequests/${id}/`] as const;
+
+export type HardwarerequestsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof hardwarerequestsRetrieve>>>
+export type HardwarerequestsRetrieveQueryError = ErrorType<unknown>
+
+export const useHardwarerequestsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof hardwarerequestsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getHardwarerequestsRetrieveKey(id) : null);
+  const swrFn = () => hardwarerequestsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows hardware device requests from participants to be viewed or edited.
  */
-export type hardwarerequestsUpdateResponse200 = {
-  data: HardwareRequestList
-  status: 200
-}
-    
-export type hardwarerequestsUpdateResponseComposite = hardwarerequestsUpdateResponse200;
-    
-export type hardwarerequestsUpdateResponse = hardwarerequestsUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwarerequestsUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardwarerequests/${id}/`
-}
-
-export const hardwarerequestsUpdate = async (id: string,
-    hardwareRequestListRequest: HardwareRequestListRequest, options?: RequestInit): Promise<hardwarerequestsUpdateResponse> => {
-  
-  const res = await fetch(getHardwarerequestsUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      hardwareRequestListRequest,)
+export const hardwarerequestsUpdate = (
+    id: string,
+    hardwareRequestListRequest: BodyType<HardwareRequestListRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareRequestList>(
+    {url: `/hardwarerequests/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: hardwareRequestListRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwarerequestsUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwarerequestsUpdateResponse
+
+export const getHardwarerequestsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: HardwareRequestListRequest }): Promise<HardwareRequestList> => {
+    return hardwarerequestsUpdate(id, arg, options);
+  }
 }
+export const getHardwarerequestsUpdateMutationKey = (id: string,) => [`/hardwarerequests/${id}/`] as const;
 
+export type HardwarerequestsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwarerequestsUpdate>>>
+export type HardwarerequestsUpdateMutationError = ErrorType<unknown>
 
+export const useHardwarerequestsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwarerequestsUpdate>>, TError, Key, HardwareRequestListRequest, Awaited<ReturnType<typeof hardwarerequestsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwarerequestsUpdateMutationKey(id);
+  const swrFn = getHardwarerequestsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows hardware device requests from participants to be viewed or edited.
  */
-export type hardwarerequestsPartialUpdateResponse200 = {
-  data: HardwareRequest
-  status: 200
-}
-    
-export type hardwarerequestsPartialUpdateResponseComposite = hardwarerequestsPartialUpdateResponse200;
-    
-export type hardwarerequestsPartialUpdateResponse = hardwarerequestsPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwarerequestsPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardwarerequests/${id}/`
-}
-
-export const hardwarerequestsPartialUpdate = async (id: string,
-    patchedHardwareRequestRequest: PatchedHardwareRequestRequest, options?: RequestInit): Promise<hardwarerequestsPartialUpdateResponse> => {
-  
-  const res = await fetch(getHardwarerequestsPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedHardwareRequestRequest,)
+export const hardwarerequestsPartialUpdate = (
+    id: string,
+    patchedHardwareRequestRequest: BodyType<PatchedHardwareRequestRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<HardwareRequest>(
+    {url: `/hardwarerequests/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedHardwareRequestRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwarerequestsPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwarerequestsPartialUpdateResponse
+
+export const getHardwarerequestsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedHardwareRequestRequest }): Promise<HardwareRequest> => {
+    return hardwarerequestsPartialUpdate(id, arg, options);
+  }
 }
+export const getHardwarerequestsPartialUpdateMutationKey = (id: string,) => [`/hardwarerequests/${id}/`] as const;
 
+export type HardwarerequestsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof hardwarerequestsPartialUpdate>>>
+export type HardwarerequestsPartialUpdateMutationError = ErrorType<unknown>
 
+export const useHardwarerequestsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwarerequestsPartialUpdate>>, TError, Key, PatchedHardwareRequestRequest, Awaited<ReturnType<typeof hardwarerequestsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwarerequestsPartialUpdateMutationKey(id);
+  const swrFn = getHardwarerequestsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
- * API endpoint that allows hardware devices to be viewed or edited.
+ * API endpoint that allows hardware device requests from participants to be viewed or edited.
  */
-export type hardwarerequestsDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type hardwarerequestsDestroyResponseComposite = hardwarerequestsDestroyResponse204;
-    
-export type hardwarerequestsDestroyResponse = hardwarerequestsDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getHardwarerequestsDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/hardwarerequests/${id}/`
-}
-
-export const hardwarerequestsDestroy = async (id: string, options?: RequestInit): Promise<hardwarerequestsDestroyResponse> => {
-  
-  const res = await fetch(getHardwarerequestsDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const hardwarerequestsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/hardwarerequests/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: hardwarerequestsDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as hardwarerequestsDestroyResponse
+
+export const getHardwarerequestsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return hardwarerequestsDestroy(id, options);
+  }
 }
+export const getHardwarerequestsDestroyMutationKey = (id: string,) => [`/hardwarerequests/${id}/`] as const;
 
+export type HardwarerequestsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof hardwarerequestsDestroy>>>
+export type HardwarerequestsDestroyMutationError = ErrorType<unknown>
 
+export const useHardwarerequestsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof hardwarerequestsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof hardwarerequestsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getHardwarerequestsDestroyMutationKey(id);
+  const swrFn = getHardwarerequestsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows Reality Kits to be viewed or edited.
  */
-export type lighthousesListResponse200 = {
-  data: LightHouse[]
-  status: 200
-}
+export const lighthousesList = (
     
-export type lighthousesListResponseComposite = lighthousesListResponse200;
-    
-export type lighthousesListResponse = lighthousesListResponseComposite & {
-  headers: Headers;
-}
-
-export const getLighthousesListUrl = () => {
-
-
-  
-
-  return `/backend/lighthouses/`
-}
-
-export const lighthousesList = async ( options?: RequestInit): Promise<lighthousesListResponse> => {
-  
-  const res = await fetch(getLighthousesListUrl(),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<LightHouse[]>(
+    {url: `/lighthouses/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: lighthousesListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as lighthousesListResponse
+
+export const getLighthousesListKey = () => [`/lighthouses/`] as const;
+
+export type LighthousesListQueryResult = NonNullable<Awaited<ReturnType<typeof lighthousesList>>>
+export type LighthousesListQueryError = ErrorType<unknown>
+
+export const useLighthousesList = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof lighthousesList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getLighthousesListKey() : null);
+  const swrFn = () => lighthousesList(requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows Reality Kits to be viewed or edited.
  */
-export type lighthousesCreateResponse201 = {
-  data: LightHouse
-  status: 201
-}
-    
-export type lighthousesCreateResponseComposite = lighthousesCreateResponse201;
-    
-export type lighthousesCreateResponse = lighthousesCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getLighthousesCreateUrl = () => {
-
-
-  
-
-  return `/backend/lighthouses/`
-}
-
-export const lighthousesCreate = async (lightHouseRequest: LightHouseRequest, options?: RequestInit): Promise<lighthousesCreateResponse> => {
-  
-  const res = await fetch(getLighthousesCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      lightHouseRequest,)
+export const lighthousesCreate = (
+    lightHouseRequest: BodyType<LightHouseRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<LightHouse>(
+    {url: `/lighthouses/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: lightHouseRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: lighthousesCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as lighthousesCreateResponse
+
+export const getLighthousesCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: LightHouseRequest }): Promise<LightHouse> => {
+    return lighthousesCreate(arg, options);
+  }
 }
+export const getLighthousesCreateMutationKey = () => [`/lighthouses/`] as const;
 
+export type LighthousesCreateMutationResult = NonNullable<Awaited<ReturnType<typeof lighthousesCreate>>>
+export type LighthousesCreateMutationError = ErrorType<unknown>
 
+export const useLighthousesCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof lighthousesCreate>>, TError, Key, LightHouseRequest, Awaited<ReturnType<typeof lighthousesCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getLighthousesCreateMutationKey();
+  const swrFn = getLighthousesCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows locations to be viewed or edited.
  */
-export type locationsListResponse200 = {
-  data: Location[]
-  status: 200
-}
-    
-export type locationsListResponseComposite = locationsListResponse200;
-    
-export type locationsListResponse = locationsListResponseComposite & {
-  headers: Headers;
-}
-
-export const getLocationsListUrl = (params?: LocationsListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/locations/?${stringifiedParams}` : `/backend/locations/`
-}
-
-export const locationsList = async (params?: LocationsListParams, options?: RequestInit): Promise<locationsListResponse> => {
-  
-  const res = await fetch(getLocationsListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const locationsList = (
+    params?: LocationsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Location[]>(
+    {url: `/locations/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: locationsListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as locationsListResponse
+
+export const getLocationsListKey = (params?: LocationsListParams,) => [`/locations/`, ...(params ? [params]: [])] as const;
+
+export type LocationsListQueryResult = NonNullable<Awaited<ReturnType<typeof locationsList>>>
+export type LocationsListQueryError = ErrorType<unknown>
+
+export const useLocationsList = <TError = ErrorType<unknown>>(
+  params?: LocationsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof locationsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getLocationsListKey(params) : null);
+  const swrFn = () => locationsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows locations to be viewed or edited.
  */
-export type locationsCreateResponse201 = {
-  data: Location
-  status: 201
-}
-    
-export type locationsCreateResponseComposite = locationsCreateResponse201;
-    
-export type locationsCreateResponse = locationsCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getLocationsCreateUrl = () => {
-
-
-  
-
-  return `/backend/locations/`
-}
-
-export const locationsCreate = async (locationRequest: LocationRequest, options?: RequestInit): Promise<locationsCreateResponse> => {
-  
-  const res = await fetch(getLocationsCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      locationRequest,)
+export const locationsCreate = (
+    locationRequest: BodyType<LocationRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Location>(
+    {url: `/locations/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: locationRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: locationsCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as locationsCreateResponse
+
+export const getLocationsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: LocationRequest }): Promise<Location> => {
+    return locationsCreate(arg, options);
+  }
 }
+export const getLocationsCreateMutationKey = () => [`/locations/`] as const;
 
+export type LocationsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof locationsCreate>>>
+export type LocationsCreateMutationError = ErrorType<unknown>
 
+export const useLocationsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof locationsCreate>>, TError, Key, LocationRequest, Awaited<ReturnType<typeof locationsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getLocationsCreateMutationKey();
+  const swrFn = getLocationsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows locations to be viewed or edited.
  */
-export type locationsRetrieveResponse200 = {
-  data: Location
-  status: 200
-}
-    
-export type locationsRetrieveResponseComposite = locationsRetrieveResponse200;
-    
-export type locationsRetrieveResponse = locationsRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getLocationsRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/locations/${id}/`
-}
-
-export const locationsRetrieve = async (id: string, options?: RequestInit): Promise<locationsRetrieveResponse> => {
-  
-  const res = await fetch(getLocationsRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const locationsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Location>(
+    {url: `/locations/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: locationsRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as locationsRetrieveResponse
+
+export const getLocationsRetrieveKey = (id: string,) => [`/locations/${id}/`] as const;
+
+export type LocationsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof locationsRetrieve>>>
+export type LocationsRetrieveQueryError = ErrorType<unknown>
+
+export const useLocationsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof locationsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getLocationsRetrieveKey(id) : null);
+  const swrFn = () => locationsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows locations to be viewed or edited.
  */
-export type locationsUpdateResponse200 = {
-  data: Location
-  status: 200
-}
-    
-export type locationsUpdateResponseComposite = locationsUpdateResponse200;
-    
-export type locationsUpdateResponse = locationsUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getLocationsUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/locations/${id}/`
-}
-
-export const locationsUpdate = async (id: string,
-    locationRequest: LocationRequest, options?: RequestInit): Promise<locationsUpdateResponse> => {
-  
-  const res = await fetch(getLocationsUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      locationRequest,)
+export const locationsUpdate = (
+    id: string,
+    locationRequest: BodyType<LocationRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Location>(
+    {url: `/locations/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: locationRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: locationsUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as locationsUpdateResponse
+
+export const getLocationsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: LocationRequest }): Promise<Location> => {
+    return locationsUpdate(id, arg, options);
+  }
 }
+export const getLocationsUpdateMutationKey = (id: string,) => [`/locations/${id}/`] as const;
 
+export type LocationsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof locationsUpdate>>>
+export type LocationsUpdateMutationError = ErrorType<unknown>
 
+export const useLocationsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof locationsUpdate>>, TError, Key, LocationRequest, Awaited<ReturnType<typeof locationsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getLocationsUpdateMutationKey(id);
+  const swrFn = getLocationsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows locations to be viewed or edited.
  */
-export type locationsPartialUpdateResponse200 = {
-  data: Location
-  status: 200
-}
-    
-export type locationsPartialUpdateResponseComposite = locationsPartialUpdateResponse200;
-    
-export type locationsPartialUpdateResponse = locationsPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getLocationsPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/locations/${id}/`
-}
-
-export const locationsPartialUpdate = async (id: string,
-    patchedLocationRequest: PatchedLocationRequest, options?: RequestInit): Promise<locationsPartialUpdateResponse> => {
-  
-  const res = await fetch(getLocationsPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedLocationRequest,)
+export const locationsPartialUpdate = (
+    id: string,
+    patchedLocationRequest: BodyType<PatchedLocationRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Location>(
+    {url: `/locations/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedLocationRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: locationsPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as locationsPartialUpdateResponse
+
+export const getLocationsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedLocationRequest }): Promise<Location> => {
+    return locationsPartialUpdate(id, arg, options);
+  }
 }
+export const getLocationsPartialUpdateMutationKey = (id: string,) => [`/locations/${id}/`] as const;
 
+export type LocationsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof locationsPartialUpdate>>>
+export type LocationsPartialUpdateMutationError = ErrorType<unknown>
 
+export const useLocationsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof locationsPartialUpdate>>, TError, Key, PatchedLocationRequest, Awaited<ReturnType<typeof locationsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getLocationsPartialUpdateMutationKey(id);
+  const swrFn = getLocationsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows locations to be viewed or edited.
  */
-export type locationsDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type locationsDestroyResponseComposite = locationsDestroyResponse204;
-    
-export type locationsDestroyResponse = locationsDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getLocationsDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/locations/${id}/`
-}
-
-export const locationsDestroy = async (id: string, options?: RequestInit): Promise<locationsDestroyResponse> => {
-  
-  const res = await fetch(getLocationsDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const locationsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/locations/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: locationsDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as locationsDestroyResponse
+
+export const getLocationsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return locationsDestroy(id, options);
+  }
 }
+export const getLocationsDestroyMutationKey = (id: string,) => [`/locations/${id}/`] as const;
 
+export type LocationsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof locationsDestroy>>>
+export type LocationsDestroyMutationError = ErrorType<unknown>
 
+export const useLocationsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof locationsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof locationsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getLocationsDestroyMutationKey(id);
+  const swrFn = getLocationsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint for getting detailed information about an authenticated user.
  */
-export type meRetrieveResponse200 = {
-  data: void
-  status: 200
-}
+export const meRetrieve = (
     
-export type meRetrieveResponseComposite = meRetrieveResponse200;
-    
-export type meRetrieveResponse = meRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getMeRetrieveUrl = () => {
-
-
-  
-
-  return `/backend/me/`
-}
-
-export const meRetrieve = async ( options?: RequestInit): Promise<meRetrieveResponse> => {
-  
-  const res = await fetch(getMeRetrieveUrl(),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/me/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: meRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as meRetrieveResponse
+
+export const getMeRetrieveKey = () => [`/me/`] as const;
+
+export type MeRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof meRetrieve>>>
+export type MeRetrieveQueryError = ErrorType<unknown>
+
+export const useMeRetrieve = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof meRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getMeRetrieveKey() : null);
+  const swrFn = () => meRetrieve(requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint for getting detailed information about an authenticated user.
  */
-export type mePartialUpdateResponse200 = {
-  data: void
-  status: 200
-}
+export const mePartialUpdate = (
     
-export type mePartialUpdateResponseComposite = mePartialUpdateResponse200;
-    
-export type mePartialUpdateResponse = mePartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getMePartialUpdateUrl = () => {
-
-
-  
-
-  return `/backend/me/`
-}
-
-export const mePartialUpdate = async ( options?: RequestInit): Promise<mePartialUpdateResponse> => {
-  
-  const res = await fetch(getMePartialUpdateUrl(),
-  {      
-    ...options,
-    method: 'PATCH'
-    
-    
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/me/`, method: 'PATCH'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mePartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mePartialUpdateResponse
+
+export const getMePartialUpdateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return mePartialUpdate(options);
+  }
 }
+export const getMePartialUpdateMutationKey = () => [`/me/`] as const;
 
+export type MePartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof mePartialUpdate>>>
+export type MePartialUpdateMutationError = ErrorType<unknown>
 
+export const useMePartialUpdate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof mePartialUpdate>>, TError, Key, Arguments, Awaited<ReturnType<typeof mePartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getMePartialUpdateMutationKey();
+  const swrFn = getMePartialUpdateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows mentor help requests to be viewed or edited.
  */
-export type mentorhelprequestsListResponse200 = {
-  data: MentorHelpRequestRead[]
-  status: 200
-}
-    
-export type mentorhelprequestsListResponseComposite = mentorhelprequestsListResponse200;
-    
-export type mentorhelprequestsListResponse = mentorhelprequestsListResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestsListUrl = (params?: MentorhelprequestsListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/mentorhelprequests/?${stringifiedParams}` : `/backend/mentorhelprequests/`
-}
-
-export const mentorhelprequestsList = async (params?: MentorhelprequestsListParams, options?: RequestInit): Promise<mentorhelprequestsListResponse> => {
-  
-  const res = await fetch(getMentorhelprequestsListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const mentorhelprequestsList = (
+    params?: MentorhelprequestsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<MentorHelpRequestRead[]>(
+    {url: `/mentorhelprequests/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestsListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestsListResponse
+
+export const getMentorhelprequestsListKey = (params?: MentorhelprequestsListParams,) => [`/mentorhelprequests/`, ...(params ? [params]: [])] as const;
+
+export type MentorhelprequestsListQueryResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestsList>>>
+export type MentorhelprequestsListQueryError = ErrorType<unknown>
+
+export const useMentorhelprequestsList = <TError = ErrorType<unknown>>(
+  params?: MentorhelprequestsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof mentorhelprequestsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getMentorhelprequestsListKey(params) : null);
+  const swrFn = () => mentorhelprequestsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows mentor help requests to be viewed or edited.
  */
-export type mentorhelprequestsCreateResponse201 = {
-  data: MentorHelpRequest
-  status: 201
-}
-    
-export type mentorhelprequestsCreateResponseComposite = mentorhelprequestsCreateResponse201;
-    
-export type mentorhelprequestsCreateResponse = mentorhelprequestsCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestsCreateUrl = () => {
-
-
-  
-
-  return `/backend/mentorhelprequests/`
-}
-
-export const mentorhelprequestsCreate = async (mentorHelpRequestRequest: MentorHelpRequestRequest, options?: RequestInit): Promise<mentorhelprequestsCreateResponse> => {
-  
-  const res = await fetch(getMentorhelprequestsCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      mentorHelpRequestRequest,)
+export const mentorhelprequestsCreate = (
+    mentorHelpRequestRequest: BodyType<MentorHelpRequestRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<MentorHelpRequest>(
+    {url: `/mentorhelprequests/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: mentorHelpRequestRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestsCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestsCreateResponse
+
+export const getMentorhelprequestsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: MentorHelpRequestRequest }): Promise<MentorHelpRequest> => {
+    return mentorhelprequestsCreate(arg, options);
+  }
 }
+export const getMentorhelprequestsCreateMutationKey = () => [`/mentorhelprequests/`] as const;
 
+export type MentorhelprequestsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestsCreate>>>
+export type MentorhelprequestsCreateMutationError = ErrorType<unknown>
 
+export const useMentorhelprequestsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof mentorhelprequestsCreate>>, TError, Key, MentorHelpRequestRequest, Awaited<ReturnType<typeof mentorhelprequestsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getMentorhelprequestsCreateMutationKey();
+  const swrFn = getMentorhelprequestsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows mentor help requests to be viewed or edited.
  */
-export type mentorhelprequestsRetrieveResponse200 = {
-  data: MentorHelpRequest
-  status: 200
-}
-    
-export type mentorhelprequestsRetrieveResponseComposite = mentorhelprequestsRetrieveResponse200;
-    
-export type mentorhelprequestsRetrieveResponse = mentorhelprequestsRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestsRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/mentorhelprequests/${id}/`
-}
-
-export const mentorhelprequestsRetrieve = async (id: string, options?: RequestInit): Promise<mentorhelprequestsRetrieveResponse> => {
-  
-  const res = await fetch(getMentorhelprequestsRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const mentorhelprequestsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<MentorHelpRequest>(
+    {url: `/mentorhelprequests/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestsRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestsRetrieveResponse
+
+export const getMentorhelprequestsRetrieveKey = (id: string,) => [`/mentorhelprequests/${id}/`] as const;
+
+export type MentorhelprequestsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestsRetrieve>>>
+export type MentorhelprequestsRetrieveQueryError = ErrorType<unknown>
+
+export const useMentorhelprequestsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof mentorhelprequestsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getMentorhelprequestsRetrieveKey(id) : null);
+  const swrFn = () => mentorhelprequestsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows mentor help requests to be viewed or edited.
  */
-export type mentorhelprequestsUpdateResponse200 = {
-  data: MentorHelpRequest
-  status: 200
-}
-    
-export type mentorhelprequestsUpdateResponseComposite = mentorhelprequestsUpdateResponse200;
-    
-export type mentorhelprequestsUpdateResponse = mentorhelprequestsUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestsUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/mentorhelprequests/${id}/`
-}
-
-export const mentorhelprequestsUpdate = async (id: string,
-    mentorHelpRequestRequest: MentorHelpRequestRequest, options?: RequestInit): Promise<mentorhelprequestsUpdateResponse> => {
-  
-  const res = await fetch(getMentorhelprequestsUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      mentorHelpRequestRequest,)
+export const mentorhelprequestsUpdate = (
+    id: string,
+    mentorHelpRequestRequest: BodyType<MentorHelpRequestRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<MentorHelpRequest>(
+    {url: `/mentorhelprequests/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: mentorHelpRequestRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestsUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestsUpdateResponse
+
+export const getMentorhelprequestsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: MentorHelpRequestRequest }): Promise<MentorHelpRequest> => {
+    return mentorhelprequestsUpdate(id, arg, options);
+  }
 }
+export const getMentorhelprequestsUpdateMutationKey = (id: string,) => [`/mentorhelprequests/${id}/`] as const;
 
+export type MentorhelprequestsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestsUpdate>>>
+export type MentorhelprequestsUpdateMutationError = ErrorType<unknown>
 
+export const useMentorhelprequestsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof mentorhelprequestsUpdate>>, TError, Key, MentorHelpRequestRequest, Awaited<ReturnType<typeof mentorhelprequestsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getMentorhelprequestsUpdateMutationKey(id);
+  const swrFn = getMentorhelprequestsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows mentor help requests to be viewed or edited.
  */
-export type mentorhelprequestsPartialUpdateResponse200 = {
-  data: MentorHelpRequest
-  status: 200
-}
-    
-export type mentorhelprequestsPartialUpdateResponseComposite = mentorhelprequestsPartialUpdateResponse200;
-    
-export type mentorhelprequestsPartialUpdateResponse = mentorhelprequestsPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestsPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/mentorhelprequests/${id}/`
-}
-
-export const mentorhelprequestsPartialUpdate = async (id: string,
-    patchedMentorHelpRequestRequest: PatchedMentorHelpRequestRequest, options?: RequestInit): Promise<mentorhelprequestsPartialUpdateResponse> => {
-  
-  const res = await fetch(getMentorhelprequestsPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedMentorHelpRequestRequest,)
+export const mentorhelprequestsPartialUpdate = (
+    id: string,
+    patchedMentorHelpRequestRequest: BodyType<PatchedMentorHelpRequestRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<MentorHelpRequest>(
+    {url: `/mentorhelprequests/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedMentorHelpRequestRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestsPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestsPartialUpdateResponse
+
+export const getMentorhelprequestsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedMentorHelpRequestRequest }): Promise<MentorHelpRequest> => {
+    return mentorhelprequestsPartialUpdate(id, arg, options);
+  }
 }
+export const getMentorhelprequestsPartialUpdateMutationKey = (id: string,) => [`/mentorhelprequests/${id}/`] as const;
 
+export type MentorhelprequestsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestsPartialUpdate>>>
+export type MentorhelprequestsPartialUpdateMutationError = ErrorType<unknown>
 
+export const useMentorhelprequestsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof mentorhelprequestsPartialUpdate>>, TError, Key, PatchedMentorHelpRequestRequest, Awaited<ReturnType<typeof mentorhelprequestsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getMentorhelprequestsPartialUpdateMutationKey(id);
+  const swrFn = getMentorhelprequestsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows mentor help requests to be viewed or edited.
  */
-export type mentorhelprequestsDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type mentorhelprequestsDestroyResponseComposite = mentorhelprequestsDestroyResponse204;
-    
-export type mentorhelprequestsDestroyResponse = mentorhelprequestsDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestsDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/mentorhelprequests/${id}/`
-}
-
-export const mentorhelprequestsDestroy = async (id: string, options?: RequestInit): Promise<mentorhelprequestsDestroyResponse> => {
-  
-  const res = await fetch(getMentorhelprequestsDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const mentorhelprequestsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/mentorhelprequests/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestsDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestsDestroyResponse
+
+export const getMentorhelprequestsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return mentorhelprequestsDestroy(id, options);
+  }
 }
+export const getMentorhelprequestsDestroyMutationKey = (id: string,) => [`/mentorhelprequests/${id}/`] as const;
 
+export type MentorhelprequestsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestsDestroy>>>
+export type MentorhelprequestsDestroyMutationError = ErrorType<unknown>
 
+export const useMentorhelprequestsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof mentorhelprequestsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof mentorhelprequestsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getMentorhelprequestsDestroyMutationKey(id);
+  const swrFn = getMentorhelprequestsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows mentor help requests historical records to be viewed.
  */
-export type mentorhelprequestshistoryListResponse200 = {
-  data: MentorHelpRequestHistory[]
-  status: 200
-}
-    
-export type mentorhelprequestshistoryListResponseComposite = mentorhelprequestshistoryListResponse200;
-    
-export type mentorhelprequestshistoryListResponse = mentorhelprequestshistoryListResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestshistoryListUrl = (params?: MentorhelprequestshistoryListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/mentorhelprequestshistory/?${stringifiedParams}` : `/backend/mentorhelprequestshistory/`
-}
-
-export const mentorhelprequestshistoryList = async (params?: MentorhelprequestshistoryListParams, options?: RequestInit): Promise<mentorhelprequestshistoryListResponse> => {
-  
-  const res = await fetch(getMentorhelprequestshistoryListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const mentorhelprequestshistoryList = (
+    params?: MentorhelprequestshistoryListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<MentorHelpRequestHistory[]>(
+    {url: `/mentorhelprequestshistory/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestshistoryListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestshistoryListResponse
+
+export const getMentorhelprequestshistoryListKey = (params?: MentorhelprequestshistoryListParams,) => [`/mentorhelprequestshistory/`, ...(params ? [params]: [])] as const;
+
+export type MentorhelprequestshistoryListQueryResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestshistoryList>>>
+export type MentorhelprequestshistoryListQueryError = ErrorType<unknown>
+
+export const useMentorhelprequestshistoryList = <TError = ErrorType<unknown>>(
+  params?: MentorhelprequestshistoryListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof mentorhelprequestshistoryList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getMentorhelprequestshistoryListKey(params) : null);
+  const swrFn = () => mentorhelprequestshistoryList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows mentor help requests historical records to be viewed.
  */
-export type mentorhelprequestshistoryCreateResponse201 = {
-  data: MentorHelpRequestHistory
-  status: 201
-}
-    
-export type mentorhelprequestshistoryCreateResponseComposite = mentorhelprequestshistoryCreateResponse201;
-    
-export type mentorhelprequestshistoryCreateResponse = mentorhelprequestshistoryCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestshistoryCreateUrl = () => {
-
-
-  
-
-  return `/backend/mentorhelprequestshistory/`
-}
-
-export const mentorhelprequestshistoryCreate = async (mentorHelpRequestHistoryRequest: MentorHelpRequestHistoryRequest, options?: RequestInit): Promise<mentorhelprequestshistoryCreateResponse> => {
-  
-  const res = await fetch(getMentorhelprequestshistoryCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      mentorHelpRequestHistoryRequest,)
+export const mentorhelprequestshistoryCreate = (
+    mentorHelpRequestHistoryRequest: BodyType<MentorHelpRequestHistoryRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<MentorHelpRequestHistory>(
+    {url: `/mentorhelprequestshistory/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: mentorHelpRequestHistoryRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestshistoryCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestshistoryCreateResponse
+
+export const getMentorhelprequestshistoryCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: MentorHelpRequestHistoryRequest }): Promise<MentorHelpRequestHistory> => {
+    return mentorhelprequestshistoryCreate(arg, options);
+  }
 }
+export const getMentorhelprequestshistoryCreateMutationKey = () => [`/mentorhelprequestshistory/`] as const;
 
+export type MentorhelprequestshistoryCreateMutationResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestshistoryCreate>>>
+export type MentorhelprequestshistoryCreateMutationError = ErrorType<unknown>
 
+export const useMentorhelprequestshistoryCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof mentorhelprequestshistoryCreate>>, TError, Key, MentorHelpRequestHistoryRequest, Awaited<ReturnType<typeof mentorhelprequestshistoryCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getMentorhelprequestshistoryCreateMutationKey();
+  const swrFn = getMentorhelprequestshistoryCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows mentor help requests historical records to be viewed.
  */
-export type mentorhelprequestshistoryRetrieveResponse200 = {
-  data: MentorHelpRequestHistory
-  status: 200
-}
-    
-export type mentorhelprequestshistoryRetrieveResponseComposite = mentorhelprequestshistoryRetrieveResponse200;
-    
-export type mentorhelprequestshistoryRetrieveResponse = mentorhelprequestshistoryRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestshistoryRetrieveUrl = (historyId: number,) => {
-
-
-  
-
-  return `/backend/mentorhelprequestshistory/${historyId}/`
-}
-
-export const mentorhelprequestshistoryRetrieve = async (historyId: number, options?: RequestInit): Promise<mentorhelprequestshistoryRetrieveResponse> => {
-  
-  const res = await fetch(getMentorhelprequestshistoryRetrieveUrl(historyId),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const mentorhelprequestshistoryRetrieve = (
+    historyId: number,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<MentorHelpRequestHistory>(
+    {url: `/mentorhelprequestshistory/${historyId}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestshistoryRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestshistoryRetrieveResponse
+
+export const getMentorhelprequestshistoryRetrieveKey = (historyId: number,) => [`/mentorhelprequestshistory/${historyId}/`] as const;
+
+export type MentorhelprequestshistoryRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestshistoryRetrieve>>>
+export type MentorhelprequestshistoryRetrieveQueryError = ErrorType<unknown>
+
+export const useMentorhelprequestshistoryRetrieve = <TError = ErrorType<unknown>>(
+  historyId: number, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof mentorhelprequestshistoryRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(historyId)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getMentorhelprequestshistoryRetrieveKey(historyId) : null);
+  const swrFn = () => mentorhelprequestshistoryRetrieve(historyId, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows mentor help requests historical records to be viewed.
  */
-export type mentorhelprequestshistoryUpdateResponse200 = {
-  data: MentorHelpRequestHistory
-  status: 200
-}
-    
-export type mentorhelprequestshistoryUpdateResponseComposite = mentorhelprequestshistoryUpdateResponse200;
-    
-export type mentorhelprequestshistoryUpdateResponse = mentorhelprequestshistoryUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestshistoryUpdateUrl = (historyId: number,) => {
-
-
-  
-
-  return `/backend/mentorhelprequestshistory/${historyId}/`
-}
-
-export const mentorhelprequestshistoryUpdate = async (historyId: number,
-    mentorHelpRequestHistoryRequest: MentorHelpRequestHistoryRequest, options?: RequestInit): Promise<mentorhelprequestshistoryUpdateResponse> => {
-  
-  const res = await fetch(getMentorhelprequestshistoryUpdateUrl(historyId),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      mentorHelpRequestHistoryRequest,)
+export const mentorhelprequestshistoryUpdate = (
+    historyId: number,
+    mentorHelpRequestHistoryRequest: BodyType<MentorHelpRequestHistoryRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<MentorHelpRequestHistory>(
+    {url: `/mentorhelprequestshistory/${historyId}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: mentorHelpRequestHistoryRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestshistoryUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestshistoryUpdateResponse
+
+export const getMentorhelprequestshistoryUpdateMutationFetcher = (historyId: number, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: MentorHelpRequestHistoryRequest }): Promise<MentorHelpRequestHistory> => {
+    return mentorhelprequestshistoryUpdate(historyId, arg, options);
+  }
 }
+export const getMentorhelprequestshistoryUpdateMutationKey = (historyId: number,) => [`/mentorhelprequestshistory/${historyId}/`] as const;
 
+export type MentorhelprequestshistoryUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestshistoryUpdate>>>
+export type MentorhelprequestshistoryUpdateMutationError = ErrorType<unknown>
 
+export const useMentorhelprequestshistoryUpdate = <TError = ErrorType<unknown>>(
+  historyId: number, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof mentorhelprequestshistoryUpdate>>, TError, Key, MentorHelpRequestHistoryRequest, Awaited<ReturnType<typeof mentorhelprequestshistoryUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getMentorhelprequestshistoryUpdateMutationKey(historyId);
+  const swrFn = getMentorhelprequestshistoryUpdateMutationFetcher(historyId, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows mentor help requests historical records to be viewed.
  */
-export type mentorhelprequestshistoryPartialUpdateResponse200 = {
-  data: MentorHelpRequestHistory
-  status: 200
-}
-    
-export type mentorhelprequestshistoryPartialUpdateResponseComposite = mentorhelprequestshistoryPartialUpdateResponse200;
-    
-export type mentorhelprequestshistoryPartialUpdateResponse = mentorhelprequestshistoryPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestshistoryPartialUpdateUrl = (historyId: number,) => {
-
-
-  
-
-  return `/backend/mentorhelprequestshistory/${historyId}/`
-}
-
-export const mentorhelprequestshistoryPartialUpdate = async (historyId: number,
-    patchedMentorHelpRequestHistoryRequest: PatchedMentorHelpRequestHistoryRequest, options?: RequestInit): Promise<mentorhelprequestshistoryPartialUpdateResponse> => {
-  
-  const res = await fetch(getMentorhelprequestshistoryPartialUpdateUrl(historyId),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedMentorHelpRequestHistoryRequest,)
+export const mentorhelprequestshistoryPartialUpdate = (
+    historyId: number,
+    patchedMentorHelpRequestHistoryRequest: BodyType<PatchedMentorHelpRequestHistoryRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<MentorHelpRequestHistory>(
+    {url: `/mentorhelprequestshistory/${historyId}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedMentorHelpRequestHistoryRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestshistoryPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestshistoryPartialUpdateResponse
+
+export const getMentorhelprequestshistoryPartialUpdateMutationFetcher = (historyId: number, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedMentorHelpRequestHistoryRequest }): Promise<MentorHelpRequestHistory> => {
+    return mentorhelprequestshistoryPartialUpdate(historyId, arg, options);
+  }
 }
+export const getMentorhelprequestshistoryPartialUpdateMutationKey = (historyId: number,) => [`/mentorhelprequestshistory/${historyId}/`] as const;
 
+export type MentorhelprequestshistoryPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestshistoryPartialUpdate>>>
+export type MentorhelprequestshistoryPartialUpdateMutationError = ErrorType<unknown>
 
+export const useMentorhelprequestshistoryPartialUpdate = <TError = ErrorType<unknown>>(
+  historyId: number, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof mentorhelprequestshistoryPartialUpdate>>, TError, Key, PatchedMentorHelpRequestHistoryRequest, Awaited<ReturnType<typeof mentorhelprequestshistoryPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getMentorhelprequestshistoryPartialUpdateMutationKey(historyId);
+  const swrFn = getMentorhelprequestshistoryPartialUpdateMutationFetcher(historyId, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows mentor help requests historical records to be viewed.
  */
-export type mentorhelprequestshistoryDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type mentorhelprequestshistoryDestroyResponseComposite = mentorhelprequestshistoryDestroyResponse204;
-    
-export type mentorhelprequestshistoryDestroyResponse = mentorhelprequestshistoryDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getMentorhelprequestshistoryDestroyUrl = (historyId: number,) => {
-
-
-  
-
-  return `/backend/mentorhelprequestshistory/${historyId}/`
-}
-
-export const mentorhelprequestshistoryDestroy = async (historyId: number, options?: RequestInit): Promise<mentorhelprequestshistoryDestroyResponse> => {
-  
-  const res = await fetch(getMentorhelprequestshistoryDestroyUrl(historyId),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const mentorhelprequestshistoryDestroy = (
+    historyId: number,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/mentorhelprequestshistory/${historyId}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: mentorhelprequestshistoryDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as mentorhelprequestshistoryDestroyResponse
+
+export const getMentorhelprequestshistoryDestroyMutationFetcher = (historyId: number, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return mentorhelprequestshistoryDestroy(historyId, options);
+  }
 }
+export const getMentorhelprequestshistoryDestroyMutationKey = (historyId: number,) => [`/mentorhelprequestshistory/${historyId}/`] as const;
 
+export type MentorhelprequestshistoryDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof mentorhelprequestshistoryDestroy>>>
+export type MentorhelprequestshistoryDestroyMutationError = ErrorType<unknown>
 
+export const useMentorhelprequestshistoryDestroy = <TError = ErrorType<unknown>>(
+  historyId: number, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof mentorhelprequestshistoryDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof mentorhelprequestshistoryDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getMentorhelprequestshistoryDestroyMutationKey(historyId);
+  const swrFn = getMentorhelprequestshistoryDestroyMutationFetcher(historyId, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows projects to be viewed or edited.
  */
-export type projectsListResponse200 = {
-  data: Project[]
-  status: 200
-}
-    
-export type projectsListResponseComposite = projectsListResponse200;
-    
-export type projectsListResponse = projectsListResponseComposite & {
-  headers: Headers;
-}
-
-export const getProjectsListUrl = (params?: ProjectsListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/projects/?${stringifiedParams}` : `/backend/projects/`
-}
-
-export const projectsList = async (params?: ProjectsListParams, options?: RequestInit): Promise<projectsListResponse> => {
-  
-  const res = await fetch(getProjectsListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const projectsList = (
+    params?: ProjectsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Project[]>(
+    {url: `/projects/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: projectsListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as projectsListResponse
+
+export const getProjectsListKey = (params?: ProjectsListParams,) => [`/projects/`, ...(params ? [params]: [])] as const;
+
+export type ProjectsListQueryResult = NonNullable<Awaited<ReturnType<typeof projectsList>>>
+export type ProjectsListQueryError = ErrorType<unknown>
+
+export const useProjectsList = <TError = ErrorType<unknown>>(
+  params?: ProjectsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof projectsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getProjectsListKey(params) : null);
+  const swrFn = () => projectsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows projects to be viewed or edited.
  */
-export type projectsCreateResponse201 = {
-  data: Project
-  status: 201
-}
-    
-export type projectsCreateResponseComposite = projectsCreateResponse201;
-    
-export type projectsCreateResponse = projectsCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getProjectsCreateUrl = () => {
-
-
-  
-
-  return `/backend/projects/`
-}
-
-export const projectsCreate = async (projectRequest: ProjectRequest, options?: RequestInit): Promise<projectsCreateResponse> => {
-  
-  const res = await fetch(getProjectsCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      projectRequest,)
+export const projectsCreate = (
+    projectRequest: BodyType<ProjectRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Project>(
+    {url: `/projects/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: projectRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: projectsCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as projectsCreateResponse
+
+export const getProjectsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: ProjectRequest }): Promise<Project> => {
+    return projectsCreate(arg, options);
+  }
 }
+export const getProjectsCreateMutationKey = () => [`/projects/`] as const;
 
+export type ProjectsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof projectsCreate>>>
+export type ProjectsCreateMutationError = ErrorType<unknown>
 
+export const useProjectsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof projectsCreate>>, TError, Key, ProjectRequest, Awaited<ReturnType<typeof projectsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getProjectsCreateMutationKey();
+  const swrFn = getProjectsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows projects to be viewed or edited.
  */
-export type projectsRetrieveResponse200 = {
-  data: Project
-  status: 200
-}
-    
-export type projectsRetrieveResponseComposite = projectsRetrieveResponse200;
-    
-export type projectsRetrieveResponse = projectsRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getProjectsRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/projects/${id}/`
-}
-
-export const projectsRetrieve = async (id: string, options?: RequestInit): Promise<projectsRetrieveResponse> => {
-  
-  const res = await fetch(getProjectsRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const projectsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Project>(
+    {url: `/projects/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: projectsRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as projectsRetrieveResponse
+
+export const getProjectsRetrieveKey = (id: string,) => [`/projects/${id}/`] as const;
+
+export type ProjectsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof projectsRetrieve>>>
+export type ProjectsRetrieveQueryError = ErrorType<unknown>
+
+export const useProjectsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof projectsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getProjectsRetrieveKey(id) : null);
+  const swrFn = () => projectsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows projects to be viewed or edited.
  */
-export type projectsUpdateResponse200 = {
-  data: Project
-  status: 200
-}
-    
-export type projectsUpdateResponseComposite = projectsUpdateResponse200;
-    
-export type projectsUpdateResponse = projectsUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getProjectsUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/projects/${id}/`
-}
-
-export const projectsUpdate = async (id: string,
-    projectRequest: ProjectRequest, options?: RequestInit): Promise<projectsUpdateResponse> => {
-  
-  const res = await fetch(getProjectsUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      projectRequest,)
+export const projectsUpdate = (
+    id: string,
+    projectRequest: BodyType<ProjectRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Project>(
+    {url: `/projects/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: projectRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: projectsUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as projectsUpdateResponse
+
+export const getProjectsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: ProjectRequest }): Promise<Project> => {
+    return projectsUpdate(id, arg, options);
+  }
 }
+export const getProjectsUpdateMutationKey = (id: string,) => [`/projects/${id}/`] as const;
 
+export type ProjectsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof projectsUpdate>>>
+export type ProjectsUpdateMutationError = ErrorType<unknown>
 
+export const useProjectsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof projectsUpdate>>, TError, Key, ProjectRequest, Awaited<ReturnType<typeof projectsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getProjectsUpdateMutationKey(id);
+  const swrFn = getProjectsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows projects to be viewed or edited.
  */
-export type projectsPartialUpdateResponse200 = {
-  data: Project
-  status: 200
-}
-    
-export type projectsPartialUpdateResponseComposite = projectsPartialUpdateResponse200;
-    
-export type projectsPartialUpdateResponse = projectsPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getProjectsPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/projects/${id}/`
-}
-
-export const projectsPartialUpdate = async (id: string,
-    patchedProjectRequest: PatchedProjectRequest, options?: RequestInit): Promise<projectsPartialUpdateResponse> => {
-  
-  const res = await fetch(getProjectsPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedProjectRequest,)
+export const projectsPartialUpdate = (
+    id: string,
+    patchedProjectRequest: BodyType<PatchedProjectRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Project>(
+    {url: `/projects/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedProjectRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: projectsPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as projectsPartialUpdateResponse
+
+export const getProjectsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedProjectRequest }): Promise<Project> => {
+    return projectsPartialUpdate(id, arg, options);
+  }
 }
+export const getProjectsPartialUpdateMutationKey = (id: string,) => [`/projects/${id}/`] as const;
 
+export type ProjectsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof projectsPartialUpdate>>>
+export type ProjectsPartialUpdateMutationError = ErrorType<unknown>
 
+export const useProjectsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof projectsPartialUpdate>>, TError, Key, PatchedProjectRequest, Awaited<ReturnType<typeof projectsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getProjectsPartialUpdateMutationKey(id);
+  const swrFn = getProjectsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows projects to be viewed or edited.
  */
-export type projectsDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type projectsDestroyResponseComposite = projectsDestroyResponse204;
-    
-export type projectsDestroyResponse = projectsDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getProjectsDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/projects/${id}/`
-}
-
-export const projectsDestroy = async (id: string, options?: RequestInit): Promise<projectsDestroyResponse> => {
-  
-  const res = await fetch(getProjectsDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const projectsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/projects/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: projectsDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as projectsDestroyResponse
+
+export const getProjectsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return projectsDestroy(id, options);
+  }
 }
+export const getProjectsDestroyMutationKey = (id: string,) => [`/projects/${id}/`] as const;
 
+export type ProjectsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof projectsDestroy>>>
+export type ProjectsDestroyMutationError = ErrorType<unknown>
 
+export const useProjectsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof projectsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof projectsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getProjectsDestroyMutationKey(id);
+  const swrFn = getProjectsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type rsvpsListResponse200 = {
-  data: AttendeeRSVP[]
-  status: 200
-}
-    
-export type rsvpsListResponseComposite = rsvpsListResponse200;
-    
-export type rsvpsListResponse = rsvpsListResponseComposite & {
-  headers: Headers;
-}
-
-export const getRsvpsListUrl = (params?: RsvpsListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/rsvps/?${stringifiedParams}` : `/backend/rsvps/`
-}
-
-export const rsvpsList = async (params?: RsvpsListParams, options?: RequestInit): Promise<rsvpsListResponse> => {
-  
-  const res = await fetch(getRsvpsListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const rsvpsList = (
+    params?: RsvpsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeeRSVP[]>(
+    {url: `/rsvps/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: rsvpsListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as rsvpsListResponse
+
+export const getRsvpsListKey = (params?: RsvpsListParams,) => [`/rsvps/`, ...(params ? [params]: [])] as const;
+
+export type RsvpsListQueryResult = NonNullable<Awaited<ReturnType<typeof rsvpsList>>>
+export type RsvpsListQueryError = ErrorType<unknown>
+
+export const useRsvpsList = <TError = ErrorType<unknown>>(
+  params?: RsvpsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof rsvpsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getRsvpsListKey(params) : null);
+  const swrFn = () => rsvpsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type rsvpsCreateResponse201 = {
-  data: AttendeeRSVPCreate
-  status: 201
-}
-    
-export type rsvpsCreateResponseComposite = rsvpsCreateResponse201;
-    
-export type rsvpsCreateResponse = rsvpsCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getRsvpsCreateUrl = () => {
-
-
-  
-
-  return `/backend/rsvps/`
-}
-
-export const rsvpsCreate = async (attendeeRSVPCreateRequest: AttendeeRSVPCreateRequest, options?: RequestInit): Promise<rsvpsCreateResponse> => {
-  
-  const res = await fetch(getRsvpsCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      attendeeRSVPCreateRequest,)
+export const rsvpsCreate = (
+    attendeeRSVPCreateRequest: BodyType<AttendeeRSVPCreateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeeRSVPCreate>(
+    {url: `/rsvps/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: attendeeRSVPCreateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: rsvpsCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as rsvpsCreateResponse
+
+export const getRsvpsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: AttendeeRSVPCreateRequest }): Promise<AttendeeRSVPCreate> => {
+    return rsvpsCreate(arg, options);
+  }
 }
+export const getRsvpsCreateMutationKey = () => [`/rsvps/`] as const;
 
+export type RsvpsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof rsvpsCreate>>>
+export type RsvpsCreateMutationError = ErrorType<unknown>
 
+export const useRsvpsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof rsvpsCreate>>, TError, Key, AttendeeRSVPCreateRequest, Awaited<ReturnType<typeof rsvpsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getRsvpsCreateMutationKey();
+  const swrFn = getRsvpsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type rsvpsRetrieveResponse200 = {
-  data: AttendeeRSVP
-  status: 200
-}
-    
-export type rsvpsRetrieveResponseComposite = rsvpsRetrieveResponse200;
-    
-export type rsvpsRetrieveResponse = rsvpsRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getRsvpsRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/rsvps/${id}/`
-}
-
-export const rsvpsRetrieve = async (id: string, options?: RequestInit): Promise<rsvpsRetrieveResponse> => {
-  
-  const res = await fetch(getRsvpsRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const rsvpsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeeRSVP>(
+    {url: `/rsvps/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: rsvpsRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as rsvpsRetrieveResponse
+
+export const getRsvpsRetrieveKey = (id: string,) => [`/rsvps/${id}/`] as const;
+
+export type RsvpsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof rsvpsRetrieve>>>
+export type RsvpsRetrieveQueryError = ErrorType<unknown>
+
+export const useRsvpsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof rsvpsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getRsvpsRetrieveKey(id) : null);
+  const swrFn = () => rsvpsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type rsvpsUpdateResponse200 = {
-  data: AttendeeRSVP
-  status: 200
-}
-    
-export type rsvpsUpdateResponseComposite = rsvpsUpdateResponse200;
-    
-export type rsvpsUpdateResponse = rsvpsUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getRsvpsUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/rsvps/${id}/`
-}
-
-export const rsvpsUpdate = async (id: string,
-    attendeeRSVPRequest: AttendeeRSVPRequest, options?: RequestInit): Promise<rsvpsUpdateResponse> => {
-  
-  const res = await fetch(getRsvpsUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      attendeeRSVPRequest,)
+export const rsvpsUpdate = (
+    id: string,
+    attendeeRSVPRequest: BodyType<AttendeeRSVPRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeeRSVP>(
+    {url: `/rsvps/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: attendeeRSVPRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: rsvpsUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as rsvpsUpdateResponse
+
+export const getRsvpsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: AttendeeRSVPRequest }): Promise<AttendeeRSVP> => {
+    return rsvpsUpdate(id, arg, options);
+  }
 }
+export const getRsvpsUpdateMutationKey = (id: string,) => [`/rsvps/${id}/`] as const;
 
+export type RsvpsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof rsvpsUpdate>>>
+export type RsvpsUpdateMutationError = ErrorType<unknown>
 
+export const useRsvpsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof rsvpsUpdate>>, TError, Key, AttendeeRSVPRequest, Awaited<ReturnType<typeof rsvpsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getRsvpsUpdateMutationKey(id);
+  const swrFn = getRsvpsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type rsvpsPartialUpdateResponse200 = {
-  data: AttendeeRSVP
-  status: 200
-}
-    
-export type rsvpsPartialUpdateResponseComposite = rsvpsPartialUpdateResponse200;
-    
-export type rsvpsPartialUpdateResponse = rsvpsPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getRsvpsPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/rsvps/${id}/`
-}
-
-export const rsvpsPartialUpdate = async (id: string,
-    patchedAttendeeRSVPRequest: PatchedAttendeeRSVPRequest, options?: RequestInit): Promise<rsvpsPartialUpdateResponse> => {
-  
-  const res = await fetch(getRsvpsPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedAttendeeRSVPRequest,)
+export const rsvpsPartialUpdate = (
+    id: string,
+    patchedAttendeeRSVPRequest: BodyType<PatchedAttendeeRSVPRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<AttendeeRSVP>(
+    {url: `/rsvps/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedAttendeeRSVPRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: rsvpsPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as rsvpsPartialUpdateResponse
+
+export const getRsvpsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedAttendeeRSVPRequest }): Promise<AttendeeRSVP> => {
+    return rsvpsPartialUpdate(id, arg, options);
+  }
 }
+export const getRsvpsPartialUpdateMutationKey = (id: string,) => [`/rsvps/${id}/`] as const;
 
+export type RsvpsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof rsvpsPartialUpdate>>>
+export type RsvpsPartialUpdateMutationError = ErrorType<unknown>
 
+export const useRsvpsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof rsvpsPartialUpdate>>, TError, Key, PatchedAttendeeRSVPRequest, Awaited<ReturnType<typeof rsvpsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getRsvpsPartialUpdateMutationKey(id);
+  const swrFn = getRsvpsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows users to be viewed or edited.
  */
-export type rsvpsDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type rsvpsDestroyResponseComposite = rsvpsDestroyResponse204;
-    
-export type rsvpsDestroyResponse = rsvpsDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getRsvpsDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/rsvps/${id}/`
-}
-
-export const rsvpsDestroy = async (id: string, options?: RequestInit): Promise<rsvpsDestroyResponse> => {
-  
-  const res = await fetch(getRsvpsDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const rsvpsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/rsvps/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: rsvpsDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as rsvpsDestroyResponse
+
+export const getRsvpsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return rsvpsDestroy(id, options);
+  }
 }
+export const getRsvpsDestroyMutationKey = (id: string,) => [`/rsvps/${id}/`] as const;
 
+export type RsvpsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof rsvpsDestroy>>>
+export type RsvpsDestroyMutationError = ErrorType<unknown>
 
+export const useRsvpsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof rsvpsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof rsvpsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getRsvpsDestroyMutationKey(id);
+  const swrFn = getRsvpsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows skill proficiencies to be viewed or edited.
  */
-export type skillproficienciesListResponse200 = {
-  data: SkillProficiency[]
-  status: 200
-}
-    
-export type skillproficienciesListResponseComposite = skillproficienciesListResponse200;
-    
-export type skillproficienciesListResponse = skillproficienciesListResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillproficienciesListUrl = (params?: SkillproficienciesListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/skillproficiencies/?${stringifiedParams}` : `/backend/skillproficiencies/`
-}
-
-export const skillproficienciesList = async (params?: SkillproficienciesListParams, options?: RequestInit): Promise<skillproficienciesListResponse> => {
-  
-  const res = await fetch(getSkillproficienciesListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const skillproficienciesList = (
+    params?: SkillproficienciesListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<SkillProficiency[]>(
+    {url: `/skillproficiencies/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillproficienciesListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillproficienciesListResponse
+
+export const getSkillproficienciesListKey = (params?: SkillproficienciesListParams,) => [`/skillproficiencies/`, ...(params ? [params]: [])] as const;
+
+export type SkillproficienciesListQueryResult = NonNullable<Awaited<ReturnType<typeof skillproficienciesList>>>
+export type SkillproficienciesListQueryError = ErrorType<unknown>
+
+export const useSkillproficienciesList = <TError = ErrorType<unknown>>(
+  params?: SkillproficienciesListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof skillproficienciesList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getSkillproficienciesListKey(params) : null);
+  const swrFn = () => skillproficienciesList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows skill proficiencies to be viewed or edited.
  */
-export type skillproficienciesCreateResponse201 = {
-  data: SkillProficiencyCreate
-  status: 201
-}
-    
-export type skillproficienciesCreateResponseComposite = skillproficienciesCreateResponse201;
-    
-export type skillproficienciesCreateResponse = skillproficienciesCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillproficienciesCreateUrl = () => {
-
-
-  
-
-  return `/backend/skillproficiencies/`
-}
-
-export const skillproficienciesCreate = async (skillProficiencyCreateRequest: SkillProficiencyCreateRequest, options?: RequestInit): Promise<skillproficienciesCreateResponse> => {
-  
-  const res = await fetch(getSkillproficienciesCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      skillProficiencyCreateRequest,)
+export const skillproficienciesCreate = (
+    skillProficiencyCreateRequest: BodyType<SkillProficiencyCreateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<SkillProficiencyCreate>(
+    {url: `/skillproficiencies/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: skillProficiencyCreateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillproficienciesCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillproficienciesCreateResponse
+
+export const getSkillproficienciesCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: SkillProficiencyCreateRequest }): Promise<SkillProficiencyCreate> => {
+    return skillproficienciesCreate(arg, options);
+  }
 }
+export const getSkillproficienciesCreateMutationKey = () => [`/skillproficiencies/`] as const;
 
+export type SkillproficienciesCreateMutationResult = NonNullable<Awaited<ReturnType<typeof skillproficienciesCreate>>>
+export type SkillproficienciesCreateMutationError = ErrorType<unknown>
 
+export const useSkillproficienciesCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof skillproficienciesCreate>>, TError, Key, SkillProficiencyCreateRequest, Awaited<ReturnType<typeof skillproficienciesCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSkillproficienciesCreateMutationKey();
+  const swrFn = getSkillproficienciesCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows skill proficiencies to be viewed or edited.
  */
-export type skillproficienciesRetrieveResponse200 = {
-  data: SkillProficiencyDetail
-  status: 200
-}
-    
-export type skillproficienciesRetrieveResponseComposite = skillproficienciesRetrieveResponse200;
-    
-export type skillproficienciesRetrieveResponse = skillproficienciesRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillproficienciesRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/skillproficiencies/${id}/`
-}
-
-export const skillproficienciesRetrieve = async (id: string, options?: RequestInit): Promise<skillproficienciesRetrieveResponse> => {
-  
-  const res = await fetch(getSkillproficienciesRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const skillproficienciesRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<SkillProficiencyDetail>(
+    {url: `/skillproficiencies/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillproficienciesRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillproficienciesRetrieveResponse
+
+export const getSkillproficienciesRetrieveKey = (id: string,) => [`/skillproficiencies/${id}/`] as const;
+
+export type SkillproficienciesRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof skillproficienciesRetrieve>>>
+export type SkillproficienciesRetrieveQueryError = ErrorType<unknown>
+
+export const useSkillproficienciesRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof skillproficienciesRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getSkillproficienciesRetrieveKey(id) : null);
+  const swrFn = () => skillproficienciesRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows skill proficiencies to be viewed or edited.
  */
-export type skillproficienciesUpdateResponse200 = {
-  data: SkillProficiency
-  status: 200
-}
-    
-export type skillproficienciesUpdateResponseComposite = skillproficienciesUpdateResponse200;
-    
-export type skillproficienciesUpdateResponse = skillproficienciesUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillproficienciesUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/skillproficiencies/${id}/`
-}
-
-export const skillproficienciesUpdate = async (id: string,
-    skillProficiencyRequest: SkillProficiencyRequest, options?: RequestInit): Promise<skillproficienciesUpdateResponse> => {
-  
-  const res = await fetch(getSkillproficienciesUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      skillProficiencyRequest,)
+export const skillproficienciesUpdate = (
+    id: string,
+    skillProficiencyRequest: BodyType<SkillProficiencyRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<SkillProficiency>(
+    {url: `/skillproficiencies/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: skillProficiencyRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillproficienciesUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillproficienciesUpdateResponse
+
+export const getSkillproficienciesUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: SkillProficiencyRequest }): Promise<SkillProficiency> => {
+    return skillproficienciesUpdate(id, arg, options);
+  }
 }
+export const getSkillproficienciesUpdateMutationKey = (id: string,) => [`/skillproficiencies/${id}/`] as const;
 
+export type SkillproficienciesUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof skillproficienciesUpdate>>>
+export type SkillproficienciesUpdateMutationError = ErrorType<unknown>
 
+export const useSkillproficienciesUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof skillproficienciesUpdate>>, TError, Key, SkillProficiencyRequest, Awaited<ReturnType<typeof skillproficienciesUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSkillproficienciesUpdateMutationKey(id);
+  const swrFn = getSkillproficienciesUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows skill proficiencies to be viewed or edited.
  */
-export type skillproficienciesPartialUpdateResponse200 = {
-  data: SkillProficiencyCreate
-  status: 200
-}
-    
-export type skillproficienciesPartialUpdateResponseComposite = skillproficienciesPartialUpdateResponse200;
-    
-export type skillproficienciesPartialUpdateResponse = skillproficienciesPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillproficienciesPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/skillproficiencies/${id}/`
-}
-
-export const skillproficienciesPartialUpdate = async (id: string,
-    patchedSkillProficiencyCreateRequest: PatchedSkillProficiencyCreateRequest, options?: RequestInit): Promise<skillproficienciesPartialUpdateResponse> => {
-  
-  const res = await fetch(getSkillproficienciesPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedSkillProficiencyCreateRequest,)
+export const skillproficienciesPartialUpdate = (
+    id: string,
+    patchedSkillProficiencyCreateRequest: BodyType<PatchedSkillProficiencyCreateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<SkillProficiencyCreate>(
+    {url: `/skillproficiencies/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedSkillProficiencyCreateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillproficienciesPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillproficienciesPartialUpdateResponse
+
+export const getSkillproficienciesPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedSkillProficiencyCreateRequest }): Promise<SkillProficiencyCreate> => {
+    return skillproficienciesPartialUpdate(id, arg, options);
+  }
 }
+export const getSkillproficienciesPartialUpdateMutationKey = (id: string,) => [`/skillproficiencies/${id}/`] as const;
 
+export type SkillproficienciesPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof skillproficienciesPartialUpdate>>>
+export type SkillproficienciesPartialUpdateMutationError = ErrorType<unknown>
 
+export const useSkillproficienciesPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof skillproficienciesPartialUpdate>>, TError, Key, PatchedSkillProficiencyCreateRequest, Awaited<ReturnType<typeof skillproficienciesPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSkillproficienciesPartialUpdateMutationKey(id);
+  const swrFn = getSkillproficienciesPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows skill proficiencies to be viewed or edited.
  */
-export type skillproficienciesDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type skillproficienciesDestroyResponseComposite = skillproficienciesDestroyResponse204;
-    
-export type skillproficienciesDestroyResponse = skillproficienciesDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillproficienciesDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/skillproficiencies/${id}/`
-}
-
-export const skillproficienciesDestroy = async (id: string, options?: RequestInit): Promise<skillproficienciesDestroyResponse> => {
-  
-  const res = await fetch(getSkillproficienciesDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const skillproficienciesDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/skillproficiencies/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillproficienciesDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillproficienciesDestroyResponse
+
+export const getSkillproficienciesDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return skillproficienciesDestroy(id, options);
+  }
 }
+export const getSkillproficienciesDestroyMutationKey = (id: string,) => [`/skillproficiencies/${id}/`] as const;
 
+export type SkillproficienciesDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof skillproficienciesDestroy>>>
+export type SkillproficienciesDestroyMutationError = ErrorType<unknown>
 
+export const useSkillproficienciesDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof skillproficienciesDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof skillproficienciesDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSkillproficienciesDestroyMutationKey(id);
+  const swrFn = getSkillproficienciesDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows skills to be viewed or edited.
  */
-export type skillsListResponse200 = {
-  data: Skill[]
-  status: 200
-}
-    
-export type skillsListResponseComposite = skillsListResponse200;
-    
-export type skillsListResponse = skillsListResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillsListUrl = (params?: SkillsListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/skills/?${stringifiedParams}` : `/backend/skills/`
-}
-
-export const skillsList = async (params?: SkillsListParams, options?: RequestInit): Promise<skillsListResponse> => {
-  
-  const res = await fetch(getSkillsListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const skillsList = (
+    params?: SkillsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Skill[]>(
+    {url: `/skills/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillsListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillsListResponse
+
+export const getSkillsListKey = (params?: SkillsListParams,) => [`/skills/`, ...(params ? [params]: [])] as const;
+
+export type SkillsListQueryResult = NonNullable<Awaited<ReturnType<typeof skillsList>>>
+export type SkillsListQueryError = ErrorType<unknown>
+
+export const useSkillsList = <TError = ErrorType<unknown>>(
+  params?: SkillsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof skillsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getSkillsListKey(params) : null);
+  const swrFn = () => skillsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows skills to be viewed or edited.
  */
-export type skillsCreateResponse201 = {
-  data: Skill
-  status: 201
-}
-    
-export type skillsCreateResponseComposite = skillsCreateResponse201;
-    
-export type skillsCreateResponse = skillsCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillsCreateUrl = () => {
-
-
-  
-
-  return `/backend/skills/`
-}
-
-export const skillsCreate = async (skillRequest: SkillRequest, options?: RequestInit): Promise<skillsCreateResponse> => {
-  
-  const res = await fetch(getSkillsCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      skillRequest,)
+export const skillsCreate = (
+    skillRequest: BodyType<SkillRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Skill>(
+    {url: `/skills/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: skillRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillsCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillsCreateResponse
+
+export const getSkillsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: SkillRequest }): Promise<Skill> => {
+    return skillsCreate(arg, options);
+  }
 }
+export const getSkillsCreateMutationKey = () => [`/skills/`] as const;
 
+export type SkillsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof skillsCreate>>>
+export type SkillsCreateMutationError = ErrorType<unknown>
 
+export const useSkillsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof skillsCreate>>, TError, Key, SkillRequest, Awaited<ReturnType<typeof skillsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSkillsCreateMutationKey();
+  const swrFn = getSkillsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows skills to be viewed or edited.
  */
-export type skillsRetrieveResponse200 = {
-  data: Skill
-  status: 200
-}
-    
-export type skillsRetrieveResponseComposite = skillsRetrieveResponse200;
-    
-export type skillsRetrieveResponse = skillsRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillsRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/skills/${id}/`
-}
-
-export const skillsRetrieve = async (id: string, options?: RequestInit): Promise<skillsRetrieveResponse> => {
-  
-  const res = await fetch(getSkillsRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const skillsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Skill>(
+    {url: `/skills/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillsRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillsRetrieveResponse
+
+export const getSkillsRetrieveKey = (id: string,) => [`/skills/${id}/`] as const;
+
+export type SkillsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof skillsRetrieve>>>
+export type SkillsRetrieveQueryError = ErrorType<unknown>
+
+export const useSkillsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof skillsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getSkillsRetrieveKey(id) : null);
+  const swrFn = () => skillsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows skills to be viewed or edited.
  */
-export type skillsUpdateResponse200 = {
-  data: Skill
-  status: 200
-}
-    
-export type skillsUpdateResponseComposite = skillsUpdateResponse200;
-    
-export type skillsUpdateResponse = skillsUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillsUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/skills/${id}/`
-}
-
-export const skillsUpdate = async (id: string,
-    skillRequest: SkillRequest, options?: RequestInit): Promise<skillsUpdateResponse> => {
-  
-  const res = await fetch(getSkillsUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      skillRequest,)
+export const skillsUpdate = (
+    id: string,
+    skillRequest: BodyType<SkillRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Skill>(
+    {url: `/skills/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: skillRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillsUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillsUpdateResponse
+
+export const getSkillsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: SkillRequest }): Promise<Skill> => {
+    return skillsUpdate(id, arg, options);
+  }
 }
+export const getSkillsUpdateMutationKey = (id: string,) => [`/skills/${id}/`] as const;
 
+export type SkillsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof skillsUpdate>>>
+export type SkillsUpdateMutationError = ErrorType<unknown>
 
+export const useSkillsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof skillsUpdate>>, TError, Key, SkillRequest, Awaited<ReturnType<typeof skillsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSkillsUpdateMutationKey(id);
+  const swrFn = getSkillsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows skills to be viewed or edited.
  */
-export type skillsPartialUpdateResponse200 = {
-  data: Skill
-  status: 200
-}
-    
-export type skillsPartialUpdateResponseComposite = skillsPartialUpdateResponse200;
-    
-export type skillsPartialUpdateResponse = skillsPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillsPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/skills/${id}/`
-}
-
-export const skillsPartialUpdate = async (id: string,
-    patchedSkillRequest: PatchedSkillRequest, options?: RequestInit): Promise<skillsPartialUpdateResponse> => {
-  
-  const res = await fetch(getSkillsPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedSkillRequest,)
+export const skillsPartialUpdate = (
+    id: string,
+    patchedSkillRequest: BodyType<PatchedSkillRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Skill>(
+    {url: `/skills/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedSkillRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillsPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillsPartialUpdateResponse
+
+export const getSkillsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedSkillRequest }): Promise<Skill> => {
+    return skillsPartialUpdate(id, arg, options);
+  }
 }
+export const getSkillsPartialUpdateMutationKey = (id: string,) => [`/skills/${id}/`] as const;
 
+export type SkillsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof skillsPartialUpdate>>>
+export type SkillsPartialUpdateMutationError = ErrorType<unknown>
 
+export const useSkillsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof skillsPartialUpdate>>, TError, Key, PatchedSkillRequest, Awaited<ReturnType<typeof skillsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSkillsPartialUpdateMutationKey(id);
+  const swrFn = getSkillsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows skills to be viewed or edited.
  */
-export type skillsDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type skillsDestroyResponseComposite = skillsDestroyResponse204;
-    
-export type skillsDestroyResponse = skillsDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getSkillsDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/skills/${id}/`
-}
-
-export const skillsDestroy = async (id: string, options?: RequestInit): Promise<skillsDestroyResponse> => {
-  
-  const res = await fetch(getSkillsDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const skillsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/skills/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: skillsDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as skillsDestroyResponse
+
+export const getSkillsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return skillsDestroy(id, options);
+  }
 }
+export const getSkillsDestroyMutationKey = (id: string,) => [`/skills/${id}/`] as const;
 
+export type SkillsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof skillsDestroy>>>
+export type SkillsDestroyMutationError = ErrorType<unknown>
 
+export const useSkillsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof skillsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof skillsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSkillsDestroyMutationKey(id);
+  const swrFn = getSkillsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows tables to be viewed or edited.
  */
-export type tablesListResponse200 = {
-  data: Table[]
-  status: 200
-}
-    
-export type tablesListResponseComposite = tablesListResponse200;
-    
-export type tablesListResponse = tablesListResponseComposite & {
-  headers: Headers;
-}
-
-export const getTablesListUrl = (params?: TablesListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/tables/?${stringifiedParams}` : `/backend/tables/`
-}
-
-export const tablesList = async (params?: TablesListParams, options?: RequestInit): Promise<tablesListResponse> => {
-  
-  const res = await fetch(getTablesListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const tablesList = (
+    params?: TablesListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Table[]>(
+    {url: `/tables/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: tablesListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as tablesListResponse
+
+export const getTablesListKey = (params?: TablesListParams,) => [`/tables/`, ...(params ? [params]: [])] as const;
+
+export type TablesListQueryResult = NonNullable<Awaited<ReturnType<typeof tablesList>>>
+export type TablesListQueryError = ErrorType<unknown>
+
+export const useTablesList = <TError = ErrorType<unknown>>(
+  params?: TablesListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof tablesList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getTablesListKey(params) : null);
+  const swrFn = () => tablesList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows tables to be viewed or edited.
  */
-export type tablesCreateResponse201 = {
-  data: TableCreate
-  status: 201
-}
-    
-export type tablesCreateResponseComposite = tablesCreateResponse201;
-    
-export type tablesCreateResponse = tablesCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getTablesCreateUrl = () => {
-
-
-  
-
-  return `/backend/tables/`
-}
-
-export const tablesCreate = async (tableCreateRequest: TableCreateRequest, options?: RequestInit): Promise<tablesCreateResponse> => {
-  
-  const res = await fetch(getTablesCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      tableCreateRequest,)
+export const tablesCreate = (
+    tableCreateRequest: BodyType<TableCreateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<TableCreate>(
+    {url: `/tables/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: tableCreateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: tablesCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as tablesCreateResponse
+
+export const getTablesCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: TableCreateRequest }): Promise<TableCreate> => {
+    return tablesCreate(arg, options);
+  }
 }
+export const getTablesCreateMutationKey = () => [`/tables/`] as const;
 
+export type TablesCreateMutationResult = NonNullable<Awaited<ReturnType<typeof tablesCreate>>>
+export type TablesCreateMutationError = ErrorType<unknown>
 
+export const useTablesCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof tablesCreate>>, TError, Key, TableCreateRequest, Awaited<ReturnType<typeof tablesCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getTablesCreateMutationKey();
+  const swrFn = getTablesCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows tables to be viewed or edited.
  */
-export type tablesRetrieveResponse200 = {
-  data: Table
-  status: 200
-}
-    
-export type tablesRetrieveResponseComposite = tablesRetrieveResponse200;
-    
-export type tablesRetrieveResponse = tablesRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getTablesRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/tables/${id}/`
-}
-
-export const tablesRetrieve = async (id: string, options?: RequestInit): Promise<tablesRetrieveResponse> => {
-  
-  const res = await fetch(getTablesRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const tablesRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Table>(
+    {url: `/tables/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: tablesRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as tablesRetrieveResponse
+
+export const getTablesRetrieveKey = (id: string,) => [`/tables/${id}/`] as const;
+
+export type TablesRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof tablesRetrieve>>>
+export type TablesRetrieveQueryError = ErrorType<unknown>
+
+export const useTablesRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof tablesRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getTablesRetrieveKey(id) : null);
+  const swrFn = () => tablesRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows tables to be viewed or edited.
  */
-export type tablesUpdateResponse200 = {
-  data: Table
-  status: 200
-}
-    
-export type tablesUpdateResponseComposite = tablesUpdateResponse200;
-    
-export type tablesUpdateResponse = tablesUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getTablesUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/tables/${id}/`
-}
-
-export const tablesUpdate = async (id: string,
-    tableRequest: TableRequest, options?: RequestInit): Promise<tablesUpdateResponse> => {
-  
-  const res = await fetch(getTablesUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      tableRequest,)
+export const tablesUpdate = (
+    id: string,
+    tableRequest: BodyType<TableRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Table>(
+    {url: `/tables/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: tableRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: tablesUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as tablesUpdateResponse
+
+export const getTablesUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: TableRequest }): Promise<Table> => {
+    return tablesUpdate(id, arg, options);
+  }
 }
+export const getTablesUpdateMutationKey = (id: string,) => [`/tables/${id}/`] as const;
 
+export type TablesUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof tablesUpdate>>>
+export type TablesUpdateMutationError = ErrorType<unknown>
 
+export const useTablesUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof tablesUpdate>>, TError, Key, TableRequest, Awaited<ReturnType<typeof tablesUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getTablesUpdateMutationKey(id);
+  const swrFn = getTablesUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows tables to be viewed or edited.
  */
-export type tablesPartialUpdateResponse200 = {
-  data: Table
-  status: 200
-}
-    
-export type tablesPartialUpdateResponseComposite = tablesPartialUpdateResponse200;
-    
-export type tablesPartialUpdateResponse = tablesPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getTablesPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/tables/${id}/`
-}
-
-export const tablesPartialUpdate = async (id: string,
-    patchedTableRequest: PatchedTableRequest, options?: RequestInit): Promise<tablesPartialUpdateResponse> => {
-  
-  const res = await fetch(getTablesPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedTableRequest,)
+export const tablesPartialUpdate = (
+    id: string,
+    patchedTableRequest: BodyType<PatchedTableRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Table>(
+    {url: `/tables/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedTableRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: tablesPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as tablesPartialUpdateResponse
+
+export const getTablesPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedTableRequest }): Promise<Table> => {
+    return tablesPartialUpdate(id, arg, options);
+  }
 }
+export const getTablesPartialUpdateMutationKey = (id: string,) => [`/tables/${id}/`] as const;
 
+export type TablesPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof tablesPartialUpdate>>>
+export type TablesPartialUpdateMutationError = ErrorType<unknown>
 
+export const useTablesPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof tablesPartialUpdate>>, TError, Key, PatchedTableRequest, Awaited<ReturnType<typeof tablesPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getTablesPartialUpdateMutationKey(id);
+  const swrFn = getTablesPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows tables to be viewed or edited.
  */
-export type tablesDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type tablesDestroyResponseComposite = tablesDestroyResponse204;
-    
-export type tablesDestroyResponse = tablesDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getTablesDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/tables/${id}/`
-}
-
-export const tablesDestroy = async (id: string, options?: RequestInit): Promise<tablesDestroyResponse> => {
-  
-  const res = await fetch(getTablesDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const tablesDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/tables/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: tablesDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as tablesDestroyResponse
+
+export const getTablesDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return tablesDestroy(id, options);
+  }
 }
+export const getTablesDestroyMutationKey = (id: string,) => [`/tables/${id}/`] as const;
 
+export type TablesDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof tablesDestroy>>>
+export type TablesDestroyMutationError = ErrorType<unknown>
 
+export const useTablesDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof tablesDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof tablesDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getTablesDestroyMutationKey(id);
+  const swrFn = getTablesDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows teams to be viewed or edited.
  */
-export type teamsListResponse200 = {
-  data: Team[]
-  status: 200
-}
-    
-export type teamsListResponseComposite = teamsListResponse200;
-    
-export type teamsListResponse = teamsListResponseComposite & {
-  headers: Headers;
-}
-
-export const getTeamsListUrl = (params?: TeamsListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    const explodeParameters = ["attendees"];
-
-    if (value instanceof Array && explodeParameters.includes(key)) {
-      value.forEach((v) => normalizedParams.append(key, v === null ? 'null' : v.toString()));
-      return;
-    }
-      
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/teams/?${stringifiedParams}` : `/backend/teams/`
-}
-
-export const teamsList = async (params?: TeamsListParams, options?: RequestInit): Promise<teamsListResponse> => {
-  
-  const res = await fetch(getTeamsListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const teamsList = (
+    params?: TeamsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Team[]>(
+    {url: `/teams/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: teamsListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as teamsListResponse
+
+export const getTeamsListKey = (params?: TeamsListParams,) => [`/teams/`, ...(params ? [params]: [])] as const;
+
+export type TeamsListQueryResult = NonNullable<Awaited<ReturnType<typeof teamsList>>>
+export type TeamsListQueryError = ErrorType<unknown>
+
+export const useTeamsList = <TError = ErrorType<unknown>>(
+  params?: TeamsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof teamsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getTeamsListKey(params) : null);
+  const swrFn = () => teamsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows teams to be viewed or edited.
  */
-export type teamsCreateResponse201 = {
-  data: TeamCreate
-  status: 201
-}
-    
-export type teamsCreateResponseComposite = teamsCreateResponse201;
-    
-export type teamsCreateResponse = teamsCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getTeamsCreateUrl = () => {
-
-
-  
-
-  return `/backend/teams/`
-}
-
-export const teamsCreate = async (teamCreateRequest: TeamCreateRequest, options?: RequestInit): Promise<teamsCreateResponse> => {
-  
-  const res = await fetch(getTeamsCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      teamCreateRequest,)
+export const teamsCreate = (
+    teamCreateRequest: BodyType<TeamCreateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<TeamCreate>(
+    {url: `/teams/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: teamCreateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: teamsCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as teamsCreateResponse
+
+export const getTeamsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: TeamCreateRequest }): Promise<TeamCreate> => {
+    return teamsCreate(arg, options);
+  }
 }
+export const getTeamsCreateMutationKey = () => [`/teams/`] as const;
 
+export type TeamsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof teamsCreate>>>
+export type TeamsCreateMutationError = ErrorType<unknown>
 
+export const useTeamsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof teamsCreate>>, TError, Key, TeamCreateRequest, Awaited<ReturnType<typeof teamsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getTeamsCreateMutationKey();
+  const swrFn = getTeamsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows teams to be viewed or edited.
  */
-export type teamsRetrieveResponse200 = {
-  data: TeamDetail
-  status: 200
-}
-    
-export type teamsRetrieveResponseComposite = teamsRetrieveResponse200;
-    
-export type teamsRetrieveResponse = teamsRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getTeamsRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/teams/${id}/`
-}
-
-export const teamsRetrieve = async (id: string, options?: RequestInit): Promise<teamsRetrieveResponse> => {
-  
-  const res = await fetch(getTeamsRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const teamsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<TeamDetail>(
+    {url: `/teams/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: teamsRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as teamsRetrieveResponse
+
+export const getTeamsRetrieveKey = (id: string,) => [`/teams/${id}/`] as const;
+
+export type TeamsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof teamsRetrieve>>>
+export type TeamsRetrieveQueryError = ErrorType<unknown>
+
+export const useTeamsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof teamsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getTeamsRetrieveKey(id) : null);
+  const swrFn = () => teamsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows teams to be viewed or edited.
  */
-export type teamsUpdateResponse200 = {
-  data: Team
-  status: 200
-}
-    
-export type teamsUpdateResponseComposite = teamsUpdateResponse200;
-    
-export type teamsUpdateResponse = teamsUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getTeamsUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/teams/${id}/`
-}
-
-export const teamsUpdate = async (id: string,
-    teamRequest: TeamRequest, options?: RequestInit): Promise<teamsUpdateResponse> => {
-  
-  const res = await fetch(getTeamsUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      teamRequest,)
+export const teamsUpdate = (
+    id: string,
+    teamRequest: BodyType<TeamRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Team>(
+    {url: `/teams/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: teamRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: teamsUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as teamsUpdateResponse
+
+export const getTeamsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: TeamRequest }): Promise<Team> => {
+    return teamsUpdate(id, arg, options);
+  }
 }
+export const getTeamsUpdateMutationKey = (id: string,) => [`/teams/${id}/`] as const;
 
+export type TeamsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof teamsUpdate>>>
+export type TeamsUpdateMutationError = ErrorType<unknown>
 
+export const useTeamsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof teamsUpdate>>, TError, Key, TeamRequest, Awaited<ReturnType<typeof teamsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getTeamsUpdateMutationKey(id);
+  const swrFn = getTeamsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows teams to be viewed or edited.
  */
-export type teamsPartialUpdateResponse200 = {
-  data: TeamUpdate
-  status: 200
-}
-    
-export type teamsPartialUpdateResponseComposite = teamsPartialUpdateResponse200;
-    
-export type teamsPartialUpdateResponse = teamsPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getTeamsPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/teams/${id}/`
-}
-
-export const teamsPartialUpdate = async (id: string,
-    patchedTeamUpdateRequest: PatchedTeamUpdateRequest, options?: RequestInit): Promise<teamsPartialUpdateResponse> => {
-  
-  const res = await fetch(getTeamsPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedTeamUpdateRequest,)
+export const teamsPartialUpdate = (
+    id: string,
+    patchedTeamUpdateRequest: BodyType<PatchedTeamUpdateRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<TeamUpdate>(
+    {url: `/teams/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedTeamUpdateRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: teamsPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as teamsPartialUpdateResponse
+
+export const getTeamsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedTeamUpdateRequest }): Promise<TeamUpdate> => {
+    return teamsPartialUpdate(id, arg, options);
+  }
 }
+export const getTeamsPartialUpdateMutationKey = (id: string,) => [`/teams/${id}/`] as const;
 
+export type TeamsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof teamsPartialUpdate>>>
+export type TeamsPartialUpdateMutationError = ErrorType<unknown>
 
+export const useTeamsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof teamsPartialUpdate>>, TError, Key, PatchedTeamUpdateRequest, Awaited<ReturnType<typeof teamsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getTeamsPartialUpdateMutationKey(id);
+  const swrFn = getTeamsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows teams to be viewed or edited.
  */
-export type teamsDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type teamsDestroyResponseComposite = teamsDestroyResponse204;
-    
-export type teamsDestroyResponse = teamsDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getTeamsDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/teams/${id}/`
-}
-
-export const teamsDestroy = async (id: string, options?: RequestInit): Promise<teamsDestroyResponse> => {
-  
-  const res = await fetch(getTeamsDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const teamsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/teams/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: teamsDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as teamsDestroyResponse
+
+export const getTeamsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return teamsDestroy(id, options);
+  }
 }
+export const getTeamsDestroyMutationKey = (id: string,) => [`/teams/${id}/`] as const;
 
+export type TeamsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof teamsDestroy>>>
+export type TeamsDestroyMutationError = ErrorType<unknown>
 
+export const useTeamsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof teamsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof teamsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getTeamsDestroyMutationKey(id);
+  const swrFn = getTeamsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows files to be viewed or edited.
  */
-export type uploadedFilesListResponse200 = {
-  data: FileUpload[]
-  status: 200
-}
-    
-export type uploadedFilesListResponseComposite = uploadedFilesListResponse200;
-    
-export type uploadedFilesListResponse = uploadedFilesListResponseComposite & {
-  headers: Headers;
-}
-
-export const getUploadedFilesListUrl = (params?: UploadedFilesListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/uploaded_files/?${stringifiedParams}` : `/backend/uploaded_files/`
-}
-
-export const uploadedFilesList = async (params?: UploadedFilesListParams, options?: RequestInit): Promise<uploadedFilesListResponse> => {
-  
-  const res = await fetch(getUploadedFilesListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const uploadedFilesList = (
+    params?: UploadedFilesListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<FileUpload[]>(
+    {url: `/uploaded_files/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: uploadedFilesListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as uploadedFilesListResponse
+
+export const getUploadedFilesListKey = (params?: UploadedFilesListParams,) => [`/uploaded_files/`, ...(params ? [params]: [])] as const;
+
+export type UploadedFilesListQueryResult = NonNullable<Awaited<ReturnType<typeof uploadedFilesList>>>
+export type UploadedFilesListQueryError = ErrorType<unknown>
+
+export const useUploadedFilesList = <TError = ErrorType<unknown>>(
+  params?: UploadedFilesListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof uploadedFilesList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getUploadedFilesListKey(params) : null);
+  const swrFn = () => uploadedFilesList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows files to be viewed or edited.
  */
-export type uploadedFilesCreateResponse201 = {
-  data: FileUpload
-  status: 201
-}
-    
-export type uploadedFilesCreateResponseComposite = uploadedFilesCreateResponse201;
-    
-export type uploadedFilesCreateResponse = uploadedFilesCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getUploadedFilesCreateUrl = () => {
-
-
-  
-
-  return `/backend/uploaded_files/`
-}
-
-export const uploadedFilesCreate = async (fileUploadRequest: FileUploadRequest, options?: RequestInit): Promise<uploadedFilesCreateResponse> => {
-  
-  const res = await fetch(getUploadedFilesCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      fileUploadRequest,)
+export const uploadedFilesCreate = (
+    fileUploadRequest: BodyType<FileUploadRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<FileUpload>(
+    {url: `/uploaded_files/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: fileUploadRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: uploadedFilesCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as uploadedFilesCreateResponse
+
+export const getUploadedFilesCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: FileUploadRequest }): Promise<FileUpload> => {
+    return uploadedFilesCreate(arg, options);
+  }
 }
+export const getUploadedFilesCreateMutationKey = () => [`/uploaded_files/`] as const;
 
+export type UploadedFilesCreateMutationResult = NonNullable<Awaited<ReturnType<typeof uploadedFilesCreate>>>
+export type UploadedFilesCreateMutationError = ErrorType<unknown>
 
+export const useUploadedFilesCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof uploadedFilesCreate>>, TError, Key, FileUploadRequest, Awaited<ReturnType<typeof uploadedFilesCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getUploadedFilesCreateMutationKey();
+  const swrFn = getUploadedFilesCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows files to be viewed or edited.
  */
-export type uploadedFilesRetrieveResponse200 = {
-  data: FileUpload
-  status: 200
-}
-    
-export type uploadedFilesRetrieveResponseComposite = uploadedFilesRetrieveResponse200;
-    
-export type uploadedFilesRetrieveResponse = uploadedFilesRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getUploadedFilesRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/uploaded_files/${id}/`
-}
-
-export const uploadedFilesRetrieve = async (id: string, options?: RequestInit): Promise<uploadedFilesRetrieveResponse> => {
-  
-  const res = await fetch(getUploadedFilesRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const uploadedFilesRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<FileUpload>(
+    {url: `/uploaded_files/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: uploadedFilesRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as uploadedFilesRetrieveResponse
+
+export const getUploadedFilesRetrieveKey = (id: string,) => [`/uploaded_files/${id}/`] as const;
+
+export type UploadedFilesRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof uploadedFilesRetrieve>>>
+export type UploadedFilesRetrieveQueryError = ErrorType<unknown>
+
+export const useUploadedFilesRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof uploadedFilesRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getUploadedFilesRetrieveKey(id) : null);
+  const swrFn = () => uploadedFilesRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows files to be viewed or edited.
  */
-export type uploadedFilesUpdateResponse200 = {
-  data: FileUpload
-  status: 200
-}
-    
-export type uploadedFilesUpdateResponseComposite = uploadedFilesUpdateResponse200;
-    
-export type uploadedFilesUpdateResponse = uploadedFilesUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getUploadedFilesUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/uploaded_files/${id}/`
-}
-
-export const uploadedFilesUpdate = async (id: string,
-    fileUploadRequest: FileUploadRequest, options?: RequestInit): Promise<uploadedFilesUpdateResponse> => {
-  
-  const res = await fetch(getUploadedFilesUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      fileUploadRequest,)
+export const uploadedFilesUpdate = (
+    id: string,
+    fileUploadRequest: BodyType<FileUploadRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<FileUpload>(
+    {url: `/uploaded_files/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: fileUploadRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: uploadedFilesUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as uploadedFilesUpdateResponse
+
+export const getUploadedFilesUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: FileUploadRequest }): Promise<FileUpload> => {
+    return uploadedFilesUpdate(id, arg, options);
+  }
 }
+export const getUploadedFilesUpdateMutationKey = (id: string,) => [`/uploaded_files/${id}/`] as const;
 
+export type UploadedFilesUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof uploadedFilesUpdate>>>
+export type UploadedFilesUpdateMutationError = ErrorType<unknown>
 
+export const useUploadedFilesUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof uploadedFilesUpdate>>, TError, Key, FileUploadRequest, Awaited<ReturnType<typeof uploadedFilesUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getUploadedFilesUpdateMutationKey(id);
+  const swrFn = getUploadedFilesUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows files to be viewed or edited.
  */
-export type uploadedFilesPartialUpdateResponse200 = {
-  data: FileUpload
-  status: 200
-}
-    
-export type uploadedFilesPartialUpdateResponseComposite = uploadedFilesPartialUpdateResponse200;
-    
-export type uploadedFilesPartialUpdateResponse = uploadedFilesPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getUploadedFilesPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/uploaded_files/${id}/`
-}
-
-export const uploadedFilesPartialUpdate = async (id: string,
-    patchedFileUploadRequest: PatchedFileUploadRequest, options?: RequestInit): Promise<uploadedFilesPartialUpdateResponse> => {
-  
-  const res = await fetch(getUploadedFilesPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedFileUploadRequest,)
+export const uploadedFilesPartialUpdate = (
+    id: string,
+    patchedFileUploadRequest: BodyType<PatchedFileUploadRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<FileUpload>(
+    {url: `/uploaded_files/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedFileUploadRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: uploadedFilesPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as uploadedFilesPartialUpdateResponse
+
+export const getUploadedFilesPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedFileUploadRequest }): Promise<FileUpload> => {
+    return uploadedFilesPartialUpdate(id, arg, options);
+  }
 }
+export const getUploadedFilesPartialUpdateMutationKey = (id: string,) => [`/uploaded_files/${id}/`] as const;
 
+export type UploadedFilesPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof uploadedFilesPartialUpdate>>>
+export type UploadedFilesPartialUpdateMutationError = ErrorType<unknown>
 
+export const useUploadedFilesPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof uploadedFilesPartialUpdate>>, TError, Key, PatchedFileUploadRequest, Awaited<ReturnType<typeof uploadedFilesPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getUploadedFilesPartialUpdateMutationKey(id);
+  const swrFn = getUploadedFilesPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows files to be viewed or edited.
  */
-export type uploadedFilesDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type uploadedFilesDestroyResponseComposite = uploadedFilesDestroyResponse204;
-    
-export type uploadedFilesDestroyResponse = uploadedFilesDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getUploadedFilesDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/uploaded_files/${id}/`
-}
-
-export const uploadedFilesDestroy = async (id: string, options?: RequestInit): Promise<uploadedFilesDestroyResponse> => {
-  
-  const res = await fetch(getUploadedFilesDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const uploadedFilesDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/uploaded_files/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: uploadedFilesDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as uploadedFilesDestroyResponse
+
+export const getUploadedFilesDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return uploadedFilesDestroy(id, options);
+  }
 }
+export const getUploadedFilesDestroyMutationKey = (id: string,) => [`/uploaded_files/${id}/`] as const;
 
+export type UploadedFilesDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof uploadedFilesDestroy>>>
+export type UploadedFilesDestroyMutationError = ErrorType<unknown>
 
+export const useUploadedFilesDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof uploadedFilesDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof uploadedFilesDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getUploadedFilesDestroyMutationKey(id);
+  const swrFn = getUploadedFilesDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows workshop attendees to be viewed or edited.
  */
-export type workshopattendeesListResponse200 = {
-  data: WorkshopAttendee[]
-  status: 200
-}
-    
-export type workshopattendeesListResponseComposite = workshopattendeesListResponse200;
-    
-export type workshopattendeesListResponse = workshopattendeesListResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopattendeesListUrl = (params?: WorkshopattendeesListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/workshopattendees/?${stringifiedParams}` : `/backend/workshopattendees/`
-}
-
-export const workshopattendeesList = async (params?: WorkshopattendeesListParams, options?: RequestInit): Promise<workshopattendeesListResponse> => {
-  
-  const res = await fetch(getWorkshopattendeesListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const workshopattendeesList = (
+    params?: WorkshopattendeesListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<WorkshopAttendee[]>(
+    {url: `/workshopattendees/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopattendeesListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopattendeesListResponse
+
+export const getWorkshopattendeesListKey = (params?: WorkshopattendeesListParams,) => [`/workshopattendees/`, ...(params ? [params]: [])] as const;
+
+export type WorkshopattendeesListQueryResult = NonNullable<Awaited<ReturnType<typeof workshopattendeesList>>>
+export type WorkshopattendeesListQueryError = ErrorType<unknown>
+
+export const useWorkshopattendeesList = <TError = ErrorType<unknown>>(
+  params?: WorkshopattendeesListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof workshopattendeesList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getWorkshopattendeesListKey(params) : null);
+  const swrFn = () => workshopattendeesList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows workshop attendees to be viewed or edited.
  */
-export type workshopattendeesCreateResponse201 = {
-  data: WorkshopAttendee
-  status: 201
-}
-    
-export type workshopattendeesCreateResponseComposite = workshopattendeesCreateResponse201;
-    
-export type workshopattendeesCreateResponse = workshopattendeesCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopattendeesCreateUrl = () => {
-
-
-  
-
-  return `/backend/workshopattendees/`
-}
-
-export const workshopattendeesCreate = async (workshopAttendeeRequest: WorkshopAttendeeRequest, options?: RequestInit): Promise<workshopattendeesCreateResponse> => {
-  
-  const res = await fetch(getWorkshopattendeesCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      workshopAttendeeRequest,)
+export const workshopattendeesCreate = (
+    workshopAttendeeRequest: BodyType<WorkshopAttendeeRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<WorkshopAttendee>(
+    {url: `/workshopattendees/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: workshopAttendeeRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopattendeesCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopattendeesCreateResponse
+
+export const getWorkshopattendeesCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: WorkshopAttendeeRequest }): Promise<WorkshopAttendee> => {
+    return workshopattendeesCreate(arg, options);
+  }
 }
+export const getWorkshopattendeesCreateMutationKey = () => [`/workshopattendees/`] as const;
 
+export type WorkshopattendeesCreateMutationResult = NonNullable<Awaited<ReturnType<typeof workshopattendeesCreate>>>
+export type WorkshopattendeesCreateMutationError = ErrorType<unknown>
 
+export const useWorkshopattendeesCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof workshopattendeesCreate>>, TError, Key, WorkshopAttendeeRequest, Awaited<ReturnType<typeof workshopattendeesCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getWorkshopattendeesCreateMutationKey();
+  const swrFn = getWorkshopattendeesCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows workshop attendees to be viewed or edited.
  */
-export type workshopattendeesRetrieveResponse200 = {
-  data: WorkshopAttendee
-  status: 200
-}
-    
-export type workshopattendeesRetrieveResponseComposite = workshopattendeesRetrieveResponse200;
-    
-export type workshopattendeesRetrieveResponse = workshopattendeesRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopattendeesRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/workshopattendees/${id}/`
-}
-
-export const workshopattendeesRetrieve = async (id: string, options?: RequestInit): Promise<workshopattendeesRetrieveResponse> => {
-  
-  const res = await fetch(getWorkshopattendeesRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const workshopattendeesRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<WorkshopAttendee>(
+    {url: `/workshopattendees/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopattendeesRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopattendeesRetrieveResponse
+
+export const getWorkshopattendeesRetrieveKey = (id: string,) => [`/workshopattendees/${id}/`] as const;
+
+export type WorkshopattendeesRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof workshopattendeesRetrieve>>>
+export type WorkshopattendeesRetrieveQueryError = ErrorType<unknown>
+
+export const useWorkshopattendeesRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof workshopattendeesRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getWorkshopattendeesRetrieveKey(id) : null);
+  const swrFn = () => workshopattendeesRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows workshop attendees to be viewed or edited.
  */
-export type workshopattendeesUpdateResponse200 = {
-  data: WorkshopAttendee
-  status: 200
-}
-    
-export type workshopattendeesUpdateResponseComposite = workshopattendeesUpdateResponse200;
-    
-export type workshopattendeesUpdateResponse = workshopattendeesUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopattendeesUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/workshopattendees/${id}/`
-}
-
-export const workshopattendeesUpdate = async (id: string,
-    workshopAttendeeRequest: WorkshopAttendeeRequest, options?: RequestInit): Promise<workshopattendeesUpdateResponse> => {
-  
-  const res = await fetch(getWorkshopattendeesUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      workshopAttendeeRequest,)
+export const workshopattendeesUpdate = (
+    id: string,
+    workshopAttendeeRequest: BodyType<WorkshopAttendeeRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<WorkshopAttendee>(
+    {url: `/workshopattendees/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: workshopAttendeeRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopattendeesUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopattendeesUpdateResponse
+
+export const getWorkshopattendeesUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: WorkshopAttendeeRequest }): Promise<WorkshopAttendee> => {
+    return workshopattendeesUpdate(id, arg, options);
+  }
 }
+export const getWorkshopattendeesUpdateMutationKey = (id: string,) => [`/workshopattendees/${id}/`] as const;
 
+export type WorkshopattendeesUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof workshopattendeesUpdate>>>
+export type WorkshopattendeesUpdateMutationError = ErrorType<unknown>
 
+export const useWorkshopattendeesUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof workshopattendeesUpdate>>, TError, Key, WorkshopAttendeeRequest, Awaited<ReturnType<typeof workshopattendeesUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getWorkshopattendeesUpdateMutationKey(id);
+  const swrFn = getWorkshopattendeesUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows workshop attendees to be viewed or edited.
  */
-export type workshopattendeesPartialUpdateResponse200 = {
-  data: WorkshopAttendee
-  status: 200
-}
-    
-export type workshopattendeesPartialUpdateResponseComposite = workshopattendeesPartialUpdateResponse200;
-    
-export type workshopattendeesPartialUpdateResponse = workshopattendeesPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopattendeesPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/workshopattendees/${id}/`
-}
-
-export const workshopattendeesPartialUpdate = async (id: string,
-    patchedWorkshopAttendeeRequest: PatchedWorkshopAttendeeRequest, options?: RequestInit): Promise<workshopattendeesPartialUpdateResponse> => {
-  
-  const res = await fetch(getWorkshopattendeesPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedWorkshopAttendeeRequest,)
+export const workshopattendeesPartialUpdate = (
+    id: string,
+    patchedWorkshopAttendeeRequest: BodyType<PatchedWorkshopAttendeeRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<WorkshopAttendee>(
+    {url: `/workshopattendees/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedWorkshopAttendeeRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopattendeesPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopattendeesPartialUpdateResponse
+
+export const getWorkshopattendeesPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedWorkshopAttendeeRequest }): Promise<WorkshopAttendee> => {
+    return workshopattendeesPartialUpdate(id, arg, options);
+  }
 }
+export const getWorkshopattendeesPartialUpdateMutationKey = (id: string,) => [`/workshopattendees/${id}/`] as const;
 
+export type WorkshopattendeesPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof workshopattendeesPartialUpdate>>>
+export type WorkshopattendeesPartialUpdateMutationError = ErrorType<unknown>
 
+export const useWorkshopattendeesPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof workshopattendeesPartialUpdate>>, TError, Key, PatchedWorkshopAttendeeRequest, Awaited<ReturnType<typeof workshopattendeesPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getWorkshopattendeesPartialUpdateMutationKey(id);
+  const swrFn = getWorkshopattendeesPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows workshop attendees to be viewed or edited.
  */
-export type workshopattendeesDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type workshopattendeesDestroyResponseComposite = workshopattendeesDestroyResponse204;
-    
-export type workshopattendeesDestroyResponse = workshopattendeesDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopattendeesDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/workshopattendees/${id}/`
-}
-
-export const workshopattendeesDestroy = async (id: string, options?: RequestInit): Promise<workshopattendeesDestroyResponse> => {
-  
-  const res = await fetch(getWorkshopattendeesDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const workshopattendeesDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/workshopattendees/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopattendeesDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopattendeesDestroyResponse
+
+export const getWorkshopattendeesDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return workshopattendeesDestroy(id, options);
+  }
 }
+export const getWorkshopattendeesDestroyMutationKey = (id: string,) => [`/workshopattendees/${id}/`] as const;
 
+export type WorkshopattendeesDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof workshopattendeesDestroy>>>
+export type WorkshopattendeesDestroyMutationError = ErrorType<unknown>
 
+export const useWorkshopattendeesDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof workshopattendeesDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof workshopattendeesDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getWorkshopattendeesDestroyMutationKey(id);
+  const swrFn = getWorkshopattendeesDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows workshops to be viewed ot edited.
  */
-export type workshopsListResponse200 = {
-  data: Workshop[]
-  status: 200
-}
-    
-export type workshopsListResponseComposite = workshopsListResponse200;
-    
-export type workshopsListResponse = workshopsListResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopsListUrl = (params?: WorkshopsListParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    const explodeParameters = ["hardware"];
-
-    if (value instanceof Array && explodeParameters.includes(key)) {
-      value.forEach((v) => normalizedParams.append(key, v === null ? 'null' : v.toString()));
-      return;
-    }
-      
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/backend/workshops/?${stringifiedParams}` : `/backend/workshops/`
-}
-
-export const workshopsList = async (params?: WorkshopsListParams, options?: RequestInit): Promise<workshopsListResponse> => {
-  
-  const res = await fetch(getWorkshopsListUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const workshopsList = (
+    params?: WorkshopsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Workshop[]>(
+    {url: `/workshops/`, method: 'GET',
+        params
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopsListResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopsListResponse
+
+export const getWorkshopsListKey = (params?: WorkshopsListParams,) => [`/workshops/`, ...(params ? [params]: [])] as const;
+
+export type WorkshopsListQueryResult = NonNullable<Awaited<ReturnType<typeof workshopsList>>>
+export type WorkshopsListQueryError = ErrorType<unknown>
+
+export const useWorkshopsList = <TError = ErrorType<unknown>>(
+  params?: WorkshopsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof workshopsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getWorkshopsListKey(params) : null);
+  const swrFn = () => workshopsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows workshops to be viewed ot edited.
  */
-export type workshopsCreateResponse201 = {
-  data: Workshop
-  status: 201
-}
-    
-export type workshopsCreateResponseComposite = workshopsCreateResponse201;
-    
-export type workshopsCreateResponse = workshopsCreateResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopsCreateUrl = () => {
-
-
-  
-
-  return `/backend/workshops/`
-}
-
-export const workshopsCreate = async (workshopRequest: WorkshopRequest, options?: RequestInit): Promise<workshopsCreateResponse> => {
-  
-  const res = await fetch(getWorkshopsCreateUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      workshopRequest,)
+export const workshopsCreate = (
+    workshopRequest: BodyType<WorkshopRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Workshop>(
+    {url: `/workshops/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: workshopRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopsCreateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopsCreateResponse
+
+export const getWorkshopsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: WorkshopRequest }): Promise<Workshop> => {
+    return workshopsCreate(arg, options);
+  }
 }
+export const getWorkshopsCreateMutationKey = () => [`/workshops/`] as const;
 
+export type WorkshopsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof workshopsCreate>>>
+export type WorkshopsCreateMutationError = ErrorType<unknown>
 
+export const useWorkshopsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof workshopsCreate>>, TError, Key, WorkshopRequest, Awaited<ReturnType<typeof workshopsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getWorkshopsCreateMutationKey();
+  const swrFn = getWorkshopsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows workshops to be viewed ot edited.
  */
-export type workshopsRetrieveResponse200 = {
-  data: Workshop
-  status: 200
-}
-    
-export type workshopsRetrieveResponseComposite = workshopsRetrieveResponse200;
-    
-export type workshopsRetrieveResponse = workshopsRetrieveResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopsRetrieveUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/workshops/${id}/`
-}
-
-export const workshopsRetrieve = async (id: string, options?: RequestInit): Promise<workshopsRetrieveResponse> => {
-  
-  const res = await fetch(getWorkshopsRetrieveUrl(id),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
+export const workshopsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Workshop>(
+    {url: `/workshops/${id}/`, method: 'GET'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopsRetrieveResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopsRetrieveResponse
+
+export const getWorkshopsRetrieveKey = (id: string,) => [`/workshops/${id}/`] as const;
+
+export type WorkshopsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof workshopsRetrieve>>>
+export type WorkshopsRetrieveQueryError = ErrorType<unknown>
+
+export const useWorkshopsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof workshopsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getWorkshopsRetrieveKey(id) : null);
+  const swrFn = () => workshopsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
 }
-
-
 
 /**
  * API endpoint that allows workshops to be viewed ot edited.
  */
-export type workshopsUpdateResponse200 = {
-  data: Workshop
-  status: 200
-}
-    
-export type workshopsUpdateResponseComposite = workshopsUpdateResponse200;
-    
-export type workshopsUpdateResponse = workshopsUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopsUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/workshops/${id}/`
-}
-
-export const workshopsUpdate = async (id: string,
-    workshopRequest: WorkshopRequest, options?: RequestInit): Promise<workshopsUpdateResponse> => {
-  
-  const res = await fetch(getWorkshopsUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      workshopRequest,)
+export const workshopsUpdate = (
+    id: string,
+    workshopRequest: BodyType<WorkshopRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Workshop>(
+    {url: `/workshops/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: workshopRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopsUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopsUpdateResponse
+
+export const getWorkshopsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: WorkshopRequest }): Promise<Workshop> => {
+    return workshopsUpdate(id, arg, options);
+  }
 }
+export const getWorkshopsUpdateMutationKey = (id: string,) => [`/workshops/${id}/`] as const;
 
+export type WorkshopsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof workshopsUpdate>>>
+export type WorkshopsUpdateMutationError = ErrorType<unknown>
 
+export const useWorkshopsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof workshopsUpdate>>, TError, Key, WorkshopRequest, Awaited<ReturnType<typeof workshopsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getWorkshopsUpdateMutationKey(id);
+  const swrFn = getWorkshopsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows workshops to be viewed ot edited.
  */
-export type workshopsPartialUpdateResponse200 = {
-  data: Workshop
-  status: 200
-}
-    
-export type workshopsPartialUpdateResponseComposite = workshopsPartialUpdateResponse200;
-    
-export type workshopsPartialUpdateResponse = workshopsPartialUpdateResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopsPartialUpdateUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/workshops/${id}/`
-}
-
-export const workshopsPartialUpdate = async (id: string,
-    patchedWorkshopRequest: PatchedWorkshopRequest, options?: RequestInit): Promise<workshopsPartialUpdateResponse> => {
-  
-  const res = await fetch(getWorkshopsPartialUpdateUrl(id),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      patchedWorkshopRequest,)
+export const workshopsPartialUpdate = (
+    id: string,
+    patchedWorkshopRequest: BodyType<PatchedWorkshopRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Workshop>(
+    {url: `/workshops/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedWorkshopRequest
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopsPartialUpdateResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopsPartialUpdateResponse
+
+export const getWorkshopsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedWorkshopRequest }): Promise<Workshop> => {
+    return workshopsPartialUpdate(id, arg, options);
+  }
 }
+export const getWorkshopsPartialUpdateMutationKey = (id: string,) => [`/workshops/${id}/`] as const;
 
+export type WorkshopsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof workshopsPartialUpdate>>>
+export type WorkshopsPartialUpdateMutationError = ErrorType<unknown>
 
+export const useWorkshopsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof workshopsPartialUpdate>>, TError, Key, PatchedWorkshopRequest, Awaited<ReturnType<typeof workshopsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getWorkshopsPartialUpdateMutationKey(id);
+  const swrFn = getWorkshopsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 
 /**
  * API endpoint that allows workshops to be viewed ot edited.
  */
-export type workshopsDestroyResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type workshopsDestroyResponseComposite = workshopsDestroyResponse204;
-    
-export type workshopsDestroyResponse = workshopsDestroyResponseComposite & {
-  headers: Headers;
-}
-
-export const getWorkshopsDestroyUrl = (id: string,) => {
-
-
-  
-
-  return `/backend/workshops/${id}/`
-}
-
-export const workshopsDestroy = async (id: string, options?: RequestInit): Promise<workshopsDestroyResponse> => {
-  
-  const res = await fetch(getWorkshopsDestroyUrl(id),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
+export const workshopsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/workshops/${id}/`, method: 'DELETE'
+    },
+    options);
   }
-)
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
-  const data: workshopsDestroyResponse['data'] = body ? JSON.parse(body) : {}
 
-  return { data, status: res.status, headers: res.headers } as workshopsDestroyResponse
+
+export const getWorkshopsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return workshopsDestroy(id, options);
+  }
 }
+export const getWorkshopsDestroyMutationKey = (id: string,) => [`/workshops/${id}/`] as const;
 
+export type WorkshopsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof workshopsDestroy>>>
+export type WorkshopsDestroyMutationError = ErrorType<unknown>
 
+export const useWorkshopsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof workshopsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof workshopsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getWorkshopsDestroyMutationKey(id);
+  const swrFn = getWorkshopsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
 

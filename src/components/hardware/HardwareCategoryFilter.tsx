@@ -1,17 +1,15 @@
 'use client';
 import CloseIcon from '@mui/icons-material/Close';
-import { Hardware, HardwareCategory, hardware_categories } from '@/types/types';
+import { HardwareCategory, hardware_categories } from '@/types/types2';
 import { useState } from 'react';
 
 
 export default function HardwareCategoryFilter(
-  { hardwareCategories, search, setSearch, selected, setSelected, selectAll, setSelectAll }:
+  { hardwareCategories, search, setSearch, selected, setSelected }:
   { hardwareCategories: HardwareCategory[], search: string, setSearch: (search: string) => void,
-    selected: any, setSelected: (selected: any) => void, selectAll: boolean,
-    setSelectAll: (selectAll: boolean) => void}
+    selected: any, setSelected: (selected: any) => void }
 ) {
   const [filterOn, setFilterOn] = useState(false);
-  {/* filter dropdown */}
   return <div className="flex flex-col items-end">
     <button
       className="fixed bg-[#493B8A] px-7 py-2 rounded-full text-white right-[4%] top-[4%] z-10"
@@ -31,7 +29,6 @@ export default function HardwareCategoryFilter(
         </div>
         <div>
           <div className="w-56 px-5 py-4 my-4 mr-4 content">
-            {/* <div className="flex flex-col"> */}
             <h3 className="inline-block -my-3">
               <span className="font-semibold">Categories</span>
             </h3>
@@ -41,48 +38,18 @@ export default function HardwareCategoryFilter(
               value={search}
               onChange={e => setSearch(e.target.value)}
             ></input>
-            {/* </div> */}
-            <div className="flex items-center">
-              <input
-                id={`filter-all`}
-                name="All"
-                defaultValue="all"
-                type="checkbox"
-                checked={selectAll}
-                onClick={ev => {
-                  setSelectAll(
-                    (ev.target as unknown as { checked: boolean }).checked
-                  );
-                  setSelected(
-                    Object.fromEntries(
-                      Object.entries(selected).map(([key, _]) => [
-                        key,
-                        false
-                      ])
-                    )
-                  );
-                }}
-                className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-              />
-              <label htmlFor={`filter-all`} className="ml-3 text-sm">
-                All
-              </label>
-            </div>
             {hardwareCategories.map(
               (cat: HardwareCategory, idx: number) => (
                 <div className="flex items-center" key={idx}>
                   <input
                     id={`filter-${cat.value}`}
-                    name={/*cat.display_name*/ hardware_categories[cat.value]}
-                    defaultValue={/*cat.display_name*/ hardware_categories[cat.value]}
+                    name={hardware_categories[cat.value]}
+                    defaultValue={hardware_categories[cat.value]}
                     type="checkbox"
-                    checked={selected[cat.value]}
+                    defaultChecked={selected[cat.value]}
                     className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                     onClick={ev => {
-                      const checked = (ev.target as any).checked;
-                      if (checked) {
-                        setSelectAll(false);
-                      }
+                      const checked = ev.currentTarget.checked;
                       setSelected({ ...selected, [cat.value]: checked });
                     }}
                   />
@@ -90,7 +57,7 @@ export default function HardwareCategoryFilter(
                     htmlFor={`filter-${cat.value}`}
                     className="ml-3 text-sm"
                   >
-                    {/*cat.display_name*/ hardware_categories[cat.value]}
+                    {hardware_categories[cat.value]}
                   </label>
                 </div>
               )

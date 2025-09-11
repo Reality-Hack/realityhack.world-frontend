@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [meFetchedFlag, setMeFetchedFlag] = useState<boolean>(false);
 
   useEffect(() => {
-    if (session && !meFetchedFlag) {
+    if (session?.access_token && !meFetchedFlag) {
       const fetchUser = async () => {
         try {
           const details = await getMe(session.access_token);

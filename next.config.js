@@ -24,16 +24,6 @@ const nextConfig = {
     config.externals = [...config.externals, { canvas: 'canvas' }]; // required to make Konva & react-konva work
     return config;
   },
-  async rewrites() {
-    return {
-      beforeFiles: [
-        {
-          source: '/backend/:path*',
-          destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/:path*/`,
-        },
-      ],
-    };
-  },
 };
 
 module.exports = nextConfig;

@@ -1,41 +1,48 @@
 'use client';
-import { fileUpload } from '@/app/api/application';
-import {
-  createHardware,
-  createHardwareDevice,
-  deleteHardware,
-  deleteHardwareDevice,
-  getHardwareDevice,
-  sendHardwareRequest,
-  updateHardware,
-  updateHardwareDevice
-} from '@/app/api/hardware';
 import CloseIcon from '@mui/icons-material/Close';
-import { PlusOne, Save } from '@mui/icons-material';
+import { Save } from '@mui/icons-material';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
-  Hardware,
   HardwareCategory,
+  hardware_categories,
+} from '@/types/types2';
+import {
+  FileUpload,
   HardwareDevice,
-  UploadedFile,
-  hardware_categories
-} from '@/types/types';
+  FileUploadRequest,
+  PatchedHardwareCreateRequest,
+  HardwareCreateRequest,
+  HardwareDeviceRequest,
+  PatchedHardwareDeviceRequest,
+} from '@/types/models'
 import Dropzone from '@/components/Dropzone';
 import { fixFileLink } from '@/app/api/uploaded_files';
-import HardwareCategoryFilter from '@/components/HardwareCategoryFilter';
+import HardwareCategoryFilter from '@/components/hardware/HardwareCategoryFilter';
 import { CircularProgress, LinearProgress } from '@mui/material';
-import { TrashIcon } from '@heroicons/react/20/solid';
 import { toast } from 'sonner';
+import { CreateHardware, TaggedHardware } from '@/types/types2';
+import { useHardwareContext } from '@/contexts/HardwareAdminContext';
+import { 
+  uploadedFilesCreate, 
+  hardwarePartialUpdate, 
+  hardwareCreate, 
+  hardwareDestroy, 
+  hardwaredevicesCreate, 
+  hardwaredevicesPartialUpdate,
+  hardwaredevicesDestroy,
+} from '@/types/endpoints';
+
 
 export default function HardwareEditor({
   hardware,
   hardwareCategories
 }: {
-  hardware: Hardware[];
+  hardware: TaggedHardware[];
   hardwareCategories: HardwareCategory[];
 }) {
-  const [hardwareList, setHardwareList] = useState(hardware);
+  const { hardwareDeviceTypes } = useHardwareContext();
+  const [hardwareList, setHardwareList] = useState<CreateHardware[]>([]);
   const [search, setSearch] = useState('');
   const [selectAll, setSelectAll] = useState(false);
   const [selected, setSelected] = useState(
@@ -44,6 +51,29 @@ export default function HardwareEditor({
     )
   );
 
+  useEffect(() => {
+    if (hardwareDeviceTypes) {
+      setHardwareList(hardwareDeviceTypes);
+    }
+  }, [hardwareDeviceTypes]);
+
+  const filteredHardware = useMemo(() => {
+    if (!hardwareDeviceTypes) return [];
+    return hardwareList.filter((item: CreateHardware) => {
+      const passesTagFilter = selectAll ||
+        item.tags.some(
+          tag => selected[tag || (tag as unknown as string)]
+        ) ||
+        !Object.entries(selected).some(([_, val]) => val);
+      
+      const passesSearchFilter = !search ||
+        item.name.toLowerCase().includes(search.toLowerCase());
+      
+      return passesTagFilter && passesSearchFilter;
+    });
+  }, [hardwareList, selected, selectAll, search]);
+
+  // add a new hardware device type to the existing list
   function addNew() {
     setHardwareList([
       {
@@ -74,51 +104,40 @@ export default function HardwareEditor({
         setSearch={setSearch}
         selected={selected}
         setSelected={setSelected}
-        selectAll={selectAll}
-        setSelectAll={setSelectAll}
-      ></HardwareCategoryFilter>
+      />
       <div className="flex flex-wrap justify-left gap-6 ml-6 mt-14">
-        {hardwareList
-          .filter(
-            (item: Hardware) =>
-              (selectAll ||
-                item.tags.some(
-                  tag => selected[tag?.value || (tag as unknown as string)]
-                ) ||
-                !Object.entries(selected).some(([_, val]) => val)) &&
-              (!search ||
-                item.name.toLowerCase().includes(search.toLowerCase()))
-          )
-          .map((item: any, i: number) => (
-            <EditableHardwareCard
-              item={item}
-              setItem={newItem =>
-                setHardwareList(
-                  hardwareList.map(item =>
-                    (
-                      item.id
-                        ? item.id === newItem.id
-                        : item.name === newItem.name
-                    )
-                      ? newItem
-                      : item
+        {filteredHardware.map((item: any, i: number) => (
+          <EditableHardwareCard
+            item={item}
+            setItem={newItem =>
+              // handle updating local list with changes from a hardware card
+              setHardwareList(
+                hardwareList.map(item =>
+                  (
+                    item.id
+                      ? item.id === newItem.id
+                      : item.name === newItem.name
                   )
+                    ? newItem
+                    : item
                 )
-              }
-              removeItem={() =>
-                setHardwareList(
-                  hardwareList.filter(it =>
-                    it.id ? it.id !== item.id : it.name !== item.name
-                  )
+              )
+            }
+            removeItem={() =>
+              // remove the item from the list
+              setHardwareList(
+                hardwareList.filter(it =>
+                  it.id ? it.id !== item.id : it.name !== item.name
                 )
-              }
-              key={item.id || item.name}
-              hardwareCategories={hardwareCategories}
-              topLevelProps={{
-                'data-testid': `hardware-request-hardware-${i}`
-              }}
-            />
-          ))}
+              )
+            }
+            key={item.id || item.name}
+            hardwareCategories={hardwareCategories}
+            topLevelProps={{
+              'data-testid': `hardware-request-hardware-${i}`
+            }}
+          />
+        ))}
       </div>
     </div>
   );
@@ -131,20 +150,21 @@ function EditableHardwareCard({
   hardwareCategories,
   topLevelProps = {}
 }: {
-  item: Hardware;
-  setItem: (item: Hardware) => void;
+  item: CreateHardware;
+  setItem: (item: CreateHardware) => void;
   removeItem: () => void;
   hardwareCategories: HardwareCategory[];
   topLevelProps?: any;
 }) {
   const { data: session } = useSession();
-  const isOriginal = !item.id;
-  const [image, setImage] = useState<null | UploadedFile>(item.image);
+  const isPersistedToDB = item?.id;
+  const [image, setImage] = useState<null | FileUpload>(item?.image || null);
   const [editingImage, setEditingImage] = useState(image == null);
   const [name, setName] = useState(item.name);
   const [quantity, setQuantity] = useState(item.total);
   const [description, setDescription] = useState(item.description);
   const [tags, setTags] = useState(item.tags);
+  const { mutateHardwareDeviceTypes } = useHardwareContext();
   const hasChanged =
     name !== item.name ||
     quantity !== item.total ||
@@ -155,63 +175,83 @@ function EditableHardwareCard({
   const [hardwareDevicesEditorOpen, setHardwareDevicesEditorOpen] =
     useState(false);
   const isReady =
-    name.length > 0 && quantity > 0 && description.length > 0 && image != null;
+    name.length > 0 && quantity && quantity > 0 && description && description.length > 0 && image != null;
+
+  // is the hardware being saved to the database?
   const [sending, setSending] = useState(false);
 
   if (!session) return null;
 
+  // handle dropzone changes -- ideally does not automatically save the upload
   async function setAcceptedFiles(
     acceptedFiles: File[] | ((prevState: File[]) => File[])
   ) {
     if (typeof acceptedFiles === 'function') {
       acceptedFiles = acceptedFiles([]);
     }
-    fileUpload(session?.access_token, acceptedFiles[0]).then(res => {
+    const validFile = acceptedFiles[0] as Blob;
+    const fileUploadRequest: FileUploadRequest = {
+      file: validFile
+    };
+    uploadedFilesCreate(fileUploadRequest, {
+      headers: {
+        Authorization: `Bearer ${session?.access_token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    }).then(res => {
       setImage(res);
       setEditingImage(false);
-    });
+    }).catch(err => {
+      toast.error('Failed to upload image');
+    })
   }
 
   function saveHardware() {
-    const data = {
-      id: item.id,
-      name: name,
-      total: quantity,
-      description: description,
-      image: image?.id,
-      tags: tags.map(tag => tag.value)
-    };
-    const newItem = {
-      ...item,
-      ...data,
-      image: image,
-      tags: tags
-    };
     setSending(true);
-    if (!isOriginal) {
-      updateHardware(session!.access_token, data)
-        .then(res => {
-          toast.success('Hardware updated successfully');
-          setItem(newItem);
-        })
-        .catch(err => {
-          toast.error('Failed to update hardware');
-        })
-        .finally(() => setSending(false));
+    if (isPersistedToDB) {
+      const payload: PatchedHardwareCreateRequest = {
+        name: name,
+        description: description,
+        image: image?.id,
+        tags: tags.map(tag => tag)
+      };
+      hardwarePartialUpdate(item.id, payload, {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`
+        }
+      })
+      .then(res => {
+        toast.success('Hardware updated successfully');
+      })
+      .catch(err => {
+        toast.error('Failed to update hardware');
+      })
+      .finally(() => {
+        setSending(false);
+        mutateHardwareDeviceTypes();
+      });
     } else {
-      createHardware(session!.access_token, data)
-        .then(res => {
-          console.log(res);
-          toast.success('Hardware created successfully');
-          setItem({
-            ...newItem,
-            id: res.id
-          });
-        })
-        .catch(err => {
-          toast.error('Failed to create hardware');
-        })
-        .finally(() => setSending(false));
+      const payload: HardwareCreateRequest = {
+        name: name,
+        description: description,
+        image: image?.id,
+        tags: tags.map(tag => tag)
+      };
+      hardwareCreate(payload, {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`
+        }
+      })
+      .then(res => {
+        toast.success('Hardware created successfully');
+      })
+      .catch(err => {
+        toast.error('Failed to create hardware');
+      })
+      .finally(() => {
+        setSending(false);
+        mutateHardwareDeviceTypes();
+      });
     }
   }
 
@@ -268,13 +308,12 @@ function EditableHardwareCard({
           onClick={() =>
             setHardwareDevicesEditorOpen(!hardwareDevicesEditorOpen)
           }
-          disabled={isOriginal}
+          disabled={!isPersistedToDB}
         >
           Edit devices
         </button>
       </div>
       <textarea
-        // disabled={quantity === 0}
         className="mt-4 placeholder:transition-all transition-all border-[1px] bg-white w-full px-3 py-2 rounded-lg appearance-none rounded-t-md focus:z-10 sm:text-sm outline-0 hover:text-themelight hover:border-themePrimary hover:shadow-themeActive hover:border-opacity-100 mr-2 required"
         name="description"
         placeholder="Hardware description"
@@ -284,11 +323,11 @@ function EditableHardwareCard({
       ></textarea>
       <div className="flex w-full flex-wrap flex-initial">
         {tags.map((tag, idx) => (
-          <span className="bg-gray-200 rounded-full px-2 py-1 m-1" key={`item-${item.id}-tag-${idx}-${tag.value}`}>
-            {hardware_categories[tag.value] /*tag.display_name*/}
+          <span className="bg-gray-200 rounded-full px-2 py-1 m-1" key={`item-${item.id}-tag-${idx}-${tag}`}>
+            {hardware_categories[tag] /*tag.display_name*/}
             <button
               onClick={() =>
-                setTags(tags.filter(other => other.value != tag.value))
+                setTags(tags.filter(existingTag => existingTag != tag))
               }
             >
               <CloseIcon />
@@ -306,12 +345,14 @@ function EditableHardwareCard({
               </button>
               <div className="w-56 px-5 py-4 my-4 mr-4 content flex flex-initial flex-wrap flex-row">
                 {hardwareCategories
-                  .filter(cat => !tags.includes(cat))
+                  // TODO: filter out tags that are already in the list
+                  .filter(cat => !tags.includes(cat.value))
                   .map((cat: HardwareCategory, idx: number) => (
                     <div className="m-1" key={`item-${item.id}-tag-${idx}-${cat.value}`}>
                       <button
                         className="cursor-pointer text-white bg-[#493B8A] px-4 rounded-full disabled:opacity-50 transition-all flex-shrink h-10 self-end"
-                        onClick={() => setTags([...tags, cat])}
+                        // set the updated tags for the current item
+                        onClick={() => setTags([...tags, cat.value])}
                       >
                         {hardware_categories[cat.value] /* cat.display_name */}
                       </button>
@@ -326,11 +367,6 @@ function EditableHardwareCard({
         </div>
       </div>
       <div className="flex justify-between w-full">
-        {/* <textarea
-        disabled={quantity === 0}
-        className='mt-4 placeholder:transition-all transition-all border-[1px] bg-white w-full px-3 py-2 rounded-lg appearance-none rounded-t-md focus:z-10 sm:text-sm outline-0 hover:text-themelight hover:border-themePrimary hover:shadow-themeActive hover:border-opacity-100 mr-2 required'
-        name="reason" placeholder="Reason for request" value={reason} rows={2}
-        onChange={event => setReason(event.target.value)}></textarea> */}
         <button
           disabled={sending || !hasChanged || !isReady}
           className="cursor-pointer text-white bg-[#493B8A] px-4 rounded-full disabled:opacity-50 transition-all flex-shrink h-10 self-end"
@@ -342,12 +378,16 @@ function EditableHardwareCard({
           disabled={sending}
           className="cursor-pointer text-white bg-[#CC2F34] px-4 rounded-full disabled:opacity-50 transition-all flex-shrink h-10 self-end"
           onClick={() => {
-            if (isOriginal) {
+            if (!isPersistedToDB) {
               removeItem();
               return;
             } else {
               setSending(true);
-              deleteHardware(session!.access_token, item.id).then(() => {
+              hardwareDestroy(item.id, {
+                headers: {
+                  Authorization: `Bearer ${session?.access_token}`
+                }
+              }).then(() => {
                 setSending(false);
                 removeItem();
               });
@@ -361,20 +401,15 @@ function EditableHardwareCard({
   );
 }
 
-function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
+function HardwareDevicesEditor({ hardware }: { hardware: CreateHardware }) {
   const { data: session } = useSession();
-  const [loading, setLoading] = useState(true);
+  const { hardwareDevices, isLoadingHardwareDevices } = useHardwareContext();
   const [devices, setDevices] = useState<Partial<HardwareDevice>[]>([]);
   useEffect(() => {
-    if (session) {
-      setLoading(true);
-      getHardwareDevice(session.access_token, { hardware: hardware.id })
-        .then(res => {
-          setDevices(res);
-        })
-        .finally(() => setLoading(false));
+    if (hardwareDevices) {
+      setDevices(hardwareDevices);
     }
-  }, [session]);
+  }, [hardwareDevices]);
 
   function addNew() {
     setDevices([
@@ -383,14 +418,14 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
         id: '',
         serial: Math.random().toString(36).substring(7),
         checked_out_to: null,
-        hardware: hardware
+        hardware: hardware.id
       }
     ]);
   }
 
   return (
     <div className="w-56 px-5 py-4 my-4 mr-4">
-      <p>{loading ? 'Loading...' : `${devices.length} devices.`}</p>
+      <p>{isLoadingHardwareDevices ? 'Loading...' : `${hardwareDevices?.length || 0} devices.`}</p>
       <p className="mt-1">
         <button
           className="cursor-pointer text-white bg-[#493B8A] py-1 px-2 rounded-full disabled:opacity-50 transition-all h-15"
@@ -400,10 +435,11 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
         </button>
       </p>
       <div className="content flex flex-col max-h-64 overflow-scroll mt-4">
-        {loading ? (
+        {isLoadingHardwareDevices ? (
           <CircularProgress />
         ) : (
-          devices
+          hardwareDevices && hardwareDevices.length > 0 ?
+          hardwareDevices
             .reverse()
             .map((device, i) => (
               <HardwareDeviceEditor
@@ -432,6 +468,8 @@ function HardwareDevicesEditor({ hardware }: { hardware: Hardware }) {
                 index={i + 1}
               />
             ))
+          :
+          <p>No devices found</p>
         )}
       </div>
     </div>
@@ -452,58 +490,85 @@ function HardwareDeviceEditor({
   index?: number;
 }) {
   const [loading, setLoading] = useState(false);
-  const isOriginal = !device.id;
+  const isPersistedToDB = device.id;
   const [serial, setSerial] = useState(device.serial || '');
-  const hasChanged = serial !== device.serial;
+  const [lastSavedSerial, setLastSavedSerial] = useState(device.serial || '');
+  const hasChanged = serial !== lastSavedSerial;
 
   function save() {
-    if (access_token) {
-      if (isOriginal) {
-        setLoading(true);
-        createHardwareDevice(access_token, {
-          serial: serial,
-          hardware: device.hardware?.id!
-        })
-          .then(res => {
-            setDevice({
-              id: res.id,
-              serial: serial,
-              hardware: device.hardware
-            });
-            toast.success('Hardware device created successfully');
-          })
-          .catch(err => {
-            toast.error('Failed to create hardware device');
-          })
-          .finally(() => setLoading(false));
-      } else {
-        setLoading(true);
-        updateHardwareDevice(access_token, {
-          id: device.id,
-          serial: serial,
-          hardware: device.hardware?.id!
-        })
-          .then(res => {
-            setDevice({
-              ...device,
-              serial: res.serial
-            });
-            toast.success('Hardware device updated successfully');
-          })
-          .catch(err => {
-            toast.error('Failed to update hardware device');
-          })
-          .finally(() => setLoading(false));
+    if (!device.hardware || !access_token) {
+      toast.error('Failed to save hardware device');
+      return
+    };
+    
+    const deviceData = { serial: serial, hardware: device.hardware };
+    
+    setDevice({
+      ...device,
+      serial: serial
+    });
+    
+    if (!isPersistedToDB) {
+      const payload: HardwareDeviceRequest = { ...deviceData };
+      setLoading(true);
+      hardwaredevicesCreate(payload, {
+        headers: { Authorization: `Bearer ${access_token}` }
+      })
+      .then(res => {
+        setDevice({
+          id: res.id,
+          serial: res.serial,
+          hardware: device.hardware
+        });
+        setSerial(res.serial);
+        setLastSavedSerial(res.serial);
+        toast.success('Hardware device created successfully');
+      })
+      .catch(err => {
+        setDevice({
+          ...device,
+          serial: device.serial
+        });
+        setSerial(device.serial || '');
+        toast.error('Failed to create hardware device');
+      })
+      .finally(() => setLoading(false));
+    } else {
+      setLoading(true);
+      const payload: PatchedHardwareDeviceRequest = {
+        ...deviceData,
       }
+      hardwaredevicesPartialUpdate(device.id, payload, {
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      })
+        .then(res => {
+          setDevice({
+            ...device,
+            serial: res.serial
+          });
+          setSerial(res.serial);
+          setLastSavedSerial(res.serial);
+          toast.success('Hardware device updated successfully');
+        })
+        .catch(err => {
+          toast.error('Failed to update hardware device');
+        })
+        .finally(() => setLoading(false));
     }
   }
 
   function remove() {
-    if (isOriginal) {
+    if (!isPersistedToDB) {
       deleteDevice();
     } else if (access_token) {
       setLoading(true);
-      deleteHardwareDevice(access_token, device.id!)
+      hardwaredevicesDestroy(device.id, {
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      })
         .then(() => {
           deleteDevice();
         })
@@ -517,7 +582,7 @@ function HardwareDeviceEditor({
       <button className="text-[#CC2F34]" onClick={remove} disabled={loading}>
         <CloseIcon />
       </button>
-      {hasChanged || isOriginal ? (
+      {hasChanged || !isPersistedToDB ? (
         <button className="text-[#493B8A]" onClick={save} disabled={loading}>
           <Save />
         </button>

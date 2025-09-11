@@ -1,18 +1,18 @@
 'use client';
-import { Hardware, HardwareCategory } from '@/types/types';
+import { HardwareCategory } from '@/types/types2';
 import HardwareCard from './HardwareCard';
 import { useState } from 'react';
 import HardwareCategoryFilter from './HardwareCategoryFilter';
+import { HardwareCount } from '@/types/models';
 
 export default function FilteredHardwareRequestViewer({
   hardware,
   hardwareCategories
 }: {
-  hardware: any;
-  hardwareCategories: any;
+  hardware: HardwareCount[];
+  hardwareCategories: HardwareCategory[];
 }) {
   const [search, setSearch] = useState('');
-  const [selectAll, setSelectAll] = useState(false);
   const [selected, setSelected] = useState(
     Object.fromEntries(
       hardwareCategories.map((cat: HardwareCategory) => [cat.value, false])
@@ -27,23 +27,24 @@ export default function FilteredHardwareRequestViewer({
         setSearch={setSearch}
         selected={selected}
         setSelected={setSelected}
-        selectAll={selectAll}
-        setSelectAll={setSelectAll}
       ></HardwareCategoryFilter>
       <div className="flex flex-wrap justify-left gap-6 ml-6 mt-14">
         {hardware
           .filter(
-            (item: Hardware) =>
-              (selectAll ||
-                item.tags.some(
-                  tag => selected[tag?.value || (tag as unknown as string)]
+            (item: HardwareCount) =>
+              (item.tags.some(
+                  tag => selected[tag?.valueOf() || tag]
                 ) ||
                 !Object.entries(selected).some(([_, val]) => val)) &&
               (!search ||
                 item.name.toLowerCase().includes(search.toLowerCase()))
           )
-          .map((item: any, i: number) => (
-            <HardwareCard item={item} key={item?.id} topLevelProps={{"data-testid": `hardware-request-hardware-${i}`}}></HardwareCard>
+          .map((item: HardwareCount, i: number) => (
+            <HardwareCard
+              item={item}
+              key={item?.id}
+              topLevelProps={{ 'data-testid': `hardware-request-hardware-${i}` }}
+            />
           ))}
       </div>
     </>

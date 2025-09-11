@@ -1,68 +1,68 @@
 'use client';
-import {
-  getHardwareRequests,
-  patchHardwareRequest,
-  deleteHardwareRequest,
-  getAllHardware,
-  getHardwareDevice,
-  updateHardwareDevice
-} from '@/app/api/hardware';
 import { useSession } from 'next-auth/react';
 import { useEffect, useMemo, useState } from 'react';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import Table from '@/components/Table';
 import {
-  Hardware,
-  HardwareDevice,
-  HardwareRequestBrief,
-  HardwareRequest,
   hardware_request_status,
-  hardware_requester
+  hardware_requester,
 } from '@/types/types';
+import { HardwareWithType } from '@/types/types2'
 import Box from '@mui/material/Box';
 import CustomSelect from '@/components/CustomSelect';
-import { TextInput } from './Inputs';
+import { hardwarerequestsPartialUpdate, hardwarerequestsDestroy, hardwaredevicesPartialUpdate } from '@/types/endpoints';
 import { LinearProgress } from '@mui/material';
+import { 
+  HardwareRequestList,
+  PatchedHardwareRequestRequest,
+  HardwareRequestStatusEnum,
+  PatchedHardwareDeviceRequest
+} from '@/types/models';
+import { toast } from 'sonner';
+import { useHardwareContext } from '@/contexts/HardwareAdminContext';
 
-const HardwareRequestStatusOptions: {
+type hardwareRequestStatusOption = {
   label: string;
-  value: hardware_request_status;
-}[] = [
+  value: HardwareRequestStatusEnum;
+}
+
+const HardwareRequestStatusOptionsCheckedOut: hardwareRequestStatusOption = {
+  label: 'Checked Out',
+  value: HardwareRequestStatusEnum.C
+}
+
+const HardwareRequestStatusOptionsFull: hardwareRequestStatusOption[] = [
   {
     label: 'Pending',
-    value: hardware_request_status.pending
-  },
-  {
-    label: 'Approved',
-    value: hardware_request_status.approved
+    value: HardwareRequestStatusEnum.P
   },
   {
     label: 'Rejected',
-    value: hardware_request_status.rejected
+    value: HardwareRequestStatusEnum.R
   },
+];
+
+const HardwareRequestStatusOptions: hardwareRequestStatusOption[] = [
   {
-    label: 'Checked Out',
-    value: hardware_request_status.checked_out
-  }
+    label: 'Approved',
+    value: HardwareRequestStatusEnum.A
+  },
+  HardwareRequestStatusOptionsCheckedOut,
+  ...HardwareRequestStatusOptionsFull
 ];
-const HardwareRequestStatusOptionsDisplay = HardwareRequestStatusOptions.slice(
-  0,
-  3
-);
-const HardwareRequestStatusOptionsCheckedOut =
-  HardwareRequestStatusOptions.slice(3);
-const HardwareRequestStatusOptionsFull = [
-  HardwareRequestStatusOptions[0],
-  HardwareRequestStatusOptions[2]
-];
+
+type HardwareRequestTableRow = HardwareRequestList & {
+  hardware_in_stock: number;
+  hardware_total: number;
+}
 
 export default function HardwareRequestView({
   statusEditable = false,
   reasonEditable = false,
   deletable = false,
   onlyApproved = false,
-  requester = null,
-  hardwareDevice = null,
+  requester = null, // rename to requesterId
+  userSelectedHardwareDevice = null,
   setCheckedOutTo = () => {}
 }: {
   statusEditable?: boolean;
@@ -70,199 +70,201 @@ export default function HardwareRequestView({
   deletable?: boolean;
   onlyApproved?: boolean;
   requester?: hardware_requester;
-  hardwareDevice?: HardwareDevice | null;
+  userSelectedHardwareDevice?: HardwareWithType | null;
   setCheckedOutTo?: (
-    newApp: HardwareRequest | HardwareRequestBrief | null
+    newApp: HardwareRequestList | null
   ) => void;
 }) {
-  const [requestsLoading, setRequestsLoading] = useState(true);
-  const [hardwareLoading, setHardwareLoading] = useState(true);
   const { data: session } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
-  const [requests, setRequests] = useState<HardwareRequestBrief[]>([]);
-  const [hardware, setHardware] = useState<{ [k: string]: Hardware }>({});
+  const [isUpdating, setIsUpdating] = useState(false);
+  const { 
+    hardwareRequests, 
+    isLoadingHardwareRequests, 
+    mutateHardwareRequests,
+    mutateHardwareDevices,
+    setHardwareRequestParams,
+    hardwareDeviceTypeMap,
+    hardwareDeviceMap,
+  } = useHardwareContext();
   useEffect(() => {
-    if (session?.access_token) {
-      setHardwareLoading(true);
-      getAllHardware(session.access_token)
-        .then(hardware => {
-          setHardware(
-            Object.fromEntries(hardware.map((h: Hardware) => [h.id, h]))
-          );
-        })
-        .finally(() => setHardwareLoading(false));
+    if (requester) {
+      setHardwareRequestParams({
+        requester__id: requester,
+      });
     }
-  }, [session]);
-  useEffect(() => {
-    (async () => {
-      if (session?.access_token) {
-        setRequestsLoading(true);
-        try {
-          const requests = await getHardwareRequests(
-            session.access_token,
-            requester
-          );
-          const requestsWithDevice = await Promise.all(
-            requests.map(async (r: any) => ({
-              ...r,
-              hardware_device:
-                r.hardware_device == null
-                  ? null
-                  : await getHardwareDevice(session.access_token, {
-                      id: r.hardware_device
-                    })
-            }))
-          );
-          setRequests(
-            requestsWithDevice.filter(
-              (r: HardwareRequestBrief) =>
-                !onlyApproved || r.status == hardware_request_status.approved
-            )
-          );
-          setRequestsLoading(false);
-        } catch (e) {
-          setRequestsLoading(false);
-          throw e;
-        }
+  }, [requester]);
+
+  const tableData = useMemo(() => {
+    if (!hardwareRequests) return [];
+    if (!hardwareDeviceTypeMap) return hardwareRequests;
+
+    return hardwareRequests?.map(req => ({
+      ...req,
+      hardware_in_stock: hardwareDeviceTypeMap[req.hardware]?.available || 0,
+      hardware_total: hardwareDeviceTypeMap[req.hardware]?.total || 0
+    }));
+  }, [hardwareRequests, hardwareDeviceTypeMap]);
+  
+  const renderRowCheckoutButton = (
+    hardwareRequest: HardwareRequestList,
+  ) => {
+    const isHardwareDeviceAvailable = userSelectedHardwareDevice?.checked_out_to == null;
+    const isSameHardwareDevice = userSelectedHardwareDevice?.id && 
+      hardwareRequest.hardware_device == userSelectedHardwareDevice.id;
+    const isSameHardwareDeviceType = userSelectedHardwareDevice?.hardwareType?.id  && 
+      userSelectedHardwareDevice.hardware == hardwareRequest.hardware;
+    const isRequestApproved = hardwareRequest.status == HardwareRequestStatusEnum.A;
+    const isDeviceCheckedOut = hardwareRequest.status == HardwareRequestStatusEnum.C;
+
+    const isValidCheckout = isSameHardwareDeviceType && isHardwareDeviceAvailable && isRequestApproved;
+    const isValidReturn = isDeviceCheckedOut && isSameHardwareDevice;
+    const isValidRequest = isValidCheckout || isValidReturn;
+
+    if (!isValidRequest) {
+      return null;
+    }
+    
+    const buttonColor = isValidCheckout ? 'bg-[#2FCC32]' : 'bg-[#CCAA2F]';
+
+    const buttonText = isValidCheckout ? 'Check Out' : 'Return';
+    const updateRequestBody: PatchedHardwareRequestRequest = {
+      status: isValidCheckout ? hardware_request_status.checked_out : hardware_request_status.pending,
+      hardware_device: isValidCheckout ? userSelectedHardwareDevice?.id : null,
+    }
+    if (!hardwareRequest.id || hardwareRequest.id == undefined) {
+      toast.error('Hardware request ID is undefined');
+      return null;
+    }
+
+    // TODO: update checked out to in parent component
+    const handleClick = () => {
+      patchHardwareRequest(hardwareRequest.id || '', updateRequestBody)
+      const selectedDevicePayload:PatchedHardwareDeviceRequest = {
+        checked_out_to: isValidCheckout ? hardwareRequest.id : null
       }
-    })();
-  }, [session, requester]);
-  const columnHelper = createColumnHelper<HardwareRequestBrief>();
-  const columns: ColumnDef<HardwareRequestBrief, any>[] = ((
-      !isAdmin
-        ? []
-        : [
-            columnHelper.display({
-              id: 'check out',
-              header: () => '',
-              cell: info =>
-                hardwareDevice == null ? null : info.row.original.status ==
-                    hardware_request_status.approved &&
-                  hardwareDevice.checked_out_to == null &&
-                  info.row.original.hardware_device == null &&
-                  info.row.original.hardware == hardwareDevice.hardware.id ? (
-                  <button
-                    className="cursor-pointer text-white bg-[#2FCC32] px-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end"
-                    onClick={() => {
-                      if (session?.access_token) {
-                        setRequestsLoading(true);
-                        (async () => {
-                          const newApp: HardwareRequestBrief = await patchHardwareRequest(
-                            session.access_token,
-                            info.row.original.id,
-                            {
-                              status: hardware_request_status.checked_out,
-                              hardware_device: hardwareDevice
-                            }
-                          )
-                          const newRequests = [...requests];
-                          newRequests[info.row.index].status = newApp.status;
-                          if(typeof newApp.hardware_device === 'string' || newApp.hardware_device instanceof String) {
-                            //@ts-ignore
-                            const newDevice = await getHardwareDevice(session.access_token, {id: newApp.hardware_device});
-                            const newRequests = [...requests];
-                            newRequests[info.row.index].hardware_device = newDevice;
-                          } else {
-                            newRequests[info.row.index].hardware_device = newApp.hardware_device;
-                          }
-                          setRequests(newRequests);
-                          setCheckedOutTo(newApp);
-                        })().finally(() => setRequestsLoading(false));
-                      }
-                    }}
-                  >
-                    Check Out
-                  </button>
-                ) : info.row.original.status ==
-                    hardware_request_status.checked_out &&
-                  info.row.original.hardware_device?.id == hardwareDevice.id ? (
-                  <button
-                    className="cursor-pointer text-white bg-[#CCAA2F] px-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end"
-                    onClick={() => {
-                      if (session?.access_token) {
-                        setRequestsLoading(true);
-                        Promise.all([patchHardwareRequest(
-                          session.access_token,
-                          info.row.original.id,
-                          {
-                            status: hardware_request_status.approved,
-                            hardware_device: null
-                          }
-                        ),
-                        updateHardwareDevice(session.access_token, {
-                          id: hardwareDevice.id,
-                          checked_out_to: null
-                        })
-                      ])
-                          .then(([newApp, _newDevice]) => {
-                            if (
-                              newApp.status != hardware_request_status.approved
-                            ) {
-                              return;
-                            }
-                            const newRequests = [...requests];
-                            newRequests[info.row.index].status = hardware_request_status.approved;
-                            newRequests[info.row.index].hardware_device = null;
-                            setRequests(newRequests);
-                            setCheckedOutTo(null);
-                          })
-                          .finally(() => {
-                            setRequestsLoading(false);
-                          });
-                      }
-                    }}
-                  >
-                    Return
-                  </button>
-                ) : null
-            })
-          ]
-    ) as ColumnDef<HardwareRequestBrief, any>[]).concat(
+      hardwaredevicesPartialUpdate(userSelectedHardwareDevice?.id || '', 
+        selectedDevicePayload,
+        {
+          headers: {
+            'Authorization': `JWT ${session?.access_token}`
+          }
+        }
+      )
+    }
+
+    return (
+      <button
+        className={`cursor-pointer text-white ${buttonColor} px-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end`}
+        onClick={handleClick}
+        disabled={isUpdating}
+      >
+        {buttonText}
+      </button>
+    )
+  }
+
+  const refreshHardwareData = () => {
+    mutateHardwareRequests();
+    mutateHardwareDevices();
+  }
+
+  const patchHardwareRequest = (hardwareRequestId: string, updateRequestBody: PatchedHardwareRequestRequest) => {
+    if (hardwareRequestId.length == 0) {
+      toast.error('Hardware request ID is empty');
+      return null;
+    }
+    if (!session?.access_token) {
+      toast.error('No access token');
+      return null;
+    }
+    setIsUpdating(true);
+    const accessToken = session.access_token;
+    // TODO: can we optimistically update?
+    hardwarerequestsPartialUpdate(hardwareRequestId, updateRequestBody, {
+      headers: {
+        'Authorization': `JWT ${accessToken}`
+      }
+    })
+      .then(() => refreshHardwareData())
+      .catch((error) => {
+      console.error(error);
+      toast.error(`Failed to update hardware request: ${error.message}`);
+    }).finally(() => {
+      setIsUpdating(false);
+    });
+  }
+
+  const renderDeleteButton = (hardwareRequestId: string | null, status: HardwareRequestStatusEnum | null) => {
+    if (hardwareRequestId == null) {
+      return null;
+    }
+    if (status == HardwareRequestStatusEnum.C) {
+      return null;
+    }
+    const handleDelete = () => {
+      if (!session?.access_token) {
+        toast.error('No access token');
+        return null;
+      }
+      setIsUpdating(true);
+      hardwarerequestsDestroy(hardwareRequestId, {
+        headers: {
+          'Authorization': `JWT ${session?.access_token}`
+        }
+      })
+      .then(() => refreshHardwareData())
+      .catch((error) => {
+        console.error(error);
+        toast.error(`Failed to delete hardware request: ${error.message}`);
+      }).finally(() => {
+        setIsUpdating(false);
+      });
+    }
+    return (
+      <button
+        className="cursor-pointer text-white bg-[#CC2F34] px-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end"
+        onClick={handleDelete}
+        disabled={isUpdating}
+      >
+        {isUpdating ? 'Updating...' : 'Delete'}
+      </button>
+    )
+  }
+
+  const rowStatusOptions = (
+    currentStatus: HardwareRequestStatusEnum, 
+    requestedDeviceId: string
+  ) => {
+    if (!hardwareDeviceTypeMap) return [];
+    if (currentStatus == HardwareRequestStatusEnum.C) {
+      return [HardwareRequestStatusOptionsCheckedOut];
+    }
+    if (hardwareDeviceTypeMap?.[requestedDeviceId]?.available < 1) {
+      return HardwareRequestStatusOptionsFull;
+    }
+    return HardwareRequestStatusOptions;
+  }
+
+  const columnHelper = createColumnHelper<HardwareRequestTableRow>();
+  const columns: ColumnDef<HardwareRequestTableRow, any>[] = ((
+    !isAdmin ? [] : [
+      columnHelper.display({
+      id: 'check out',
+      header: () => '',
+      cell: info =>
+        renderRowCheckoutButton(info.row.original)
+      })
+    ]
+    ) as ColumnDef<HardwareRequestTableRow, any>[]).concat(
       !deletable
         ? []
         : [
             columnHelper.display({
               id: 'delete',
               header: () => '',
-              cell: info =>
-                [
-                  hardware_request_status.rejected,
-                  hardware_request_status.checked_out
-                ].includes(info.row.original.status) ? null : (
-                  <button
-                    className="cursor-pointer text-white bg-[#CC2F34] px-2 rounded-full disabled:opacity-50 transition-all flex-shrink self-end"
-                    onClick={() => {
-                      if (session?.access_token) {
-                        setRequestsLoading(true);
-                        deleteHardwareRequest(
-                          session.access_token,
-                          info.row.original.id
-                        )
-                          .then(() => {
-                            if (
-                              info.row.original.status ==
-                              hardware_request_status.approved
-                            ) {
-                              hardware[
-                                info.row.original.hardware
-                              ].available += 1;
-                            }
-                            setRequests(
-                              requests
-                                .slice(0, info.row.index)
-                                .concat(requests.slice(info.row.index + 1))
-                            );
-                          })
-                          .finally(() => {
-                            // TODO: .catch
-                            setRequestsLoading(false);
-                          });
-                      }
-                    }}
-                  >
-                    Delete
-                  </button>
-                )
+              cell: info => 
+                renderDeleteButton(info.row.original.id || null, info.row.original.status || null)
             })
           ]
     ).concat(
@@ -271,7 +273,7 @@ export default function HardwareRequestView({
     // @ts-ignore
     columnHelper.accessor('team', {
       header: () => 'Team',
-      cell: info => () => info.getValue()?.name
+      cell: info => info.getValue()?.name
     }),
     columnHelper.accessor('requester', {
       header: () => 'Requested by',
@@ -279,35 +281,36 @@ export default function HardwareRequestView({
     }),
     columnHelper.accessor('hardware', {
       header: () => 'Item',
-      cell: info => hardware[info.getValue()]?.name
+      cell: info => hardwareDeviceTypeMap?.[info.getValue()]?.name
     }),
     columnHelper.accessor('reason', {
       header: () => 'Reason',
       cell: info =>
-        !reasonEditable ? (
+        !reasonEditable || !info.row.original.id ? (
           info.getValue()
         ) : (
           <ReasonEditor
             initial={info.getValue()}
             id={info.row.original.id}
             access_token={session?.access_token}
+            mutateHardwareRequests={mutateHardwareRequests}
           ></ReasonEditor>
         )
     }),
     columnHelper.accessor('hardware_in_stock', {
       header: () => 'In Stock',
-      cell: info => hardware[info.getValue()]?.available
+      cell: info => info.getValue()
     }),
     columnHelper.accessor('hardware_total', {
       header: () => 'Total',
-      cell: info => hardware[info.getValue()]?.total
+      cell: info => info.getValue()
     }),
     columnHelper.accessor('hardware_device', {
       header: () => 'Hardware Device Assigned',
       cell: info =>
         info.getValue() == null
           ? null
-          : info.getValue()?.serial?.slice(0, 12)?.concat('...')
+          : hardwareDeviceMap?.[info.getValue()]?.serial?.slice(0, 12)?.concat('...')
     }),
     columnHelper.accessor('status', {
       header: () => 'Status',
@@ -320,54 +323,15 @@ export default function HardwareRequestView({
           <Box sx={{ minWidth: 120 }}>
             <CustomSelect
               label="Select a status"
-              options={
-                !hardware[info.row.original.hardware]
-                  ? []
-                  : info.getValue() == 'C'
-                  ? HardwareRequestStatusOptionsCheckedOut
-                  : hardware[info.row.original.hardware].available < 1
-                  ? HardwareRequestStatusOptionsFull
-                  : HardwareRequestStatusOptionsDisplay
-              }
+              options={rowStatusOptions(info.getValue(), info.row.original.hardware_device || '')}
               value={info.getValue()}
+              disabled={isUpdating}
               onChange={(newStatus: string) => {
-                if (session?.access_token && isAdmin) {
-                  setRequestsLoading(true);
-                  setHardwareLoading(true);
-                  const status = newStatus as hardware_request_status;
-                  patchHardwareRequest(
-                    session.access_token,
-                    info.row.original.id,
-                    {
-                      status
-                    }
-                  )
-                    // get type from generated typesdz
-                    .then((newApp: HardwareRequestBrief) => {
-                      const newHardware = Object.fromEntries(
-                        Object.entries(hardware)
-                      );
-                      if (newApp.status == hardware_request_status.approved) {
-                        hardware[info.row.original.hardware].available -= 1;
-                      } else if (
-                        newApp.status == hardware_request_status.rejected &&
-                        info.row.original.status ==
-                          hardware_request_status.approved
-                      ) {
-                        hardware[info.row.original.hardware].available += 1;
-                      }
-                      const newRequests = [...requests];
-                      newRequests[info.row.index].status = newApp.status;
-                      newRequests[info.row.index].hardware_device =
-                        newApp.hardware_device;
-                      setRequests(newRequests);
-                      setHardware(newHardware);
-                    })
-                    .finally(() => {
-                      // TODO: .catch
-                      setRequestsLoading(false);
-                      setHardwareLoading(false);
-                    });
+                if (isAdmin) {
+                  const updateRequestBody: PatchedHardwareRequestRequest = {
+                    status: newStatus as HardwareRequestStatusEnum
+                  }
+                  patchHardwareRequest(info.row.original.id || '', updateRequestBody)
                 }
               }}
             />
@@ -381,10 +345,10 @@ export default function HardwareRequestView({
       <div className="z-50 px-6 py-6 overflow-y-scroll bg-[#FCFCFC] border-gray-300 rounded-2xl">
         <div className="overflow-y-scroll z-50 rounded-l border border-[#EEEEEE]">
           <Table
-            data={requests}
-            columns={columns}
+            data={tableData || []}
+            columns={columns as ColumnDef<HardwareRequestList, any>[]}
             pagination={true}
-            loading={requestsLoading || hardwareLoading}
+            loading={isLoadingHardwareRequests}
             search={true}
           ></Table>
         </div>
@@ -396,11 +360,13 @@ export default function HardwareRequestView({
 function ReasonEditor({
   initial,
   id,
-  access_token
+  access_token,
+  mutateHardwareRequests
 }: {
   initial: string;
   id: string;
   access_token: string | undefined;
+  mutateHardwareRequests: () => void;
 }) {
   const [loading, setLoading] = useState(false);
   const [initial_, setInitial] = useState(initial);
@@ -409,20 +375,22 @@ function ReasonEditor({
   const submit = ((newReason: string) => {
     if (!access_token) return;
     setLoading(true);
-    patchHardwareRequest(
-      access_token,
-      id,
-      {
-        reason: newReason
+    hardwarerequestsPartialUpdate(id, { reason: newReason}, {
+      headers: {
+        'Authorization': `JWT ${access_token}`
       }
-    )
-      .then((newApp: HardwareRequestBrief) => {
-        setInitial(newApp.reason);
-      })
-      .finally(() => {
-        // TODO: .catch
-        setLoading(false);
-      });
+    }).then(() => {
+      setValue(newReason);
+      setInitial(newReason);
+      mutateHardwareRequests();
+    })
+    .catch((error) => {
+      console.error(error);
+      toast.error(`Failed to update hardware request: ${error.message}`);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
   });
 
   return loading ? <LinearProgress /> : (
@@ -430,12 +398,20 @@ function ReasonEditor({
       {value == initial_ ? <input value={value} onChange={e => setValue(e.target.value)}></input>
       : <>
         <textarea value={value} onChange={e => setValue(e.target.value)} rows={4}></textarea>
-        <button
-          className="cursor-pointer text-white bg-[#493B8A] px-2 mx-2 rounded-full disabled:opacity-50 transition-all flex-shrink h-5 self-end"
-          onClick={() => submit(value)}
-        >
-          Submit
-        </button>
+        <div className="flex flex-row">          
+          <button
+            className="cursor-pointer text-white bg-[#493B8A] px-2 mx-2 rounded-full disabled:opacity-50 transition-all flex-shrink h-5 self-end"
+            onClick={() => submit(value)}
+          >
+            Submit
+          </button>
+          <button
+            className="cursor-pointer text-white bg-red-800 px-2 mx-2 rounded-full disabled:opacity-50 transition-all flex-shrink h-5 self-end"
+            onClick={() => setValue(initial_)}
+          >
+            Cancel
+          </button>
+        </div>
       </>}
     </>
   );
