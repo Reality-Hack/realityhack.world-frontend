@@ -1,35 +1,26 @@
 'use client';
-import { SerializedTeam } from '@/app/api/team';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useEffect, useState } from 'react';
 import TeamForm from './TeamForm';
+import { TeamOperationResult } from '@/types/types2';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSave: (newTeam: any) => void;
 };
+export default function TeamDialog({ open, onClose }: Props) {
+  const router = useRouter();
+  const handleSuccess = (result: TeamOperationResult | null) => {
+    if (result && 'id' in result) {
+      router.replace(`/admin/teams/${result.id as string}`);
+    }
+    onClose();
+  };
 
-const defaultTeam: SerializedTeam = {
-  id: '',
-  name: '',
-  number: undefined,
-  attendees: [],
-  project: null,
-  table: undefined,
-  created_at: '',
-  updated_at: '',
-  tracks: [],
-  destiny_hardware: []
-};
-
-export default function TeamDialog({ open, onClose, onSave }: Props) {
-  const [team, setTeam] = useState<SerializedTeam>(defaultTeam);
-
-  useEffect(() => {
-    setTeam(defaultTeam);
-  }, [open]);
+  const handleError = (error: any) => {
+    console.error('Team creation failed:', error);
+  };
 
   return (
     open && (
@@ -37,32 +28,11 @@ export default function TeamDialog({ open, onClose, onSave }: Props) {
         <DialogTitle>Create New Team</DialogTitle>
         <div className="p-4 flex flex-col h-full">
           <div className="inline">
-            <TeamForm team={team} onChange={setTeam} />
-          </div>
-          <div className="flex-1" />
-          <div className="m-2 flex gap-1">
-            <div className="flex-1" />
-            <button
-              className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] transition-all"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] transition-all"
-              onClick={() => {
-                let payload = {
-                  name: team.name,
-                  table: { 
-                    id: team.table?.id 
-                  },
-                  attendees: team.attendees.map(a => a.id)
-                };
-                onSave(payload);
-              }}
-            >
-              Save
-            </button>
+            <TeamForm
+              onSuccess={handleSuccess}
+              onError={handleError}
+              onCancel={onClose}
+            />
           </div>
         </div>
       </Dialog>

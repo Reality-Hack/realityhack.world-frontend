@@ -1,34 +1,34 @@
 'use client';
-import { getAllTeams, Team } from '@/app/api/team';
+import { useTeamsList, TeamsListQueryResult } from '@/types/endpoints';
 import Table from '@/components/Table';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 export default function TeamTable() {
   const router = useRouter();
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
   const { data: session } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
 
-  useEffect(() => {
-    if (session?.access_token && isAdmin) {
-      setLoading(true);
-      getAllTeams(session.access_token)
-        .then(teams => {
-          setTeams(teams);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+  const {
+    data: teams = [],
+    error,
+    isLoading: loading
+  } = useTeamsList(undefined, {
+    swr: {
+      enabled: !!(session?.access_token && isAdmin)
+    },
+    request: {
+      headers: {
+        Authorization: `JWT ${session?.access_token}`
+      }
     }
-  }, []);
+  });
 
-  const columnHelper = createColumnHelper<Team>();
-  const columns = useMemo<ColumnDef<Team, any>[]>(
+  const columnHelper = createColumnHelper<TeamsListQueryResult[0]>();
+  const columns = useMemo<ColumnDef<TeamsListQueryResult[0], any>[]>(
     () => [
       columnHelper.accessor('id', {
         header: () => 'ID',

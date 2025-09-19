@@ -4,7 +4,14 @@ import {
     HardwareCount,
     FileUpload, 
     TagsEnum,
-    HardwareCountDetail
+    HardwareCountDetail,
+    TeamLightHouse,
+    TeamTable,
+    TeamDetail,
+    AttendeeList,
+    AttendeeName,
+    Team,
+    TeamCreateRequest
 } from '@/types/models'
 
 export interface HardwareWithType extends HardwareDevice {
@@ -40,3 +47,11 @@ export const hardware_categories: { [key in TagsEnum]: string } = {
 
 
 export type TaggedHardware = HardwareCount & { mappedTags: HardwareCategory[] };
+
+export interface TeamCreate extends Omit<TeamDetail, 'table' | 'lighthouse' | 'attendees'> {
+  table: TeamTable | null;
+  lighthouse: TeamLightHouse | null;
+  attendees: AttendeeList[] | AttendeeName[];
+}
+
+export type TeamOperationResult = TeamCreate | Team | TeamDetail | TeamCreateRequest;

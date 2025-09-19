@@ -1,3 +1,35 @@
+**Thurs Sept 18**
+What I did
+- Cache busting and prevent client side on attendees endpoint to allow optimistic updates
+- Improve loading state for team form by showing loading animation when attendees are loading
+
+**Mon Sept. 15 - Wed Sept. 17**
+
+What I did
+- Refactor teams form to isolate business logic away from implementing components
+- Use SWR hooks for teams and team pages
+- Create useAttendees hook to improve rendering inside admin teams pages
+
+Up next
+- Refactor applications
+- Scope task to segment data by year
+
+**Sunday Sept. 14**
+
+What I did
+- Optimistically update checkin UI 
+
+**Friday Sept. 12**
+
+What I did
+- Created context hook for Attendees and Attendee
+- refactored checkin to use the new hook
+- Added cache busting to Attendee list endpoint so that checkin refreshes after action
+  - Still takes about 30s to return 
+
+What's next
+- upgrate Teams page
+
 **Wednesday Sept. 10**
 
 What I did
