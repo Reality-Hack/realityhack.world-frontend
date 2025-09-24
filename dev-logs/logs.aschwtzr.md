@@ -1,3 +1,8 @@
+**Tues Sept 23**
+What I did
+- Refactor participant hardware to use common context for hardware browser and hardware requests pages
+- Clean up admin landing page by removing duplicate tiles and single icon
+
 **Thurs Sept 18**
 What I did
 - Cache busting and prevent client side on attendees endpoint to allow optimistic updates
