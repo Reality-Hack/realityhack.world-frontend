@@ -1,6 +1,7 @@
 'use client';
 import { Tab } from '../../../components/Tab';
 import { usePathname } from 'next/navigation';
+import { HardwareProvider } from '@/contexts/HardwareAdminContext';
 
 export default function Hardware({ children }: { children: any }) {
   const pathname = usePathname();
@@ -25,7 +26,9 @@ export default function Hardware({ children }: { children: any }) {
           ></Tab>
         </div>
       </div>
-      {children}
+      <HardwareProvider>
+        {children}
+      </HardwareProvider>
     </main>
   );
 }

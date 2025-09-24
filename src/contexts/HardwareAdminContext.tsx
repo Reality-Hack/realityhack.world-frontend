@@ -14,6 +14,7 @@ type HardwareContextType = {
   hardwareRequestsError: Error | null;
   mutateHardwareRequests: () => void;
   hardwareDeviceTypes: HardwareCount[] | null;
+  filteredHardwareTypes: HardwareCount[] | null;
   isLoadingHardwareDeviceTypes: boolean;
   hardwareDeviceTypesError: Error | null;
   mutateHardwareDeviceTypes: () => void;
@@ -24,6 +25,10 @@ type HardwareContextType = {
   mutateHardwareDevices: () => void;
   hardwareDeviceMap: Record<string, HardwareDevice>;
   hardwareCategories: HardwareCategory[]; 
+  searchTerm: string;
+  setSearchTerm: (searchTerm: string) => void;
+  selectedHardwareCategories: Record<string, boolean>;
+  setSelectedHardwareCategories: (selectedHardwareCategories: Record<string, boolean>) => void;
 };
 
 const HardwareContext = createContext<HardwareContextType | undefined>(undefined);
@@ -37,6 +42,17 @@ export const useHardwareContext = () => {
 export const HardwareProvider = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
   const [hardwareCategories, setHardwareCategories] = useState<HardwareCategory[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedHardwareCategories, setSelectedHardwareCategories] = useState({});
+  useEffect(() => {
+    if (hardwareCategories && hardwareCategories.length > 0) {
+      setSelectedHardwareCategories(
+        Object.fromEntries(
+          hardwareCategories.map((cat: HardwareCategory) => [cat.value, false])
+        )
+      );
+    }
+  }, [hardwareCategories]);
 
   const [hardwareRequestParams, setHardwareRequestParams] = useState<HardwarerequestsListParams>({
     hardware: undefined,
@@ -105,6 +121,45 @@ export const HardwareProvider = ({ children }: { children: ReactNode }) => {
     }
   });
 
+  const filteredHardwareTypes = useMemo(() => {
+    if (!selectedHardwareCategories && !searchTerm) {
+      return hardwareDeviceTypes;
+    }
+
+    if (isLoadingHardwareDeviceTypes) return null;
+
+    function filterBySearch(
+      hardwareList: HardwareCount[],
+      search: string
+    ): HardwareCount[] {
+      return hardwareList.filter(
+        (item: HardwareCount) =>
+          !search || item.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    function filterBySelected(
+      hardwareList: HardwareCount[],
+      selected: Record<string, boolean>
+    ): HardwareCount[] {
+      return hardwareList.filter(
+        (item: HardwareCount) =>
+          item.tags.some(tag => selected[tag?.valueOf() || tag]) ||
+          !Object.entries(selected).some(([_, val]) => val)
+      );
+    }
+
+    if (!searchTerm) {
+      return filterBySelected(hardwareDeviceTypes || [], selectedHardwareCategories);
+    }
+
+    if (!selectedHardwareCategories) {
+      return filterBySearch(hardwareDeviceTypes || [], searchTerm);
+    }
+    const filteredBySelected = filterBySelected(hardwareDeviceTypes || [], selectedHardwareCategories);
+    return filterBySearch(filteredBySelected, searchTerm);
+  }, [hardwareDeviceTypes, selectedHardwareCategories, searchTerm]);
+
   const hardwareDeviceTypeMap = useMemo(() => {
     if (!hardwareDeviceTypes) return {};
     return Object.fromEntries(hardwareDeviceTypes?.map(h => [h.id, h]) || []);
@@ -123,6 +178,7 @@ export const HardwareProvider = ({ children }: { children: ReactNode }) => {
       hardwareRequestsError: hardwareRequestsError as Error | null,
       mutateHardwareRequests,
       hardwareDeviceTypes: hardwareDeviceTypes || null,
+      filteredHardwareTypes: filteredHardwareTypes || null,
       isLoadingHardwareDeviceTypes,
       hardwareDeviceTypesError: hardwareDeviceTypesError as Error | null,
       mutateHardwareDeviceTypes,
@@ -133,6 +189,10 @@ export const HardwareProvider = ({ children }: { children: ReactNode }) => {
       mutateHardwareDevices,
       hardwareDeviceMap,
       hardwareCategories,
+      searchTerm,
+      setSearchTerm,
+      selectedHardwareCategories,
+      setSelectedHardwareCategories,
     }}>
       {children}
     </HardwareContext.Provider>

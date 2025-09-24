@@ -7,7 +7,7 @@ import { fixFileLink } from '@/app/api/uploaded_files';
 import { toast } from 'sonner';
 import { useHardwarerequestsCreate } from '@/types/endpoints';
 
-export default function HardwareCard({ item, topLevelProps = {} }: { item: HardwareCount, topLevelProps?: object }) {
+export default function HardwareCard({ item, identifier }: { item: HardwareCount, identifier: string }) {
   const { data: session } = useSession();
   const [reason, setReason] = useState('');
   const quantity = item.available;
@@ -33,7 +33,7 @@ export default function HardwareCard({ item, topLevelProps = {} }: { item: Hardw
     setReason('');
   }
   return (
-    <div {...topLevelProps} className="flex-col gap-2 w-[355px] bg-gradient-to-t from-[#FFFFFF] to-[#FFFFFF] border border-blue-500 rounded-[10px] shadow flex justify-center items-center p-2">
+    <div data-testid={identifier} className="flex-col gap-2 w-[355px] bg-gradient-to-t from-[#FFFFFF] to-[#FFFFFF] border border-blue-500 rounded-[10px] shadow flex justify-center items-center p-2">
       {!!item.image && <img className="rounded-xl" src={fixFileLink(item.image.file)} />}
       <div className="flex justify-between w-full">
         <span className="text-xl" title="Hardware name">{item.name}</span>

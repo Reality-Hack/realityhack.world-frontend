@@ -2,13 +2,18 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { HardwareCategory, hardware_categories } from '@/types/types2';
 import { useState } from 'react';
+import { useHardwareContext } from '@/contexts/HardwareAdminContext';
 
 
 export default function HardwareCategoryFilter(
-  { hardwareCategories, search, setSearch, selected, setSelected }:
-  { hardwareCategories: HardwareCategory[], search: string, setSearch: (search: string) => void,
-    selected: any, setSelected: (selected: any) => void }
 ) {
+  const { 
+    hardwareCategories, 
+    selectedHardwareCategories, 
+    setSelectedHardwareCategories, 
+    searchTerm, 
+    setSearchTerm 
+  } = useHardwareContext();
   const [filterOn, setFilterOn] = useState(false);
   return <div className="flex flex-col items-end">
     <button
@@ -18,7 +23,7 @@ export default function HardwareCategoryFilter(
       Filter
     </button>
     {filterOn && (
-      <div className="fixed rounded-md shadow-xl bg-white z-10 right-[4%] top-[16%]">
+      <div className="fixed rounded-md shadow-xl bg-white z-10 right-[4%] top-[8%]">
         <div className='flex flex-end justify-end'>
           <button
             className="self-end rounded-full text-black mx-4"
@@ -35,8 +40,8 @@ export default function HardwareCategoryFilter(
             <input
               className="my-1 shadow-md"
               placeholder="Search hardware"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
             ></input>
             {hardwareCategories.map(
               (cat: HardwareCategory, idx: number) => (
@@ -46,11 +51,11 @@ export default function HardwareCategoryFilter(
                     name={hardware_categories[cat.value]}
                     defaultValue={hardware_categories[cat.value]}
                     type="checkbox"
-                    defaultChecked={selected[cat.value]}
+                    defaultChecked={selectedHardwareCategories[cat.value]}
                     className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                     onClick={ev => {
                       const checked = ev.currentTarget.checked;
-                      setSelected({ ...selected, [cat.value]: checked });
+                      setSelectedHardwareCategories({ ...selectedHardwareCategories, [cat.value]: checked });
                     }}
                   />
                   <label

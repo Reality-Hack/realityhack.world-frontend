@@ -7,37 +7,20 @@ import { useEffect, useState } from 'react';
 import FilteredHardwareRequestViewer from '@/components/hardware/FilteredHardwareRequestViewer';
 import Loader from '@/components/Loader';
 import { HardwareCategory } from '@/types/types2';
+import { useHardwareContext } from '@/contexts/HardwareAdminContext';
 
 export default function HardwareRequest() {
   const { data: session } = useSession();
-  const [hardwareCategories, setHardwareCategories] = useState<HardwareCategory[]>([]);
-  const { data: hardwareData, isLoading: isLoadingHardware, error: hardwareError } = useHardwareList({}, {
-    swr: { enabled: !!session?.access_token}, 
-    request: {
-      headers: {
-        'Authorization': `JWT ${session?.access_token}`
-      }
-    }
-  });
+  const { isLoadingHardwareDeviceTypes, hardwareDeviceTypesError } = useHardwareContext();
 
-  useEffect(() => {
-    const fetchHardwareCategories = async () => {
-      if (session?.access_token) {
-        const response: HardwareCategory[] = await getHardwareCategories(session?.access_token);
-        setHardwareCategories(response);
-      }
-    };
-    fetchHardwareCategories();
-  }, [session]);
-
-  if (isLoadingHardware) {
+  if (isLoadingHardwareDeviceTypes) {
     return <Loader />;
   }
 
-  if (hardwareError) {
+  if (hardwareDeviceTypesError) {
     return (
       <p className="text-lg text-center text-red-600">
-        {hardwareError.message}
+        {hardwareDeviceTypesError.message}
       </p>
     );
   }
@@ -47,9 +30,6 @@ export default function HardwareRequest() {
   }
 
   return (
-    <FilteredHardwareRequestViewer
-      hardware={hardwareData || []}
-      hardwareCategories={hardwareCategories || []}
-    />
+    <FilteredHardwareRequestViewer/>
   );
 }

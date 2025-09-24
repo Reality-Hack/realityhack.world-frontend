@@ -5,7 +5,7 @@ import HardwareRequestView from '@/components/HardwareRequestView';
 import QRCodeReader from '@/components/admin/QRCodeReader';
 import { useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
-import { AttendeeList, Hardware, HardwareCountDetail, HardwareDeviceDetail, HardwaredevicesListParams } from '@/types/models';
+import { AttendeeList, Hardware, HardwareCountDetail } from '@/types/models';
 import { HardwareWithType } from '@/types/types2';
 import { hardwaredevicesList, hardwaredevicesRetrieve, hardwareRetrieve } from '@/types/endpoints';
 import { toast } from 'sonner';

@@ -98,13 +98,7 @@ export default function HardwareEditor({
         <span className="text-3xl">+</span>{' '}
         <span className="py-2 px-2">add new</span>
       </button>
-      <HardwareCategoryFilter
-        hardwareCategories={hardwareCategories}
-        search={search}
-        setSearch={setSearch}
-        selected={selected}
-        setSelected={setSelected}
-      />
+      <HardwareCategoryFilter/>
       <div className="flex flex-wrap justify-left gap-6 ml-6 mt-14">
         {filteredHardware.map((item: any, i: number) => (
           <EditableHardwareCard
