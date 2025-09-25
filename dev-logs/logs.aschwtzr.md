@@ -1,3 +1,7 @@
+**Wed Sept 24**
+What I did
+- Refactor reusable TeamsForm out of participant team page for reuse in admin
+
 **Tues Sept 23**
 What I did
 - Refactor participant hardware to use common context for hardware browser and hardware requests pages
