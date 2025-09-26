@@ -1,35 +1,13 @@
 'use client';
-import { TeamCreate, createTeam } from '@/app/api/team';
 import TeamDialog from '@/components/admin/teams/TeamDialog';
 import TeamTable from '@/components/admin/teams/TeamTable';
 import { Alert } from '@mui/material';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function TeamListPage() {
-  const { data: session } = useSession();
-  const router = useRouter();
-  const isAdmin = session && session.roles?.includes('admin');
   const [open, setOpen] = useState<boolean>(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [errorAlertMessage, setErrorAlertMessage] = useState('');
-
-  const saveTeam = async (newTeam: TeamCreate) => {
-    try {
-      if (isAdmin && session?.access_token) {
-        const result = await createTeam(newTeam, session.access_token);
-        router.replace(`/admin/teams/${result.id}`);
-      }
-    } catch (error: any) {
-      setShowErrorAlert(true);
-      setErrorAlertMessage(error.message);
-      const timer = setTimeout(() => {
-        setShowErrorAlert(false);
-      }, 4000);
-      return () => clearTimeout(timer);
-    }
-  };
 
   return (
     <main className="pl-2 pt-8">
@@ -48,7 +26,6 @@ export default function TeamListPage() {
       <TeamDialog
         open={open}
         onClose={() => setOpen(false)}
-        onSave={saveTeam}
       />
       {showErrorAlert && (
         <div

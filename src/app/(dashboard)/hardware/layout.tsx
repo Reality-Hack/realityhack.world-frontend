@@ -1,13 +1,12 @@
 'use client';
-import { SetDynamicRoute } from '../../utils/setDynamicRoute';
 import { Tab } from '../../../components/Tab';
 import { usePathname } from 'next/navigation';
+import { HardwareProvider } from '@/contexts/HardwareAdminContext';
 
 export default function Hardware({ children }: { children: any }) {
   const pathname = usePathname();
   return (
     <main>
-      <SetDynamicRoute />
       <h1 className="text-4xl">
         {pathname == '/hardware/requested'
           ? 'Requested hardware'
@@ -27,7 +26,9 @@ export default function Hardware({ children }: { children: any }) {
           ></Tab>
         </div>
       </div>
-      {children}
+      <HardwareProvider>
+        {children}
+      </HardwareProvider>
     </main>
   );
 }

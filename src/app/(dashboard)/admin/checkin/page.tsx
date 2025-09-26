@@ -3,21 +3,36 @@ import { useSession } from 'next-auth/react';
 import React, { useState, useEffect } from 'react';
 import QRCodeReader from '@/components/admin/QRCodeReader';
 import CustomSelect from '@/components/CustomSelect';
-import { getAllAttendees, updateAttendee } from '@/app/api/attendee';
+import { updateAttendee } from '@/app/api/attendee';
 import { Modal, Box, Alert } from '@mui/material';
+import { useAttendees, useAttendee } from '@/hooks/useAttendees';
+import { AttendeeList } from '@/types/models';
+import { attendeesPartialUpdate } from '@/types/endpoints';
 
 export default function Checkin() {
-  const [attendees, setAttendees] = useState<[]>([]);
-  const [selectOptions, setSelectOptions] = useState([]);
+  const { data: session, status } = useSession();
+  
+  const { 
+    attendees,
+    isLoading: isLoadingAttendees,
+    getCheckedInCount,
+    getTotalCount,
+    participationClassCounts,
+    getAttendeeById,
+    mutate
+  } = useAttendees();
+  
   const [selectedValue, setSelectedValue] = useState('');
   const [open, setOpen] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [checkedInAttendee, setCheckedInAttendee] = useState('');
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [errorAlertMessage, setErrorAlertMessage] = useState('');
-  const [attendeeDetails, setAttendeeDetails] = useState<any>(null);
 
-  const { data: session, status } = useSession();
+  const { attendee: selectedAttendee } = useAttendee(selectedValue, { 
+    fetchIndividual: false
+  });
+
   const isAdmin = session && (session as any).roles?.includes('admin');
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -34,43 +49,31 @@ export default function Checkin() {
     p: 4
   };
 
-  useEffect(() => {
-    if (isAdmin) {
-      const getData = async () => {
-        const data = await getAllAttendees(session.access_token);
-        setAttendees(data);
-        const namesOptions = data.map((attendee: any) => ({
-          value: attendee.id,
-          label: (
-            <div className="flex flex-row items-center justify-start gap-2">
-              {attendee.checked_in_at && (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 64 64"
-                  className="w-4 h-4 min-w-4 min-h-4 max-w-4 max-h-4"
-                >
-                  <path
-                    fill="#43a047"
-                    d="M32 2C15.431 2 2 15.432 2 32c0 16.568 13.432 30 30 30 16.568 0 30-13.432 30-30C62 15.432 48.568 2 32 2zm-6.975 48-.02-.02-.017.02L11 35.6l7.029-7.164 6.977 7.184 21-21.619L53 21.199 25.025 50z"
-                  />
-                </svg>
-              )}
-              {`${attendee.first_name} ${attendee.last_name}`}
-            </div>
-          )
-        }));
-        setSelectOptions(namesOptions);
-      };
-      getData();
-    }
-  }, [isAdmin, session?.access_token, showSuccessAlert]);
+  const selectOptions = attendees?.map((attendee) => ({
+    value: attendee.id || '',
+    label: (
+      <div className="flex flex-row items-center justify-start gap-2">
+        {attendee.checked_in_at && (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 64 64"
+            className="w-4 h-4 min-w-4 min-h-4 max-w-4 max-h-4"
+          >
+            <path
+              fill="#43a047"
+              d="M32 2C15.431 2 2 15.432 2 32c0 16.568 13.432 30 30 30 16.568 0 30-13.432 30-30C62 15.432 48.568 2 32 2zm-6.975 48-.02-.02-.017.02L11 35.6l7.029-7.164 6.977 7.184 21-21.619L53 21.199 25.025 50z"
+            />
+          </svg>
+        )}
+        {`${attendee.first_name} ${attendee.last_name}`}
+      </div>
+    )
+  })) || [];
 
   useEffect(() => {
     let timeout: any;
     if (showSuccessAlert) {
-      timeout = setTimeout(() => {
-        setShowSuccessAlert(false);
-      }, 4000);
+      timeout = setTimeout(() => setShowSuccessAlert(false), 4000);
     }
     return () => clearTimeout(timeout);
   }, [showSuccessAlert]);
@@ -78,41 +81,17 @@ export default function Checkin() {
   useEffect(() => {
     let timeout: any;
     if (showErrorAlert) {
-      timeout = setTimeout(() => {
-        setShowErrorAlert(false);
-      }, 4000);
+      timeout = setTimeout(() => setShowErrorAlert(false), 4000);
     }
     return () => clearTimeout(timeout);
   }, [showErrorAlert]);
-
-  useEffect(() => {
-    if (selectedValue) {
-      fetchAttendeeDetails(selectedValue);
-    } else {
-      setAttendeeDetails(null);
-    }
-  }, [selectedValue, attendees]);
-
-  const fetchAttendeeDetails = async (id: string) => {
-    const attendee = (attendees as unknown as any[])?.find(a => a.id === id);
-    if (attendee) {
-      setAttendeeDetails({
-        firstName: attendee.first_name,
-        lastName: attendee.last_name,
-        checkedInAt: attendee.checked_in_at,
-        participationClass: attendee.participation_class
-      });
-    }
-  };
 
   const handleSelectChange = (value: any) => {
     setSelectedValue(value);
   };
 
   const handleCheckin = async (userId: string, scanned?: boolean) => {
-    const attendee = (attendees as unknown as any[])?.find(
-      (a: any) => a.id === userId
-    );
+    const attendee = getAttendeeById(userId);
 
     if (!attendee) {
       setShowErrorAlert(true);
@@ -124,37 +103,44 @@ export default function Checkin() {
     setSelectedValue(userId);
 
     try {
-      if (attendee.checked_in_at) {
-        if (!scanned) {
-          setShowErrorAlert(true);
-          setErrorAlertMessage(
-            `${attendee.first_name} ${attendee.last_name} has already been checked in.`
-          );
-          handleClose();
-          return;
-        } else {
-          await updateAttendee(session?.access_token || '', {
-            id: userId,
-            checked_in_at: null
+      const newCheckedInAt = attendee.checked_in_at ? null : new Date().toISOString();
+      await mutate(
+        async (currentAttendees: AttendeeList[] | undefined) => {
+          await attendeesPartialUpdate(userId, {
+            checked_in_at: newCheckedInAt
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session?.access_token}`
+            }
           });
-          showAlert(
-            `${attendee.first_name} ${attendee.last_name}'s check-in has been removed.`
+          
+          if (!currentAttendees) return undefined;
+          return currentAttendees.map(att => 
+            att.id === userId 
+              ? { ...att, checked_in_at: newCheckedInAt } 
+              : att
           );
+        },
+        {
+          optimisticData: (currentAttendees: AttendeeList[] | undefined) => {
+            if (!currentAttendees) return [];
+            return currentAttendees.map(att => 
+              att.id === userId 
+                ? { ...att, checked_in_at: newCheckedInAt } 
+                : att
+            );
+          },
+          rollbackOnError: true
         }
-      } else {
-        await updateAttendee(session?.access_token || '', {
-          id: userId,
-          checked_in_at: new Date().toISOString()
-        });
-        showAlert(
-          `${attendee.first_name} ${attendee.last_name} has been checked in.`
-        );
-      }
-    } catch {
+      );
+      showAlert(
+        `${attendee.first_name} ${attendee.last_name} has ${attendee.checked_in_at ? 'been checked out' : 'been checked in'}.`
+      );
+    } catch (error) {
       setShowErrorAlert(true);
       setErrorAlertMessage(`invalid QR code scanned.`);
     }
-
     handleClose();
   };
 
@@ -165,47 +151,21 @@ export default function Checkin() {
 
   const getParticipationClassName = (code: string) => {
     switch (code) {
-      case 'P':
-        return 'Hacker';
-      case 'M':
-        return 'Mentor';
-      case 'J':
-        return 'Judge';
-      case 'S':
-        return 'Sponsor';
-      case 'V':
-        return 'Volunteer';
-      case 'O':
-        return 'Organizer';
-      case 'G':
-        return 'Guardian';
-      case 'E':
-        return 'Media';
-      default:
-        return '';
+      case 'P': return 'Hacker';
+      case 'M': return 'Mentor';
+      case 'J': return 'Judge';
+      case 'S': return 'Sponsor';
+      case 'V': return 'Volunteer';
+      case 'O': return 'Organizer';
+      case 'G': return 'Guardian';
+      case 'E': return 'Media';
+      default: return '';
     }
   };
 
-  const calculateClassCounts = (attendees: any[]) => {
-    const classCounts: { [key: string]: { total: number; checkedIn: number } } =
-      {};
-
-    attendees.forEach((attendee: any) => {
-      const classType = attendee.participation_class;
-
-      if (!classCounts[classType]) {
-        classCounts[classType] = { total: 0, checkedIn: 0 };
-      }
-
-      classCounts[classType].total += 1;
-
-      if (attendee.checked_in_at) {
-        classCounts[classType].checkedIn += 1;
-      }
-    });
-
-    return classCounts;
-  };
+  if (!isAdmin) {
+    return <div>You are not authorized to access this page</div>;
+  }
 
   return (
     <div className="h-screen p-6">
@@ -232,9 +192,9 @@ export default function Checkin() {
                   />
                 </button>
               </div>
-              {selectedValue && attendeeDetails ? (
+              {selectedValue && selectedAttendee ? (
                 <div className="flex items-center h-20 gap-2 pl-4 bg-white rounded">
-                  {attendeeDetails.checkedInAt && (
+                  {selectedAttendee.checked_in_at && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 64 64"
@@ -247,13 +207,9 @@ export default function Checkin() {
                     </svg>
                   )}
                   <div className="flex flex-col">
-                    <p>
-                      {attendeeDetails.firstName} {attendeeDetails.lastName}
-                    </p>
+                    <p>{selectedAttendee.first_name} {selectedAttendee.last_name}</p>
                     <div className="w-fit h-5 px-2 bg-neutral-800 rounded-[5px] flex justify-center items-center text-xs mt-2 text-white">
-                      {getParticipationClassName(
-                        attendeeDetails.participationClass
-                      )}
+                      {getParticipationClassName(selectedAttendee.participation_class || '')}
                     </div>
                   </div>
                 </div>
@@ -262,15 +218,13 @@ export default function Checkin() {
                   <span>Select or scan a user to continue</span>
                 </div>
               )}
-              {selectedValue && attendeeDetails && (
+              {selectedValue && selectedAttendee && (
                 <button
                   onClick={() => handleCheckin(selectedValue, true)}
                   className="px-4 py-2 mt-4 ml-auto text-white bg-blue-500 rounded font-xs hover:bg-blue-700"
                 >
                   <p className="text-sm">
-                    {attendeeDetails.checkedInAt
-                      ? 'Remove Check In'
-                      : 'Check In User'}
+                    {selectedAttendee.checked_in_at ? 'Remove Check In' : 'Check In User'}
                   </p>
                 </button>
               )}
@@ -283,7 +237,7 @@ export default function Checkin() {
                     Total Attendees
                   </span>
                   <span className="text-2xl font-semibold text-black text-opacity-90">
-                    {attendees ? attendees.length : 0}
+                    {getTotalCount()}
                   </span>
                 </div>
                 <div className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
@@ -291,32 +245,24 @@ export default function Checkin() {
                     Checked In
                   </span>
                   <span className="text-2xl font-semibold text-black text-opacity-90">
-                    {attendees
-                      ? attendees.filter(
-                          (attendee: { checked_in_at: any }) =>
-                            attendee.checked_in_at
-                        ).length
-                      : 0}
+                    {getCheckedInCount()}
                   </span>
                 </div>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-4">
-                {attendees &&
-                  Object.entries(calculateClassCounts(attendees)).map(
-                    ([classType, counts]) => (
-                      <div
-                        key={classType}
-                        className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5"
-                      >
-                        <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-                          {getParticipationClassName(classType)}s
-                        </span>
-                        <span className="text-2xl font-semibold text-black text-opacity-90">
-                          {counts.checkedIn}/{counts.total}
-                        </span>
-                      </div>
-                    )
-                  )}
+                {Object.entries(participationClassCounts).map(([classType, counts]) => (
+                  <div
+                    key={classType}
+                    className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5"
+                  >
+                    <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
+                      {getParticipationClassName(classType)}s
+                    </span>
+                    <span className="text-2xl font-semibold text-black text-opacity-90">
+                      {counts.checkedIn}/{counts.total}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -333,16 +279,12 @@ export default function Checkin() {
           {showSuccessAlert && (
             <div
               className={`fixed top-0 left-0 m-4 z-[1001] transition-opacity w-[500px] ${
-                showSuccessAlert
-                  ? 'opacity-100'
-                  : 'pointer-events-none opacity-0'
+                showSuccessAlert ? 'opacity-100' : 'pointer-events-none opacity-0'
               }`}
             >
               <Alert
                 severity="success"
-                onClose={() => {
-                  setShowSuccessAlert(false);
-                }}
+                onClose={() => setShowSuccessAlert(false)}
               >
                 {checkedInAttendee}
               </Alert>
@@ -356,9 +298,7 @@ export default function Checkin() {
             >
               <Alert
                 severity="error"
-                onClose={() => {
-                  setShowErrorAlert(false);
-                }}
+                onClose={() => setShowErrorAlert(false)}
               >
                 {errorAlertMessage}
               </Alert>

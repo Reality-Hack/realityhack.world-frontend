@@ -8,10 +8,10 @@ export default function RequestedHardware() {
   return !user ? (
     <LinearProgress />
   ) : (
-    <HardwareRequestView
-      reasonEditable={true}
-      deletable={true}
-      requester={user.id}
-    ></HardwareRequestView>
+      <HardwareRequestView
+        reasonEditable={true}
+        deletable={true}
+        requester={user.id}
+      ></HardwareRequestView>
   );
 }

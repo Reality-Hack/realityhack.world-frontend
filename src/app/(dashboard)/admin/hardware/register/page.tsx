@@ -1,56 +1,33 @@
 'use client';
-import { getAllHardware, getHardwareCategories } from '@/app/api/hardware';
-import HardwareEditor from '@/components/admin/hardware/HardwareEditor';
-import { Hardware, HardwareTag } from '@/types/types';
+import HardwareEditor from '@/components/hardware/HardwareEditor';
 import { LinearProgress } from '@mui/material';
-import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { TaggedHardware } from '@/types/types2';
+import { useMemo } from 'react';
+import { HardwareCount, TagsEnum } from '@/types/models'
+import { useHardwareContext } from '@/contexts/HardwareAdminContext';
+import { HardwareCategory } from '@/types/types2';
 
 export default function Register() {
-  const [hardware, setHardware] = useState<Hardware[] | null>(null);
-  const [hardwareCategories, setHardwareCategories] = useState<
-    HardwareTag[] | null
-  >(null);
-  const { data: session } = useSession();
-  useEffect(() => {
-    if (session)
-      (async () => {
-        const hardware = await getAllHardware(session.access_token);
-        const hardwareCategories: HardwareTag[] = await getHardwareCategories(
-          session.access_token
-        );
-        setHardwareCategories(hardwareCategories);
-        setHardware(
-          hardware.map((hardware: any) => ({
-            ...hardware,
-            tags: hardwareCategories.filter(tag =>
-              hardware.tags.includes(tag.value)
-            )
-          }))
-        );
-      })();
-  }, [session]);
+  const { hardwareDeviceTypes, hardwareCategories } = useHardwareContext();
+
+  const taggedHardware = useMemo((): TaggedHardware[] => {
+    if (!hardwareDeviceTypes || !hardwareCategories) return [];
+    return hardwareDeviceTypes.map((hardware: HardwareCount) => ({
+      ...hardware,
+      mappedTags: hardwareCategories.filter((tag: HardwareCategory) => hardware.tags.includes(tag.value))
+    }));
+  }, [hardwareDeviceTypes, hardwareCategories]);
+
   return (
     <>
-      {hardware == null || hardwareCategories == null ? (
+      {hardwareDeviceTypes == null || hardwareCategories == null ? (
         <LinearProgress />
       ) : (
         <HardwareEditor
-          hardware={hardware}
+          hardware={taggedHardware}
           hardwareCategories={hardwareCategories}
         ></HardwareEditor>
       )}
     </>
   );
 }
-
-// import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-// import { getAllHardware } from "@/app/api/hardware";
-// import HardwareEditor from "@/components/admin/hardware/HardwareEditor";
-// import { getServerSession } from "next-auth";
-
-// export default async function Register() {
-//     const session: any = await getServerSession(authOptions);
-//     const hardware = await getAllHardware(session.accessToken);
-//     return <HardwareEditor hardware={hardware}></HardwareEditor>
-// }
