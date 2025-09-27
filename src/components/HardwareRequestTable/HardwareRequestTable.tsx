@@ -51,6 +51,7 @@ export default function HardwareRequestTable({
   const { data: session } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDataReady, setIsDataReady] = useState(false);
 
   const { 
     hardwareRequests, 
@@ -71,14 +72,18 @@ export default function HardwareRequestTable({
   }, [requester]);
 
   const tableData = useMemo(() => {
-    if (!hardwareRequests) return [];
-    if (!hardwareDeviceTypeMap) return hardwareRequests;
-
-    return hardwareRequests?.map(req => ({
+    if (!hardwareRequests || Object.keys(hardwareDeviceTypeMap).length === 0) return [];
+    
+    const mappedHardwareRequests = hardwareRequests.map(req => ({
       ...req,
+      teamName: req.team?.name,
+      requesterName: `${req.requester.first_name} ${req.requester.last_name}`,
+      hardwareName: hardwareDeviceTypeMap[req.hardware]?.name,
       hardware_in_stock: hardwareDeviceTypeMap[req.hardware]?.available || 0,
       hardware_total: hardwareDeviceTypeMap[req.hardware]?.total || 0
     }));
+    setIsDataReady(true);
+    return mappedHardwareRequests;
   }, [hardwareRequests, hardwareDeviceTypeMap]);
   
   const renderRowCheckoutButton = (
@@ -237,17 +242,17 @@ export default function HardwareRequestTable({
     [
     // excessively deep type instantiation
     // @ts-ignore
-    columnHelper.accessor('team', {
+    columnHelper.accessor('teamName', {
       header: () => 'Team',
-      cell: info => info.getValue()?.name
+      cell: info => info.getValue()
     }),
-    columnHelper.accessor('requester', {
+    columnHelper.accessor('requesterName', {
       header: () => 'Requested by',
-      cell: info => `${info.getValue().first_name} ${info.getValue().last_name}`
+      cell: info => info.getValue()
     }),
-    columnHelper.accessor('hardware', {
+    columnHelper.accessor('hardwareName', {
       header: () => 'Item',
-      cell: info => hardwareDeviceTypeMap?.[info.getValue()]?.name
+      cell: info => info.getValue()
     }),
     columnHelper.accessor('reason', {
       header: () => 'Reason',
@@ -314,7 +319,7 @@ export default function HardwareRequestTable({
             data={tableData || []}
             columns={columns as ColumnDef<HardwareRequestList, any>[]}
             pagination={true}
-            loading={isLoadingHardwareRequests}
+            loading={isLoadingHardwareRequests || !isDataReady}
             search={true}
           ></Table>
         </div>

@@ -8,6 +8,9 @@ export type HardwareRequestStatusOption = {
 }
 
 export type HardwareRequestTableRow = HardwareRequestList & {
+  teamName: string;
+  requesterName: string;
+  hardwareName: string;
   hardware_in_stock: number;
   hardware_total: number;
 }
@@ -40,14 +43,14 @@ export const HardwareRequestStatusOptions: HardwareRequestStatusOption[] = [
 /**
  * Checks if a hardware device is available (not checked out to anyone)
  */
-export const isHardwareDeviceAvailable = (device: HardwareWithType | null): boolean => {
+const isHardwareDeviceAvailable = (device: HardwareWithType | null): boolean => {
   return device?.checked_out_to == null;
 };
 
 /**
  * Checks if the selected hardware device matches the hardware request's assigned device
  */
-export const isSameHardwareDevice = (
+const isSameHardwareDevice = (
   device: HardwareWithType | null,
   hardwareRequest: HardwareRequestList
 ): boolean => {
@@ -57,7 +60,7 @@ export const isSameHardwareDevice = (
 /**
  * Checks if the selected hardware device type matches the hardware request's hardware type
  */
-export const isSameHardwareDeviceType = (
+const isSameHardwareDeviceType = (
   device: HardwareWithType | null,
   hardwareRequest: HardwareRequestList
 ): boolean => {
@@ -67,14 +70,14 @@ export const isSameHardwareDeviceType = (
 /**
  * Checks if the hardware request status is approved
  */
-export const isRequestApproved = (hardwareRequest: HardwareRequestList): boolean => {
+const isRequestApproved = (hardwareRequest: HardwareRequestList): boolean => {
   return hardwareRequest.status === HardwareRequestStatusEnum.A;
 };
 
 /**
  * Checks if the hardware request status is checked out
  */
-export const isDeviceCheckedOut = (hardwareRequest: HardwareRequestList): boolean => {
+const isDeviceCheckedOut = (hardwareRequest: HardwareRequestList): boolean => {
   return hardwareRequest.status === HardwareRequestStatusEnum.C;
 };
 

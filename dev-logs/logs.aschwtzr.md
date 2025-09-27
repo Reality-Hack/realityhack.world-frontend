@@ -1,30 +1,26 @@
-ˇ**Friday Sept 26**
-What I did
+**Saturday Sept 27**
+- Fix search in admin hardware requests table
+
+**Friday Sept 26**
 - Improve handling of new user created hardware device with state for just that device (as opposed to all devices + the new one)
 - Fix bug with missing team ID when requesting hardware
-- Add loading state to auth context hook 
+- Add loading state to auth context hook
 
-ˇ**Thurs Sept 25**
-What I did
+**Thurs Sept 25**
 - Reorganize hardware related components into smaller, single responsibility components
 
 **Wed Sept 24**
-What I did
 - Refactor reusable TeamsForm out of participant team page for reuse in admin
 
 **Tues Sept 23**
-What I did
 - Refactor participant hardware to use common context for hardware browser and hardware requests pages
 - Clean up admin landing page by removing duplicate tiles and single icon
 
 **Thurs Sept 18**
-What I did
 - Cache busting and prevent client side on attendees endpoint to allow optimistic updates
 - Improve loading state for team form by showing loading animation when attendees are loading
 
 **Mon Sept. 15 - Wed Sept. 17**
-
-What I did
 - Refactor teams form to isolate business logic away from implementing components
 - Use SWR hooks for teams and team pages
 - Create useAttendees hook to improve rendering inside admin teams pages

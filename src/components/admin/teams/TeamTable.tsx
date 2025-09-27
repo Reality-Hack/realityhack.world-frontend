@@ -27,8 +27,8 @@ export default function TeamTable() {
     }
   });
 
-  const columnHelper = createColumnHelper<TeamsListQueryResult[0]>();
-  const columns = useMemo<ColumnDef<TeamsListQueryResult[0], any>[]>(
+  const columnHelper = createColumnHelper<TeamsListQueryResult[number]>();
+  const columns = useMemo<ColumnDef<TeamsListQueryResult[number], any>[]>(
     () => [
       columnHelper.accessor('id', {
         header: () => 'ID',
