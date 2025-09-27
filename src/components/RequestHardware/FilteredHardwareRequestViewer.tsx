@@ -5,10 +5,12 @@ import { useMemo, useState } from 'react';
 import HardwareCategoryFilter from '../hardware/HardwareCategoryFilter';
 import { HardwareCount } from '@/types/models';
 import { useHardwareContext } from '@/contexts/HardwareContext';
+import { useAuthContext } from '@/hooks/AuthContext';
 
 export default function FilteredHardwareRequestViewer({
 }) {
   const { filteredHardwareTypes } = useHardwareContext();
+  const { user: currentUser } = useAuthContext();
   return (
     <>
       <HardwareCategoryFilter/>
@@ -19,6 +21,7 @@ export default function FilteredHardwareRequestViewer({
               item={item}
               key={item?.id}
               identifier={`hardware-request-hardware-${i}`}
+              teamId={currentUser?.team?.id || null}
             />
           )) : <p className="text-lg text-center text-gray-500">No hardware types found</p>}
       </div>

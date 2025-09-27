@@ -2,12 +2,12 @@
 
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { HardwareCount } from '@/types/models';
+import { HardwareCount, HardwareRequestCreateRequest } from '@/types/models';
 import { fixFileLink } from '@/app/api/uploaded_files';
 import { toast } from 'sonner';
 import { useHardwarerequestsCreate } from '@/types/endpoints';
 
-export default function HardwareCard({ item, identifier }: { item: HardwareCount, identifier: string }) {
+export default function HardwareCard({ item, identifier, teamId }: { item: HardwareCount, identifier: string, teamId: string | null }) {
   const { data: session } = useSession();
   const [reason, setReason] = useState('');
   const quantity = item.available;
@@ -25,13 +25,20 @@ export default function HardwareCard({ item, identifier }: { item: HardwareCount
       toast.error('No hardware ID found');
       return;
     }
-    createHardwareRequest({
+    if (!teamId) {
+      toast.error('Please register your team first');
+      return;
+    }
+    const requestBody: HardwareRequestCreateRequest = {
       hardware: item.id,
       requester: session!.user!.email!,
-      reason: reason
-    });
+      reason: reason,
+      team: teamId,
+    }
+    createHardwareRequest(requestBody);
     setReason('');
   }
+  const canCreateRequest = reason.length === 0 || quantity <= 0 || isMutating;
   return (
     <div data-testid={identifier} className="flex-col gap-2 w-[355px] bg-gradient-to-t from-[#FFFFFF] to-[#FFFFFF] border border-blue-500 rounded-[10px] shadow flex justify-center items-center p-2">
       {!!item.image && <img className="rounded-xl" src={fixFileLink(item.image.file)} />}
@@ -58,7 +65,7 @@ export default function HardwareCard({ item, identifier }: { item: HardwareCount
           onChange={event => setReason(event.target.value)}
         ></textarea>
         <button
-          disabled={reason.length === 0 || quantity <= 0 || isMutating}
+          disabled={canCreateRequest}
           className="cursor-pointer text-white bg-[#493B8A] px-4 rounded-full disabled:opacity-50 transition-all flex-shrink h-10 self-end"
           onClick={() => sendRequest()}
         >

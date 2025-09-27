@@ -1,6 +1,8 @@
 ˇ**Friday Sept 26**
 What I did
 - Improve handling of new user created hardware device with state for just that device (as opposed to all devices + the new one)
+- Fix bug with missing team ID when requesting hardware
+- Add loading state to auth context hook 
 
 ˇ**Thurs Sept 25**
 What I did
