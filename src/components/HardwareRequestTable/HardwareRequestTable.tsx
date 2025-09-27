@@ -11,7 +11,6 @@ import { HardwareWithType } from '@/types/types2'
 import Box from '@mui/material/Box';
 import CustomSelect from '@/components/CustomSelect';
 import { hardwarerequestsPartialUpdate, hardwarerequestsDestroy, hardwaredevicesPartialUpdate } from '@/types/endpoints';
-import { LinearProgress } from '@mui/material';
 import { 
   HardwareRequestList,
   PatchedHardwareRequestRequest,
@@ -19,44 +18,18 @@ import {
   PatchedHardwareDeviceRequest
 } from '@/types/models';
 import { toast } from 'sonner';
-import { useHardwareContext } from '@/contexts/HardwareAdminContext';
-
-type hardwareRequestStatusOption = {
-  label: string;
-  value: HardwareRequestStatusEnum;
-}
-
-const HardwareRequestStatusOptionsCheckedOut: hardwareRequestStatusOption = {
-  label: 'Checked Out',
-  value: HardwareRequestStatusEnum.C
-}
-
-const HardwareRequestStatusOptionsFull: hardwareRequestStatusOption[] = [
-  {
-    label: 'Pending',
-    value: HardwareRequestStatusEnum.P
-  },
-  {
-    label: 'Rejected',
-    value: HardwareRequestStatusEnum.R
-  },
-];
-
-const HardwareRequestStatusOptions: hardwareRequestStatusOption[] = [
-  {
-    label: 'Approved',
-    value: HardwareRequestStatusEnum.A
-  },
+import { useHardwareContext } from '@/contexts/HardwareContext';
+import ReasonEditor from './ReasonEditor';
+import {
+  isValidCheckout,
+  isValidRequest,
+  HardwareRequestTableRow,
   HardwareRequestStatusOptionsCheckedOut,
-  ...HardwareRequestStatusOptionsFull
-];
+  HardwareRequestStatusOptionsFull,
+  HardwareRequestStatusOptions
+} from './utils';
 
-type HardwareRequestTableRow = HardwareRequestList & {
-  hardware_in_stock: number;
-  hardware_total: number;
-}
-
-export default function HardwareRequestView({
+export default function HardwareRequestTable({
   statusEditable = false,
   reasonEditable = false,
   deletable = false,
@@ -78,6 +51,7 @@ export default function HardwareRequestView({
   const { data: session } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
   const [isUpdating, setIsUpdating] = useState(false);
+
   const { 
     hardwareRequests, 
     isLoadingHardwareRequests, 
@@ -87,6 +61,7 @@ export default function HardwareRequestView({
     hardwareDeviceTypeMap,
     hardwareDeviceMap,
   } = useHardwareContext();
+
   useEffect(() => {
     if (requester) {
       setHardwareRequestParams({
@@ -109,28 +84,19 @@ export default function HardwareRequestView({
   const renderRowCheckoutButton = (
     hardwareRequest: HardwareRequestList,
   ) => {
-    const isHardwareDeviceAvailable = userSelectedHardwareDevice?.checked_out_to == null;
-    const isSameHardwareDevice = userSelectedHardwareDevice?.id && 
-      hardwareRequest.hardware_device == userSelectedHardwareDevice.id;
-    const isSameHardwareDeviceType = userSelectedHardwareDevice?.hardwareType?.id  && 
-      userSelectedHardwareDevice.hardware == hardwareRequest.hardware;
-    const isRequestApproved = hardwareRequest.status == HardwareRequestStatusEnum.A;
-    const isDeviceCheckedOut = hardwareRequest.status == HardwareRequestStatusEnum.C;
+    const validCheckout = isValidCheckout(userSelectedHardwareDevice, hardwareRequest);
+    const validRequest = isValidRequest(userSelectedHardwareDevice, hardwareRequest);
 
-    const isValidCheckout = isSameHardwareDeviceType && isHardwareDeviceAvailable && isRequestApproved;
-    const isValidReturn = isDeviceCheckedOut && isSameHardwareDevice;
-    const isValidRequest = isValidCheckout || isValidReturn;
-
-    if (!isValidRequest) {
+    if (!validRequest) {
       return null;
     }
     
-    const buttonColor = isValidCheckout ? 'bg-[#2FCC32]' : 'bg-[#CCAA2F]';
+    const buttonColor = validCheckout ? 'bg-[#2FCC32]' : 'bg-[#CCAA2F]';
 
-    const buttonText = isValidCheckout ? 'Check Out' : 'Return';
+    const buttonText = validCheckout ? 'Check Out' : 'Return';
     const updateRequestBody: PatchedHardwareRequestRequest = {
-      status: isValidCheckout ? hardware_request_status.checked_out : hardware_request_status.pending,
-      hardware_device: isValidCheckout ? userSelectedHardwareDevice?.id : null,
+      status: validCheckout ? hardware_request_status.checked_out : hardware_request_status.pending,
+      hardware_device: validCheckout ? userSelectedHardwareDevice?.id : null,
     }
     if (!hardwareRequest.id || hardwareRequest.id == undefined) {
       toast.error('Hardware request ID is undefined');
@@ -141,7 +107,7 @@ export default function HardwareRequestView({
     const handleClick = () => {
       patchHardwareRequest(hardwareRequest.id || '', updateRequestBody)
       const selectedDevicePayload:PatchedHardwareDeviceRequest = {
-        checked_out_to: isValidCheckout ? hardwareRequest.id : null
+        checked_out_to: validCheckout ? hardwareRequest.id : null
       }
       hardwaredevicesPartialUpdate(userSelectedHardwareDevice?.id || '', 
         selectedDevicePayload,
@@ -353,66 +319,6 @@ export default function HardwareRequestView({
           ></Table>
         </div>
       </div>
-    </>
-  );
-}
-
-function ReasonEditor({
-  initial,
-  id,
-  access_token,
-  mutateHardwareRequests
-}: {
-  initial: string;
-  id: string;
-  access_token: string | undefined;
-  mutateHardwareRequests: () => void;
-}) {
-  const [loading, setLoading] = useState(false);
-  const [initial_, setInitial] = useState(initial);
-  const [value, setValue] = useState(initial);
-
-  const submit = ((newReason: string) => {
-    if (!access_token) return;
-    setLoading(true);
-    hardwarerequestsPartialUpdate(id, { reason: newReason}, {
-      headers: {
-        'Authorization': `JWT ${access_token}`
-      }
-    }).then(() => {
-      setValue(newReason);
-      setInitial(newReason);
-      mutateHardwareRequests();
-    })
-    .catch((error) => {
-      console.error(error);
-      toast.error(`Failed to update hardware request: ${error.message}`);
-    })
-    .finally(() => {
-      setLoading(false);
-    });
-  });
-
-  return loading ? <LinearProgress /> : (
-    <>
-      {value == initial_ ? <input value={value} onChange={e => setValue(e.target.value)}></input>
-      : <>
-        <textarea value={value} onChange={e => setValue(e.target.value)} rows={4}></textarea>
-        <div className="flex flex-row">          
-          <button
-            className="cursor-pointer text-white bg-[#493B8A] px-2 mx-2 rounded-full disabled:opacity-50 transition-all flex-shrink h-5 self-end"
-            onClick={() => submit(value)}
-          >
-            Submit
-          </button>
-          <button
-            className="cursor-pointer text-white bg-red-800 px-2 mx-2 rounded-full disabled:opacity-50 transition-all flex-shrink h-5 self-end"
-            onClick={() => setValue(initial_)}
-          >
-            Cancel
-          </button>
-        </div>
-      </>}
     </>
   );
 }

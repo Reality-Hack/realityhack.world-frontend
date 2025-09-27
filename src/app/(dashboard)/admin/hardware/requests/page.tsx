@@ -1,6 +1,6 @@
 'use client';
-import HardwareRequestView from '@/components/HardwareRequestView';
-import { useHardwareContext } from '@/contexts/HardwareAdminContext';
+import HardwareRequestTable from '@/components/HardwareRequestTable/HardwareRequestTable';
+import { useHardwareContext } from '@/contexts/HardwareContext';
 import { useEffect } from 'react';
 
 export default function HardwareRequests() {
@@ -10,5 +10,5 @@ export default function HardwareRequests() {
       requester__id: undefined,
     });
   }, []);
-  return <HardwareRequestView statusEditable={true}></HardwareRequestView>;
+  return <HardwareRequestTable statusEditable={true} />;
 }

@@ -1,7 +1,7 @@
 'use client';
 import { Tab } from '../../../../components/Tab';
 import { usePathname } from 'next/navigation';
-import { HardwareProvider } from '@/contexts/HardwareAdminContext';
+import { HardwareProvider } from '@/contexts/HardwareContext';
 import { useMemo } from 'react';
 
 export default function Hardware({ children }: { children: any }) {

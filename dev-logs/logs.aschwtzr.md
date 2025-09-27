@@ -1,3 +1,11 @@
+ˇ**Friday Sept 26**
+What I did
+- Improve handling of new user created hardware device with state for just that device (as opposed to all devices + the new one)
+
+ˇ**Thurs Sept 25**
+What I did
+- Reorganize hardware related components into smaller, single responsibility components
+
 **Wed Sept 24**
 What I did
 - Refactor reusable TeamsForm out of participant team page for reuse in admin

@@ -2,9 +2,9 @@
 import { HardwareCategory } from '@/types/types2';
 import HardwareCard from './HardwareCard';
 import { useMemo, useState } from 'react';
-import HardwareCategoryFilter from './HardwareCategoryFilter';
+import HardwareCategoryFilter from '../hardware/HardwareCategoryFilter';
 import { HardwareCount } from '@/types/models';
-import { useHardwareContext } from '@/contexts/HardwareAdminContext';
+import { useHardwareContext } from '@/contexts/HardwareContext';
 
 export default function FilteredHardwareRequestViewer({
 }) {

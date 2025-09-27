@@ -1,5 +1,5 @@
 'use client';
-import HardwareRequestView from '@/components/HardwareRequestView'; 
+import HardwareRequestTable from '@/components/HardwareRequestTable/HardwareRequestTable'; 
 import { LinearProgress } from '@mui/material';
 import { useAuthContext } from '@/hooks/AuthContext';
 
@@ -8,10 +8,10 @@ export default function RequestedHardware() {
   return !user ? (
     <LinearProgress />
   ) : (
-      <HardwareRequestView
+      <HardwareRequestTable
         reasonEditable={true}
         deletable={true}
         requester={user.id}
-      ></HardwareRequestView>
+      />
   );
 }
