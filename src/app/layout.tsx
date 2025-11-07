@@ -12,8 +12,8 @@ interface RootLayoutProps {
 }
 
 export const metadata = {
-  title: 'MIT Reality Hack 2025',
-  description: 'MIT Reality Hack 2025'
+  title: 'Reality Hack at MIT 2026',
+  description: 'Reality Hack at MIT 2026'
 };
 
 const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {

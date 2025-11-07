@@ -6,13 +6,12 @@
 import type { GenderIdentityEnum } from './genderIdentityEnum';
 import type { CountryEnum } from './countryEnum';
 import type { RaceEthnicGroupEnum } from './raceEthnicGroupEnum';
-import type { AgeGroupEnum } from './ageGroupEnum';
+import type { PreviousParticipationEnum } from './previousParticipationEnum';
 import type { HeardAboutUsEnum } from './heardAboutUsEnum';
 import type { DigitalDesignerSkillsEnum } from './digitalDesignerSkillsEnum';
+import type { AgeGroupEnum } from './ageGroupEnum';
 import type { IndustryEnum } from './industryEnum';
-import type { HardwareHackDetailEnum } from './hardwareHackDetailEnum';
-import type { ApplicationParticipationClassEnum } from './applicationParticipationClassEnum';
-import type { ApplicationRequestAgeGroup } from './applicationRequestAgeGroup';
+import type { ParticipationClassA3fEnum } from './participationClassA3fEnum';
 import type { ApplicationRequestDisabilityIdentity } from './applicationRequestDisabilityIdentity';
 import type { ApplicationRequestParticipationCapacity } from './applicationRequestParticipationCapacity';
 import type { ApplicationRequestStatus } from './applicationRequestStatus';
@@ -22,18 +21,32 @@ import type { ApplicationRequestThemeInterestTrackTwo } from './applicationReque
 import type { ApplicationRequestThemeDetailOne } from './applicationRequestThemeDetailOne';
 import type { ApplicationRequestThemeDetailTwo } from './applicationRequestThemeDetailTwo';
 import type { ApplicationRequestThemeDetailThree } from './applicationRequestThemeDetailThree';
-import type { HardwareHackInterestEnum } from './hardwareHackInterestEnum';
+import type { ApplicationRequestHardwareHackInterest } from './applicationRequestHardwareHackInterest';
+import type { ApplicationRequestHardwareHackDetail } from './applicationRequestHardwareHackDetail';
 
+/**
+ * Base serializer that automatically scopes foreign key fields to the current event.
+
+This serializer ensures that when validating foreign key relationships,
+only objects from the current event are considered valid. This is crucial
+for maintaining proper event isolation in the multi-tenant system.
+
+Usage:
+    class MySerializer(EventScopedSerializer):
+        class Meta:
+            model = MyModel
+            fields = ['id', 'name', 'foreign_key_field']
+ */
 export interface ApplicationRequest {
   gender_identity: GenderIdentityEnum[];
   nationality: CountryEnum[];
   current_country: CountryEnum[];
   race_ethnic_group: RaceEthnicGroupEnum[];
-  previous_participation: AgeGroupEnum[];
+  previous_participation: PreviousParticipationEnum[];
   heard_about_us: HeardAboutUsEnum[];
   digital_designer_skills: DigitalDesignerSkillsEnum[];
+  age_group: AgeGroupEnum;
   industry: IndustryEnum[];
-  hardware_hack_detail: HardwareHackDetailEnum[];
   /**
    * @minLength 1
    * @maxLength 100
@@ -50,7 +63,7 @@ export interface ApplicationRequest {
    * @maxLength 100
    */
   last_name: string;
-  participation_class?: ApplicationParticipationClassEnum;
+  participation_class?: ParticipationClassA3fEnum;
   /**
    * @minLength 1
    * @maxLength 100
@@ -63,18 +76,11 @@ export interface ApplicationRequest {
    * @nullable
    */
   pronouns?: string | null;
-  /** @nullable */
-  age_group?: ApplicationRequestAgeGroup;
   /**
    * @minLength 1
    * @maxLength 254
    */
   email: string;
-  /**
-   * @minimum -2147483648
-   * @maximum 2147483647
-   */
-  event_year?: number;
   /**
    * @minLength 1
    * @maxLength 200
@@ -139,6 +145,12 @@ export interface ApplicationRequest {
    * @nullable
    */
   specialized_expertise?: string | null;
+  /**
+   * @minLength 1
+   * @maxLength 1000
+   * @nullable
+   */
+  other_skills_experiences?: string | null;
   /** @nullable */
   status?: ApplicationRequestStatus;
   /** @nullable */
@@ -175,7 +187,10 @@ export interface ApplicationRequest {
   theme_detail_two?: ApplicationRequestThemeDetailTwo;
   /** @nullable */
   theme_detail_three?: ApplicationRequestThemeDetailThree;
-  hardware_hack_interest?: HardwareHackInterestEnum;
+  /** @nullable */
+  hardware_hack_interest?: ApplicationRequestHardwareHackInterest;
+  /** @nullable */
+  hardware_hack_detail?: ApplicationRequestHardwareHackDetail;
   /**
    * @minLength 1
    * @maxLength 20
@@ -229,6 +244,7 @@ export interface ApplicationRequest {
   judge_previously_judged?: boolean | null;
   /** @nullable */
   rsvp_email_sent_at?: string | null;
+  event: string;
   /** @nullable */
   resume?: string | null;
 }

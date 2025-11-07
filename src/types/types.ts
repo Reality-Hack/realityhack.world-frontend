@@ -154,6 +154,7 @@ export interface Application {
   employer?: string | null;
   status?: status | null;
   experience_with_xr?: string | null;
+  other_skills_experiences?: string | null;
   experience_contribution?: string | null;
   additional_skills: string | null;
   previously_participated?: boolean | null;

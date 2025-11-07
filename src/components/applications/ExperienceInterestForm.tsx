@@ -209,7 +209,7 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
       )}
 
       <p className="py-4">
-        Have you ever participated in the MIT Reality Hack before?{' '}
+        Have you ever participated in the Reality Hack before?{' '}
         <span className="font-bold text-themeSecondary">*</span>
       </p>
 
@@ -283,16 +283,16 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
             />
             {key === 'specialist' && (
               <p className="ml-4 text-xs italic max-w-[520px] -mt-2 mb-2">
-                Specialized skills and domain expertise includes fields like AI,
-                machine learning, robotics, edge computing, etc.
+                Specialized skills and domain expertise includes fields like AI, 
+                machine learning, robotics, edge computing, medical technologists and professionals, 
+                music technology, aerospace training, TV and media, urbanists, educators or any other domain expertise.
               </p>
             )}
             {key === 'project_manager' && (
               <p className="ml-4 text-xs italic max-w-[520px] -mt-2 mb-2">
-                Recommended for management students and others experienced in
-                business, marketing, and project management. Project managers
-                help their team by doing market research, refining concepts,
-                guiding the project pitch, and preparing presentation materials.
+                Recommended for marketing, project and product management specialists. 
+                Product managers help their team by doing market research, refining concepts, 
+                coordinating collaborative teamwork and preparing presentation materials.
               </p>
             )}
           </>
@@ -381,7 +381,7 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
         valid={!errors.experience_contribution}
         onBlur={handleBlur}
       >
-        MIT Reality Hack is a fast-paced event that harness a variety of talents
+        Reality Hack is a fast-paced event that harnesses a variety of talents
         from participants to create something entirely new in a very short
         period of time. How do you envision your role in this environment and
         how will you contribute to your team?
@@ -398,6 +398,19 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
       >
         Can you demonstrate familiarity with any tools related to design,
         development, or programming languages for XR? If so, please list.
+      </TextAreaInput>
+      <TextAreaInput
+        name="other_skills_experiences"
+        placeholder="Describe other relevant skills and experiences (Optional)"
+        value={formData.other_skills_experiences || ''}
+        onChange={handleChange}
+        error={errors.other_skills_experiences}
+        valid={!errors.experienceother_skills_experiences_with_xr}
+        onBlur={handleBlur}
+      >
+        Do you have any other skills or experiences that you'd like to tell us about? 
+        We want to see the breadth of your skillset and are most interested in skills 
+        and expertise relating to physical computing, AI, and machine learning. 
       </TextAreaInput>
     </div>
   );

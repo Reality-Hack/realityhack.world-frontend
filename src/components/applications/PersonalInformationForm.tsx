@@ -142,12 +142,12 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         error={errors.communications_platform_username}
         valid={!errors.communications_platform_username}
       >
-        Link to your preferred social media account{' '}
+        Link to your preferred social media account (must be a valid URL with https://){' '}
         <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
       <TextInput
         name="portfolio"
-        placeholder="e.g. https://example.com/alex"
+        placeholder="e.g. https://alex.io/portfolio"
         type="url"
         value={formData.portfolio || ''}
         onChange={handleChange}
@@ -155,7 +155,7 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         error={errors.portfolio}
         valid={!errors.portfolio}
       >
-        Link to your portfolio or an example of your past work{' '}
+        Link to your portfolio or an example of your past work (must be a valid URL with https://){' '}
         <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
       <p>
@@ -213,7 +213,7 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
       <label className="mb-2">
-        As of January 23, 2025, I will fall under this age group:{' '}
+        As of January 22, 2026, I will fall under this age group:{' '}
       </label>
       <span className="font-bold text-themeSecondary">*</span>
       <div className="mb-8">

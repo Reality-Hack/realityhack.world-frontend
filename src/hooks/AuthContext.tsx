@@ -16,6 +16,7 @@ interface AuthContextType {
   router: any;
   pathname: string;
   user: any;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -29,15 +30,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const [meFetchedFlag, setMeFetchedFlag] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (session?.access_token && !meFetchedFlag) {
+    if (session?.access_token && isLoading) {
       const fetchUser = async () => {
         try {
           const details = await getMe(session.access_token);
           setUser(details);
-          setMeFetchedFlag(true);
+          setIsLoading(false);
         } catch (error) {
           console.error('Error fetching attendee details:', error);
         }
@@ -51,7 +52,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     session,
     router,
     pathname,
-    user
+    user,
+    isLoading,
   };
 
   return (

@@ -61,13 +61,15 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
       }
     }
 
-    // if hardware_hack_interest has no values, set to A
-    updatedPayload.hardware_hack_interest =
-      updatedPayload.hardware_hack_interest || 'A';
-
-    // if hardware_hack_detail has no values, set to H
-    updatedPayload.hardware_hack_detail =
-      updatedPayload.hardware_hack_detail || 'H';
+    if (updatedPayload.hardware_hack_interest === null || 
+        updatedPayload.hardware_hack_interest === undefined) {
+      updatedPayload.hardware_hack_interest = 'A';
+    }
+    
+    if (!Array.isArray(updatedPayload.hardware_hack_detail) || 
+        updatedPayload.hardware_hack_detail.length === 0) {
+      updatedPayload.hardware_hack_detail = ['H'];
+    }
 
     // Assuming updatedPayload.middle_name may contain a "blank" character like a space
     if (updatedPayload.middle_name) {
@@ -86,6 +88,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
     [
       'disability_accommodations',
       'experience_with_xr',
+      'other_skills_experiences',
       'experience_contribution',
       'outreach_groups'
     ].forEach(field => {
@@ -136,7 +139,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
           <div className="w-[250px] h-[250px] mt-8 mx-auto bg-logocolor dark:bg-logobw bg-contain bg-no-repeat bg-center" />
           <div className="pb-8">
             <h1 className="py-1 text-2xl leading-8 text-center text-themeSecondary drop-shadow-md font-ethnocentric">
-              MIT Reality Hack 2025
+              Reality Hack at MIT 2026
             </h1>
             <h2 className="text-2xl font-bold leading-8 text-center text-themeYellow drop-shadow-md">
               {' '}

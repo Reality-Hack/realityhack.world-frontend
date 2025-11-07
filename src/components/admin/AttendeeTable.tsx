@@ -54,7 +54,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
 
   useEffect(() => {
     const getData = async () => {
-      const options = await applicationOptions(applications);
+      const options = await applicationOptions();
       setOptions(options);
     };
     getData();
@@ -132,7 +132,8 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
               throw Error('application not saved');
             }
             let newApps = applications.slice();
-            newApps[appId] = response;
+            // TODO: fix this type casting
+            newApps[appId] = response as any;
             setApplications(newApps);
           })
           .finally(() => {

@@ -24,12 +24,9 @@ import {
   previousParticipationLabels,
 } from '../applications/ExperienceInterestForm';
 import { ageGroupLabels } from '../applications/PersonalInformationForm';
-import {
-  hardwareHackDetailLabels,
-  hardwareHackLabels
-} from '../applications/ThematicForm';
-// TODO: move to RSVP
-//   disabilitiesLabels,
+import { useApplicationquestionsList, useApplicationsRetrieve } from '@/types/endpoints'
+import Loader from '../Loader';
+
 
 export default function ReviewPage({
   allInfo,
@@ -39,6 +36,19 @@ export default function ReviewPage({
   acceptedFiles?: File[];
 }) {
   const { data: session } = useSession();
+
+  const { 
+    data: application, 
+    isLoading: isApplicationLoading, 
+    error: applicationError 
+} = useApplicationsRetrieve(allInfo.id, {
+    swr: { enabled: !!session?.access_token && !!allInfo.id },
+    request: {
+      headers: {
+        'Authorization': `JWT ${session?.access_token}`
+      }
+    }
+  })
 
   const formatParticipation = (participationType: string) => {
     switch (participationType) {
@@ -204,7 +214,7 @@ export default function ReviewPage({
               value=""
               onChange={() => {}}
               label="Is willing to work on a hackers schedule and is available 
-              to attend from January 23-26, 2025 (attending on January 27 is 
+              to attend from January 22-25, 2026 (attending on January 26 is 
               optional for mentors). Our participants are so committed to 
               experiential technology innovation, that they often work well 
               into the night. We&apos;d love mentors to be with them on that journey 
@@ -268,6 +278,18 @@ export default function ReviewPage({
               </div>
             </div>
           ))}
+        <LabelAndValue
+          label={'What age will you be as of January 22, 2026?'}
+          value={
+            allInfo.age_group
+              ? getLabelFromEnumValue(
+                  allInfo.age_group,
+                  age_group,
+                  ageGroupLabels
+                )
+              : '[none]'
+          }
+        />
       </div>
     );
   };
@@ -286,18 +308,6 @@ export default function ReviewPage({
         <LabelAndValue
           label={'What city are you based in?'}
           value={allInfo.current_city}
-        />
-        <LabelAndValue
-          label={'What age will you be as of January 23, 2025?'}
-          value={
-            allInfo.age_group
-              ? getLabelFromEnumValue(
-                  allInfo.age_group,
-                  age_group,
-                  ageGroupLabels
-                )
-              : '[none]'
-          }
         />
       </div>
     );
@@ -478,6 +488,13 @@ export default function ReviewPage({
               <br />
               <LabelAndValue
                 label={
+                  "Do you have any other skills or experiences that you'd like to tell us about?"
+                }
+                value={allInfo.other_skills_experiences}
+              />
+              <br />
+              <LabelAndValue
+                label={
                   'MIT Reality Hack is a fast-paced event that harness a variety of talents from participants to create something entirely new in a very short period of time. How do you envision your role in this environment and how will you contribute to your team?'
                 }
                 value={allInfo.experience_contribution}
@@ -598,82 +615,57 @@ export default function ReviewPage({
   };
 
   const ThematicSection = () => {
+    let questionResponses;
+    if (application?.id) {
+      if (isApplicationLoading) {
+        return <Loader />;
+      }
+  
+      if (applicationError) {
+        return <div>Error loading application details: {applicationError.message}</div>;
+      }
+      questionResponses = application?.question_responses;
+    } else {
+      questionResponses = allInfo.question_responses;
+    }
+
+    if (!questionResponses || questionResponses.length === 0) {
+      return (
+        <div className="py-4 text-gray-600">
+          No thematic questions were answered for this application.
+        </div>
+      );
+    }
+
+    const renderAnswer = (response: any) => {
+      if (response.text_response_snapshot) {
+        return response.text_response_snapshot;
+      }
+
+      if (response.selected_keys_snapshot && response.choices_snapshot) {
+        const selectedKeys = Array.isArray(response.selected_keys_snapshot) 
+          ? response.selected_keys_snapshot 
+          : [response.selected_keys_snapshot];
+        
+        const selectedChoices = selectedKeys.map((key: string) => 
+          response.choices_snapshot[key] || key
+        );
+        
+        return selectedChoices;
+      }
+
+      return '[no response]';
+    };
+
     return (
       <div className="flex flex-col gap-4">
-        <LabelAndValue
-          label={
-            'At MIT Reality Hack, teamwork and communication are critical to success. How do you see yourself supporting your team in this respect?'
-          }
-          value={allInfo.theme_essay}
-        />
-        {/* <LabelAndValue
-          label={
-            'How do you think XR technologies can help us with “Connection”? (Long answer)'
-          }
-          value={allInfo.theme_essay_follow_up}
-        /> */}
-        <LabelAndValue
-          label={
-            'Are you interested in participating in programming focused on startups and entrepreneurship? Please indicate your interest here and we will follow up.'
-          }
-          value={allInfo.theme_interest_track_one === 'Y' ? 'Yes' : 'No'}
-        />
-        <LabelAndValue
-          label={'Are you interested in hacking on Apple Vision Pro?'}
-          value={allInfo.theme_interest_track_two === 'Y' ? 'Yes' : 'No'}
-        />
-        {allInfo.theme_interest_track_two === 'Y' && (
-          <>
-            <LabelAndValue
-              label={
-                "Do you meet all of the minimum system requirements? This means you MUST have an Apple silicon Mac (M1, M2, etc.) to develop for visionOS. Please note that this is a hard requirement for being on a Vision Pro team. These requirements are set by Apple and we unfortunately won't have Mac hardware to check out."
-              }
-              value={allInfo.theme_detail_one === 'Y' ? 'Yes' : 'No'}
-            />
-            <LabelAndValue
-              label={
-                'If your team decides to develop using Unity, are you willing to sign up for a 30-Day Unity Pro Trial? CRITICAL: You MUST cancel the trial before the 30 days is up or you will be charged $2,040 USD. This is true even if you choose the monthly payment plan, since the subscription is for one year and the payment plan just spreads the cost over one year. The 30 day trial can be cancelled the moment you activate it and you will still have access for 30 days. Unity allows only one 30 day trial per account. Please ensure your trial period will cover the event days from January 23 - 27, 2025. Unity Pro is required to develop for Apple Vision Pro.'
-              }
-              value={allInfo.theme_detail_two === 'Y' ? 'Yes' : 'No'}
-            />
-            <LabelAndValue
-              label={
-                'Do you own a Vision Pro that you are willing to bring to support your team? You will not be expected to allow your teammates to use your device if you are uncomfortable doing so. We will set this expectation during opening ceremony.'
-              }
-              value={allInfo.theme_detail_three === 'Y' ? 'Yes' : 'No'}
-            />
-          </>
-        )}
-        <LabelAndValue
-          label={
-            'Would you be interested in participating in the hardware hack this year?'
-          }
-          value={
-            allInfo.hardware_hack_interest
-              ? getLabelFromEnumValue(
-                  allInfo.hardware_hack_interest,
-                  hardware_hack_interest,
-                  hardwareHackLabels
-                )
-              : '[none]'
-          }
-        />
-        <LabelAndValue
-          label={
-            'If you are interested in the hardware hack, please list the areas in which you have experience.'
-          }
-          value={
-            Array.isArray(allInfo.hardware_hack_detail)
-              ? allInfo.hardware_hack_detail.map((enumValue: string) =>
-                  getLabelFromEnumValue(
-                    enumValue,
-                    hardware_hack_detail,
-                    hardwareHackDetailLabels
-                  )
-                )
-              : allInfo.hardware_hack_detail
-          }
-        />
+        {questionResponses.map((response: any) => (
+          <LabelAndValue
+            key={response.id}
+            label={response.question_text_snapshot}
+            value={renderAnswer(response)}
+          />
+        ))}
       </div>
     );
   };

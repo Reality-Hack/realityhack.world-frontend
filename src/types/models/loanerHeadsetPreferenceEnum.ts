@@ -8,8 +8,8 @@
  * * `META` - Meta Quest 3
 * `SNAP` - Snap Spectacles
 * `BYOD` - I am bringing my own XR device to work with.
-* `HWHACK` - I’ve chosen the Hardware Hack, so I will probably not need a headset.
-* `TBD` - I’m not sure yet
+* `HWHACK` - I've chosen the Hardware Hack, so I will probably not need a headset.
+* `TBD` - I'm not sure yet
  */
 export type LoanerHeadsetPreferenceEnum = typeof LoanerHeadsetPreferenceEnum[keyof typeof LoanerHeadsetPreferenceEnum];
 

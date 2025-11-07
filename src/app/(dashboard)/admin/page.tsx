@@ -27,6 +27,13 @@ const Dashboard: NextPage = ({}: any) => {
             </span>
           </div>
         </Link>
+        <Link href="/admin/events">
+          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
+            <span className="text-xl text-center text-[#40337F]">
+              Events
+            </span>
+          </div>
+        </Link>
         <Link href="/admin/teams">
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
             <span className="text-xl text-center text-[#40337F]">
@@ -38,13 +45,6 @@ const Dashboard: NextPage = ({}: any) => {
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
             <span className="text-xl text-center text-[#40337F]">
               Hardware
-            </span>
-          </div>
-        </Link>
-        <Link href="/admin/markdown">
-          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">
-              Markdown editor
             </span>
           </div>
         </Link>

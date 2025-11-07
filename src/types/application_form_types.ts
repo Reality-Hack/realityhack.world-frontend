@@ -82,7 +82,8 @@ export enum previous_participation {
   _2020 = 'E',
   _2022 = 'F',
   _2023 = 'G',
-  _2024 = 'H'
+  _2024 = 'H',
+  _2025 = 'I'
 }
 
 export enum participation_role {
@@ -99,7 +100,7 @@ export const participation_role_display_name: Record<
   digital_creative_designer: 'Digital/Creative Designer',
   developer: 'Developer',
   specialist: 'Domain or other Specialized Skill Expert',
-  project_manager: 'Project Manager'
+  project_manager: 'Product Manager'
 };
 
 export enum digital_designer_skills {
@@ -223,6 +224,7 @@ export interface form_data {
   employer?: string | null;
   status?: status | null;
   experience_with_xr?: string | null;
+  other_skills_experiences?: string | null;
   experience_contribution?: string | null;
   additional_skills: string | null;
   previously_participated?: string | null;

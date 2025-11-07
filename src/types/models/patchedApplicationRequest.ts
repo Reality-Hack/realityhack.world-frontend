@@ -6,13 +6,12 @@
 import type { GenderIdentityEnum } from './genderIdentityEnum';
 import type { CountryEnum } from './countryEnum';
 import type { RaceEthnicGroupEnum } from './raceEthnicGroupEnum';
-import type { AgeGroupEnum } from './ageGroupEnum';
+import type { PreviousParticipationEnum } from './previousParticipationEnum';
 import type { HeardAboutUsEnum } from './heardAboutUsEnum';
 import type { DigitalDesignerSkillsEnum } from './digitalDesignerSkillsEnum';
+import type { AgeGroupEnum } from './ageGroupEnum';
 import type { IndustryEnum } from './industryEnum';
-import type { HardwareHackDetailEnum } from './hardwareHackDetailEnum';
-import type { ApplicationParticipationClassEnum } from './applicationParticipationClassEnum';
-import type { PatchedApplicationRequestAgeGroup } from './patchedApplicationRequestAgeGroup';
+import type { ParticipationClassA3fEnum } from './participationClassA3fEnum';
 import type { PatchedApplicationRequestDisabilityIdentity } from './patchedApplicationRequestDisabilityIdentity';
 import type { PatchedApplicationRequestParticipationCapacity } from './patchedApplicationRequestParticipationCapacity';
 import type { PatchedApplicationRequestStatus } from './patchedApplicationRequestStatus';
@@ -22,18 +21,32 @@ import type { PatchedApplicationRequestThemeInterestTrackTwo } from './patchedAp
 import type { PatchedApplicationRequestThemeDetailOne } from './patchedApplicationRequestThemeDetailOne';
 import type { PatchedApplicationRequestThemeDetailTwo } from './patchedApplicationRequestThemeDetailTwo';
 import type { PatchedApplicationRequestThemeDetailThree } from './patchedApplicationRequestThemeDetailThree';
-import type { HardwareHackInterestEnum } from './hardwareHackInterestEnum';
+import type { PatchedApplicationRequestHardwareHackInterest } from './patchedApplicationRequestHardwareHackInterest';
+import type { PatchedApplicationRequestHardwareHackDetail } from './patchedApplicationRequestHardwareHackDetail';
 
+/**
+ * Base serializer that automatically scopes foreign key fields to the current event.
+
+This serializer ensures that when validating foreign key relationships,
+only objects from the current event are considered valid. This is crucial
+for maintaining proper event isolation in the multi-tenant system.
+
+Usage:
+    class MySerializer(EventScopedSerializer):
+        class Meta:
+            model = MyModel
+            fields = ['id', 'name', 'foreign_key_field']
+ */
 export interface PatchedApplicationRequest {
   gender_identity?: GenderIdentityEnum[];
   nationality?: CountryEnum[];
   current_country?: CountryEnum[];
   race_ethnic_group?: RaceEthnicGroupEnum[];
-  previous_participation?: AgeGroupEnum[];
+  previous_participation?: PreviousParticipationEnum[];
   heard_about_us?: HeardAboutUsEnum[];
   digital_designer_skills?: DigitalDesignerSkillsEnum[];
+  age_group?: AgeGroupEnum;
   industry?: IndustryEnum[];
-  hardware_hack_detail?: HardwareHackDetailEnum[];
   /**
    * @minLength 1
    * @maxLength 100
@@ -50,7 +63,7 @@ export interface PatchedApplicationRequest {
    * @maxLength 100
    */
   last_name?: string;
-  participation_class?: ApplicationParticipationClassEnum;
+  participation_class?: ParticipationClassA3fEnum;
   /**
    * @minLength 1
    * @maxLength 100
@@ -63,18 +76,11 @@ export interface PatchedApplicationRequest {
    * @nullable
    */
   pronouns?: string | null;
-  /** @nullable */
-  age_group?: PatchedApplicationRequestAgeGroup;
   /**
    * @minLength 1
    * @maxLength 254
    */
   email?: string;
-  /**
-   * @minimum -2147483648
-   * @maximum 2147483647
-   */
-  event_year?: number;
   /**
    * @minLength 1
    * @maxLength 200
@@ -139,6 +145,12 @@ export interface PatchedApplicationRequest {
    * @nullable
    */
   specialized_expertise?: string | null;
+  /**
+   * @minLength 1
+   * @maxLength 1000
+   * @nullable
+   */
+  other_skills_experiences?: string | null;
   /** @nullable */
   status?: PatchedApplicationRequestStatus;
   /** @nullable */
@@ -175,7 +187,10 @@ export interface PatchedApplicationRequest {
   theme_detail_two?: PatchedApplicationRequestThemeDetailTwo;
   /** @nullable */
   theme_detail_three?: PatchedApplicationRequestThemeDetailThree;
-  hardware_hack_interest?: HardwareHackInterestEnum;
+  /** @nullable */
+  hardware_hack_interest?: PatchedApplicationRequestHardwareHackInterest;
+  /** @nullable */
+  hardware_hack_detail?: PatchedApplicationRequestHardwareHackDetail;
   /**
    * @minLength 1
    * @maxLength 20
@@ -229,6 +244,7 @@ export interface PatchedApplicationRequest {
   judge_previously_judged?: boolean | null;
   /** @nullable */
   rsvp_email_sent_at?: string | null;
+  event?: string;
   /** @nullable */
   resume?: string | null;
 }

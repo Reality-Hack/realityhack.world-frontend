@@ -97,7 +97,7 @@ const JudgeApp: NextPage = ({}: any) => {
 
   useEffect(() => {
     const getData = async () => {
-      const options = await applicationOptions(formData);
+      const options = await applicationOptions();
       setOptions(options);
       setIndustries(options.actions.POST.industry.choices);
     };
@@ -264,19 +264,19 @@ const JudgeApp: NextPage = ({}: any) => {
       <div className="text-xl font-bold text-purple-900">Welcome</div>
       <div className="flex flex-col gap-4">
         <div className="pt-8">
-          Thank you for your interest to be a Judge at MIT Reality Hack 2025.
+          Thank you for your interest to be a Judge at Reality Hack 2026.
           For all judge-related questions, contact{' '}
-          <Link href="mailto:catherine@mitrealityhack.com">
+          <Link href="mailto:catherine@realityhackinc.org">
             <span className="text-themePrimary">
-              catherine@mitrealityhack.com
+              catherine@realityhackinc.org
             </span>
           </Link>
           .
         </div>
 
         <div className="pb-4">
-          Please note that this form is not a commitment to attend MIT Reality
-          Hack 2025 as a judge. Our team will reach out to you about your
+          Please note that this form is not a commitment to attend Reality
+          Hack 2026 as a judge. Our team will reach out to you about your
           interest to confirm your participation.
         </div>
         <div>
@@ -291,7 +291,7 @@ const JudgeApp: NextPage = ({}: any) => {
       <div className="flex flex-col gap-4 py-4 mt-8">
         <div className="pt-8">
           Before you begin, please be advised that Judges only need to attend on 
-          January 26, 2025 from about 12pm Eastern and be available until 6pm at 
+          January 26, 2026 from about 12pm Eastern and be available until 6pm at 
           the latest. We will also need a phone number to be in touch with you during the hackathon.
         </div>
       </div>
@@ -300,7 +300,7 @@ const JudgeApp: NextPage = ({}: any) => {
 
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
-      <p>{`Thank you for submitting your interest to be a Judge at MIT Reality Hack 2025, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+      <p>{`Thank you for submitting your interest to be a Judge at Reality Hack 2026, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 

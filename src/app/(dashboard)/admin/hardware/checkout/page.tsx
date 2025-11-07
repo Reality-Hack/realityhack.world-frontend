@@ -1,7 +1,7 @@
 'use client';
-import HardwareCheckout from '@/components/hardware/HardwareCheckout';
+import HardwareCheckout from '@/components/HardwareCheckout/HardwareCheckout';
 import { useSession } from 'next-auth/react';
-import { useHardwareContext } from '@/contexts/HardwareAdminContext';
+import { useHardwareContext } from '@/contexts/HardwareContext';
 import { useAttendeesList } from '@/types/endpoints';
 import { HardwareDevice } from '@/types/models';
 import { useState, useEffect } from 'react';

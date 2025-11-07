@@ -26,8 +26,16 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { applicationOptions } from '../api/application';
+import { useApplicationquestionsList } from '@/types/endpoints';
+import {
+  initializeDynamicQuestions,
+  getDynamicRequiredFields,
+  validateDynamicQuestion,
+  isThematicQuestion,
+  getQuestionForField
+} from '@/utils/dynamicQuestions';
 
 const Application: NextPage = ({}: any) => {
   const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
@@ -76,6 +84,9 @@ const Application: NextPage = ({}: any) => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
+
+  const { data: dynamicQuestions } = useApplicationquestionsList();
+
   const [formData, setFormData] = useState<Partial<form_data>>({
     participation_class: 'P',
     disclaimer_groups: null,
@@ -109,15 +120,7 @@ const Application: NextPage = ({}: any) => {
     proficient_languages: '',
     experience_with_xr: '',
     additional_skills: '',
-    theme_essay: '',
-    // theme_essay_follow_up: '',
-    theme_interest_track_one: null,
-    theme_interest_track_two: null,
-    theme_detail_one: null,
-    theme_detail_two: null,
-    theme_detail_three: null,
-    hardware_hack_interest: null,
-    hardware_hack_detail: [],
+    // Thematic questions (theme_* and hardware_hack_*) will be initialized dynamically
     heard_about_us: [],
     outreach_groups: null,
     gender_identity_other: null,
@@ -132,6 +135,17 @@ const Application: NextPage = ({}: any) => {
   // disability_accommodations: '',
   // disabilities_other: null,
   // disabilities: [],
+
+  useEffect(() => {
+    if (dynamicQuestions && dynamicQuestions.length > 0) {
+      setFormData(prev => {
+        const thematicQuestions = dynamicQuestions.filter(q => 
+          isThematicQuestion(q.question_key)
+        );
+        return initializeDynamicQuestions(thematicQuestions, prev);
+      });
+    }
+  }, [dynamicQuestions]);
 
   useEffect(() => {
     let updatedFormData = { ...formData };
@@ -194,7 +208,7 @@ const Application: NextPage = ({}: any) => {
 
   useEffect(() => {
     const getData = async () => {
-      const options = await applicationOptions(formData);
+      const options = await applicationOptions();
       setOptions(options);
       setCountries(options.actions.POST.current_country.choices);
       setNationalities(options.actions.POST.nationality.choices);
@@ -224,6 +238,7 @@ const Application: NextPage = ({}: any) => {
       >
     ) => {
       const { name, value, type } = e.target;
+
       const checked = (e.target as HTMLInputElement).checked;
 
       setFormData(prev => {
@@ -251,8 +266,7 @@ const Application: NextPage = ({}: any) => {
           }
         } else if (
           // RADIO
-          type === 'radio' &&
-          !['true', 'false', 'Y', 'N'].includes(value)
+          type === 'radio'
         ) {
           return {
             ...prev,
@@ -276,44 +290,69 @@ const Application: NextPage = ({}: any) => {
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
       >
     ) => {
-      let fieldType = e.target.type.toLowerCase();
-
       const fieldName = e.target.name;
-      const fieldTab = Object.entries(requiredFields).find(([_, fields]) =>
-        fields.includes(fieldName)
-      )?.[0];
+      const fieldValue = formData[fieldName as keyof typeof formData];
 
-      let isFieldRequired = false;
+      const dynamicQuestion = getQuestionForField(fieldName, dynamicQuestions);
 
-      if (fieldTab !== undefined) {
-        isFieldRequired = requiredFields[fieldTab].includes(fieldName);
-      }
+      if (dynamicQuestion && isThematicQuestion(fieldName)) {
+        const validationError = validateDynamicQuestion(
+          dynamicQuestion,
+          fieldValue,
+          dynamicQuestion.required ?? false
+        );
 
-      const fieldOptions = options?.actions?.POST[fieldName];
-      const maxLength = fieldOptions?.max_length;
-
-      const validationError = validateField(
-        fieldType,
-        e.target.value,
-        isFieldRequired,
-        false,
-        maxLength
-      );
-
-      if (validationError) {
-        setErrors(prevErrors => ({
-          ...prevErrors,
-          [fieldName]: validationError
-        }));
+        if (validationError) {
+          setErrors(prevErrors => ({
+            ...prevErrors,
+            [fieldName]: validationError
+          }));
+        } else {
+          setErrors(prevErrors => {
+            const newErrors = { ...prevErrors };
+            delete newErrors[fieldName];
+            return newErrors;
+          });
+        }
       } else {
-        setErrors(prevErrors => {
-          const newErrors = { ...prevErrors };
-          delete newErrors[fieldName];
-          return newErrors;
-        });
+        let fieldType = e.target.type.toLowerCase();
+
+        const fieldTab = Object.entries(requiredFields).find(([_, fields]) =>
+          fields.includes(fieldName)
+        )?.[0];
+
+        let isFieldRequired = false;
+
+        if (fieldTab !== undefined) {
+          isFieldRequired = requiredFields[fieldTab].includes(fieldName);
+        }
+
+        const fieldOptions = options?.actions?.POST[fieldName];
+        const maxLength = fieldOptions?.max_length;
+
+        const validationError = validateField(
+          fieldType,
+          e.target.value,
+          isFieldRequired,
+          false,
+          maxLength
+        );
+
+        if (validationError) {
+          setErrors(prevErrors => ({
+            ...prevErrors,
+            [fieldName]: validationError
+          }));
+        } else {
+          setErrors(prevErrors => {
+            const newErrors = { ...prevErrors };
+            delete newErrors[fieldName];
+            return newErrors;
+          });
+        }
       }
     },
-    [requiredFields, options]
+    [requiredFields, options, dynamicQuestions, formData]
   );
 
   const isTabValid = (tabName: string): boolean => {
@@ -330,30 +369,43 @@ const Application: NextPage = ({}: any) => {
 
     for (let field of required_fields) {
       const fieldValue = formData[field as keyof typeof formData];
-      const fieldOptions = options?.actions?.POST[field];
-      const maxLength = fieldOptions?.max_length || 0;
+      
+      const dynamicQuestion = getQuestionForField(field, dynamicQuestions);
 
-      const fieldType = fieldOptions?.type || 'text';
-      const validationError = validateField(
-        fieldType,
-        fieldValue,
-        true,
-        false,
-        maxLength
-      );
+      if (dynamicQuestion && isThematicQuestion(field)) {
+        const validationError = validateDynamicQuestion(
+          dynamicQuestion,
+          fieldValue,
+          true
+        );
+        
+        if (validationError) return false;
+      } else {
+        const fieldOptions = options?.actions?.POST[field];
+        const maxLength = fieldOptions?.max_length || 0;
 
-      if (validationError) {
-        return false;
-      }
+        const fieldType = fieldOptions?.type || 'text';
+        const validationError = validateField(
+          fieldType,
+          fieldValue,
+          true,
+          false,
+          maxLength
+        );
 
-      if (typeof fieldValue === 'string' && fieldValue.trim().length < 1) {
-        return false;
-      } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
-        return false;
-      } else if (typeof fieldValue === 'boolean' && fieldValue === null) {
-        return false;
-      } else if (!fieldValue) {
-        return false;
+        if (validationError) {
+          return false;
+        }
+
+        if (typeof fieldValue === 'string' && fieldValue.trim().length < 1) {
+          return false;
+        } else if (Array.isArray(fieldValue) && fieldValue.length === 0) {
+          return false;
+        } else if (typeof fieldValue === 'boolean' && fieldValue === null) {
+          return false;
+        } else if (!fieldValue) {
+          return false;
+        }
       }
     }
 
@@ -386,15 +438,13 @@ const Application: NextPage = ({}: any) => {
         : [])
     ];
 
-    const updatedThematic = [
-      ...(formData.theme_interest_track_two &&
-        formData.theme_interest_track_two === theme_interest_track_choice.yes
-        ? ['theme_detail_one', 'theme_detail_two', 'theme_detail_three']
-        : []),
-      'theme_essay',
-      'theme_interest_track_one',
-      'theme_interest_track_two'
-    ];
+    const thematicQuestions = dynamicQuestions?.filter(q => 
+      isThematicQuestion(q.question_key)
+    );
+    const updatedThematic = getDynamicRequiredFields(
+      thematicQuestions,
+      formData
+    );
 
     const updatedDiversityInclusion = [
       ...(formData.gender_identity &&
@@ -427,6 +477,8 @@ const Application: NextPage = ({}: any) => {
       THEMATIC: updatedThematic
     }));
   }, [
+    formData,
+    dynamicQuestions,
     formData.participation_capacity,
     formData.previously_participated,
     formData.participation_role,
@@ -434,7 +486,6 @@ const Application: NextPage = ({}: any) => {
     formData.race_ethnic_group,
     formData.heard_about_us,
     formData.disability_identity,
-    formData.theme_interest_track_two
   ]);
 
   const WelcomeTab = () => (
@@ -442,25 +493,25 @@ const Application: NextPage = ({}: any) => {
       <div className="text-xl font-bold text-purple-900">Welcome</div>
       <div className="flex flex-col gap-4">
         <div className="pt-8">
-          Welcome to the Reality Hack 2025 participant application form. Please
-          fill out this form to apply for a spot at Reality Hack 2025. For all
+          Welcome to the Reality Hack participant application form. Please
+          fill out this form to apply for a spot at Reality Hack 2026. For all
           applications-related questions, contact{' '}
-          <Link href="mailto:apply@mitrealityhack.com">
-            <span className="text-themePrimary">apply@mitrealityhack.com</span>
+          <Link href="mailto:apply@realityhackinc.org">
+            <span className="text-themePrimary">apply@realityhackinc.org</span>
           </Link>
           .
         </div>
 
         <div className="py-4">
           For general inquiries, contact{' '}
-          <Link href="team@mitrealityhack.com">
-            <span className="text-themePrimary">team@mitrealityhack.com</span>
+          <Link href="team@realityhackinc.org">
+            <span className="text-themePrimary">team@realityhackinc.org</span>
           </Link>
           .
         </div>
         <div className="pb-4">
           Please note that this form is not a commitment to attend Reality Hack
-          2025. You will be notified of your acceptance status by email.
+          2026. You will be notified of your acceptance status by email.
         </div>
         <div>
           You will receive a confirmation email when you complete the
@@ -530,11 +581,6 @@ const Application: NextPage = ({}: any) => {
     </div>
   );
 
-  const ReviewTab = () => (
-    <div className="px-6">
-      <p>Submit form</p>
-    </div>
-  );
 
   const acceptedFileTypes = {
     'application/pdf': ['.pdf'],
@@ -547,9 +593,50 @@ const Application: NextPage = ({}: any) => {
 
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
-      <p>{`Thank you for applying to MIT Reality Hack 2025, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+      <p>{`Thank you for applying to Reality Hack 2026, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
+
+  const mappedReviewApplication = useMemo(() => {
+    return {
+      ...formData,
+      question_responses: dynamicQuestions?.map((question, index) => {
+        const base = {
+          id: `${question.question_key}-${index}`,
+          question_key: question.question_key,
+          question_text_snapshot: question.question_text,
+        };
+        if (question.question_type === 'S' || question.question_type === 'M') {
+          const choicesLookup: Record<string, string> = {};
+          question.choices?.forEach(choice => {
+            choicesLookup[choice.choice_key] = choice.choice_text;
+          });
+
+          const questionKey = question.question_key as keyof typeof formData;
+          const selectedValue = formData[questionKey];
+
+          const toHumanReadable = (key: string): string => {
+            return choicesLookup[key] ?? key;
+          };
+
+          return {
+            ...base,
+            choices_snapshot: choicesLookup,
+            selected_keys_snapshot: Array.isArray(selectedValue)
+              ? selectedValue.map(toHumanReadable)
+              : toHumanReadable(selectedValue as string),
+          };
+        } else if (question.question_type === 'T' || question.question_type === 'L') {
+          return {
+            ...base,
+            text_response_snapshot: formData[question.question_key as keyof typeof formData],
+          };
+        } else {
+          return base;
+        }
+      }) || [],
+    };
+  }, [formData, dynamicQuestions]);
 
   // Define your tabs as an array of components or elements
   const tabs = [
@@ -600,7 +687,7 @@ const Application: NextPage = ({}: any) => {
       handleChange={handleChange}
       errors={errors}
     />,
-    <ReviewPage key={7} allInfo={formData} acceptedFiles={acceptedFiles} />,
+    <ReviewPage key={7} allInfo={mappedReviewApplication} acceptedFiles={acceptedFiles} />,
     <ConfirmationTab key={8} />
   ];
   const tabNames = [

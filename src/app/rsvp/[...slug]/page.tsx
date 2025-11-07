@@ -512,7 +512,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
           <div className="w-[250px] h-[250px] mt-8 mx-auto bg-logocolor dark:bg-logobw bg-contain bg-no-repeat bg-center" />
           <div className="pb-8">
             <h1 className="py-1 text-2xl leading-8 text-center text-themeSecondary drop-shadow-md font-ethnocentric">
-              MIT Reality Hack 2025
+              Reality Hack at MIT 2026
             </h1>
             <h2 className="text-2xl font-bold leading-8 text-center text-themeYellow drop-shadow-md">
               {isParticipant
@@ -950,7 +950,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
               {isParticipant && (
                 <>
                   <div className="pb-4">
-                    Will you be under 18 on January 23, 2025?{' '}
+                    Will you be under 18 on January 22, 2026?{' '}
                     <span className="text-red-700">*</span>
                     <div className="flex flex-col mt-[10px]">
                       <RadioInput
@@ -978,7 +978,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                           <div className="relative flex flex-col mb-0 ml-4 cursor-default items-left">
                             <div>
                               As you will be under 18 when the event starts on
-                              January 23, 2025, we require the completion of a
+                              January 22, 2026, we require the completion of a
                               Parental Consent and Release Form. If your
                               parent/guardian has not already done so, please
                               have your parent/guardian{' '}
@@ -1030,7 +1030,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
               <div>
                 Please read over the{' '}
                 <a
-                  href="https://www.mitrealityhack.com/rules"
+                  href="https://www.realityhackinc.org/rules"
                   target="_blank"
                   className="underline cursor-pointer text-themePrimary"
                 >
@@ -1038,7 +1038,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 </a>{' '}
                 and{' '}
                 <a
-                  href="https://www.mitrealityhack.com/code-of-conduct"
+                  href="https://www.realityhackinc.org/code-of-conduct"
                   target="_blank"
                   className="underline cursor-pointer text-themePrimary"
                 >
@@ -1381,19 +1381,19 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 adhere to the Rules and Code of Conduct for the MIT Reality
                 Hack, available at{' '}
                 <a
-                  href="https://mitrealityhack.com/rules"
+                  href="https://realityhackinc.org/rules"
                   target="_blank"
                   className="underline cursor-pointer text-themePrimary"
                 >
-                  https://mitrealityhack.com/rules
+                  https://realityhackinc.org/rules
                 </a>{' '}
                 and{' '}
                 <a
-                  href="https://www.mitrealityhack.com/code-of-conduct "
+                  href="https://www.realityhackinc.org/code-of-conduct "
                   target="_blank"
                   className="underline cursor-pointer text-themePrimary"
                 >
-                  https://www.mitrealityhack.com/code-of-conduct
+                  https://www.realityhackinc.org/code-of-conduct
                 </a>
                 . I acknowledge that non-compliance may lead to
                 disqualification, forfeiture of prizes, and potential exclusion
@@ -1405,7 +1405,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 </span>
                 <br></br>I understand that any intellectual property I develop
                 or contribute to during the Reality Hack event, scheduled for
-                January 23 - 27th, 2025, at Massachusetts Institute of
+                January 22 - 26th, 2026, at Massachusetts Institute of
                 Technology in Cambridge, MA, will be subject to specific
                 licensing agreements. All code developed during the hackathon
                 must adhere to open-source licensing, ensuring its source code
@@ -1627,7 +1627,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
             </div>
           ) : (
             <div className="px-6 py-6 h-[256px]">
-              <p>{`Thank you for submitting your RSVP to MIT Reality Hack 2025! You should receive an email to log in to our platform shortly.`}</p>
+              <p>{`Thank you for submitting your RSVP to Reality Hack 2026! You should receive an email to log in to our platform shortly.`}</p>
             </div>
           )}
         </div>

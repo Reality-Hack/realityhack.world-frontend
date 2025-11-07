@@ -5,14 +5,14 @@
  */
 
 /**
- * * `A` - 2016
-* `B` - 2017
-* `C` - 2018
-* `D` - 2019
-* `E` - 2020
-* `F` - 2022
-* `G` - 2023
-* `H` - 2024
+ * * `A` - 17 or younger
+* `B` - 18 to 20
+* `C` - 21 to 29
+* `D` - 30 to 39
+* `E` - 40 to 49
+* `F` - 50 to 59
+* `G` - 60 or older
+* `H` - I prefer not to say
  */
 export type AgeGroupEnum = typeof AgeGroupEnum[keyof typeof AgeGroupEnum];
 

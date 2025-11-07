@@ -5,9 +5,24 @@
  */
 import type { RecommendedForEnum } from './recommendedForEnum';
 
+/**
+ * Base serializer that automatically scopes foreign key fields to the current event.
+
+This serializer ensures that when validating foreign key relationships,
+only objects from the current event are considered valid. This is crucial
+for maintaining proper event isolation in the multi-tenant system.
+
+Usage:
+    class MySerializer(EventScopedSerializer):
+        class Meta:
+            model = MyModel
+            fields = ['id', 'name', 'foreign_key_field']
+ */
 export interface Workshop {
   readonly id?: string;
   recommended_for: RecommendedForEnum[];
+  readonly skills?: string;
+  readonly hardware?: string;
   /** @maxLength 300 */
   name: string;
   /** @nullable */
@@ -27,8 +42,7 @@ export interface Workshop {
   course_materials?: string | null;
   readonly created_at?: string;
   readonly updated_at?: string;
+  event: string;
   /** @nullable */
   location?: string | null;
-  skills?: string[];
-  hardware?: string[];
 }

@@ -14,6 +14,19 @@ import type { AttendeeRSVPRequestSpecialInterestTrackTwo } from './attendeeRSVPR
 import type { AttendeeRSVPRequestLoanerHeadsetPreference } from './attendeeRSVPRequestLoanerHeadsetPreference';
 import type { ParticipationClassEnum } from './participationClassEnum';
 
+/**
+ * Base serializer that automatically scopes foreign key fields to the current event.
+
+This serializer ensures that when validating foreign key relationships,
+only objects from the current event are considered valid. This is crucial
+for maintaining proper event isolation in the multi-tenant system.
+
+Usage:
+    class MySerializer(EventScopedSerializer):
+        class Meta:
+            model = MyModel
+            fields = ['id', 'name', 'foreign_key_field']
+ */
 export interface AttendeeRSVPRequest {
   /** @maxLength 150 */
   first_name?: string;
@@ -93,7 +106,7 @@ export interface AttendeeRSVPRequest {
    */
   us_visa_support_address?: string | null;
   /**
-   * Will you be under 18 on January 23, 2025
+   * Will you be under 18 on January 22, 2026
    * @nullable
    */
   under_18_by_date?: boolean | null;

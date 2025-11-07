@@ -2,7 +2,7 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { HardwareCategory, hardware_categories } from '@/types/types2';
 import { useState } from 'react';
-import { useHardwareContext } from '@/contexts/HardwareAdminContext';
+import { useHardwareContext } from '@/contexts/HardwareContext';
 
 
 export default function HardwareCategoryFilter(

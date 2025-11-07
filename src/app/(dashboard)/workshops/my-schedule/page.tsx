@@ -141,7 +141,7 @@ const Page: React.FC = () => {
                               data.description || 'No Description provided.'
                             }
                             datetime={
-                              data.datetime || '2025-01-13T02:09:00.806940Z'
+                              data.datetime || '2026-01-25T02:09:00.806940Z'
                             }
                             skills={data.skills || []}
                             key={data.id}
@@ -155,7 +155,7 @@ const Page: React.FC = () => {
               </div>
             </div>
             <div className="origin-top-left -rotate-90 translate-y-[-500%] text-zinc-500 text-base font-light leading-normal tracking-[2.88px]">
-              Monday January 25
+              Saturday January 24
             </div>
           </div>
           <div className="text-zinc-500 text-2xl font-normal leading-normal bg-white border-2 border-gray-200 flex flex-col gap-2 w-fit p-2 rounded-lg bg-neutral-50 rounded-[10px] shadow">

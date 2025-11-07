@@ -66,6 +66,46 @@ export const validateField = (
   return ''; // Return empty string if no validation errors
 };
 
+export const formatMarkdownURL = (label: string): JSX.Element => {
+  const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  
+  const parts: (string | JSX.Element)[] = [];
+  let lastIndex = 0;
+  let match;
+  
+  while ((match = markdownLinkRegex.exec(label)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(label.substring(lastIndex, match.index));
+    }
+    
+    const linkText = match[1];
+    const url = match[2];
+    parts.push(
+      <a
+        key={match.index}
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 hover:text-blue-800 underline"
+      >
+        {linkText}
+      </a>
+    );
+    
+    lastIndex = match.index + match[0].length;
+  }
+  
+  if (lastIndex < label.length) {
+    parts.push(label.substring(lastIndex));
+  }
+  
+  if (parts.length === 0) {
+    return <span>{label}</span>;
+  }
+  
+  return <span>{parts}</span>;
+};
+
 export const TextInput: React.FC<{
   name: string;
   placeholder: string;
@@ -450,7 +490,7 @@ export const CheckboxInput: React.FC<{
           className="px-3 py-3 mr-2 bg-white outline-none accent-themePrimary rounded-xl "
           onBlur={handleBlur}
         />
-        {label}
+        {(formatMarkdownURL(label))}
       </label>
       {error && <p className="ml-1 text-xs text-themeSecondary">{error}</p>}
     </div>
@@ -480,7 +520,7 @@ export const RadioInput: React.FC<{
         onBlur={handleBlur}
         className="mr-2 text-black accent-themePrimary rounded-xl w-fit"
       />
-      {label}
+      {(formatMarkdownURL(label))}
     </label>
   </div>
   );

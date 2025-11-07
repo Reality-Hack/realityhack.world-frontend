@@ -106,7 +106,7 @@ const MentorApp: NextPage = ({}: any) => {
 
   useEffect(() => {
     const getData = async () => {
-      const options = await applicationOptions(formData);
+      const options = await applicationOptions();
       setOptions(options);
       setIndustries(options.actions.POST.industry.choices);
     };
@@ -273,17 +273,17 @@ const MentorApp: NextPage = ({}: any) => {
       <div className="text-xl font-bold text-purple-900">Welcome</div>
       <div className="flex flex-col gap-4">
         <div className="pt-8">
-          Thank you for your interest to be a Mentor at MIT Reality Hack 2025.
+          Thank you for your interest to be a Mentor at Reality Hack 2026.
           For all mentor-related questions, contact{' '}
-          <Link href="mailto:jared@mitrealityhack.com">
-            <span className="text-themePrimary">jared@mitrealityhack.com</span>
+          <Link href="mailto:mentors@realityhackinc.org">
+            <span className="text-themePrimary">mentors@realityhackinc.org</span>
           </Link>
           .
         </div>
 
         <div className="pb-4">
-          Please note that this form is not a commitment to attend MIT Reality
-          Hack 2025 as a mentor. Our team will reach out to you about your
+          Please note that this form is not a commitment to attend Reality
+          Hack 2026 as a mentor. Our team will reach out to you about your
           interest to confirm your participation.
         </div>
         <div>
@@ -309,7 +309,7 @@ const MentorApp: NextPage = ({}: any) => {
         <div className="border border-gray-200 border-1"></div>
         <div>
           Is willing to work on a hackers schedule and is available to attend 
-          from January 23-26, 2025 (attending on January 27 is optional for 
+          from January 22-25, 2026 (attending on January 26th is optional for 
           mentors). Our participants are so committed experiential technology 
           innovation, that they often work well into the night. We&apos;d love 
           mentors to be with them on that journey - especially the evening 
@@ -363,7 +363,7 @@ const MentorApp: NextPage = ({}: any) => {
 
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
-      <p>{`Thank you for submitting your interest to be a Mentor at MIT Reality Hack 2025, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+      <p>{`Thank you for submitting your interest to be a Mentor at Reality Hack 2026, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 

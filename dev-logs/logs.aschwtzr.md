@@ -1,20 +1,53 @@
+**Tues October 14**
+- Fix first time setup for local development
+- Fix assignment of participant role (participant => attendee)
+
+What's next
+- Local backend file storage for docker-compose 
+
+**October 12**
+- Add yearly scoping suffix to auth roles from keycloak 
+
+What's next
+- Spend more time validating the auth changes before pushing forward with them
+
+**October 6-10**
+- Client based role access management in frontend
+- Enhance Keycloak integration in backend with standalone client
+- Handlers for client role creating as part of RSVP flow (moved away from Realm roles)
+
+**Sunday Sept 28**
+- Fix participant hardware requests missing team data
+
+**Saturday Sept 27**
+- Fix search in admin hardware requests table
+- Implement frontend semantic versioning
+
+
+What's next
+- Update mentor help queue?
+- Update 2026 application questions
+
+**Friday Sept 26**
+- Improve handling of new user created hardware device with state for just that device (as opposed to all devices + the new one)
+- Fix bug with missing team ID when requesting hardware
+- Add loading state to auth context hook
+
+**Thurs Sept 25**
+- Reorganize hardware related components into smaller, single responsibility components
+
 **Wed Sept 24**
-What I did
 - Refactor reusable TeamsForm out of participant team page for reuse in admin
 
 **Tues Sept 23**
-What I did
 - Refactor participant hardware to use common context for hardware browser and hardware requests pages
 - Clean up admin landing page by removing duplicate tiles and single icon
 
 **Thurs Sept 18**
-What I did
 - Cache busting and prevent client side on attendees endpoint to allow optimistic updates
 - Improve loading state for team form by showing loading animation when attendees are loading
 
 **Mon Sept. 15 - Wed Sept. 17**
-
-What I did
 - Refactor teams form to isolate business logic away from implementing components
 - Use SWR hooks for teams and team pages
 - Create useAttendees hook to improve rendering inside admin teams pages

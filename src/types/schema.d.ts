@@ -481,6 +481,7 @@ export interface components {
       previously_participated?: boolean | null;
       participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
       experience_with_xr?: string | null;
+      other_skills_experiences?: string | null;
       experience_contribution?: string | null;
       theme_essay?: string | null;
       theme_essay_follow_up?: string | null;
@@ -1402,6 +1403,7 @@ export interface components {
       previously_participated?: boolean | null;
       participation_role?: components["schemas"]["ParticipationRoleEnum"] | components["schemas"]["NullEnum"] | null;
       experience_with_xr?: string | null;
+      other_skills_experiences?: string | null;
       experience_contribution?: string | null;
       theme_essay?: string | null;
       theme_essay_follow_up?: string | null;

@@ -1,6 +1,6 @@
 import {
     HardwareDevice,
-    Hardware,
+    // Hardware,
     HardwareCount,
     FileUpload, 
     TagsEnum,
@@ -14,16 +14,21 @@ import {
     TeamCreateRequest
 } from '@/types/models'
 
+export interface HardwareType extends Omit<HardwareCount, 'hardware_devices'> {
+  hardware_devices?: HardwareDevice[] | undefined;
+}
+
 export interface HardwareWithType extends HardwareDevice {
-  hardwareType: Hardware | HardwareCountDetail;
+  hardwareType: HardwareCountDetail | HardwareType;
 }
 
 
-export   interface CreateHardware extends Omit<Hardware, 'image'> {
+export interface CreateHardware extends Omit<HardwareCountDetail, 'image' | 'available' | 'checked_out' | 'total' | 'hardware_devices'> {
   image?: FileUpload | null;
   total?: number;
   available?: number;
   checked_out?: number;
+  hardware_devices?: HardwareDevice[];
 }
 
 // should have a signle type/interface instead of this and HardwareTag

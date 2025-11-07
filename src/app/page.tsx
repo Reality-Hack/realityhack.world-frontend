@@ -182,7 +182,7 @@ export default function Dashboard() {
               <div className="ml-2 text-xl">CONGRATS!</div>
             </div>
             <div className="p-6">
-              Now that you’ve RSVP’d to MIT Reality Hack 2025, make sure you
+              Now that you’ve RSVP’d to Reality Hack 2026, make sure you
               join our Discord to start chatting with other accepted
               participants, coordinate housing, share resources, and get to know
               each other! We&apos;ll also be running the event and posting
@@ -326,8 +326,8 @@ export default function Dashboard() {
               <div className="p-6">
                 Have you booked travel and accommodations yet? <br /> <br />
                 <span className="font-bold">
-                  You should plan to be in Boston on the evening of January 22nd
-                  as we begin at 8am on the 23rd.
+                  You should plan to be in Boston on the evening of January 21st
+                  as we begin at 8am on the 22nd.
                 </span>{' '}
                 You can also plan to wrap up by around 5pm EST on the 27th.
                 We’ll release our full schedule later but you can use our

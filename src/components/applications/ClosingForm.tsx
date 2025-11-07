@@ -80,9 +80,9 @@ const ClosingForm: React.FC<FormProps> = ({
           onBlur={handleBlur}
         >
           Help us reach more communities that matter! What are your favorite
-          online groups (LinkedIn, Discord, etc.) related to XR, creative
-          technology, or social justice and accessibility? All languages
-          welcome!
+          online groups (LinkedIn, Discord, etc.) related to AI, machine learning, 
+          robotics, XR, creative technology, or social justice and accessibility? 
+          All languages welcome!
         </TextAreaInput>
       </div>
     </div>

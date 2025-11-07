@@ -2,28 +2,64 @@
 
 import Nav from '@/components/Nav';
 import { useSession } from 'next-auth/react';
-import { ReactNode, useEffect, useState, useRef } from 'react';
+import { ReactNode, useEffect, useState, useRef, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Loader from './Loader';
 import { AuthProvider } from '@/hooks/AuthContext';
 import useFeatureFlags from '../hooks/useFeaureFlags';
+import { ErrorDisplay } from './ErrorDisplay';
+import { AUTH_ERRORS, AUTH_ERROR_TYPES, AUTH_ERROR_TITLES } from '../constants/auth';
+
 interface RootLayoutProps {
   children: ReactNode;
 }
 
 const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
-  const [loaded, setLoaded] = useState(false);
+  const [authState, setAuthState] = useState<{
+    loaded: boolean;
+    error: string | null;
+    authenticated: boolean;
+  }>({ loaded: false, error: null, authenticated: false });
   const [navOpen, setNavOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const isAdmin = session && (session as any).roles?.includes('admin');
-  const isSponsor = session && (session as any).roles?.includes('sponsor');
 
   const navRef = useRef<HTMLDivElement>(null);
 
-  const { areFeatureFlagsDefined } = useFeatureFlags();
+  const isAdmin = session?.roles?.includes('admin');
+  const isSponsor = session?.roles?.includes('sponsor');
+
+  const checkAccess = useCallback(() => {
+    const protectedRoutes = {
+      admin: '/admin',
+      sponsor: '/sponsor',
+    };
+    const publicRoutes = ['/apply', '/signin', '/rsvp'];
+
+    if (pathname.startsWith(protectedRoutes.admin) && !isAdmin) {
+      return session ? '/' : '/signin';
+    }
+  
+    if (pathname.startsWith(protectedRoutes.sponsor) && !isSponsor) {
+      return session ? '/' : '/signin';
+    }
+    
+    if (session && publicRoutes.some(route => 
+      pathname === route || pathname.startsWith(`${route}/`)
+    )) {
+      return '/';
+    }
+    
+    if (!session && !publicRoutes.some(route => 
+      pathname === route || pathname.startsWith(`${route}/`)
+    )) {
+      return '/signin';
+    }
+    
+    return null;
+  }, [session, pathname, isAdmin, isSponsor]);
 
   const checkScreenSize = () => {
     if (window.innerWidth > 640) {
@@ -46,60 +82,31 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (!areFeatureFlagsDefined) {
-      setTimeout(() => {
-        setLoaded(true);
-      }, 400);
-      return;
-    }
-
     if (status === 'loading') return;
 
+    if (session?.error) {
+      setAuthState({ 
+        loaded: true, 
+        error: session?.error,
+        authenticated: true
+      });
+      return;
+    }
+
+    const redirectUrl = checkAccess();
+    if (redirectUrl) {
+      router.replace(redirectUrl);
+    }
+
     setTimeout(() => {
-      if (
-        (session && status === 'authenticated') ||
-        (!session && status === 'unauthenticated')
-      ) {
-        setLoaded(true);
-      }
+      setAuthState({ 
+        loaded: true, 
+        error: null, 
+        authenticated: !!session 
+      });
     }, 400);
 
-    if (!isAdmin && pathname.startsWith('/admin')) {
-      session ? router.replace('/') : router.replace('/signin');
-      setTimeout(() => setLoaded(true), 400);
-      return;
-    }
-
-    if (!isSponsor && pathname.startsWith('/sponsor')) {
-      session ? router.replace('/') : router.replace('/signin');
-      setTimeout(() => setLoaded(true), 400);
-      return;
-    }
-
-    if (
-      session &&
-      (pathname === '/apply' ||
-        pathname.startsWith('/apply/') ||
-        pathname.startsWith('/rsvp/') ||
-        pathname === '/signin')
-    ) {
-      router.replace('/');
-      setTimeout(() => setLoaded(true), 400);
-      return;
-    }
-
-    if (
-      !session &&
-      !pathname.startsWith('/apply/') &&
-      pathname !== '/apply' &&
-      pathname !== '/signin' &&
-      !pathname.startsWith('/rsvp/')
-    ) {
-      router.replace('/signin');
-      setTimeout(() => setLoaded(true), 400);
-      return;
-    }
-  }, [session, status]);
+  }, [session, status, pathname, checkAccess, router]);
 
   useEffect(() => {
     if (session) {
@@ -110,9 +117,30 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
     }
   }, [session, status]);
 
+  if (authState.error) {
+    const errorTitle = authState.error === AUTH_ERROR_TYPES.NO_CLIENT_ROLES 
+      ? AUTH_ERROR_TITLES.NO_CLIENT_ROLES 
+      : AUTH_ERROR_TITLES.REFRESH_TOKEN_ERROR;
+      
+    const errorMessage = authState.error === AUTH_ERROR_TYPES.NO_CLIENT_ROLES
+      ? AUTH_ERRORS.NO_CLIENT_ROLES
+      : AUTH_ERRORS.REFRESH_TOKEN_ERROR;
+
+    return (
+      <ErrorDisplay
+        title={errorTitle}
+        message={errorMessage}
+        actionLabel="Get Involved"
+        onAction={() => {
+          window.location.href = 'https://www.realityhackatmit.com/';
+        }}
+      />
+    );
+  }
+
   return (
     <AuthProvider>
-      {loaded ? (
+      {authState.loaded ? (
         <>
           {session ? (
             <div className="flex flex-row h-screen overflow-hidden">
@@ -154,7 +182,13 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
               </div>
             </div>
           ) : (
-            <main>{!loaded ? <Loader /> : children}</main>
+            <main>
+              {!authState.loaded ? (
+                <Loader />
+              ) : (
+                children
+              )}
+            </main>
           )}
         </>
       ) : (

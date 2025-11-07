@@ -6,13 +6,12 @@
 import type { GenderIdentityEnum } from './genderIdentityEnum';
 import type { CountryEnum } from './countryEnum';
 import type { RaceEthnicGroupEnum } from './raceEthnicGroupEnum';
-import type { AgeGroupEnum } from './ageGroupEnum';
+import type { PreviousParticipationEnum } from './previousParticipationEnum';
 import type { HeardAboutUsEnum } from './heardAboutUsEnum';
 import type { DigitalDesignerSkillsEnum } from './digitalDesignerSkillsEnum';
+import type { AgeGroupEnum } from './ageGroupEnum';
 import type { IndustryEnum } from './industryEnum';
-import type { HardwareHackDetailEnum } from './hardwareHackDetailEnum';
-import type { ApplicationParticipationClassEnum } from './applicationParticipationClassEnum';
-import type { ApplicationAgeGroup } from './applicationAgeGroup';
+import type { ParticipationClassA3fEnum } from './participationClassA3fEnum';
 import type { ApplicationDisabilityIdentity } from './applicationDisabilityIdentity';
 import type { ApplicationParticipationCapacity } from './applicationParticipationCapacity';
 import type { ApplicationStatus } from './applicationStatus';
@@ -22,19 +21,33 @@ import type { ApplicationThemeInterestTrackTwo } from './applicationThemeInteres
 import type { ApplicationThemeDetailOne } from './applicationThemeDetailOne';
 import type { ApplicationThemeDetailTwo } from './applicationThemeDetailTwo';
 import type { ApplicationThemeDetailThree } from './applicationThemeDetailThree';
-import type { HardwareHackInterestEnum } from './hardwareHackInterestEnum';
+import type { ApplicationHardwareHackInterest } from './applicationHardwareHackInterest';
+import type { ApplicationHardwareHackDetail } from './applicationHardwareHackDetail';
 
+/**
+ * Base serializer that automatically scopes foreign key fields to the current event.
+
+This serializer ensures that when validating foreign key relationships,
+only objects from the current event are considered valid. This is crucial
+for maintaining proper event isolation in the multi-tenant system.
+
+Usage:
+    class MySerializer(EventScopedSerializer):
+        class Meta:
+            model = MyModel
+            fields = ['id', 'name', 'foreign_key_field']
+ */
 export interface Application {
   readonly id?: string;
   gender_identity: GenderIdentityEnum[];
   nationality: CountryEnum[];
   current_country: CountryEnum[];
   race_ethnic_group: RaceEthnicGroupEnum[];
-  previous_participation: AgeGroupEnum[];
+  previous_participation: PreviousParticipationEnum[];
   heard_about_us: HeardAboutUsEnum[];
   digital_designer_skills: DigitalDesignerSkillsEnum[];
+  age_group: AgeGroupEnum;
   industry: IndustryEnum[];
-  hardware_hack_detail: HardwareHackDetailEnum[];
   /** @maxLength 100 */
   first_name: string;
   /**
@@ -44,7 +57,7 @@ export interface Application {
   middle_name?: string | null;
   /** @maxLength 100 */
   last_name: string;
-  participation_class?: ApplicationParticipationClassEnum;
+  participation_class?: ParticipationClassA3fEnum;
   /**
    * @maxLength 100
    * @nullable
@@ -55,15 +68,8 @@ export interface Application {
    * @nullable
    */
   pronouns?: string | null;
-  /** @nullable */
-  age_group?: ApplicationAgeGroup;
   /** @maxLength 254 */
   email: string;
-  /**
-   * @minimum -2147483648
-   * @maximum 2147483647
-   */
-  event_year?: number;
   /**
    * @maxLength 200
    * @nullable
@@ -118,6 +124,11 @@ export interface Application {
    * @nullable
    */
   specialized_expertise?: string | null;
+  /**
+   * @maxLength 1000
+   * @nullable
+   */
+  other_skills_experiences?: string | null;
   /** @nullable */
   status?: ApplicationStatus;
   /** @nullable */
@@ -154,7 +165,10 @@ export interface Application {
   theme_detail_two?: ApplicationThemeDetailTwo;
   /** @nullable */
   theme_detail_three?: ApplicationThemeDetailThree;
-  hardware_hack_interest?: HardwareHackInterestEnum;
+  /** @nullable */
+  hardware_hack_interest?: ApplicationHardwareHackInterest;
+  /** @nullable */
+  hardware_hack_detail?: ApplicationHardwareHackDetail;
   /**
    * @maxLength 20
    * @nullable
@@ -203,6 +217,7 @@ export interface Application {
   judge_previously_judged?: boolean | null;
   /** @nullable */
   rsvp_email_sent_at?: string | null;
+  event: string;
   /** @nullable */
   resume?: string | null;
 }

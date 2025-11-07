@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import useFeatureFlags from '../hooks/useFeaureFlags';
 import Loader from './Loader';
+import LogoutButton from './auth/LogoutButton';
 
 async function keycloakSessionLogOut(): Promise<void> {
   try {
@@ -104,22 +105,10 @@ export default function Nav({
                   </div>
                 </span>{' '}
                 <br />
-                <button
-                  className="w-20 px-2 py-1 font-bold text-white border rounded border-gray-50"
-                  onClick={() => {
-                    keycloakSessionLogOut().then(() =>
-                      signOut({ callbackUrl: '/' })
-                    );
-                  }}
-                >
-                  <span
-                    className={`font-normal whitespace-nowrap transition-all ${
-                      collapsed ? 'opacity-100' : 'opacity-0'
-                    }`}
-                  >
-                    Log out
-                  </span>
-                </button>
+                <LogoutButton
+                  collapsed={collapsed}
+                  className="bg-blue-500"
+                />
               </div>
             )
           )}

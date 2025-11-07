@@ -1,4 +1,4 @@
-import { Application } from '@/types/types';
+import { Application } from '@/types/models';
 
 export async function getAllHackerApplications(accessToken: string) {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/`;
@@ -32,7 +32,7 @@ export async function getApplication(id: string) {
   throw new Error('Failed to fetch data. Status: ' + resp.status);
 }
 
-export async function applicationOptions(data: any) {
+export async function applicationOptions() {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/`;
   try {
     const response = await fetch(url, {
@@ -40,7 +40,6 @@ export async function applicationOptions(data: any) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(data)
     });
 
     if (!response.ok) {

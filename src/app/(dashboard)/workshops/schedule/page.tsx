@@ -178,7 +178,7 @@ function Workshop({
             </div>
             <div className="mb-1 text-sm text-gray-700">
               By {speakers} | {formatTime(workshop?.datetime)} -{' '}
-              {addHoursToTime(formatTime(workshop?.datetime), 1)} | Jan 23, 2025
+              {addHoursToTime(formatTime(workshop?.datetime), 1)} | Jan 22, 2026
             </div>
             <div className="flex flex-wrap mt-2 mb-1">
               <div

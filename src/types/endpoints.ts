@@ -17,7 +17,11 @@ import type {
 
 import type {
   Application,
+  ApplicationDetail,
+  ApplicationQuestion,
+  ApplicationQuestionRequest,
   ApplicationRequest,
+  ApplicationquestionsListParams,
   ApplicationsListParams,
   Attendee,
   AttendeeList,
@@ -39,6 +43,8 @@ import type {
   DestinyteamattendeevibesListParams,
   DestinyteamsListParams,
   DiscordUsernameRole,
+  Event,
+  EventsListParams,
   FileUpload,
   FileUploadRequest,
   GroupDetail,
@@ -75,12 +81,14 @@ import type {
   MentorHelpRequestRequest,
   MentorhelprequestsListParams,
   MentorhelprequestshistoryListParams,
+  PatchedApplicationQuestionRequest,
   PatchedApplicationRequest,
   PatchedAttendeePatchRequest,
   PatchedAttendeePreferenceRequest,
   PatchedAttendeeRSVPRequest,
   PatchedDestinyTeamAttendeeVibeRequest,
   PatchedDestinyTeamUpdateRequest,
+  PatchedEventRequest,
   PatchedFileUploadRequest,
   PatchedGroupDetailRequest,
   PatchedHardwareCreateRequest,
@@ -146,6 +154,256 @@ import type { ErrorType , BodyType } from '../lib/custom-axios';
 
   
 /**
+ * Return all questions for the active event, ordered by order field
+ */
+export const applicationquestionsList = (
+    params?: ApplicationquestionsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<ApplicationQuestion[]>(
+    {url: `/applicationquestions/`, method: 'GET',
+        params
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionsListKey = (params?: ApplicationquestionsListParams,) => [`/applicationquestions/`, ...(params ? [params]: [])] as const;
+
+export type ApplicationquestionsListQueryResult = NonNullable<Awaited<ReturnType<typeof applicationquestionsList>>>
+export type ApplicationquestionsListQueryError = ErrorType<unknown>
+
+export const useApplicationquestionsList = <TError = ErrorType<unknown>>(
+  params?: ApplicationquestionsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof applicationquestionsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getApplicationquestionsListKey(params) : null);
+  const swrFn = () => applicationquestionsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows application questions to be viewed or edited.
+Frontend uses this to load dynamic questions for the active event.
+ */
+export const applicationquestionsCreate = (
+    applicationQuestionRequest: BodyType<ApplicationQuestionRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<ApplicationQuestion>(
+    {url: `/applicationquestions/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: applicationQuestionRequest
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: ApplicationQuestionRequest }): Promise<ApplicationQuestion> => {
+    return applicationquestionsCreate(arg, options);
+  }
+}
+export const getApplicationquestionsCreateMutationKey = () => [`/applicationquestions/`] as const;
+
+export type ApplicationquestionsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof applicationquestionsCreate>>>
+export type ApplicationquestionsCreateMutationError = ErrorType<unknown>
+
+export const useApplicationquestionsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationquestionsCreate>>, TError, Key, ApplicationQuestionRequest, Awaited<ReturnType<typeof applicationquestionsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationquestionsCreateMutationKey();
+  const swrFn = getApplicationquestionsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows application questions to be viewed or edited.
+Frontend uses this to load dynamic questions for the active event.
+ */
+export const applicationquestionsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<ApplicationQuestion>(
+    {url: `/applicationquestions/${id}/`, method: 'GET'
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionsRetrieveKey = (id: string,) => [`/applicationquestions/${id}/`] as const;
+
+export type ApplicationquestionsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof applicationquestionsRetrieve>>>
+export type ApplicationquestionsRetrieveQueryError = ErrorType<unknown>
+
+export const useApplicationquestionsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof applicationquestionsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getApplicationquestionsRetrieveKey(id) : null);
+  const swrFn = () => applicationquestionsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows application questions to be viewed or edited.
+Frontend uses this to load dynamic questions for the active event.
+ */
+export const applicationquestionsUpdate = (
+    id: string,
+    applicationQuestionRequest: BodyType<ApplicationQuestionRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<ApplicationQuestion>(
+    {url: `/applicationquestions/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: applicationQuestionRequest
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: ApplicationQuestionRequest }): Promise<ApplicationQuestion> => {
+    return applicationquestionsUpdate(id, arg, options);
+  }
+}
+export const getApplicationquestionsUpdateMutationKey = (id: string,) => [`/applicationquestions/${id}/`] as const;
+
+export type ApplicationquestionsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof applicationquestionsUpdate>>>
+export type ApplicationquestionsUpdateMutationError = ErrorType<unknown>
+
+export const useApplicationquestionsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationquestionsUpdate>>, TError, Key, ApplicationQuestionRequest, Awaited<ReturnType<typeof applicationquestionsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationquestionsUpdateMutationKey(id);
+  const swrFn = getApplicationquestionsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows application questions to be viewed or edited.
+Frontend uses this to load dynamic questions for the active event.
+ */
+export const applicationquestionsPartialUpdate = (
+    id: string,
+    patchedApplicationQuestionRequest: BodyType<PatchedApplicationQuestionRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<ApplicationQuestion>(
+    {url: `/applicationquestions/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedApplicationQuestionRequest
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedApplicationQuestionRequest }): Promise<ApplicationQuestion> => {
+    return applicationquestionsPartialUpdate(id, arg, options);
+  }
+}
+export const getApplicationquestionsPartialUpdateMutationKey = (id: string,) => [`/applicationquestions/${id}/`] as const;
+
+export type ApplicationquestionsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof applicationquestionsPartialUpdate>>>
+export type ApplicationquestionsPartialUpdateMutationError = ErrorType<unknown>
+
+export const useApplicationquestionsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationquestionsPartialUpdate>>, TError, Key, PatchedApplicationQuestionRequest, Awaited<ReturnType<typeof applicationquestionsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationquestionsPartialUpdateMutationKey(id);
+  const swrFn = getApplicationquestionsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows application questions to be viewed or edited.
+Frontend uses this to load dynamic questions for the active event.
+ */
+export const applicationquestionsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/applicationquestions/${id}/`, method: 'DELETE'
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return applicationquestionsDestroy(id, options);
+  }
+}
+export const getApplicationquestionsDestroyMutationKey = (id: string,) => [`/applicationquestions/${id}/`] as const;
+
+export type ApplicationquestionsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof applicationquestionsDestroy>>>
+export type ApplicationquestionsDestroyMutationError = ErrorType<unknown>
+
+export const useApplicationquestionsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationquestionsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof applicationquestionsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationquestionsDestroyMutationKey(id);
+  const swrFn = getApplicationquestionsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
  * API endpoint that allows applications to be viewed or edited.
  */
 export const applicationsList = (
@@ -183,7 +441,7 @@ export const useApplicationsList = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint that allows applications to be viewed or edited.
+ * Create application and handle dynamic question responses.
  */
 export const applicationsCreate = (
     applicationRequest: BodyType<ApplicationRequest>,
@@ -231,7 +489,7 @@ export const useApplicationsCreate = <TError = ErrorType<unknown>>(
 export const applicationsRetrieve = (
     id: string,
  options?: SecondParameter<typeof customAxios>) => {
-    return customAxios<Application>(
+    return customAxios<ApplicationDetail>(
     {url: `/applications/${id}/`, method: 'GET'
     },
     options);
@@ -1570,6 +1828,164 @@ export const useDiscordDestroy = <TError = ErrorType<unknown>>(
 
   const swrKey = swrOptions?.swrKey ?? getDiscordDestroyMutationKey(attendeeCommunicationsPlatformUsername);
   const swrFn = getDiscordDestroyMutationFetcher(attendeeCommunicationsPlatformUsername, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for editing and viewing Events.
+ */
+export const eventsList = (
+    params?: EventsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Event[]>(
+    {url: `/events/`, method: 'GET',
+        params
+    },
+    options);
+  }
+
+
+
+export const getEventsListKey = (params?: EventsListParams,) => [`/events/`, ...(params ? [params]: [])] as const;
+
+export type EventsListQueryResult = NonNullable<Awaited<ReturnType<typeof eventsList>>>
+export type EventsListQueryError = ErrorType<unknown>
+
+export const useEventsList = <TError = ErrorType<unknown>>(
+  params?: EventsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof eventsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getEventsListKey(params) : null);
+  const swrFn = () => eventsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * Activate an event by its ID
+ */
+export const eventsActivateCreate = (
+    eventId: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Event>(
+    {url: `/events/${eventId}/activate`, method: 'POST'
+    },
+    options);
+  }
+
+
+
+export const getEventsActivateCreateMutationFetcher = (eventId: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<Event> => {
+    return eventsActivateCreate(eventId, options);
+  }
+}
+export const getEventsActivateCreateMutationKey = (eventId: string,) => [`/events/${eventId}/activate`] as const;
+
+export type EventsActivateCreateMutationResult = NonNullable<Awaited<ReturnType<typeof eventsActivateCreate>>>
+export type EventsActivateCreateMutationError = ErrorType<unknown>
+
+export const useEventsActivateCreate = <TError = ErrorType<unknown>>(
+  eventId: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventsActivateCreate>>, TError, Key, Arguments, Awaited<ReturnType<typeof eventsActivateCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventsActivateCreateMutationKey(eventId);
+  const swrFn = getEventsActivateCreateMutationFetcher(eventId, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for editing and viewing Events.
+ */
+export const eventsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Event>(
+    {url: `/events/${id}/`, method: 'GET'
+    },
+    options);
+  }
+
+
+
+export const getEventsRetrieveKey = (id: string,) => [`/events/${id}/`] as const;
+
+export type EventsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof eventsRetrieve>>>
+export type EventsRetrieveQueryError = ErrorType<unknown>
+
+export const useEventsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof eventsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getEventsRetrieveKey(id) : null);
+  const swrFn = () => eventsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for editing and viewing Events.
+ */
+export const eventsPartialUpdate = (
+    id: string,
+    patchedEventRequest: BodyType<PatchedEventRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Event>(
+    {url: `/events/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedEventRequest
+    },
+    options);
+  }
+
+
+
+export const getEventsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedEventRequest }): Promise<Event> => {
+    return eventsPartialUpdate(id, arg, options);
+  }
+}
+export const getEventsPartialUpdateMutationKey = (id: string,) => [`/events/${id}/`] as const;
+
+export type EventsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof eventsPartialUpdate>>>
+export type EventsPartialUpdateMutationError = ErrorType<unknown>
+
+export const useEventsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventsPartialUpdate>>, TError, Key, PatchedEventRequest, Awaited<ReturnType<typeof eventsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventsPartialUpdateMutationKey(id);
+  const swrFn = getEventsPartialUpdateMutationFetcher(id, requestOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions)
 
@@ -5656,7 +6072,7 @@ export const useWorkshopattendeesDestroy = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint that allows workshops to be viewed ot edited.
+ * API endpoint that allows workshops to be viewed or edited.
  */
 export const workshopsList = (
     params?: WorkshopsListParams,
@@ -5693,7 +6109,7 @@ export const useWorkshopsList = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint that allows workshops to be viewed ot edited.
+ * API endpoint that allows workshops to be viewed or edited.
  */
 export const workshopsCreate = (
     workshopRequest: BodyType<WorkshopRequest>,
@@ -5736,7 +6152,7 @@ export const useWorkshopsCreate = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint that allows workshops to be viewed ot edited.
+ * API endpoint that allows workshops to be viewed or edited.
  */
 export const workshopsRetrieve = (
     id: string,
@@ -5772,7 +6188,7 @@ export const useWorkshopsRetrieve = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint that allows workshops to be viewed ot edited.
+ * API endpoint that allows workshops to be viewed or edited.
  */
 export const workshopsUpdate = (
     id: string,
@@ -5816,7 +6232,7 @@ export const useWorkshopsUpdate = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint that allows workshops to be viewed ot edited.
+ * API endpoint that allows workshops to be viewed or edited.
  */
 export const workshopsPartialUpdate = (
     id: string,
@@ -5860,7 +6276,7 @@ export const useWorkshopsPartialUpdate = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint that allows workshops to be viewed ot edited.
+ * API endpoint that allows workshops to be viewed or edited.
  */
 export const workshopsDestroy = (
     id: string,

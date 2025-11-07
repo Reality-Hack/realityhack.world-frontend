@@ -5,6 +5,19 @@
  */
 import type { HardwareRequestStatusEnum } from './hardwareRequestStatusEnum';
 
+/**
+ * Base serializer that automatically scopes foreign key fields to the current event.
+
+This serializer ensures that when validating foreign key relationships,
+only objects from the current event are considered valid. This is crucial
+for maintaining proper event isolation in the multi-tenant system.
+
+Usage:
+    class MySerializer(EventScopedSerializer):
+        class Meta:
+            model = MyModel
+            fields = ['id', 'name', 'foreign_key_field']
+ */
 export interface HardwareRequest {
   readonly id?: string;
   hardware: string;

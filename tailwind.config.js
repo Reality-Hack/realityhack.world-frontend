@@ -25,8 +25,8 @@ module.exports = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
         logopaint: "url('/images/white-paint-logo.jpg')",
-        logobw: "url('/images/RH-logo-BW.png')",
-        logocolor: "url('/images/RH-logo-color.png')",
+        logobw: "url('/images/MITRealityHack-Black-Logo.png')",
+        logocolor: "url('/images/MITRealityHack-4C-Logo.png')",
         starfield: "url('/images/starfield.jpg')",
         starfieldGrad: "url('/images/starfield-grad.jpg')",
         startiles: "url('/images/stars-tile.gif')"

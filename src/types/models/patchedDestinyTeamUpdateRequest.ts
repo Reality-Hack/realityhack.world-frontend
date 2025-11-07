@@ -7,6 +7,19 @@ import type { TableNumberRequest } from './tableNumberRequest';
 import type { PatchedDestinyTeamUpdateRequestTrack } from './patchedDestinyTeamUpdateRequestTrack';
 import type { DestinyHardwareEnum } from './destinyHardwareEnum';
 
+/**
+ * Base serializer that automatically scopes foreign key fields to the current event.
+
+This serializer ensures that when validating foreign key relationships,
+only objects from the current event are considered valid. This is crucial
+for maintaining proper event isolation in the multi-tenant system.
+
+Usage:
+    class MySerializer(EventScopedSerializer):
+        class Meta:
+            model = MyModel
+            fields = ['id', 'name', 'foreign_key_field']
+ */
 export interface PatchedDestinyTeamUpdateRequest {
   table?: TableNumberRequest;
   /** @nullable */
@@ -18,5 +31,6 @@ export interface PatchedDestinyTeamUpdateRequest {
   round?: number;
   hardware_hack?: boolean;
   destiny_hardware?: DestinyHardwareEnum;
+  event?: string;
   attendees?: string[];
 }
