@@ -7,6 +7,8 @@ import Tabs from '@mui/material/Tabs';
 import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
+import { Modal } from '@mui/material';
+import Loader from '../Loader';
 
 interface AnyAppProps {
   tabs: React.ReactNode[];
@@ -197,7 +199,20 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
               return selectedTab === index ? tabContent : null;
             })}
           </div>
-
+          <Modal
+              className="flex justify-center items-center w-1/2 mx-auto"
+              open={isUploading}
+              onClose={() => {}}
+              aria-labelledby="qr-code-reader-modal"
+              aria-describedby="modal-modal-description"
+            >
+              <div className="h-72 bg-white w-full flex flex-col justify-center items-center rounded-lg gap-4 border-2 border-themePrimary">
+                <div className="text-center text-sm pt-16 px-4">
+                  Submitting... please don't close or refresh the window. You'll be automatically redirected when the submission is complete
+                </div>
+                <Loader />
+              </div>
+          </Modal>
           {!isOnLastTab && (
             <div className="flex justify-start mb-4 ml-6 space-x-4">
               <button
@@ -209,7 +224,7 @@ const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
               </button>
               <button
                 onClick={handleNextTab}
-                className={`cursor-pointer text-white px-4 py-2 rounded-lg disabled:opacity-50 transition-all ${
+                className={`${isUploading ? 'cursor-not-allowed' : 'cursor-pointer'} text-white px-4 py-2 rounded-lg disabled:opacity-50 transition-all ${
                   isUploading
                     ? 'opacity-50 bg-green-400'
                     : 'opacity-100 bg-[#493B8A]'
