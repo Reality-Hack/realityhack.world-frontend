@@ -9,7 +9,7 @@ import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 import CustomSelect from '@/components/CustomSelect';
 import Table from '@/components/Table';
 import { status } from '@/types/types';
-import { Application } from '@/types/models';
+import { Application, ApplicationsListParticipationClass } from '@/types/models';
 import Box from '@mui/material/Box';
 import { ColumnDef, Row, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
@@ -21,7 +21,7 @@ import { toast } from 'sonner';
 import Loader from '@/components/Loader';
 
 interface ApplicationTableProps {
-  type: string;
+  type: ApplicationsListParticipationClass;
 }
 
 const ApplicationStatusOptions: {
@@ -62,7 +62,9 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
     data: applications, 
     isLoading: isLoadingApplications,
     mutate: revalidateApplications
-  } = useApplicationsList({}, {
+  } = useApplicationsList({
+    participation_class: type
+  }, {
     swr: { enabled: !!session?.access_token },
     request: {
       headers: {

@@ -4,6 +4,7 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { ApplicationsListParticipationCapacity } from './applicationsListParticipationCapacity';
+import type { ApplicationsListParticipationClass } from './applicationsListParticipationClass';
 import type { ApplicationsListParticipationRole } from './applicationsListParticipationRole';
 
 export type ApplicationsListParams = {
@@ -14,6 +15,12 @@ email?: string;
 * `H` - Hobbyist
  */
 participation_capacity?: ApplicationsListParticipationCapacity;
+/**
+ * * `P` - Participant
+* `M` - Mentor
+* `J` - Judge
+ */
+participation_class?: ApplicationsListParticipationClass;
 /**
  * * `A` - Digital/Creative Designer
 * `D` - Developer

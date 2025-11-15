@@ -57,6 +57,7 @@ export * from './applicationThemeInterestTrackTwo';
 export * from './applicationquestionsListParams';
 export * from './applicationsListParams';
 export * from './applicationsListParticipationCapacity';
+export * from './applicationsListParticipationClass';
 export * from './applicationsListParticipationRole';
 export * from './attendee';
 export * from './attendeeList';
