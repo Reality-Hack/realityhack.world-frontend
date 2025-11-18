@@ -19,6 +19,11 @@ participation_capacity?: ApplicationsListParticipationCapacity;
  * * `P` - Participant
 * `M` - Mentor
 * `J` - Judge
+* `S` - Sponsor
+* `V` - Volunteer
+* `O` - Organizer
+* `G` - Guardian
+* `E` - Media
  */
 participation_class?: ApplicationsListParticipationClass;
 /**

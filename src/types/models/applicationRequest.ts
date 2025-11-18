@@ -11,7 +11,7 @@ import type { HeardAboutUsEnum } from './heardAboutUsEnum';
 import type { DigitalDesignerSkillsEnum } from './digitalDesignerSkillsEnum';
 import type { AgeGroupEnum } from './ageGroupEnum';
 import type { IndustryEnum } from './industryEnum';
-import type { ParticipationClassA3fEnum } from './participationClassA3fEnum';
+import type { ParticipationClassEnum } from './participationClassEnum';
 import type { ApplicationRequestDisabilityIdentity } from './applicationRequestDisabilityIdentity';
 import type { ApplicationRequestParticipationCapacity } from './applicationRequestParticipationCapacity';
 import type { ApplicationRequestStatus } from './applicationRequestStatus';
@@ -63,7 +63,7 @@ export interface ApplicationRequest {
    * @maxLength 100
    */
   last_name: string;
-  participation_class?: ParticipationClassA3fEnum;
+  participation_class?: ParticipationClassEnum;
   /**
    * @minLength 1
    * @maxLength 100

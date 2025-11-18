@@ -15,4 +15,6 @@ export interface AttendeeName {
   /** @nullable */
   participation_role?: AttendeeNameParticipationRole;
   readonly profile_image?: FileUpload;
+  /** @maxLength 254 */
+  email: string;
 }

@@ -9,7 +9,12 @@ export type ApplicationsListParticipationClass = typeof ApplicationsListParticip
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ApplicationsListParticipationClass = {
+  E: 'E',
+  G: 'G',
   J: 'J',
   M: 'M',
+  O: 'O',
   P: 'P',
+  S: 'S',
+  V: 'V',
 } as const;

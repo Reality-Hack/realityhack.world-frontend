@@ -24,6 +24,7 @@ import type {
   ApplicationquestionsListParams,
   ApplicationsListParams,
   Attendee,
+  AttendeeDetail,
   AttendeeList,
   AttendeePatch,
   AttendeePreference,
@@ -44,6 +45,10 @@ import type {
   DestinyteamsListParams,
   DiscordUsernameRole,
   Event,
+  EventRsvp,
+  EventRsvpDetail,
+  EventRsvpRequest,
+  EventrsvpsListParams,
   EventsListParams,
   FileUpload,
   FileUploadRequest,
@@ -89,6 +94,7 @@ import type {
   PatchedDestinyTeamAttendeeVibeRequest,
   PatchedDestinyTeamUpdateRequest,
   PatchedEventRequest,
+  PatchedEventRsvpRequest,
   PatchedFileUploadRequest,
   PatchedGroupDetailRequest,
   PatchedHardwareCreateRequest,
@@ -1838,6 +1844,251 @@ export const useDiscordDestroy = <TError = ErrorType<unknown>>(
 }
 
 /**
+ * API endpoint that allows event RSVPs to be viewed or edited.
+ */
+export const eventrsvpsList = (
+    params?: EventrsvpsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventRsvp[]>(
+    {url: `/eventrsvps/`, method: 'GET',
+        params
+    },
+    options);
+  }
+
+
+
+export const getEventrsvpsListKey = (params?: EventrsvpsListParams,) => [`/eventrsvps/`, ...(params ? [params]: [])] as const;
+
+export type EventrsvpsListQueryResult = NonNullable<Awaited<ReturnType<typeof eventrsvpsList>>>
+export type EventrsvpsListQueryError = ErrorType<unknown>
+
+export const useEventrsvpsList = <TError = ErrorType<unknown>>(
+  params?: EventrsvpsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof eventrsvpsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getEventrsvpsListKey(params) : null);
+  const swrFn = () => eventrsvpsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows event RSVPs to be viewed or edited.
+ */
+export const eventrsvpsCreate = (
+    eventRsvpRequest: BodyType<EventRsvpRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventRsvp>(
+    {url: `/eventrsvps/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: eventRsvpRequest
+    },
+    options);
+  }
+
+
+
+export const getEventrsvpsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: EventRsvpRequest }): Promise<EventRsvp> => {
+    return eventrsvpsCreate(arg, options);
+  }
+}
+export const getEventrsvpsCreateMutationKey = () => [`/eventrsvps/`] as const;
+
+export type EventrsvpsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof eventrsvpsCreate>>>
+export type EventrsvpsCreateMutationError = ErrorType<unknown>
+
+export const useEventrsvpsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventrsvpsCreate>>, TError, Key, EventRsvpRequest, Awaited<ReturnType<typeof eventrsvpsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventrsvpsCreateMutationKey();
+  const swrFn = getEventrsvpsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows event RSVPs to be viewed or edited.
+ */
+export const eventrsvpsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventRsvpDetail>(
+    {url: `/eventrsvps/${id}/`, method: 'GET'
+    },
+    options);
+  }
+
+
+
+export const getEventrsvpsRetrieveKey = (id: string,) => [`/eventrsvps/${id}/`] as const;
+
+export type EventrsvpsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof eventrsvpsRetrieve>>>
+export type EventrsvpsRetrieveQueryError = ErrorType<unknown>
+
+export const useEventrsvpsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof eventrsvpsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getEventrsvpsRetrieveKey(id) : null);
+  const swrFn = () => eventrsvpsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows event RSVPs to be viewed or edited.
+ */
+export const eventrsvpsUpdate = (
+    id: string,
+    eventRsvpRequest: BodyType<EventRsvpRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventRsvp>(
+    {url: `/eventrsvps/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: eventRsvpRequest
+    },
+    options);
+  }
+
+
+
+export const getEventrsvpsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: EventRsvpRequest }): Promise<EventRsvp> => {
+    return eventrsvpsUpdate(id, arg, options);
+  }
+}
+export const getEventrsvpsUpdateMutationKey = (id: string,) => [`/eventrsvps/${id}/`] as const;
+
+export type EventrsvpsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof eventrsvpsUpdate>>>
+export type EventrsvpsUpdateMutationError = ErrorType<unknown>
+
+export const useEventrsvpsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventrsvpsUpdate>>, TError, Key, EventRsvpRequest, Awaited<ReturnType<typeof eventrsvpsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventrsvpsUpdateMutationKey(id);
+  const swrFn = getEventrsvpsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows event RSVPs to be viewed or edited.
+ */
+export const eventrsvpsPartialUpdate = (
+    id: string,
+    patchedEventRsvpRequest: BodyType<PatchedEventRsvpRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventRsvp>(
+    {url: `/eventrsvps/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedEventRsvpRequest
+    },
+    options);
+  }
+
+
+
+export const getEventrsvpsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedEventRsvpRequest }): Promise<EventRsvp> => {
+    return eventrsvpsPartialUpdate(id, arg, options);
+  }
+}
+export const getEventrsvpsPartialUpdateMutationKey = (id: string,) => [`/eventrsvps/${id}/`] as const;
+
+export type EventrsvpsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof eventrsvpsPartialUpdate>>>
+export type EventrsvpsPartialUpdateMutationError = ErrorType<unknown>
+
+export const useEventrsvpsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventrsvpsPartialUpdate>>, TError, Key, PatchedEventRsvpRequest, Awaited<ReturnType<typeof eventrsvpsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventrsvpsPartialUpdateMutationKey(id);
+  const swrFn = getEventrsvpsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows event RSVPs to be viewed or edited.
+ */
+export const eventrsvpsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/eventrsvps/${id}/`, method: 'DELETE'
+    },
+    options);
+  }
+
+
+
+export const getEventrsvpsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return eventrsvpsDestroy(id, options);
+  }
+}
+export const getEventrsvpsDestroyMutationKey = (id: string,) => [`/eventrsvps/${id}/`] as const;
+
+export type EventrsvpsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof eventrsvpsDestroy>>>
+export type EventrsvpsDestroyMutationError = ErrorType<unknown>
+
+export const useEventrsvpsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventrsvpsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof eventrsvpsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventrsvpsDestroyMutationKey(id);
+  const swrFn = getEventrsvpsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
  * API endpoint for editing and viewing Events.
  */
 export const eventsList = (
@@ -3545,12 +3796,12 @@ export const useLocationsDestroy = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint for getting detailed information about an authenticated user.
+ * Get detailed information about an authenticated user.
  */
 export const meRetrieve = (
     
  options?: SecondParameter<typeof customAxios>) => {
-    return customAxios<void>(
+    return customAxios<AttendeeDetail>(
     {url: `/me/`, method: 'GET'
     },
     options);
@@ -3581,13 +3832,15 @@ export const useMeRetrieve = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint for getting detailed information about an authenticated user.
+ * Update the authenticated user's information.
  */
 export const mePartialUpdate = (
-    
+    patchedAttendeePatchRequest: BodyType<PatchedAttendeePatchRequest>,
  options?: SecondParameter<typeof customAxios>) => {
-    return customAxios<void>(
-    {url: `/me/`, method: 'PATCH'
+    return customAxios<AttendeePatch>(
+    {url: `/me/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedAttendeePatchRequest
     },
     options);
   }
@@ -3595,8 +3848,8 @@ export const mePartialUpdate = (
 
 
 export const getMePartialUpdateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
-  return (_: Key, __: { arg: Arguments }): Promise<void> => {
-    return mePartialUpdate(options);
+  return (_: Key, { arg }: { arg: PatchedAttendeePatchRequest }): Promise<AttendeePatch> => {
+    return mePartialUpdate(arg, options);
   }
 }
 export const getMePartialUpdateMutationKey = () => [`/me/`] as const;
@@ -3605,7 +3858,7 @@ export type MePartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeo
 export type MePartialUpdateMutationError = ErrorType<unknown>
 
 export const useMePartialUpdate = <TError = ErrorType<unknown>>(
-   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof mePartialUpdate>>, TError, Key, Arguments, Awaited<ReturnType<typeof mePartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof mePartialUpdate>>, TError, Key, PatchedAttendeePatchRequest, Awaited<ReturnType<typeof mePartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
 ) => {
 
   const {swr: swrOptions, request: requestOptions} = options ?? {}
