@@ -9,10 +9,8 @@ import { toast } from 'sonner';
 
 const isEventsEnabled = process.env.NEXT_PUBLIC_IS_EVENTS_ENABLED === 'true';
 export default function EventsAdminPage() {
-  if (!isEventsEnabled) {
-    return <div>Events are not enabled</div>;
-  }
-	const { data: session } = useSession();
+  const { data: session } = useSession();
+
 	const { 
     data: events, 
     isLoading: isLoadingEvents,
@@ -47,6 +45,10 @@ export default function EventsAdminPage() {
 	const formatDate = (date: string) => {
 		return DateTime.fromISO(date).toLocaleString(DateTime.DATETIME_SHORT);
 	}
+
+  if (!isEventsEnabled) {
+    return <div>Events are not enabled</div>;
+  }
 
 	if (isLoadingEvents) {
 		return <Loader />

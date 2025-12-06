@@ -3,10 +3,22 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
+import type { EventrsvpsListParticipationClass } from './eventrsvpsListParticipationClass';
 
 export type EventrsvpsListParams = {
 attendee?: string;
 event?: string;
+/**
+ * * `P` - Participant
+* `M` - Mentor
+* `J` - Judge
+* `S` - Sponsor
+* `V` - Volunteer
+* `O` - Organizer
+* `G` - Guardian
+* `E` - Media
+ */
+participation_class?: EventrsvpsListParticipationClass;
 /**
  * A search term.
  */

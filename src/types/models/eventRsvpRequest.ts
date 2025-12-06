@@ -32,8 +32,6 @@ export interface EventRsvpRequest {
   participation_role?: EventRsvpRequestParticipationRole;
   event: string;
   /** @nullable */
-  application?: string | null;
-  /** @nullable */
   shirt_size?: EventRsvpRequestShirtSize;
   /**
    * I.e., a Discord username

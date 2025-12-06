@@ -229,6 +229,12 @@ export interface ApplicationRequest {
   /** @nullable */
   mentor_previously_mentored?: boolean | null;
   /**
+   * List devices you are willing to bring to assist with troubleshooting
+   * @maxLength 1000
+   * @nullable
+   */
+  mentor_own_troubleshooting_devices?: string | null;
+  /**
    * @minLength 1
    * @maxLength 1000
    * @nullable

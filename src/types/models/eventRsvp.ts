@@ -4,7 +4,9 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { EventRsvpParticipationRole } from './eventRsvpParticipationRole';
+import type { Application } from './application';
 import type { EventRsvpShirtSize } from './eventRsvpShirtSize';
+import type { AttendeeName } from './attendeeName';
 import type { DietaryRestrictionsEnum } from './dietaryRestrictionsEnum';
 import type { DietaryAllergiesEnum } from './dietaryAllergiesEnum';
 import type { EventRsvpUsVisaSupportNationalIdentificationDocumentType } from './eventRsvpUsVisaSupportNationalIdentificationDocumentType';
@@ -32,10 +34,10 @@ export interface EventRsvp {
   /** @nullable */
   participation_role?: EventRsvpParticipationRole;
   event: string;
-  /** @nullable */
-  application?: string | null;
+  readonly application?: Application;
   /** @nullable */
   shirt_size?: EventRsvpShirtSize;
+  readonly attendee?: AttendeeName;
   /**
    * I.e., a Discord username
    * @maxLength 40

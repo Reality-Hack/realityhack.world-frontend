@@ -408,7 +408,7 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
         valid={!errors.experienceother_skills_experiences_with_xr}
         onBlur={handleBlur}
       >
-        Do you have any other skills or experiences that you'd like to tell us about? 
+        Do you have any other skills or experiences that you&apos;d like to tell us about? 
         We want to see the breadth of your skillset and are most interested in skills 
         and expertise relating to physical computing, AI, and machine learning. 
       </TextAreaInput>

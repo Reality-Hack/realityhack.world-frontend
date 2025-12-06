@@ -204,6 +204,12 @@ export interface Application {
   /** @nullable */
   mentor_previously_mentored?: boolean | null;
   /**
+   * List devices you are willing to bring to assist with troubleshooting
+   * @maxLength 1000
+   * @nullable
+   */
+  mentor_own_troubleshooting_devices?: string | null;
+  /**
    * @maxLength 1000
    * @nullable
    */

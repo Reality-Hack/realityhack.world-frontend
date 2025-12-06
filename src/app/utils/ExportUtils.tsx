@@ -20,17 +20,19 @@ export async function exportToCsv(
 
 export function ExportButton({
   onExport,
-  children
+  children,
+  disabled,
 }: {
   onExport: () => Promise<unknown>;
   children: any;
+  disabled?: boolean;
 }) {
   const [exporting, setExporting] = useState(false);
 
   return (
     <button
       className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] transition-all"
-      disabled={exporting}
+      disabled={exporting || disabled}
       onClick={async () => {
         setExporting(true);
         await onExport();

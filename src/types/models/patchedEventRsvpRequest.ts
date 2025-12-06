@@ -32,8 +32,6 @@ export interface PatchedEventRsvpRequest {
   participation_role?: PatchedEventRsvpRequestParticipationRole;
   event?: string;
   /** @nullable */
-  application?: string | null;
-  /** @nullable */
   shirt_size?: PatchedEventRsvpRequestShirtSize;
   /**
    * I.e., a Discord username

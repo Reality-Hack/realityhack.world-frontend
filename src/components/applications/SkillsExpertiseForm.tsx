@@ -113,11 +113,11 @@ const SkillsExpertiseForm: React.FC<FormProps> = ({
           <div className="mb-8">
             <TextAreaInput
               name="theme_essay_follow_up"
-              placeholder="List the devices"
-              value={formData.theme_essay_follow_up || ''}
+              placeholder="List devices you are willing to bring to assist with troubleshooting"
+              value={formData.mentor_own_troubleshooting_devices || ''}
               onChange={handleChange}
-              error={errors.theme_essay_follow_up}
-              valid={!errors.theme_essay_follow_up}
+              error={errors.mentor_own_troubleshooting_devices}
+              valid={!errors.mentor_own_troubleshooting_devices}
               onBlur={handleBlur}
             >
               Do you have related hardware (such as headsets) that you may be 

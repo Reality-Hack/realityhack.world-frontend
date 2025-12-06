@@ -238,6 +238,7 @@ export interface form_data {
   theme_detail_one?: theme_interest_track_choice | null;
   theme_detail_two?: theme_interest_track_choice | null;
   theme_detail_three?: theme_interest_track_choice | null;
+  mentor_own_troubleshooting_devices?: string | null;
   heard_about_us?: heard_about_us[] | '';
   digital_designer_skills?: digital_designer_skills[] | null;
   specialized_expertise?: string | null;

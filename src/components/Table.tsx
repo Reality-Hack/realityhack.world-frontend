@@ -107,7 +107,8 @@ export default function Table<T>({
           </div>
         </>
       )}
-      {loading && <LinearProgress />}
+      {/* TODO: revisit this loading bar implementation since the table needs data for search to work */}
+      {loading && <LinearProgress />} 
       <div className="relative overflow-x-auto">
         <table className="relative overflow-x-auto dark:bg-contentDark dark:bg-border-borderDark">
           <thead className="text-sm text-gray-600 dark:text-gray-400 font-interMedium h-11 bg-[#FDFDFD] dark:bg-backgroundDark sticky top-[-1px] z-10 border-[#EEEEEE]">

@@ -4,7 +4,9 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { EventRsvpDetailParticipationRole } from './eventRsvpDetailParticipationRole';
+import type { Application } from './application';
 import type { EventRsvpDetailShirtSize } from './eventRsvpDetailShirtSize';
+import type { AttendeeName } from './attendeeName';
 import type { DietaryRestrictionsEnum } from './dietaryRestrictionsEnum';
 import type { DietaryAllergiesEnum } from './dietaryAllergiesEnum';
 import type { EventRsvpDetailUsVisaSupportNationalIdentificationDocumentType } from './eventRsvpDetailUsVisaSupportNationalIdentificationDocumentType';
@@ -13,7 +15,6 @@ import type { EventRsvpDetailSpecialInterestTrackOne } from './eventRsvpDetailSp
 import type { EventRsvpDetailSpecialInterestTrackTwo } from './eventRsvpDetailSpecialInterestTrackTwo';
 import type { ParticipationClassEnum } from './participationClassEnum';
 import type { EventRsvpDetailLoanerHeadsetPreference } from './eventRsvpDetailLoanerHeadsetPreference';
-import type { AttendeeName } from './attendeeName';
 
 /**
  * Base serializer that automatically scopes foreign key fields to the current event.
@@ -33,10 +34,10 @@ export interface EventRsvpDetail {
   /** @nullable */
   participation_role?: EventRsvpDetailParticipationRole;
   event: string;
-  /** @nullable */
-  application?: string | null;
+  readonly application?: Application;
   /** @nullable */
   shirt_size?: EventRsvpDetailShirtSize;
+  attendee: AttendeeName;
   /**
    * I.e., a Discord username
    * @maxLength 40
@@ -148,5 +149,4 @@ export interface EventRsvpDetail {
   loaner_headset_preference?: EventRsvpDetailLoanerHeadsetPreference;
   readonly created_at?: string;
   readonly updated_at?: string;
-  attendee: AttendeeName;
 }
