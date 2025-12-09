@@ -1,3 +1,4 @@
+// Type mappings for when Orval generated types are difficult to work with
 import {
     HardwareDevice,
     // Hardware,

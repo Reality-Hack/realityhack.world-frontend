@@ -16,109 +16,54 @@ import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../Modal';
 import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
+import { useEventrsvpsList } from '@/types/endpoints';
+import { EventRsvp, EventrsvpsListParticipationClass, ShirtSizeEnum } from '@/types/models';
+import Loader from '@/components/Loader';
+import { useRSVPStats, ShirtSizeLabel, SHIRT_SIZE_MAP } from '@/hooks/useRSVPStats';
 
-interface ApplicationTableProps {
-  type: string;
+interface RsvpTableProps {
+  type: EventrsvpsListParticipationClass | undefined;
 }
 
-export default function ApplicationTable({ type }: ApplicationTableProps) {
-  const [dialogRow, setDialogRow] = useState<any | void>(undefined);
-  const [RSVP, setRSVP] = useState<any>([]);
-  const [options, setOptions] = useState<any>({});
-  const [loading, setLoading] = useState<boolean>(false);
+export default function RsvpTable({ type }: RsvpTableProps) {
   const { data: session } = useSession();
-  const isAdmin = session && session.roles?.includes('admin');
 
-  useEffect(() => {
-    const getData = async () => {
-      const options = await rsvpOptions(RSVP);
-      setOptions(options);
-    };
-    getData();
-  }, []);
-
-  useEffect(() => {
-    if (session?.access_token && isAdmin) {
-      setLoading(true);
-      getAllRSVPs(session.access_token)
-        .then(apps => {
-          const filteredApps = apps.filter((app: any) => {
-            if (type === 'P') {
-              return (
-                app.participation_class === 'P' ||
-                typeof app.participation_class === 'undefined'
-              );
-            } else {
-              return app.participation_class === type;
-            }
-          });
-
-          const transformedApps = transformApplications(filteredApps, options);
-          setRSVP(transformedApps);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+  const {
+    data: eventRsvps,
+    isLoading: isLoadingEventRsvps,
+    mutate: revalidateEventRsvps
+  } = useEventrsvpsList({
+    participation_class: type
+  }, {
+    swr: { enabled: !!session?.access_token },
+    request: {
+      headers: {
+        'Authorization': `JWT ${session?.access_token}`
+      }
     }
-  }, [session, options]);
+  });
 
-  const [isOverlayVisible, setOverlayVisible] = useState(false);
-  const toggleOverlay = () => {
-    setOverlayVisible(prev => !prev);
-  };
-  const toggleOverlayAndPassData = useCallback((row: any) => {
-    toggleOverlay();
-    setDialogRow(row);
-  }, []);
+  const { 
+    total, 
+    shirtSizes, 
+    specialInterestTrackOneCounts, 
+    specialInterestTrackTwoCounts,
+  } = useRSVPStats();
 
-  function transformApplications(apps: any, options: any) {
-    return apps.map((app: any) => {
-      const transformedApp = { ...app };
+  const mappedEventRsvps = useMemo(() => {
+    if (!eventRsvps) return [];
+  return eventRsvps.map((rsvp: EventRsvp) => {
+    const shirtSize = rsvp.shirt_size ? SHIRT_SIZE_MAP[rsvp.shirt_size] : null;
+    return {
+      ...rsvp,
+      first_name: rsvp.application?.first_name,
+      last_name: rsvp.application?.last_name,
+      email: rsvp.application?.email,
+      shirt_size: shirtSize,
+    }
+  })
 
-      Object.keys(transformedApp).forEach(key => {
-        if (key === 'status') {
-          return;
-        }
-
-        if (options.actions?.POST[key]?.choices) {
-          const currentValue = transformedApp[key]?.[0];
-          const choice = options.actions.POST[key].choices.find(
-            (c: any) => c.value === currentValue
-          );
-          transformedApp[key] = choice ? choice.display_name : null;
-        }
-      });
-
-      return transformedApp;
-    });
-  }
-
-  const onStatusChange = useCallback(
-    (app: Application) => (value: string) => {
-      let status: status | null = value as status;
-      if (status.length === 0) {
-        status = null;
-      }
-      let appId = RSVP.findIndex((a: Application) => a.id === app.id);
-
-      if (appId >= 0 && session?.access_token && isAdmin) {
-        setLoading(true);
-        updateApplication(app.id, { status }, session.access_token)
-          .then(response => {
-            if (!response) {
-              throw Error('application not saved');
-            }
-            let newApps = RSVP.slice();
-            newApps[appId] = response;
-            setRSVP(newApps);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      }
-    },
-    [RSVP, isAdmin, session]
-  );
+  }, [eventRsvps]);
 
   const columnHelper = createColumnHelper<any>();
   const columns = useMemo<ColumnDef<any, any>[]>(
@@ -139,7 +84,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
         header: () => 'Shirt Size',
         cell: info => info.getValue()
       }),
-      columnHelper.accessor('communications_platform_username', {
+      columnHelper.accessor('communication_platform_username', {
         header: () => 'Discord Username',
         cell: info => info.getValue()
       }),
@@ -183,7 +128,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
         cell: info => info.getValue()
       })
     ],
-    [columnHelper, onStatusChange, toggleOverlayAndPassData, type]
+    [columnHelper, type]
   );
 
   return (
@@ -194,7 +139,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Total RSVPs
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {RSVP.length}
+            {total}
           </span>
         </div>
 
@@ -203,13 +148,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Founders Lab Interest
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {
-              RSVP.filter((app: any) => {
-                return (
-                  app?.special_interest_track_two === 'Yes'
-                );
-              }).length
-            }
+            { specialInterestTrackOneCounts }
           </span>
         </div>
 
@@ -218,11 +157,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Hardware Hack
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {
-              RSVP.filter((app: any) => {
-                return app?.special_interest_track_one === 'Yes';
-              }).length
-            }
+            { specialInterestTrackTwoCounts }
           </span>
         </div>
       </div>
@@ -236,11 +171,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
               S
             </span>
             <span className="text-lg font-semibold text-black text-opacity-90">
-              {
-                RSVP.filter((app: any) => {
-                  return app?.shirt_size === 'S';
-                }).length
-              }
+              { shirtSizes[ShirtSizeLabel.S] }
             </span>
           </div>
           <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
@@ -248,11 +179,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
               M
             </span>
             <span className="text-lg font-semibold text-black text-opacity-90">
-              {
-                RSVP.filter((app: any) => {
-                  return app?.shirt_size === 'M';
-                }).length
-              }
+              { shirtSizes[ShirtSizeLabel.M] }
             </span>
           </div>
           <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
@@ -260,11 +187,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
               L
             </span>
             <span className="text-lg font-semibold text-black text-opacity-90">
-              {
-                RSVP.filter((app: any) => {
-                  return app?.shirt_size === 'L';
-                }).length
-              }
+              { shirtSizes[ShirtSizeLabel.L] }
             </span>
           </div>
           <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
@@ -272,11 +195,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
               XL
             </span>
             <span className="text-lg font-semibold text-black text-opacity-90">
-              {
-                RSVP.filter((app: any) => {
-                  return app?.shirt_size === 'XL';
-                }).length
-              }
+              { shirtSizes[ShirtSizeLabel.XL] }
             </span>
           </div>
           <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
@@ -284,54 +203,30 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
               XXL
             </span>
             <span className="text-lg font-semibold text-black text-opacity-90">
-              {
-                RSVP.filter((app: any) => {
-                  return app?.shirt_size === 'XL';
-                }).length
-              }
+              { shirtSizes[ShirtSizeLabel.XXL] }
             </span>
           </div>
         </div>
       </div>
 
-      <ExportButton onExport={() => exportToCsv(RSVP, 'rsvps.csv')}>
+      <ExportButton onExport={() => exportToCsv(eventRsvps || [], 'rsvps.csv')} disabled={isLoadingEventRsvps}>
         Export CSV
       </ExportButton>
       <div className="z-50 px-6 py-6 overflow-y-scroll bg-[#FCFCFC] border-gray-300 rounded-2xl">
-        <div className="h-[629px] overflow-y-scroll z-50 rounded-l border border-[#EEEEEE]">
-          <Table
-            data={RSVP}
-            columns={columns}
-            search={true}
-            pagination={true}
-            loading={loading}
-          />
-        </div>
+        {eventRsvps && !isLoadingEventRsvps ? (
+          <div className="h-1/2 overflow-y-scroll z-50 rounded-l border border-[#EEEEEE]">
+            <Table
+              data={mappedEventRsvps}
+              columns={columns}
+              search={true}
+              pagination={true}
+              loading={isLoadingEventRsvps}
+            />
+          </div>
+        ) : (
+          <Loader />
+        )}
       </div>
-      {isOverlayVisible && (
-        <ReviewModal
-          toggleOverlay={toggleOverlay}
-          item={dialogRow}
-          data={RSVP}
-        />
-      )}
     </>
-  );
-}
-
-type ReviewModalProps = {
-  toggleOverlay: () => void;
-  item: Row<Application>;
-  data: Application[];
-};
-
-function ReviewModal({ item, data, toggleOverlay }: ReviewModalProps) {
-  const i = data[item.id as any];
-  return (
-    <div>
-      <Modal toggleOverlay={toggleOverlay}>
-        {<div>{/* <ReviewPage allInfo={i} /> */}</div>}
-      </Modal>
-    </div>
   );
 }

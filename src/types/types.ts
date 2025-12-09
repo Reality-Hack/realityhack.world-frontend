@@ -1,3 +1,4 @@
+// NOTE: this is the legacy types file which will be replaced by types2
 import { hardware_hack_detail } from './application_form_types';
 
 export enum status {

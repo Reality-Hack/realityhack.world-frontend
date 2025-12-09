@@ -18,7 +18,7 @@ export interface ApplicationResponse {
   choices_snapshot?: ApplicationResponseChoicesSnapshot;
   /** List of choice_keys selected, preserved snapshot */
   selected_keys_snapshot?: ApplicationResponseSelectedKeysSnapshot;
-  readonly selected_choice_keys?: string;
+  readonly selected_choice_keys?: readonly string[];
   /** Free-form text response for TEXT question types */
   text_response?: string;
   /** Snapshot of text response at time of submission */

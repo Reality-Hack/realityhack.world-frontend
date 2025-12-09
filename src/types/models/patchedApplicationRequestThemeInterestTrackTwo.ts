@@ -3,9 +3,9 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
-import type { ThemeDetailEnum } from './themeDetailEnum';
+import type { ThemeInterestTrackEnum } from './themeInterestTrackEnum';
 
 /**
  * @nullable
  */
-export type PatchedApplicationRequestThemeInterestTrackTwo = ThemeDetailEnum | null;
+export type PatchedApplicationRequestThemeInterestTrackTwo = ThemeInterestTrackEnum | null;

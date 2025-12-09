@@ -21,8 +21,8 @@ Usage:
 export interface Workshop {
   readonly id?: string;
   recommended_for: RecommendedForEnum[];
-  readonly skills?: string;
-  readonly hardware?: string;
+  readonly skills?: readonly number[];
+  readonly hardware?: readonly number[];
   /** @maxLength 300 */
   name: string;
   /** @nullable */

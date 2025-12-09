@@ -11,6 +11,19 @@ export default function Checkout() {
   const { data: session } = useSession();
   const [mappedHardwareDevices, setMappedHardwareDevices] = useState<HardwareWithType[]>([])
   const { hardwareDevices, hardwareDeviceTypeMap, isLoadingHardwareDevices } = useHardwareContext();
+
+  useEffect(() => {
+    if (!hardwareDevices || !hardwareDeviceTypeMap) {
+      return;
+    }
+    const mappedDevices = hardwareDevices
+      ?.map((item: HardwareDevice) => ({
+        ...item,
+        hardwareType: hardwareDeviceTypeMap[item.hardware]
+      })).filter((item: HardwareWithType) => item.hardwareType)
+    setMappedHardwareDevices(mappedDevices);
+  }, [hardwareDevices, hardwareDeviceTypeMap])
+
   const {data: attendees, isLoading: isLoadingAttendees} = useAttendeesList({}, {
     swr: { enabled: !!session?.access_token}, 
     request: {
@@ -25,18 +38,6 @@ export default function Checkout() {
   if (!isAdmin) {
     return <div>You are not authorized to access this page</div>;
   }
-
-  useEffect(() => {
-    if (!hardwareDevices || !hardwareDeviceTypeMap) {
-      return;
-    }
-    const mappedDevices = hardwareDevices
-      ?.map((item: HardwareDevice) => ({
-        ...item,
-        hardwareType: hardwareDeviceTypeMap[item.hardware]
-      })).filter((item: HardwareWithType) => item.hardwareType)
-    setMappedHardwareDevices(mappedDevices);
-  }, [hardwareDevices, hardwareDeviceTypeMap])
   
   return (
     isLoadingAttendees || isLoadingHardwareDevices ? (

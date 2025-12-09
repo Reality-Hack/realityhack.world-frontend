@@ -12,7 +12,7 @@ import type { DigitalDesignerSkillsEnum } from './digitalDesignerSkillsEnum';
 import type { IndustryEnum } from './industryEnum';
 import type { HardwareHackDetailEnum } from './hardwareHackDetailEnum';
 import type { ApplicationResponse } from './applicationResponse';
-import type { ParticipationClassA3fEnum } from './participationClassA3fEnum';
+import type { ParticipationClassEnum } from './participationClassEnum';
 import type { ApplicationDetailAgeGroup } from './applicationDetailAgeGroup';
 import type { ApplicationDetailDisabilityIdentity } from './applicationDetailDisabilityIdentity';
 import type { ApplicationDetailParticipationCapacity } from './applicationDetailParticipationCapacity';
@@ -49,7 +49,7 @@ export interface ApplicationDetail {
   middle_name?: string | null;
   /** @maxLength 100 */
   last_name: string;
-  participation_class?: ParticipationClassA3fEnum;
+  participation_class?: ParticipationClassEnum;
   /**
    * @maxLength 100
    * @nullable
@@ -195,6 +195,12 @@ export interface ApplicationDetail {
   mentor_mentoring_steps?: string | null;
   /** @nullable */
   mentor_previously_mentored?: boolean | null;
+  /**
+   * List devices you are willing to bring to assist with troubleshooting
+   * @maxLength 1000
+   * @nullable
+   */
+  mentor_own_troubleshooting_devices?: string | null;
   /**
    * @maxLength 1000
    * @nullable

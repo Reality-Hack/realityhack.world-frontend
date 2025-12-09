@@ -49,12 +49,6 @@ export interface AttendeeRSVP {
   email: string;
   /** @nullable */
   shirt_size?: AttendeeRSVPShirtSize;
-  /**
-   * I.e., a Discord username
-   * @maxLength 40
-   * @nullable
-   */
-  communications_platform_username?: string | null;
   dietary_restrictions: DietaryRestrictionsEnum[];
   /**
    * @maxLength 40
@@ -105,7 +99,6 @@ export interface AttendeeRSVP {
   parental_consent_form_signed?: boolean | null;
   agree_to_media_release?: boolean;
   agree_to_liability_release?: boolean;
-  agree_to_rules_code_of_conduct?: boolean;
   /** @maxLength 200 */
   emergency_contact_name: string;
   /** @maxLength 128 */
@@ -125,8 +118,15 @@ export interface AttendeeRSVP {
    * @nullable
    */
   breakthrough_hacks_interest?: string | null;
+  agree_to_rules_code_of_conduct?: boolean;
   /** @nullable */
   loaner_headset_preference?: AttendeeRSVPLoanerHeadsetPreference;
+  /**
+   * I.e., a Discord username
+   * @maxLength 40
+   * @nullable
+   */
+  communications_platform_username?: string | null;
   /**
    * Do you already have an AR or VR app in any store? And if so, which store(s)?
    * @maxLength 250
