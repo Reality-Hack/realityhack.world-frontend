@@ -112,7 +112,7 @@ const SkillsExpertiseForm: React.FC<FormProps> = ({
           </div>
           <div className="mb-8">
             <TextAreaInput
-              name="theme_essay_follow_up"
+              name="mentor_own_troubleshooting_devices"
               placeholder="List devices you are willing to bring to assist with troubleshooting"
               value={formData.mentor_own_troubleshooting_devices || ''}
               onChange={handleChange}
