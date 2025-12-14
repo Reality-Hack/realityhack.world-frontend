@@ -278,6 +278,7 @@ export interface rsvp_data {
     | string;
   us_visa_support_document_number?: string | null;
   breakthrough_hacks_interest?: string | null;
+  device_preference_ranked?: string | null;
   loaner_headset_preference?: string | null;
   us_visa_support_citizenship?: string | null;
   us_visa_support_address?: string | null;

@@ -675,6 +675,7 @@ export interface components {
       special_interest_track_one?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
       special_interest_track_two?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
       breakthrough_hacks_interest?: string | null;
+      device_preference_ranked?: string | null;
       loaner_headset_preference?: components["schemas"]["LoanerHeadsetPreferenceEnum"] | components["schemas"]["NullEnum"] | null;
       /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
       app_in_store?: string | null;
@@ -739,6 +740,7 @@ export interface components {
       participation_class?: components["schemas"]["ParticipationClassD2aEnum"];
       sponsor_company?: string | null;
       breakthrough_hacks_interest?: string | null;
+      device_preference_ranked?: string | null;
       loaner_headset_preference?: components["schemas"]["LoanerHeadsetPreferenceEnum"] | components["schemas"]["NullEnum"] | null;
     };
     /** @enum {unknown} */
@@ -1519,6 +1521,7 @@ export interface components {
       special_interest_track_one?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
       special_interest_track_two?: components["schemas"]["SpecialInterestTrackTwoEnum"] | components["schemas"]["NullEnum"] | null;
       breakthrough_hacks_interest?: string | null;
+      device_preference_ranked?: string | null;
       loaner_headset_preference?: components["schemas"]["LoanerHeadsetPreferenceEnum"] | components["schemas"]["NullEnum"] | null;
       /** @description Do you already have an AR or VR app in any store? And if so, which store(s)? */
       app_in_store?: string | null;

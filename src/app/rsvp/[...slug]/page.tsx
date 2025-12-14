@@ -73,7 +73,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
     emergency_contact_relationship: '',
     special_interest_track_one: null,
     special_interest_track_two: null,
-    breakthrough_hacks_interest: null,
+    device_preference_ranked: null,
     loaner_headset_preference: null,
     app_in_store: null,
     currently_build_for_xr: null,
@@ -884,8 +884,8 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                       error={errors.personal_phone_number}
                       valid={!errors.personal_phone_number}
                     >
-                      A mobile phone number we can reach you at during the MIT
-                      Reality Hack event. <br /> (include country code if
+                      A mobile phone number we can reach you at during the 
+                      Reality Hack at MIT event. <br /> (include country code if
                       non-US) <span className="text-red-700">*</span>
                     </TextInput>
                     <TextInput
@@ -983,7 +983,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                               parent/guardian has not already done so, please
                               have your parent/guardian{' '}
                               <a
-                                href="https://na1.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhDHzrXhxSW2uEcg6EoLG5EwP07XTkmO4ztmqfZdkQfJB0kXbcn5IpJiNGVY8CH9Hq0*"
+                                href="https://na1.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhAz2suqqAFHVZiVssZmxX7YHDeK5Rmx4pMwpwUmeIcfbBxSlX4AUW4mYltO_sKhC7s*"
                                 target="_blank"
                                 className="underline cursor-pointer text-themePrimary"
                               >
@@ -1030,7 +1030,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
               <div>
                 Please read over the{' '}
                 <a
-                  href="https://www.realityhackinc.org/rules"
+                  href="https://www.realityhackatmit.com/rules"
                   target="_blank"
                   className="underline cursor-pointer text-themePrimary"
                 >
@@ -1038,13 +1038,13 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 </a>{' '}
                 and{' '}
                 <a
-                  href="https://www.realityhackinc.org/code-of-conduct"
+                  href="https://www.realityhackatmit.com/code-of-conduct"
                   target="_blank"
                   className="underline cursor-pointer text-themePrimary"
                 >
                   Code of Conduct
                 </a>
-                . By participating in MIT Reality Hack, you agree to these Rules
+                . By participating in Reality Hack at MIT, you agree to these Rules
                 and our Code of Conduct.
                 <div className="relative">
                   <CheckboxInput
@@ -1067,8 +1067,8 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
 
                   <div className="pb-8">
                     <div>
-                      If you had to choose one loaner headset to work with,
-                      which would be your preference?{' '}
+                    If you had to choose one device to work with, which would be your top preference? 
+                    Please note that equipment listed may not be available or will be limited to specific prize tracks.{' '}
                       <span className="text-red-700">*</span>
                     </div>
                     <div>
@@ -1081,6 +1081,41 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                       />
                       <RadioInput
                         name="loaner_headset_preference"
+                        value="RB_META_AI"
+                        onChange={handleChange}
+                        label="Ray-Ban Meta AI glasses"
+                        checked={formData.loaner_headset_preference === 'RB_META_AI'}
+                      />
+                      <RadioInput
+                        name="loaner_headset_preference"
+                        value="ARDUINO_UNO"
+                        onChange={handleChange}
+                        label="Arduino Uno Kits"
+                        checked={formData.loaner_headset_preference === 'ARDUINO_UNO'}
+                      />
+                      <RadioInput
+                        name="loaner_headset_preference"
+                        value="SAMSUNG_GALAXY_XR"
+                        onChange={handleChange}
+                        label="Samsung Galaxy XR"
+                        checked={formData.loaner_headset_preference === 'SAMSUNG_GALAXY_XR'}
+                      />
+                      <RadioInput
+                        name="loaner_headset_preference"
+                        value="RAYNEO"
+                        onChange={handleChange}
+                        label="RayNeo"
+                        checked={formData.loaner_headset_preference === 'RAYNEO'}
+                      />
+                      <RadioInput
+                        name="loaner_headset_preference"
+                        value="RAVEN_AR"
+                        onChange={handleChange}
+                        label="Raven AR"
+                        checked={formData.loaner_headset_preference === 'RAVEN_AR'}
+                      />
+                      <RadioInput
+                        name="loaner_headset_preference"
                         value="SNAP"
                         onChange={handleChange}
                         label="Snap Spectacles"
@@ -1088,26 +1123,38 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                       />
                       <RadioInput
                         name="loaner_headset_preference"
-                        value="BYOD"
+                        value="APPLE_VISION_PRO"
                         onChange={handleChange}
-                        label="I am bringing my own XR device to work with."
-                        checked={formData.loaner_headset_preference === 'BYOD'}
+                        label="Apple Vision Pro"
+                        checked={formData.loaner_headset_preference === 'APPLE_VISION_PRO'}
                       />
                       <RadioInput
                         name="loaner_headset_preference"
-                        value="HWHACK"
+                        value="BLACKMAGIC"
                         onChange={handleChange}
-                        label="I've chosen the Hardware Hack, so I will probably not need a headset."
-                        checked={
-                          formData.loaner_headset_preference === 'HWHACK'
-                        }
+                        label="Blackmagic URSA Cine Immersive Camera"
+                        checked={formData.loaner_headset_preference === 'BLACKMAGIC'}
                       />
                       <RadioInput
                         name="loaner_headset_preference"
-                        value="TBD"
+                        value="XREAL"
                         onChange={handleChange}
-                        label="I'm not sure yet"
-                        checked={formData.loaner_headset_preference === 'TBD'}
+                        label="XREAL"
+                        checked={formData.loaner_headset_preference === 'XREAL'}
+                      />
+                      <RadioInput
+                        name="loaner_headset_preference"
+                        value="PICO"
+                        onChange={handleChange}
+                        label="Pico"
+                        checked={formData.loaner_headset_preference === 'PICO'}
+                      />
+                      <RadioInput
+                        name="loaner_headset_preference"
+                        value="OPENBCI"
+                        onChange={handleChange}
+                        label="OpenBCI Sensors"
+                        checked={formData.loaner_headset_preference === 'OPENBCI'}
                       />
                       {errors.loaner_headset_preference && (
                         <p className="text-red-500 text-sm">
@@ -1117,83 +1164,18 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                     </div>
                   </div>
                   <div className="pb-8">
-                    <div>
-                      <strong>Breakthrough Hacks Opportunity:</strong> This
-                      year, select teams will be given the opportunity to be
-                      some of the FIRST hackers ever to work with technology
-                      from the following companies:
-                      <ul className="ml-4 list-disc">
-                        <li>
-                          <a
-                            href="https://galea.co/#home"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline cursor-pointer text-themePrimary"
-                          >
-                            Galea
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="https://www.maradin.co.il/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline cursor-pointer text-themePrimary"
-                          >
-                            Maradin
-                          </a>{' '}
-                          (dev kit includes monocle display glass)
-                        </li>
-                        <li>
-                          <a
-                            href="https://distance.tech/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline cursor-pointer text-themePrimary"
-                          >
-                            Distance
-                          </a>
-                        </li>
-                        <li>
-                          Advanced haptic gloves (We will reveal who it is at
-                          the Hack!)
-                        </li>
-                        <li>
-                          <a
-                            href="https://shop.openbci.com/collections/frontpage?_gl=1*1pykcxm*_gcl_au*NjU1MDkxNDY1LjE3MzQzMDY3MTE.*_ga*NTQ3MjAxNTAuMTczNDMwNjcxMQ..*_ga_HVMLC0ZWWS*MTczNDMwNjcxMC4xLjAuMTczNDMwNjcxMC42MC4wLjA."
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline cursor-pointer text-themePrimary"
-                          >
-                            OpenBCI Biometric Sensors
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="https://www.qualcomm.com/developer/hardware/rb3-gen-2-development-kit"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline cursor-pointer text-themePrimary"
-                          >
-                            Qualcomm RB3 Gen2
-                          </a>
-                        </li>
-                      </ul>
-                      <br />
-                      If you&apos;re interested in any of these, please let us
-                      know which one and why.
-                    </div>
+                    From the above list, please list other devices you may be interested in working with ranked in order of preference. 
                     <TextAreaInput
-                      name="breakthrough_hacks_interest"
+                      name="device_preference_ranked"
                       placeholder="Please describe your interest..."
-                      value={formData.breakthrough_hacks_interest || ''}
+                      value={formData.device_preference_ranked || ''}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      error={errors.breakthrough_hacks_interest}
-                      valid={!errors.breakthrough_hacks_interest}
+                      error={errors.device_preference_ranked}
+                      valid={!errors.device_preference_ranked}
                       rows={4}
                     >
-                      Enter your interest here.
+                    {' '}
                     </TextAreaInput>
                   </div>
 
@@ -1207,8 +1189,9 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                       indicate your interest below.
                     </div>
                     <div className="pb-4">
-                      Would you like to register for the Hardware Hack at this
-                      time? *
+                    Do you want to register your interest for the Immersion League Continuity Track at this time? 
+                    Please make sure you've filled out the Google Form found in the Track Description in the RSVP email if you 
+                    want to apply to it. <span className="text-red-700">*</span>
                       <RadioInput
                         name="special_interest_track_one"
                         value="Y"
@@ -1234,8 +1217,9 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                       </p>
                     </div>
                     <div>
-                      Would you like to register for the MIT Reality Hack
-                      Founders Lab at this time? *
+                    Do you want to register your interest in the Founders Lab Prize Track at this time? This option is open to hackers 
+                    interested in taking extra steps to research their concepts and polish their level of presentation. 
+                    It is not for pre-formed startups. <span className="text-red-700">*</span>
                       <RadioInput
                         name="special_interest_track_two"
                         value="Y"
@@ -1270,11 +1254,11 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
               <div>
                 <div className="pb-3">
                   If you need to apply for a temporary B2 tourist visa to visit
-                  the US for MIT Reality Hack and require a letter of invitation
+                  the US for Reality Hack at MIT and require a letter of invitation
                   to supplement your visa application, please let us know by
                   filling out{' '}
                   <a
-                    href=" https://forms.gle/1kjZbYidRFGXmjnE6"
+                    href="https://forms.gle/Z62YnSegK7WQZ81dA"
                     target="_blank"
                     className="underline cursor-pointer text-themePrimary"
                   >
@@ -1350,7 +1334,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                 Attendee liability release form
               </div>
               <div>
-                As an attendee in the &quot;MIT Reality Hack,&quot; organized by
+                As an attendee in the &quot;Reality Hack at MIT,&quot; organized by
                 Reality Hack, Inc., a Massachusetts 501(c)(3) nonprofit, and
                 VR/AR MIT, an MIT student group, I hereby agree to the following
                 terms:
@@ -1378,22 +1362,21 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                   Hackathon Rules and Code of Conduct Compliance
                 </span>
                 <br></br>I affirm that I have reviewed, understand, and agree to
-                adhere to the Rules and Code of Conduct for the MIT Reality
-                Hack, available at{' '}
+                adhere to the Rules and Code of Conduct for the Reality Hack at MIT, available at{' '}
                 <a
-                  href="https://realityhackinc.org/rules"
+                  href="https:/www.realityhackatmit.com/rules "
                   target="_blank"
                   className="underline cursor-pointer text-themePrimary"
                 >
-                  https://realityhackinc.org/rules
+                  https:/www.realityhackatmit.com/rules 
                 </a>{' '}
                 and{' '}
                 <a
-                  href="https://www.realityhackinc.org/code-of-conduct "
+                  href="https://www.realityhackatmit.com/code-of-conduct"
                   target="_blank"
                   className="underline cursor-pointer text-themePrimary"
                 >
-                  https://www.realityhackinc.org/code-of-conduct
+                  https://www.realityhackatmit.com/code-of-conduct
                 </a>
                 . I acknowledge that non-compliance may lead to
                 disqualification, forfeiture of prizes, and potential exclusion
