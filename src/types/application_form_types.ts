@@ -262,7 +262,7 @@ export interface rsvp_data {
   id: string;
   bio: string | null;
   shirt_size: shirt_size | null;
-  communications_platform_username: string | null;
+  communication_platform_username: string | null;
   dietary_restrictions?: dietary_restrictions[] | null;
   dietary_restrictions_other?: string | null;
   dietary_allergies: dietary_allergies[] | null;
@@ -290,6 +290,7 @@ export interface rsvp_data {
   agree_to_rules_code_of_conduct: boolean;
   emergency_contact_name: string;
   personal_phone_number: string;
+  device_preference_ranked?: string | null;
   emergency_contact_phone_number: string;
   emergency_contact_email: string;
   emergency_contact_relationship: string;

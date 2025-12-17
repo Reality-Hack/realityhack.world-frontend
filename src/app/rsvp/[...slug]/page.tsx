@@ -56,7 +56,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
     dietary_restrictions: [],
     dietary_allergies: [],
     shirt_size: null,
-    communications_platform_username: null,
+    communication_platform_username: null,
     dietary_restrictions_other: null,
     allergies_other: null,
     additional_accommodations: null,
@@ -111,7 +111,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
           'under_18_by_date',
           'special_interest_track_one',
           'special_interest_track_two',
-          'communications_platform_username',
+          'communication_platform_username',
           'loaner_headset_preference'
         ].forEach(field => {
           if (!updatedFields.includes(field)) {
@@ -121,7 +121,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
       }
 
       if (slug[0] !== 'judge') {
-        const field = 'communications_platform_username';
+        const field = 'communication_platform_username';
         if (!updatedFields.includes(field)) {
           updatedFields.push(field);
         }
@@ -305,7 +305,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
 
       let isFieldRequired = false;
 
-      if (fieldName === 'communications_platform_username') {
+      if (fieldName === 'communication_platform_username') {
         setRenderDiscordError(false);
       }
 
@@ -336,7 +336,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
       const discordLookup = async () => {
         setDiscordValidationResult(null);
         if (
-          fieldName === 'communications_platform_username' &&
+          fieldName === 'communication_platform_username' &&
           e.target.value
         ) {
           setRenderDiscordError(false);
@@ -359,7 +359,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
             } else {
               setErrors(prevErrors => ({
                 ...prevErrors,
-                communications_platform_username: 'Invalid'
+                communication_platform_username: 'Invalid'
               }));
               setDiscordValidationResult('error');
               setRenderDiscordError(true);
@@ -599,14 +599,14 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
               {slug[0] !== 'judge' && (
                 <div className="relative flex items-end">
                   <TextInput
-                    name="communications_platform_username"
+                    name="communication_platform_username"
                     placeholder="e.g. Username1234"
                     type="text"
-                    value={formData.communications_platform_username || ''}
+                    value={formData.communication_platform_username || ''}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={errors.communications_platform_username}
-                    valid={!errors.communications_platform_username}
+                    error={errors.communication_platform_username}
+                    valid={!errors.communication_platform_username}
                   >
                     Discord will be our primary communications platform leading
                     up to and during the event. <br /> What is your Discord
