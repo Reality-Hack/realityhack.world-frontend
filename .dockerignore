@@ -2,3 +2,8 @@
 node_modules
 
 .eslintrc.json
+
+.env
+.env.*
+.env*.local
+*.env

@@ -9,6 +9,13 @@ primary_region = 'ewr'
 [build]
   dockerfile = 'Dockerfile.fly'
 
+  [build.args]
+    NEXT_PUBLIC_BACKEND_URL="https://api.realityhack.world"
+    NEXT_PUBLIC_BACKEND_WS_URL="wss://api.realityhack.world"
+    NEXT_PUBLIC_IS_EVENTS_ENABLED="false"
+    NEXT_PUBLIC_TEAM_FORMATION_STAGE="0"
+    NEXT_PUBLIC_FEATURE_FLAGS='{"home":true,"admin":true,"schedule":false,"team":true,"help":true,"hardware":true,"showcase":false,"tracks":false,"workshops":false,"resources":false,"guide":false,"settings":true, "mentors":true, "team-formation/hackers-met":false,"hardware/request":true,"lighthouses":false}'
+
 [http_service]
   internal_port = 3000
   force_https = true
@@ -16,6 +23,10 @@ primary_region = 'ewr'
   auto_start_machines = true
   min_machines_running = 0
   processes = ['app']
+
+  [http_service.tls_options]
+    alpn = ["h2", "http/1.1"]
+    versions = ["TLSv1.2", "TLSv1.3"]
 
 [[vm]]
   memory = '1gb'
