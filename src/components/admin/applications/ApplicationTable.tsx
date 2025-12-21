@@ -369,7 +369,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
       </div>
 
       <ExportButton
-        onExport={() => exportToCsv(applications, 'applications.csv')}
+        onExport={() => exportToCsv(transformedApplications, 'applications.csv')}
       >
         Export CSV
       </ExportButton>
