@@ -100,6 +100,31 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
 
   function transformApplications(apps: Application[], options: any): Application[] {
     setDataTransformFinished(false);
+
+    function extractThematicResponseValue(response: any): string {
+      if (response.text_response) {
+        return response.text_response;
+      }
+      if (response.selected_keys_snapshot && response.selected_keys_snapshot.length > 0) {
+        const selectedChoices = response.selected_keys_snapshot.map((key: string) => {
+          return response.choices_snapshot[key] || key;
+        });
+        return selectedChoices.join(', ');
+      }
+      return '';
+    }
+    
+    const thematicQuestionsMap = new Map<string, string>();
+    apps.forEach((app: any) => {
+      if (app.question_responses && Array.isArray(app.question_responses)) {
+        app.question_responses.forEach((response: any) => {
+          if (!thematicQuestionsMap.has(response.question)) {
+            thematicQuestionsMap.set(response.question, response.question_text_snapshot);
+          }
+        });
+      }
+    });
+
     const transformedApps = apps.map((app: any) => {
       const transformedApp = { ...app };
 
@@ -128,8 +153,18 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
         }
       });
 
+      thematicQuestionsMap.forEach((questionText: string, questionId: string) => {
+        const response = transformedApp.question_responses?.find(
+          (r: any) => r.question === questionId
+        );
+        
+        const columnKey = `Thematic: ${questionText}`;
+        transformedApp[columnKey] = response ? extractThematicResponseValue(response) : '';
+      });
+
       return transformedApp;
     });
+
     setDataTransformFinished(true);
     return transformedApps;
   }

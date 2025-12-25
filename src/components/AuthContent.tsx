@@ -1,7 +1,7 @@
 'use client';
 
 import Nav from '@/components/Nav';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { ReactNode, useEffect, useState, useRef, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Loader from './Loader';
@@ -83,6 +83,11 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     if (status === 'loading') return;
+
+    if (session?.error === AUTH_ERROR_TYPES.REFRESH_TOKEN_ERROR) {
+      signOut({ callbackUrl: '/signin', redirect: true });
+      return;
+    }
 
     if (session?.error) {
       setAuthState({ 

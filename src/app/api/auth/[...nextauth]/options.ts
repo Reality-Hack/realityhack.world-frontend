@@ -62,12 +62,17 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
 
     if (!resp.ok) {
       const errorData = await resp.json();
-      console.error('Token refresh failed:', {
-        status: resp.status,
-        statusText: resp.statusText,
-        error: errorData
-      });
-      throw new Error(`Token refresh failed: ${resp.status}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Token refresh failed:', {
+          status: resp.status,
+          statusText: resp.statusText,
+          error: errorData
+        });
+      }
+      const error = new Error(`Token refresh failed: ${resp.status}`);
+      (error as any).status = resp.status;
+      (error as any).data = errorData;
+      throw error;
     }
 
     const refreshToken = await resp.json();
@@ -79,10 +84,13 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
       decoded,
       id_token: refreshToken.id_token,
       expires_at: refreshToken.expires_in,
-      refresh_token: refreshToken.refresh_token
+      refresh_token: refreshToken.refresh_token,
+      error: undefined
     };
   } catch (error) {
-    console.error('Error refreshing access token:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error refreshing access token:', error);
+    }
     throw error;
   }
 }
@@ -98,10 +106,20 @@ async function refreshAccessTokenWithRetry(
       return await refreshAccessToken(token);
     } catch (error) {
       lastError = error as Error;
-      console.warn(`Token refresh attempt ${attempt} failed:`, error);
+
+      if ((error as any).status === 400) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Refresh token is invalid or expired, not retrying');
+        }
+        throw lastError;
+      }
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`Token refresh attempt ${attempt} failed:`, error);
+      }
       
       if (attempt < maxRetries) {
-        // Token refresh with exponential backoff
+        // Exponential backoff for network errors
         await new Promise(resolve => 
           setTimeout(resolve, Math.pow(2, attempt) * 1000)
         );
