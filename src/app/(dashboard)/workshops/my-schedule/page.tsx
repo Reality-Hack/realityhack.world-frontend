@@ -9,7 +9,7 @@ import ScheduleRoom from '@/components/dashboard/schedule/ScheduleItem';
 import TimeComponent from '@/components/dashboard/schedule/TimeComponent';
 import { useSession } from 'next-auth/react';
 import { getAllWorkshops, getMyWorkshops } from '@/app/api/workshops';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const LegendRoom: React.FC<LegendRoomProps> = ({ color, name }) => {
   const roomNames: { [key: string]: string } = {
@@ -50,7 +50,7 @@ const Page: React.FC = () => {
   const [allEvents, setAllEvents] = useState<[]>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   const START_HOUR = 10;
   const END_HOUR = 17;

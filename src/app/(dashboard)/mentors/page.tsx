@@ -6,7 +6,7 @@ import {
   getAllHelpRequests
 } from '@/app/api/helpqueue';
 import { MentorPosting } from '@/components/helpQueue/hackerView/PostingComps';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { MentorTopics, getKeyByValue, mentor_help_status } from '@/types/types';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -26,7 +26,7 @@ export default function Page() {
     session &&
     ((session as any).roles?.includes('admin') ||
       (session as any).roles?.includes('mentor'));
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   const [selectedItems, setSelectedItems] = useState<string[]>([]); // New state variable
 
   const [selectedTab, setSelectedTab] = useState(0);

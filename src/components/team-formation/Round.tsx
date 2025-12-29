@@ -6,7 +6,7 @@ import {
   getDestinyTeamsByAttendee,
   updateAttendeeVibeForTeam
 } from '@/app/api/teamformation';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import LinearProgress from '@mui/material/LinearProgress';
 import { Radio, RadioChangeEvent } from 'antd';
 import { useSession } from 'next-auth/react';
@@ -55,7 +55,7 @@ const vibeoptions = [
 
 export default function Round({ round }: RoundProps) {
   const { data: session } = useSession();
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   const [destinyTeam, setDestinyTeam] = useState<DestinyTeam | void>();
   const [loading, setLoading] = useState<boolean>(false);
   const [tracks, setTracks] = useState<TrackOption[] | undefined>(undefined);

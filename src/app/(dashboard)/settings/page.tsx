@@ -1,6 +1,6 @@
 'use client';
 import Dropzone from '@/components/Dropzone';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { patchMe } from '../../api/attendee';
@@ -10,7 +10,7 @@ import { AttendeeData } from '../../page';
 
 export default function Settings() {
   const { data: session, status } = useSession();
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
   const [rejectedFiles, setRejectedFiles] = useState<any>(null);

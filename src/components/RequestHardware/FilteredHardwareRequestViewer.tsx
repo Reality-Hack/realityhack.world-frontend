@@ -5,12 +5,12 @@ import { useMemo, useState } from 'react';
 import HardwareCategoryFilter from '../hardware/HardwareCategoryFilter';
 import { HardwareCount } from '@/types/models';
 import { useHardwareContext } from '@/contexts/HardwareContext';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function FilteredHardwareRequestViewer({
 }) {
   const { filteredHardwareTypes } = useHardwareContext();
-  const { user: currentUser } = useAuthContext();
+  const { user: currentUser } = useAuth();
   return (
     <>
       <HardwareCategoryFilter/>

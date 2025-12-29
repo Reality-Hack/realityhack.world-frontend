@@ -2,6 +2,7 @@
 
 import { getMe } from '@/app/api/attendee';
 import { useSession } from 'next-auth/react';
+import { useMemo } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   ReactNode,
@@ -17,6 +18,14 @@ interface AuthContextType {
   pathname: string;
   user: any;
   isLoading: boolean;
+  isAdmin: boolean;
+  isSponsor: boolean;
+  isMentor: boolean;
+  isParticipant: boolean;
+  canAccessSponsor: boolean;
+  canAccessMentor: boolean;
+  canAccessParticipant: boolean;
+  status: 'authenticated' | 'loading' | 'unauthenticated'
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -30,7 +39,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+  const isAdmin = useMemo(() => status === 'authenticated' && session?.roles?.includes('admin'), [session, status])
+  const isSponsor = useMemo(() => status === 'authenticated' && session?.roles?.includes('sponsor'), [session, status])
+  const isMentor = useMemo(() => status === 'authenticated' && session?.roles?.includes('mentor'), [session, status])
+  const isParticipant = useMemo(() => status === 'authenticated' && session?.roles?.includes('attendee'), [session, status])
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const canAccessSponsor = isAdmin || isSponsor;
+  const canAccessMentor = isAdmin || isMentor;
+  const canAccessParticipant = isAdmin || isParticipant;
 
   useEffect(() => {
     if (session?.access_token && isLoading) {
@@ -54,6 +70,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     pathname,
     user,
     isLoading,
+    isAdmin,
+    isSponsor,
+    isMentor,
+    isParticipant,
+    canAccessSponsor,
+    canAccessMentor,
+    canAccessParticipant,
+    status
   };
 
   return (
@@ -61,4 +85,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 };
 
-export const useAuthContext = () => useContext(AuthContext) as AuthContextType;
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
+};

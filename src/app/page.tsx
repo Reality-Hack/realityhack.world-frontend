@@ -3,7 +3,7 @@ import Dropzone from '@/components/Dropzone';
 import Loader from '@/components/Loader';
 import Modal from '@/components/Modal';
 import QRCodeGenerator from '@/components/dashboard/QRCodeGenerator';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { fileUpload } from './api/application';
@@ -23,7 +23,7 @@ export interface AttendeeData {
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   const localInitialSetup = localStorage.getItem('initial_setup');
   const [_isOverlayVisible, setOverlayVisible] = useState(false);
 

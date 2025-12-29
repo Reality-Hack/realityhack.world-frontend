@@ -1,12 +1,12 @@
 'use client';
 import { useState } from 'react';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from 'next-auth/react';
 import Loader from '@/components/Loader';
 import './profile.css';
 export default function RoundOne() {
   const { data: session, status } = useSession();
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   {/*Variable Initialization for Destiny Profile: Basic Info, About Me, Current Project, Social Links*/}
   const [basicInfo, setBasicInfo] = useState({
     name: 'Alex Johnson',
