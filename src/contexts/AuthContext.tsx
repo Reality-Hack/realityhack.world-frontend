@@ -22,6 +22,7 @@ interface AuthContextType {
   isSponsor: boolean;
   isMentor: boolean;
   isParticipant: boolean;
+  isJudge: boolean;
   canAccessSponsor: boolean;
   canAccessMentor: boolean;
   canAccessParticipant: boolean;
@@ -43,6 +44,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const isSponsor = useMemo(() => status === 'authenticated' && session?.roles?.includes('sponsor'), [session, status])
   const isMentor = useMemo(() => status === 'authenticated' && session?.roles?.includes('mentor'), [session, status])
   const isParticipant = useMemo(() => status === 'authenticated' && session?.roles?.includes('attendee'), [session, status])
+  const isJudge = useMemo(() => status === 'authenticated' && session?.roles?.includes('judge'), [session, status])
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const canAccessSponsor = isAdmin || isSponsor;
   const canAccessMentor = isAdmin || isMentor;
@@ -74,6 +76,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isSponsor,
     isMentor,
     isParticipant,
+    isJudge,
     canAccessSponsor,
     canAccessMentor,
     canAccessParticipant,

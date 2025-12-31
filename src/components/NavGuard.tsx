@@ -13,48 +13,47 @@ export const NavGuardProvider = ({ children }: NavGuardProviderProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const { availableRoutes } = useNavigationAccess();
-  const { session } = useAuth();
+  const { session, status } = useAuth();
 
-  const canAccessRoute = useCallback((pathname: string): boolean => {
-    const publicRoutes = ['/apply', '/signin', '/rsvp'];
+  const getRedirectPath = useCallback((path: string): string | null => {
+    if (status === 'loading') return null;
+
+    const publicRoutes = ['/apply', '/signin', '/rsvp', '/signout'];
     const isPublicRoute = publicRoutes.some(route => 
-      pathname === route || pathname.startsWith(`${route}/`)
+      path === route || path.startsWith(`${route}/`)
     );
 
     if (session && isPublicRoute) {
-      console.warn(`${pathname} isPublicRoute: ${isPublicRoute} ${session ? 'has session' : 'no session'}`);
-      router.replace('/');
-      return false;
+      console.warn(`${path} isPublicRoute: ${isPublicRoute} - redirecting to home because session exists`);
+      return '/';
     }
 
     if (!session && !isPublicRoute) {
-      console.warn(`${pathname} not public and no session, redirecting to signin`);
-      router.replace('/signin');
-      return false;
+      console.warn(`${path} not public and no session, redirecting to signin`);
+      return '/signin';
     }
 
     if (session && !isPublicRoute) {
       const hasAccess = availableRoutes.some(route => {
         if (route === '/') {
-          return pathname === '/';
+          return path === '/';
         }
-        return pathname.startsWith(route);
+        return path.startsWith(route);
       });
       if (!hasAccess) {
-        console.warn(`Route ${pathname} not accessible, redirecting to home`);
-        router.replace('/');
-        return false;
+        console.warn(`Route ${path} not accessible, redirecting to home`);
+        return '/';
       }
-      return true;
     }
-    return true;
-  }, [pathname, session]);
+    return null;
+  }, [session, status, availableRoutes]);
 
   useEffect(() => {
-    if (!canAccessRoute(pathname)) {
-      router.replace('/');
+    const redirectPath = getRedirectPath(pathname);
+    if (redirectPath && redirectPath !== pathname) {
+      router.replace(redirectPath);
     }
-  }, [pathname, canAccessRoute]);
+  }, [pathname, getRedirectPath, router]);
 
   return <>{children}</>;
 };

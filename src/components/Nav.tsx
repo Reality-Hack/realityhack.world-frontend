@@ -23,7 +23,7 @@ export default function Nav({
   const { session, status } = useAuth();
   const { navItems } = useNavigationAccess();
 
-  const { user } = useAuth();
+  const { user, isParticipant } = useAuth();
 
   useEffect(() => {
     if (
@@ -87,6 +87,17 @@ export default function Nav({
     );
   }
 
+  const renderTeamName = () => {
+    if (!isParticipant) {
+      return null;
+    }
+    if (user?.team) {
+      return <span className="text-xs">{user.team.name}</span>;
+    } else {
+      return <span className="text-xs">No team joined</span>;
+    }
+  }
+
   return (
     <>
       <div
@@ -115,11 +126,7 @@ export default function Nav({
                       <span className="text-white">
                         {user?.first_name} {user?.last_name}
                       </span>
-                      {!!user?.team ? (
-                        <span className="text-xs">{user.team.name}</span>
-                      ) : (
-                        <span className="text-xs">No team joined</span>
-                      )}
+                      {renderTeamName()}
                     </div>
                   </div>
                 </span>{' '}

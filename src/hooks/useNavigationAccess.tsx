@@ -82,7 +82,7 @@ export default function useNavigationAccess(): NavItems {
         icon: '/icons/dashboard/workshops.svg'
       })
     }
-    if (isHackersMetEnabled) {
+    if (isHackersMetEnabled && canAccessParticipant) {
       navItems.push({
         href: '/team-formation/hackers-met',
         title: 'Team Formation',
