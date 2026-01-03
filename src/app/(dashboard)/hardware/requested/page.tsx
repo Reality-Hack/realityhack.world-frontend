@@ -1,10 +1,10 @@
 'use client';
 import HardwareRequestTable from '@/components/HardwareRequestTable/HardwareRequestTable'; 
 import { LinearProgress } from '@mui/material';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function RequestedHardware() {
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   return !user ? (
     <LinearProgress />
   ) : (

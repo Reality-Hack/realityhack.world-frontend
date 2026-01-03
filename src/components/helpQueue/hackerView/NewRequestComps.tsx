@@ -1,5 +1,5 @@
 import SelectToolWithOther from '@/app/(dashboard)/mentors/SelectToolWithOther';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { MentorTopics } from '@/types/types';
 import { ThemeProvider, createTheme } from '@mui/material';
 import Image from 'next/image';
@@ -83,7 +83,7 @@ export function QuestionDialog({
   closeNewRequestDialog,
   onSubmit
 }: QuestionDialogProps) {
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   const formattedOptions = [];
   const [descriptionText, setDescriptionText] = useState<string>('');
   const [locations, setLocations] = useState<string>('');

@@ -2,14 +2,14 @@
 import { updateAttendee } from '@/app/api/attendee';
 import { useSpecialTracks, Track } from '@/hooks/useSpecialTracks';
 import CustomSelectMultipleTyping from '@/components/CustomSelectMultipleTyping';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { SpecialTrackSelect } from '@/components/SpecialTrackSelect';
 
 export default function Interests() {
   const { data: session } = useSession();
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   const [warning, setWarning] = useState<string>();
   const { tracks, isLoading, error } = useSpecialTracks();

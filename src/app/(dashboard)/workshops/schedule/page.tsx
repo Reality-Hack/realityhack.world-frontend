@@ -5,7 +5,7 @@ import {
   removeInterestInWorkshop,
   showInterestInWorkshop
 } from '@/app/api/workshops';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useSession } from 'next-auth/react';
 import React, { MouseEvent, useEffect, useState } from 'react';
@@ -68,7 +68,7 @@ function Workshop({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   useEffect(() => {
     const enrollmentStatus = myWorkshops?.some(
@@ -301,7 +301,7 @@ const Page: React.FC<PageProps> = () => {
 
   const { data: session } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   const parseWorkshopName = (name: string) => {
     const [firstPart, ...titleParts] = name.split(' - ');

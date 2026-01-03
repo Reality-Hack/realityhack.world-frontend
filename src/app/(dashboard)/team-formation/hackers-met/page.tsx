@@ -8,7 +8,7 @@ import {
 } from '@/app/api/preferences';
 import CustomSelectTyping from '@/components/CustomSelectTyping';
 import { useSession } from 'next-auth/react';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import CustomDialog from './Dialogue';
 import QRCodeReader from '@/components/admin/QRCodeReader';
@@ -44,7 +44,7 @@ interface PreferenceInput {
 
 export default function HackersMet({}) {
   const { data: session } = useSession();
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   const connections: Connection[] = [
     {
@@ -585,7 +585,7 @@ function PreferenceRowForm({
   addToPreferences,
   enabled
 }: PreferenceFormRow) {
-  // const { user } = useAuthContext();
+  // const { user } = useAuth();
   const [fellowAttendee, setFellowAttendee] = useState('');
 
   function handleAttendeeSelection(value: string) {

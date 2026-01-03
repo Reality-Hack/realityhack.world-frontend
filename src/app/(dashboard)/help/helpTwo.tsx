@@ -12,7 +12,7 @@ import {
 } from '@/app/api/helpqueue';
 import { QuestionDialog } from '@/components/helpQueue/hackerView/NewRequestComps';
 import { Posting } from '@/components/helpQueue/hackerView/PostingComps';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -28,7 +28,7 @@ type LighthouseInfo = {
 
 export default function Help2() {
   const { data: session } = useSession();
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   const [myTable, setMyTable] = useState<Table>();
   const [allHelpRequests, setHelpRequests] = useState<HelpRequest[]>([]);

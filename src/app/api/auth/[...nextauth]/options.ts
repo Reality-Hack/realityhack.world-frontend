@@ -162,8 +162,8 @@ export const authOptions: NextAuthOptions = {
       } else {
         try {
           const refreshedToken = await refreshAccessTokenWithRetry(token);
-
-          if (!hasClientRoles(refreshedToken.decoded)) {
+          const roles = getClientRolesFromToken(refreshedToken.decoded);
+          if (!hasClientRoles(roles)) {
             return { ...refreshedToken, error: AUTH_ERROR_TYPES.NO_CLIENT_ROLES };
           }
 

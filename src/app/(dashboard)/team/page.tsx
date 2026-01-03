@@ -1,12 +1,12 @@
 'use client';
-import { useAuthContext } from '@/hooks/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { TeamForm } from '@/components/TeamForm/TeamForm';
 import { 
   useTeamsRetrieve
 } from '@/types/endpoints';
 
 export default function Team() {
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   
   // SWR hook for data fetching
   const { 

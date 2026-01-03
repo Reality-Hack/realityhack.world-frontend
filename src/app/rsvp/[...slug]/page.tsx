@@ -983,7 +983,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                               parent/guardian has not already done so, please
                               have your parent/guardian{' '}
                               <a
-                                href="https://na1.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhAz2suqqAFHVZiVssZmxX7YHDeK5Rmx4pMwpwUmeIcfbBxSlX4AUW4mYltO_sKhC7s*"
+                                href="https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=64125d74-ae74-46bf-bbab-f7fb119856c2&env=na4&acct=83645d39-e03b-40e3-b225-a975e8c6f8cc&v=2"
                                 target="_blank"
                                 className="underline cursor-pointer text-themePrimary"
                               >
@@ -994,7 +994,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                                 <CheckboxInput
                                   value="true"
                                   name="parential_consent_form_signed"
-                                  label="Check this box when you have received an email confirmation from Adobe that the form was successfully signed."
+                                  label="Check this box when you have received an email confirmation from Docusign that the form was successfully signed."
                                   onChange={handleChange}
                                   onBlur={handleBlur}
                                   checked={
@@ -1050,7 +1050,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                   <CheckboxInput
                     value="accept"
                     name="agree_to_rules_code_of_conduct"
-                    label={`By checking this box, I, certify I have read and agree with the above Rules and Code of Conduct.`}
+                    label={`By checking this box, I certify that I have read and agree with the above Rules and Code of Conduct.`}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     checked={formData.agree_to_rules_code_of_conduct === true}
@@ -1578,7 +1578,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
                   <CheckboxInput
                     name="agree_to_media_release"
                     value="true"
-                    label="By checking this box, I confirm that I have read, understood, and voluntarily agree to the terms of this Consent and Release for the 2024-25 MIT Reality Hack."
+                    label="By checking this box, I confirm that I have read, understood, and voluntarily agree to the terms of this Consent and Release for the 2025-26 Reality Hack at MIT."
                     checked={formData.agree_to_media_release === true}
                     onChange={handleChange}
                     onBlur={handleBlur}
