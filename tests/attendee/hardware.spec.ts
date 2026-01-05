@@ -53,11 +53,11 @@ async function getPageHardwareRequests({page, knownElements}: {page: Page, known
     }))
 }
 
-async function deleteHardwareRequest(page: Page, id: number) {
-    // await page.getByRole('button', { name: 'Delete' }).nth(id).click();
-    // await page.getByRole('button', { name: 'Delete' }).click();
+// async function deleteHardwareRequest(page: Page, id: number) {
+//     // await page.getByRole('button', { name: 'Delete' }).nth(id).click();
+//     // await page.getByRole('button', { name: 'Delete' }).click();
     
-}
+// }
 
 test.describe(() => {
   test.use({ storageState: 'playwright/.auth/attendee.json' });
@@ -74,7 +74,7 @@ test.describe(() => {
   test('can delete hardware requests', async ({ page }) => {
     await goToHardware(page);
     const request = await requestHardware(page, { reason: "Hardware request deletion test" });
-    const deleteRequest = await deleteHardwareRequest(page, request.id);
+    // const deleteRequest = await deleteHardwareRequest(page, request.id);
     await openOwnHardware(page);
     const hardwareRequestsTable = await getPageHardwareRequests({page, knownElements: 1});
     // TODO: go to requested hardware tab, delete hardware request

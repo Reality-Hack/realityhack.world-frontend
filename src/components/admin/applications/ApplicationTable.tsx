@@ -9,7 +9,7 @@ import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 import CustomSelect from '@/components/CustomSelect';
 import Table from '@/components/Table';
 import { status } from '@/types/types';
-import { Application, ApplicationsListParticipationClass } from '@/types/models';
+import { Application, ApplicationDetail, ApplicationsListParticipationClass } from '@/types/models';
 import Box from '@mui/material/Box';
 import { ColumnDef, Row, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
@@ -98,7 +98,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
     }
   }, [applications, options]);
 
-  function transformApplications(apps: Application[], options: any): Application[] {
+  function transformApplications(apps: ApplicationDetail[], options: any): Application[] {
     setDataTransformFinished(false);
 
     function extractThematicResponseValue(response: any): string {
@@ -179,7 +179,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
       if (status.length === 0) {
         status = null;
       }
-      let appId = applications.findIndex((a: Application) => a.id === app.id);
+      let appId = applications.findIndex((a: ApplicationDetail) => a.id === app.id);
 
       if (appId >= 0 && session?.access_token && isAdmin) {
         setDataTransformFinished(false);

@@ -415,7 +415,7 @@ export const useApplicationquestionsDestroy = <TError = ErrorType<unknown>>(
 export const applicationsList = (
     params?: ApplicationsListParams,
  options?: SecondParameter<typeof customAxios>) => {
-    return customAxios<Application[]>(
+    return customAxios<ApplicationDetail[]>(
     {url: `/applications/`, method: 'GET',
         params
     },
