@@ -7,6 +7,7 @@ import { patchMe } from '../../api/attendee';
 import { fileUpload } from '../../api/application';
 // this lazy but let's use the same type
 import { AttendeeData } from '../../page';
+import { toast } from 'sonner';
 
 export default function Settings() {
   const { data: session, status } = useSession();
@@ -31,12 +32,18 @@ export default function Settings() {
 
     setIsUploading(true);
     let profileImageUpload;
+    const userId = user?.id;
 
-    if (session) {
+    if (!userId) {
+      toast.error('User ID not found. Please try again.');
+      return;
+    } 
+
+    if (session && userId) {
       let data: AttendeeData = {
-        id: user.id,
-        first_name: firstName,
-        last_name: lastName,
+        id: userId,
+        first_name: firstName ?? '',
+        last_name: lastName ?? '',
         initial_setup: false
       };
 

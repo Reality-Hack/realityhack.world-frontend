@@ -6,7 +6,17 @@
 
 /**
  * * `META` - Meta Quest 3
+* `RB_META_AI` - Ray-Ban Meta AI lasses
+* `ARDUINO_UNO` - Arduino Uno Kits
+* `SAMSUNG_GALAXY_XR` - Samsung Galaxy XR
+* `RAYNEO` - RayNeo
+* `RAVEN_AR` - Raven AR
 * `SNAP` - Snap Spectacles
+* `APPLE_VISION_PRO` - Apple Vision Pro
+* `BLACKMAGIC` - Blackmagic URSA Cine Immersive Camera
+* `XREAL` - XREAL
+* `PICO` - Pico
+* `OPENBCI` - OpenBCI Sensors
 * `BYOD` - I am bringing my own XR device to work with.
 * `HWHACK` - I've chosen the Hardware Hack, so I will probably not need a headset.
 * `TBD` - I'm not sure yet
@@ -17,7 +27,17 @@ export type LoanerHeadsetPreferenceEnum = typeof LoanerHeadsetPreferenceEnum[key
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LoanerHeadsetPreferenceEnum = {
   META: 'META',
+  RB_META_AI: 'RB_META_AI',
+  ARDUINO_UNO: 'ARDUINO_UNO',
+  SAMSUNG_GALAXY_XR: 'SAMSUNG_GALAXY_XR',
+  RAYNEO: 'RAYNEO',
+  RAVEN_AR: 'RAVEN_AR',
   SNAP: 'SNAP',
+  APPLE_VISION_PRO: 'APPLE_VISION_PRO',
+  BLACKMAGIC: 'BLACKMAGIC',
+  XREAL: 'XREAL',
+  PICO: 'PICO',
+  OPENBCI: 'OPENBCI',
   BYOD: 'BYOD',
   HWHACK: 'HWHACK',
   TBD: 'TBD',

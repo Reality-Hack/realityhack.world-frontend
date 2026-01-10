@@ -1,6 +1,7 @@
 'use client';
 import { useAuth } from '@/contexts/AuthContext';
 import { TeamForm } from '@/components/TeamForm/TeamForm';
+import { toast } from 'sonner';
 import { 
   useTeamsRetrieve
 } from '@/types/endpoints';
@@ -27,6 +28,7 @@ export default function Team() {
   // Handle team data revalidation after successful updates
   const handleUpdateSuccess = async (): Promise<void> => {
     await mutateTeam();
+    toast.success('Team updated successfully!');
   };
 
   // Handle loading state
@@ -42,7 +44,8 @@ export default function Team() {
     );
   }
 
-  // Handle error state
+  const teamId = user?.team?.id;
+  
   if (teamError) {
     return (
       <div className="h-screen p-6 flex flex-col items-start">
@@ -64,10 +67,10 @@ export default function Team() {
         <hr className="w-full mt-2 border-t-2 border-gray-300 mt-4" />
       </div>
       
-      {user?.team && teamData ? (
+      {teamId && teamData ? (
         <TeamForm 
           teamData={teamData}
-          teamId={user.team.id}
+          teamId={teamId}
           onUpdateSuccess={handleUpdateSuccess}
         />
       ) : (

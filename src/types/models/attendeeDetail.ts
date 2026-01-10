@@ -6,6 +6,7 @@
 import type { SkillProficiencyAttendee } from './skillProficiencyAttendee';
 import type { FileUpload } from './fileUpload';
 import type { Team } from './team';
+import type { EventRsvpSummary } from './eventRsvpSummary';
 import type { HardwareDeviceDetail } from './hardwareDeviceDetail';
 import type { WorkshopAttendeeWorkshopDetail } from './workshopAttendeeWorkshopDetail';
 import type { ParticipationClassEnum } from './participationClassEnum';
@@ -25,6 +26,7 @@ export interface AttendeeDetail {
   /** @nullable */
   checked_in_at?: string | null;
   team: Team;
+  event_rsvp: EventRsvpSummary;
   hardware_devices: HardwareDeviceDetail[];
   /**
    * I.e., a Discord username

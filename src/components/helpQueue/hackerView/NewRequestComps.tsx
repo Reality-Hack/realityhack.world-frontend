@@ -113,6 +113,13 @@ export function QuestionDialog({
   const [selectedItems, setSelectedItems] = useState<string[]>([]); // New state variable
 
   const handleOnSubmit = async () => {
+    const userId = user?.id;
+    const teamId = user?.team?.id;
+
+    if (!userId || !teamId) {
+      toast.error('Session or User information missing. Please try again.');
+      return;
+    }
     if (!user || !user.team) {
       toast.error('User or team is null');
       return;
@@ -126,7 +133,7 @@ export function QuestionDialog({
         // Assuming onSubmit is a Promise. If not, adjust accordingly.
         await onSubmit(
           selectedItems,
-          user?.team?.id,
+          teamId,
           descriptionText,
           locations
         ); // Pass locations

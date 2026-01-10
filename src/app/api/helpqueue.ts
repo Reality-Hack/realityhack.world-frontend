@@ -30,7 +30,7 @@ export type HelpRequest = {
   created_at: string;
   description: string;
   id: string;
-  mentor: string;
+  mentor: string | null;
   reporter: HelpRequestReporter;
   status: string;
   team: HelpRequestTeam;
@@ -44,7 +44,7 @@ export type CreateHelpRequest = {
   team: string;
   topic: string[];
   description?: string;
-  mentor?: string;
+  mentor?: string | null;
   reporter?: string; //an attendee
   title?: string;
   reporter_location?: string;
@@ -56,7 +56,7 @@ export type EditHelpRequest = {
   team: string;
   topics: string[];
   description?: string;
-  mentor?: string;
+  mentor?: string | null;
   reporter: string; //an attendee
   status?: string;
   title?: string;

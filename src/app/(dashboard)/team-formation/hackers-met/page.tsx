@@ -15,6 +15,7 @@ import QRCodeReader from '@/components/admin/QRCodeReader';
 import { getAvailableTracks } from '@/app/api/teamformation';
 import { LinearProgress } from '@mui/material';
 import { FaStar, FaShieldAlt, FaRocket } from 'react-icons/fa';
+import { toast } from 'sonner';
 import './Styles.css';
 
 interface Connection {
@@ -256,70 +257,88 @@ export default function HackersMet({}) {
   >(undefined);
 
   useEffect(() => {
-    if (session?.access_token) {
-      setAttendeesLoading(true);
-      getAllAttendees(session.access_token)
-        .then(apps => {
-          // Filter attendees with participation class "P"
-          const filteredAttendees = apps.filter(
-            (attendees: any) =>
-              (attendees.participation_class === 'P' ||
-                typeof attendees.participation_class === 'undefined') &&
-              attendees.id != user?.id
-          );
-          setAttendeeInfo(filteredAttendees);
-        })
-        .catch(error => {
-          // Handle error if necessary
-          console.error('Error fetching attendees:', error);
-        })
-        .finally(() => setAttendeesLoading(false));
-    }
-  }, [session]);
+    const token = session?.access_token;
+    const userId = user?.id;
+
+    if (!token) return;
+
+    setAttendeesLoading(true);
+    getAllAttendees(token)
+      .then(apps => {
+        // Filter attendees with participation class "P"
+        const filteredAttendees = apps.filter(
+          (attendee: any) =>
+            (attendee.participation_class === 'P' ||
+              typeof attendee.participation_class === 'undefined') &&
+            attendee.id !== userId
+        );
+        setAttendeeInfo(filteredAttendees);
+      })
+      .catch(error => {
+        console.error('Error fetching attendees:', error);
+        toast.error('Failed to load attendees.');
+      })
+      .finally(() => setAttendeesLoading(false));
+  }, [session, user?.id]);
 
   useEffect(() => {
-    if (session && user) {
-      setPreferencesLoading(true);
-      getPreferencesByAttendeeId(session.access_token, user.id)
-        .then(prefs => {
-          setPersonalPreferences(prefs);
-          console.log(prefs, 'prefs');
-        })
-        .catch(error => {
-          // Handle error if necessary
-          console.error('Error fetching attendees:', error);
-        })
-        .finally(() => setPreferencesLoading(false));
-    }
-  }, [session, user]);
+    const token = session?.access_token;
+    const userId = user?.id;
+
+    if (!token || !userId) return;
+
+    setPreferencesLoading(true);
+    getPreferencesByAttendeeId(token, userId)
+      .then(prefs => {
+        setPersonalPreferences(prefs);
+      })
+      .catch(error => {
+        console.error('Error fetching preferences:', error);
+        toast.error('Failed to load your connections.');
+      })
+      .finally(() => setPreferencesLoading(false));
+  }, [session, user?.id]);
 
   async function addPreferences(
     preferee: string,
     preferenceStatus: 'Y' | 'N' | 'T'
   ) {
-    //HOW DO I GET THE ATTENDEE ID
-    if (session) {
+    const token = session?.access_token;
+    const userId = user?.id;
+
+    if (!token || !userId) {
+      toast.error('Session or User information missing.');
+      return;
+    }
+
+    try {
       const pref: PreferenceInput = {
         preference: preferenceStatus,
-        preferer: user?.id,
+        preferer: userId,
         preferee: preferee
       };
-      const retrievedPref = await addPreference(session?.access_token, pref);
-      console.log(retrievedPref);
-      setPersonalPreferences(prev => [...prev, retrievedPref]); // Remove the trailing comma here
+      const retrievedPref = await addPreference(token, pref);
+      setPersonalPreferences(prev => [...prev, retrievedPref]);
+      toast.success('Connection added!');
+    } catch (error: any) {
+      console.error('Error adding preference:', error);
+      toast.error('Failed to add connection: ' + error.message);
     }
   }
 
   async function deletePreferences(preferenceId: string) {
-    if (session) {
+    const token = session?.access_token;
+    if (!token) return;
+
+    try {
       setPreferencesLoading(true);
-      await deletePreference(session?.access_token, preferenceId);
-      let oldPrefIdx = personalPreferences.findIndex(
-        el => el.id === preferenceId
-      );
-      let newPrefList = personalPreferences.slice();
-      newPrefList.splice(oldPrefIdx, 1);
-      setPersonalPreferences(newPrefList);
+      await deletePreference(token, preferenceId);
+      setPersonalPreferences(prev => prev.filter(p => p.id !== preferenceId));
+      toast.success('Connection removed.');
+    } catch (error: any) {
+      console.error('Error deleting preference:', error);
+      toast.error('Failed to remove connection: ' + error.message);
+    } finally {
       setPreferencesLoading(false);
     }
   }
@@ -328,17 +347,20 @@ export default function HackersMet({}) {
     preference: 'Y' | 'N',
     preferenceId: string
   ) {
-    if (session) {
+    const token = session?.access_token;
+    if (!token) return;
+
+    try {
       setPreferencesLoading(true);
-      await updatePreference(session?.access_token, preferenceId, preference);
-      let oldPrefIdx = personalPreferences.findIndex(
-        el => el.id === preferenceId
+      await updatePreference(token, preferenceId, preference);
+      setPersonalPreferences(prev => 
+        prev.map(p => p.id === preferenceId ? { ...p, preference } : p)
       );
-      let newPrefList = personalPreferences.slice();
-      if (oldPrefIdx != -1) {
-        newPrefList[oldPrefIdx].preference = preference;
-      }
-      setPersonalPreferences(newPrefList);
+      toast.success('Connection updated!');
+    } catch (error: any) {
+      console.error('Error updating preference:', error);
+      toast.error('Failed to update connection: ' + error.message);
+    } finally {
       setPreferencesLoading(false);
     }
   }

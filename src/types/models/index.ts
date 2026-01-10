@@ -154,6 +154,8 @@ export * from './eventRsvpRequestUsVisaSupportNationalIdentificationDocumentType
 export * from './eventRsvpShirtSize';
 export * from './eventRsvpSpecialInterestTrackOne';
 export * from './eventRsvpSpecialInterestTrackTwo';
+export * from './eventRsvpSummary';
+export * from './eventRsvpSummaryShirtSize';
 export * from './eventRsvpUsVisaSupportCitizenship';
 export * from './eventRsvpUsVisaSupportNationalIdentificationDocumentType';
 export * from './eventRsvpsListParams';

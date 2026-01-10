@@ -11,6 +11,8 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { Radio, RadioChangeEvent } from 'antd';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import Loader from '@/components/Loader';
+import { toast } from 'sonner';
 
 interface RoundProps {
   round: number;
@@ -65,80 +67,96 @@ export default function Round({ round }: RoundProps) {
   const [attendeeVibeForTeamID, setAttendeeVibeForTeamID] = useState<
     string | void
   >();
-
+  if (!user) {
+    return <Loader />;
+  }
   const onChange = (e: RadioChangeEvent) => {
     const newVibe = e.target.value;
+    const userId = user?.id;
+    const token = session?.access_token;
+    const teamId = destinyTeam?.id;
+
+    if (!token || !userId || !teamId) {
+      toast.error('Session or User information missing. Please try again.');
+      return;
+    }
+
     setVibe(newVibe);
-    if (!!attendeeVibeForTeamID && newVibe) {
+
+    if (attendeeVibeForTeamID) {
       // vibe object already exists, patch it
-      updateAttendeeVibeForTeam(
-        session!.access_token,
-        attendeeVibeForTeamID,
-        newVibe
+      updateAttendeeVibeForTeam(token, attendeeVibeForTeamID, newVibe).catch(
+        error => toast.error('Failed to update vibe: ' + error.message)
       );
     } else if (newVibe) {
       // create new vibe object
-      createAttendeeVibeForTeam(
-        session!.access_token,
-        destinyTeam!.id,
-        user!.id,
-        newVibe
-      ).then(result => {
-        console.log(result);
-        setAttendeeVibeForTeamID(result.id);
-      });
+      createAttendeeVibeForTeam(token, teamId, userId, newVibe)
+        .then(result => {
+          setAttendeeVibeForTeamID(result.id);
+          toast.success('Vibe recorded!');
+        })
+        .catch(error => toast.error('Failed to create vibe: ' + error.message));
     }
   };
 
   useEffect(() => {
-    if (session && user) {
-      setLoading(true);
-      getDestinyTeamsByAttendee(session?.access_token, user.id, round)
-        .then(destinyTeams => {
-          setDestinyTeam(destinyTeams[0]);
-          if (destinyTeams.length === 1) {
-            setDestinyTeam(destinyTeams[0]);
-            setError(undefined);
-            getAttendeeVibeForTeam(
-              session?.access_token,
-              destinyTeams[0].id,
-              user.id
-            ).then(attendeesVibeForTeam => {
+    const userId = user?.id;
+    const token = session?.access_token;
+
+    if (!token || !userId) {
+      toast.error('You must be logged in to view team rounds!');
+      return;
+    }
+
+    setLoading(true);
+    getDestinyTeamsByAttendee(token, userId, round)
+      .then(destinyTeams => {
+        const team = destinyTeams[0];
+        if (!team) {
+          setError(
+            'You are not in a team for this round. Please reach out to an organizer about this problem.'
+          );
+          return;
+        }
+        setDestinyTeam(team);
+        if (destinyTeams.length === 1) {
+          setError(undefined);
+          getAttendeeVibeForTeam(token, team.id, userId)
+            .then(attendeesVibeForTeam => {
               if (attendeesVibeForTeam.length > 1) {
                 setError('You have multiple vibes for the same team. Uh oh!');
               } else if (attendeesVibeForTeam.length === 1) {
                 setVibe(attendeesVibeForTeam[0].vibe);
                 setAttendeeVibeForTeamID(attendeesVibeForTeam[0].id);
               }
-            });
-          } else if (destinyTeams.length > 1) {
-            setError(
-              'You are assigned to multiple teams this round. Please reach out to an organizer about this problem.'
-            );
-          } else {
-            setError(
-              'You are not in a team for this round. Please reach out to an organizer about this problem.'
-            );
-          }
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-      getAvailableTracks(session?.access_token)
-        .then(result => {
-          if (result) {
-            const formattedTracks = result.track.choices.map(track => {
-              return {
-                label: track.display_name,
-                value: track.value
-              };
-            });
-            setTracks(formattedTracks);
-          }
-        })
-        .catch(error => console.error(error.message));
-    }
-  }, [session]);
+            })
+            .catch(err => console.error('Error fetching vibes:', err));
+        } else if (destinyTeams.length > 1) {
+          setError(
+            'You are assigned to multiple teams this round. Please reach out to an organizer about this problem.'
+          );
+        }
+      })
+      .catch(err => {
+        toast.error('Failed to fetch team data: ' + err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+    getAvailableTracks(token)
+      .then(result => {
+        if (result) {
+          const formattedTracks = result.track.choices.map(track => {
+            return {
+              label: track.display_name,
+              value: track.value
+            };
+          });
+          setTracks(formattedTracks);
+        }
+      })
+      .catch(error => console.error('Error fetching tracks:', error));
+  }, [session, user, round, status]);
 
   const track = tracks?.find(t => t.value === destinyTeam?.track);
 

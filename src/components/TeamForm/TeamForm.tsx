@@ -113,14 +113,12 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
     if (teamData && !isTracksLoading && !isTablesLoading && tableOptions !== null) {
       if (tracks.length < 1) {
         toast.error('No tracks available');
-        return;
       }
       if (hardwareTracks.length < 1) {
         toast.error('No hardware tracks available');
       }
       if (tableOptions && tableOptions.length < 1) {
         toast.error('No tables available');
-        return;
       }
 
       const members: TeamMember[] = teamData.attendees.map((attendee: AttendeeName) => {

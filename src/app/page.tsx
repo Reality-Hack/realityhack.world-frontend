@@ -6,6 +6,7 @@ import QRCodeGenerator from '@/components/dashboard/QRCodeGenerator';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
 import { fileUpload } from './api/application';
 import { patchMe } from './api/attendee';
 
@@ -166,39 +167,52 @@ export default function Dashboard() {
     };
 
     const handleSubmit = async () => {
+      const token = session?.access_token;
+      const userId = user?.id;
+
+      if (!token || !userId) {
+        toast.error('Session or User information missing. Please try again.');
+        return;
+      }
+
       if (isUploading) return;
 
       setIsUploading(true);
       let profileImageUpload;
 
-      if (session) {
-        let data: AttendeeData = {
-          id: user.id,
-          first_name: firstName,
-          last_name: lastName,
-          initial_setup: true
-        };
-        if (acceptedFiles && acceptedFiles.length > 0) {
-          try {
-            profileImageUpload = await fileUpload(
-              session.access_token,
-              acceptedFiles[0]
-            );
-            data = { ...data, profile_image: profileImageUpload.id };
-          } catch (error) {
-            console.error('Error in file upload:', error);
-            setIsUploading(false);
-            return;
-          }
-        }
+      let data: AttendeeData = {
+        id: userId,
+        first_name: firstName ?? '',
+        last_name: lastName ?? '',
+        initial_setup: true
+      };
 
+      if (acceptedFiles && acceptedFiles.length > 0) {
         try {
-          await patchMe(session.access_token, data);
-          localStorage.setItem('initial_setup', 'true');
-          window.location.reload();
+          profileImageUpload = await fileUpload(
+            token,
+            acceptedFiles[0]
+          );
+          data = { ...data, profile_image: profileImageUpload.id };
         } catch (error) {
-          console.error('Error updating attendee:', error);
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          console.error('Error in file upload:', error);
+          toast.error('Failed to upload profile image: ' + errorMessage);
+          setIsUploading(false);
+          return;
         }
+      }
+
+      try {
+        await patchMe(token, data);
+        localStorage.setItem('initial_setup', 'true');
+        toast.success('Account set up successfully!');
+        window.location.reload();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Error updating attendee:', error);
+        toast.error('Failed to update profile: ' + errorMessage);
+        setIsUploading(false);
       }
     };
 
@@ -269,7 +283,7 @@ export default function Dashboard() {
       {status === 'authenticated' ? (
         <>
           {!user?.initial_setup && <SetupModal toggleOverlay={toggleOverlay} />}
-          <h1 className="text-2xl">Welcome, {user?.first_name}!</h1>
+          <h1 className="text-2xl">Welcome{user?.first_name ? `, ${user.first_name}` : ''}!</h1>
           <hr className="my-4" />
           <div className="w-full pb-6 mb-6 rounded-lg shadow-md">
             <div className="h-2 w-full bg-[#4D97E8] rounded-t-lg" />
@@ -281,16 +295,18 @@ export default function Dashboard() {
           </div>
 
           <div className="p-4 w-full bg-gradient-to-br from-[#59BFDC] to-[#3C60F9] rounded-[10px] shadow mb-6">
-            {user && (
+            {user?.id && (
               <div className="grid px-8 py-4 md:grid-cols-2 gap-x-2">
                 <div className="flex flex-col items-center justify-center">
-                  <QRCodeGenerator value={user?.id} />
+                  {user.event_rsvp.id && (
+                    <QRCodeGenerator value={user.event_rsvp.id} />
+                  )}
                   <div className="pt-2 pb-4 text-white">
-                    <span>{user?.first_name}</span>{' '}
-                    <span>{user?.last_name}</span>
+                    <span>{user.first_name}</span>{' '}
+                    <span>{user.last_name}</span>
                   </div>
                   <div className="w-32 h-9 bg-neutral-800 rounded-[5px] flex justify-center items-center text-white">
-                    {getParticipationClassName(user?.participation_class)}
+                    {getParticipationClassName(user.event_rsvp.participation_class ?? '')}
                   </div>
                   <div className="pt-6 pb-4 text-white">
                     Show QR code to check in

@@ -10,6 +10,7 @@ import TimeComponent from '@/components/dashboard/schedule/TimeComponent';
 import { useSession } from 'next-auth/react';
 import { getAllWorkshops, getMyWorkshops } from '@/app/api/workshops';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 const LegendRoom: React.FC<LegendRoomProps> = ({ color, name }) => {
   const roomNames: { [key: string]: string } = {
@@ -65,29 +66,40 @@ const Page: React.FC = () => {
   }
 
   useEffect(() => {
-    if (session?.access_token && user) {
-      setLoading(true);
-      getMyWorkshops(session.access_token, user.id)
-        .then(data => {
-          setUserEvents(data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [session, allEvents]);
+    const token = session?.access_token;
+    const userId = user?.id;
+
+    if (!token || !userId) return;
+
+    setLoading(true);
+    getMyWorkshops(token, userId)
+      .then(data => {
+        setUserEvents(data);
+      })
+      .catch(err => {
+        console.error('Error fetching my workshops:', err);
+        toast.error('Failed to load your schedule: ' + err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [session, user, allEvents]);
 
   useEffect(() => {
-    if (session?.access_token) {
-      setLoading(true);
-      getAllWorkshops(session.access_token)
-        .then(data => {
-          setAllEvents(data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
+    const token = session?.access_token;
+    if (!token) return;
+
+    setLoading(true);
+    getAllWorkshops(token)
+      .then(data => {
+        setAllEvents(data);
+      })
+      .catch(err => {
+        console.error('Error fetching all workshops:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [session]);
 
   return (

@@ -170,5 +170,13 @@ export interface EventRsvpRequest {
    */
   breakthrough_hacks_interest?: string | null;
   /** @nullable */
+  checked_in_at?: string | null;
+  /** @nullable */
   loaner_headset_preference?: EventRsvpRequestLoanerHeadsetPreference;
+  /**
+   * List other devices you are interested in ranked by preference.
+   * @maxLength 1000
+   * @nullable
+   */
+  device_preference_ranked?: string | null;
 }

@@ -13,6 +13,8 @@ import Tabs from '@mui/material/Tabs';
 import { useSession } from 'next-auth/react';
 import { useEffect, useMemo, useState } from 'react';
 import SelectToolWithOther from './SelectToolWithOther';
+import { toast } from 'sonner';
+
 const tabNames = [
   'Open Requests',
   'My Queue',
@@ -47,9 +49,16 @@ export default function Page() {
 
   // Function to fetch help requests
   const fetchHelpRequests = async () => {
-    if (session?.access_token && isMentorOrAdmin) {
-      const helpReqs = await getAllHelpRequests(session.access_token);
-      setAllHelpRequests(helpReqs);
+    const token = session?.access_token;
+    if (token && isMentorOrAdmin) {
+      try {
+        const helpReqs = await getAllHelpRequests(token);
+        setAllHelpRequests(helpReqs);
+      } catch (error ) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Error fetching help requests:', errorMessage);
+        toast.error('Failed to load help queue: ' + errorMessage);
+      }
     }
   };
 
@@ -90,20 +99,32 @@ export default function Page() {
   }, [session?.access_token, isMentorOrAdmin]);
 
   const handleUpdateStatus = (requestId: string) => async (status: string) => {
-    if (!session || !isMentorOrAdmin) {
+    const token = session?.access_token;
+    const userId = user?.id;
+
+    if (!token || !userId || !isMentorOrAdmin) {
+      toast.error('You do not have permission to update requests.');
       return;
     }
-    const updateData = {
-      status: status,
-      mentor: status === 'A' || status === 'E' ? user!.id : null
-    };
-    await editMentorHelpRequest(
-      session!.access_token,
-      requestId,
-      updateData
-    );
-    // Fetch fresh data to ensure we have complete information
-    await fetchHelpRequests();
+
+    try {
+      const updateData = {
+        status: status,
+        mentor: status === 'A' || status === 'E' ? userId : null
+      };
+      await editMentorHelpRequest(
+        token,
+        requestId,
+        updateData
+      );
+      toast.success('Status updated!');
+      // Fetch fresh data to ensure we have complete information
+      await fetchHelpRequests();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Error updating status:', errorMessage);
+      toast.error('Failed to update status: ' + errorMessage);
+    }
   };
 
   const filteredHelpRequests = useMemo<HelpRequest[]>(() => {

@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { SpecialTrackSelect } from '@/components/SpecialTrackSelect';
+import { toast } from 'sonner';
 
 export default function Interests() {
   const { data: session } = useSession();
@@ -20,18 +21,29 @@ export default function Interests() {
   useEffect(() => {
     if (user) {
       setSelectedTracks(user.intended_tracks);
-      setIsInterested(user.intended_hardware_hack);
+      setIsInterested(user.intended_hardware_hack ?? false);
     }
   }, [user]);
 
+  const handleSubmit = async () => {
+    const token = session?.access_token;
+    const userId = user?.id;
 
-  const handleSubmit = () => {
-    if (session) {
-      updateAttendee(session?.access_token, {
-        id: user?.id,
+    if (!token || !userId) {
+      toast.error('Session or User information missing. Please try again.');
+      return;
+    }
+
+    try {
+      await updateAttendee(token, {
+        id: userId,
         intended_tracks: selectedTracks,
         intended_hardware_hack: isInterested
       });
+      toast.success('Interests saved successfully!');
+    } catch (error: any) {
+      console.error('Error updating interests:', error);
+      toast.error('Failed to save interests: ' + error.message);
     }
   };
 

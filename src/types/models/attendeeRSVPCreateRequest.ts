@@ -189,6 +189,12 @@ export interface AttendeeRSVPCreateRequest {
    * @nullable
    */
   breakthrough_hacks_interest?: string | null;
+  /**
+   * List other devices you are interested in ranked by preference.
+   * @maxLength 1000
+   * @nullable
+   */
+  device_preference_ranked?: string | null;
   /** @nullable */
   loaner_headset_preference?: AttendeeRSVPCreateRequestLoanerHeadsetPreference;
 }
