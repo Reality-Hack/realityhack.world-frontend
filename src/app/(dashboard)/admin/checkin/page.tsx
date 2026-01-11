@@ -1,167 +1,134 @@
 'use client';
 import { useSession } from 'next-auth/react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import QRCodeReader from '@/components/admin/QRCodeReader';
 import CustomSelect from '@/components/CustomSelect';
-import { updateAttendee } from '@/app/api/attendee';
 import { Modal, Box, Alert } from '@mui/material';
-import { useAttendees, useAttendee } from '@/hooks/useAttendees';
-import { AttendeeList } from '@/types/models';
-import { attendeesPartialUpdate } from '@/types/endpoints';
+import { eventrsvpsPartialUpdate } from '@/types/endpoints';
+import { EventRsvp } from '@/types/models';
+import { useEventRsvps } from '@/hooks/useEventRsvps';
+
+const modalStyle = {
+  position: 'absolute' as const,
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  height: 400,
+  bgcolor: 'background.paper',
+  borderRadius: '10px',
+  p: 4
+};
+
+const PARTICIPATION_CLASS_NAMES: Record<string, string> = {
+  'P': 'Hacker',
+  'M': 'Mentor',
+  'J': 'Judge',
+  'S': 'Sponsor',
+  'V': 'Volunteer',
+  'O': 'Organizer',
+  'G': 'Guardian',
+  'E': 'Media',
+};
+
+const getParticipationClassName = (code: string) => 
+  PARTICIPATION_CLASS_NAMES[code] || '';
+
+const CheckmarkIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className={className}>
+    <path
+      fill="#43a047"
+      d="M32 2C15.431 2 2 15.432 2 32c0 16.568 13.432 30 30 30 16.568 0 30-13.432 30-30C62 15.432 48.568 2 32 2zm-6.975 48-.02-.02-.017.02L11 35.6l7.029-7.164 6.977 7.184 21-21.619L53 21.199 25.025 50z"
+    />
+  </svg>
+);
+
+type AlertState = {
+  type: 'success' | 'error' | null;
+  message: string;
+};
 
 export default function Checkin() {
   const { data: session, status } = useSession();
   
   const { 
-    attendees,
-    isLoading: isLoadingAttendees,
-    getCheckedInCount,
+    eventRsvps, 
     getTotalCount,
-    participationClassCounts,
-    getAttendeeById,
+    getCheckedInCount,
+    participationClassCounts, 
+    rsvpByAttendeeId,
     mutate
-  } = useAttendees();
-  
-  const [selectedValue, setSelectedValue] = useState('');
-  const [open, setOpen] = useState(false);
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-  const [checkedInAttendee, setCheckedInAttendee] = useState('');
-  const [showErrorAlert, setShowErrorAlert] = useState(false);
-  const [errorAlertMessage, setErrorAlertMessage] = useState('');
+  } = useEventRsvps();
 
-  const { attendee: selectedAttendee } = useAttendee(selectedValue, { 
-    fetchIndividual: false
-  });
+  const [selectedValue, setSelectedValue] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [alert, setAlert] = useState<AlertState>({ type: null, message: '' });
+
+  const selectedAttendee = useMemo(() => 
+    selectedValue ? rsvpByAttendeeId(selectedValue) : null
+  , [selectedValue, eventRsvps]);
 
   const isAdmin = session && (session as any).roles?.includes('admin');
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
-  const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    height: 400,
-    bgcolor: 'background.paper',
-    borderRadius: '10px',
-    p: 4
-  };
+  const selectOptions = useMemo(() => 
+    eventRsvps?.map((rsvp: EventRsvp) => ({
+      value: rsvp.attendee?.id || '',
+      label: (
+        <div className="flex flex-row items-center justify-start gap-2">
+          {rsvp.checked_in_at && <CheckmarkIcon className="w-4 h-4 min-w-4 min-h-4 max-w-4 max-h-4" />}
+          {`${rsvp.attendee?.first_name} ${rsvp.attendee?.last_name}`}
+        </div>
+      )
+    })) || []
+  , [eventRsvps]);
 
-  const selectOptions = attendees?.map((attendee) => ({
-    value: attendee.id || '',
-    label: (
-      <div className="flex flex-row items-center justify-start gap-2">
-        {attendee.checked_in_at && (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 64 64"
-            className="w-4 h-4 min-w-4 min-h-4 max-w-4 max-h-4"
-          >
-            <path
-              fill="#43a047"
-              d="M32 2C15.431 2 2 15.432 2 32c0 16.568 13.432 30 30 30 16.568 0 30-13.432 30-30C62 15.432 48.568 2 32 2zm-6.975 48-.02-.02-.017.02L11 35.6l7.029-7.164 6.977 7.184 21-21.619L53 21.199 25.025 50z"
-            />
-          </svg>
-        )}
-        {`${attendee.first_name} ${attendee.last_name}`}
-      </div>
-    )
-  })) || [];
-
+  // Single alert timeout effect
   useEffect(() => {
-    let timeout: any;
-    if (showSuccessAlert) {
-      timeout = setTimeout(() => setShowSuccessAlert(false), 4000);
-    }
+    if (!alert.type) return;
+    const timeout = setTimeout(() => setAlert({ type: null, message: '' }), 4000);
     return () => clearTimeout(timeout);
-  }, [showSuccessAlert]);
+  }, [alert.type, alert.message]);
 
-  useEffect(() => {
-    let timeout: any;
-    if (showErrorAlert) {
-      timeout = setTimeout(() => setShowErrorAlert(false), 4000);
-    }
-    return () => clearTimeout(timeout);
-  }, [showErrorAlert]);
-
-  const handleSelectChange = (value: any) => {
+  const handleSelectChange = useCallback((value: string) => {
     setSelectedValue(value);
-  };
+  }, []);
 
-  const handleCheckin = async (userId: string, scanned?: boolean) => {
-    const attendee = getAttendeeById(userId);
-
-    if (!attendee) {
-      setShowErrorAlert(true);
-      setErrorAlertMessage(`invalid QR code scanned.`);
-      handleClose();
+  const handleCheckin = useCallback(async (attendeeId: string) => {
+    const rsvp = rsvpByAttendeeId(attendeeId);
+    
+    if (!rsvp?.id) {
+      setAlert({ type: 'error', message: 'Invalid QR code - no RSVP found.' });
+      setIsModalOpen(false);
       return;
     }
 
-    setSelectedValue(userId);
+    setSelectedValue(attendeeId);
 
     try {
-      const newCheckedInAt = attendee.checked_in_at ? null : new Date().toISOString();
-      await mutate(
-        async (currentAttendees: AttendeeList[] | undefined) => {
-          await attendeesPartialUpdate(userId, {
-            checked_in_at: newCheckedInAt
-          }, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${session?.access_token}`
-            }
-          });
-          
-          if (!currentAttendees) return undefined;
-          return currentAttendees.map(att => 
-            att.id === userId 
-              ? { ...att, checked_in_at: newCheckedInAt } 
-              : att
-          );
-        },
-        {
-          optimisticData: (currentAttendees: AttendeeList[] | undefined) => {
-            if (!currentAttendees) return [];
-            return currentAttendees.map(att => 
-              att.id === userId 
-                ? { ...att, checked_in_at: newCheckedInAt } 
-                : att
-            );
-          },
-          rollbackOnError: true
+      const isCheckingIn = !rsvp.checked_in_at;
+      const newCheckedInAt = isCheckingIn ? new Date().toISOString() : null;
+      
+      await eventrsvpsPartialUpdate(rsvp.id, {
+        checked_in_at: newCheckedInAt
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
         }
-      );
-      showAlert(
-        `${attendee.first_name} ${attendee.last_name} has ${attendee.checked_in_at ? 'been checked out' : 'been checked in'}.`
-      );
+      });
+      
+      mutate();
+      
+      setAlert({
+        type: 'success',
+        message: `${rsvp.attendee?.first_name} ${rsvp.attendee?.last_name} has been ${isCheckingIn ? 'checked in' : 'checked out'}.`
+      });
     } catch (error) {
-      setShowErrorAlert(true);
-      setErrorAlertMessage(`invalid QR code scanned.`);
+      console.error('Check-in error:', error);
+      setAlert({ type: 'error', message: 'Failed to check in user. Please try again.' });
     }
-    handleClose();
-  };
-
-  const showAlert = (message: string) => {
-    setCheckedInAttendee(message);
-    setShowSuccessAlert(true);
-  };
-
-  const getParticipationClassName = (code: string) => {
-    switch (code) {
-      case 'P': return 'Hacker';
-      case 'M': return 'Mentor';
-      case 'J': return 'Judge';
-      case 'S': return 'Sponsor';
-      case 'V': return 'Volunteer';
-      case 'O': return 'Organizer';
-      case 'G': return 'Guardian';
-      case 'E': return 'Media';
-      default: return '';
-    }
-  };
+    setIsModalOpen(false);
+  }, [rsvpByAttendeeId, session?.access_token, mutate]);
 
   if (!isAdmin) {
     return <div>You are not authorized to access this page</div>;
@@ -184,30 +151,15 @@ export default function Checkin() {
                   onChange={handleSelectChange}
                   search={true}
                 />
-                <button onClick={handleOpen}>
-                  <img
-                    src="/icons/dashboard/qr.svg"
-                    alt="scan QR code"
-                    className="mb-3 ml-3 "
-                  />
+                <button onClick={() => setIsModalOpen(true)}>
+                  <img src="/icons/dashboard/qr.svg" alt="scan QR code" className="mb-3 ml-3" />
                 </button>
               </div>
-              {selectedValue && selectedAttendee ? (
+              {selectedAttendee ? (
                 <div className="flex items-center h-20 gap-2 pl-4 bg-white rounded">
-                  {selectedAttendee.checked_in_at && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 64 64"
-                      className="w-8 h-8"
-                    >
-                      <path
-                        fill="#43a047"
-                        d="M32 2C15.431 2 2 15.432 2 32c0 16.568 13.432 30 30 30 16.568 0 30-13.432 30-30C62 15.432 48.568 2 32 2zm-6.975 48-.02-.02-.017.02L11 35.6l7.029-7.164 6.977 7.184 21-21.619L53 21.199 25.025 50z"
-                      />
-                    </svg>
-                  )}
+                  {selectedAttendee.checked_in_at && <CheckmarkIcon className="w-8 h-8" />}
                   <div className="flex flex-col">
-                    <p>{selectedAttendee.first_name} {selectedAttendee.last_name}</p>
+                    <p>{selectedAttendee.attendee?.first_name} {selectedAttendee.attendee?.last_name}</p>
                     <div className="w-fit h-5 px-2 bg-neutral-800 rounded-[5px] flex justify-center items-center text-xs mt-2 text-white">
                       {getParticipationClassName(selectedAttendee.participation_class || '')}
                     </div>
@@ -218,9 +170,9 @@ export default function Checkin() {
                   <span>Select or scan a user to continue</span>
                 </div>
               )}
-              {selectedValue && selectedAttendee && (
+              {selectedAttendee && (
                 <button
-                  onClick={() => handleCheckin(selectedValue, true)}
+                  onClick={() => handleCheckin(selectedValue)}
                   className="px-4 py-2 mt-4 ml-auto text-white bg-blue-500 rounded font-xs hover:bg-blue-700"
                 >
                   <p className="text-sm">
@@ -237,7 +189,7 @@ export default function Checkin() {
                     Total Attendees
                   </span>
                   <span className="text-2xl font-semibold text-black text-opacity-90">
-                    {getTotalCount()}
+                    {getTotalCount}
                   </span>
                 </div>
                 <div className="flex flex-col items-center px-4 py-2 w-36 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
@@ -245,7 +197,7 @@ export default function Checkin() {
                     Checked In
                   </span>
                   <span className="text-2xl font-semibold text-black text-opacity-90">
-                    {getCheckedInCount()}
+                    {getCheckedInCount}
                   </span>
                 </div>
               </div>
@@ -266,41 +218,21 @@ export default function Checkin() {
               </div>
             </div>
           </div>
+
           <Modal
-            open={open}
-            onClose={handleClose}
+            open={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
             aria-labelledby="qr-code-reader-modal"
-            aria-describedby="modal-modal-description"
           >
-            <Box sx={style}>
-              {open && <QRCodeReader onScanSuccess={handleCheckin} />}
+            <Box sx={modalStyle}>
+              {isModalOpen && <QRCodeReader onScanSuccess={handleCheckin} />}
             </Box>
           </Modal>
-          {showSuccessAlert && (
-            <div
-              className={`fixed top-0 left-0 m-4 z-[1001] transition-opacity w-[500px] ${
-                showSuccessAlert ? 'opacity-100' : 'pointer-events-none opacity-0'
-              }`}
-            >
-              <Alert
-                severity="success"
-                onClose={() => setShowSuccessAlert(false)}
-              >
-                {checkedInAttendee}
-              </Alert>
-            </div>
-          )}
-          {showErrorAlert && (
-            <div
-              className={`fixed top-0 left-0 m-4 z-[1001] transition-opacity w-[500px] ${
-                showErrorAlert ? 'opacity-100' : 'pointer-events-none opacity-0'
-              }`}
-            >
-              <Alert
-                severity="error"
-                onClose={() => setShowErrorAlert(false)}
-              >
-                {errorAlertMessage}
+
+          {alert.type && (
+            <div className="fixed top-0 left-0 m-4 z-[1001] w-[500px]">
+              <Alert severity={alert.type} onClose={() => setAlert({ type: null, message: '' })}>
+                {alert.message}
               </Alert>
             </div>
           )}

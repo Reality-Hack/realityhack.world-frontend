@@ -298,8 +298,8 @@ export default function Dashboard() {
             {user?.id && (
               <div className="grid px-8 py-4 md:grid-cols-2 gap-x-2">
                 <div className="flex flex-col items-center justify-center">
-                  {user.event_rsvp.id && (
-                    <QRCodeGenerator value={user.event_rsvp.id} />
+                  {user.id && (
+                    <QRCodeGenerator value={user.id} />
                   )}
                   <div className="pt-2 pb-4 text-white">
                     <span>{user.first_name}</span>{' '}
