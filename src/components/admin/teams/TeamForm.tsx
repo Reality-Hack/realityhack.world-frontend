@@ -17,19 +17,19 @@ import { useSession } from 'next-auth/react';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { useAttendees } from '@/hooks/useAttendees';
-import { AttendeeList, TeamDetail, TeamTable, AttendeeName } from '@/types/models';
+import { TeamDetail, TeamTable } from '@/types/models';
 import { TeamCreateRequest, TeamRequest } from '@/types/models';
 import { useTeamsCreate, useTeamsUpdate, useTeamsDestroy } from '@/types/endpoints';
 import { TeamOperationResult } from '@/types/types2';
 import LinearProgress from '@mui/material/LinearProgress';
+import { useEventRsvps, AttendeeWithCheckIn } from '@/hooks/useEventRsvps';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />
 
 type TeamFormData = {
   name: string;
-  attendees: AttendeeList[]; 
+  attendees: AttendeeWithCheckIn[]; 
   table?: { id: string } | TeamTable | null;
 };
 
@@ -42,39 +42,15 @@ type TeamFormProps = {
 
 export default function TeamForm({ initialData, onSuccess, onError, onCancel }: TeamFormProps) {
   const { data: session } = useSession();
-  const { attendees, isLoading: attendeesLoading } = useAttendees();
+  const { 
+    rsvpAttendeesWithCheckIn: attendees,
+    isLoading: attendeesLoading,
+  } = useEventRsvps();
   const isEdit = !!initialData?.id;
-
-  const convertToAttendeeList = useCallback((inputAttendees: (AttendeeList | AttendeeName)[]): AttendeeList[] => {
-    return inputAttendees.map(attendee => {
-      if ('prefers_destiny_hardware' in attendee) {
-        return attendee as AttendeeList;
-      }
-      const fullAttendee = attendees?.find(a => a.id === attendee.id);
-      if (fullAttendee) {
-        return fullAttendee;
-      }
-      return {
-        ...attendee,
-        checked_in_at: null,
-        initial_setup: false,
-        guardian_of: [],
-        sponsor_handler: null,
-        prefers_destiny_hardware: [],
-        communications_platform_username: null,
-        intended_tracks: [],
-        intended_hardware_hack: false,
-        sponsor_company: null,
-        participation_class: undefined,
-        created_at: '',
-        updated_at: ''
-      } as AttendeeList;
-    });
-  }, [attendees]);
 
   const [formData, setFormData] = useState<TeamFormData>(() => ({
     name: initialData?.name || '',
-    attendees: initialData?.attendees ? convertToAttendeeList(initialData.attendees) : [],
+    attendees: (initialData?.attendees || []).map(a => ({ ...a, checked_in_at: null })),
     table: initialData?.table || null
   }));
 
@@ -115,15 +91,15 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
     if (initialData) {
       const data = {
         name: initialData.name,
-        attendees: convertToAttendeeList(initialData.attendees || []),
+        attendees: (initialData.attendees || []).map(a => ({ ...a, checked_in_at: null })),
         table: initialData.table || null
       };
       setFormData(data);
       setOriginalData(data);
     }
-  }, [initialData, convertToAttendeeList]);
+  }, [initialData]);
 
-  const attendeeOptions = useMemo(() => {
+  const attendeeOptions = useMemo((): AttendeeWithCheckIn[] => {
     if (!attendees) return [];
     return attendees;
   }, [attendees]);
@@ -163,7 +139,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
     }
   };
 
-  const handleAttendeesChange = (attendees: AttendeeList[] | null) => {
+  const handleAttendeesChange = (attendees: AttendeeWithCheckIn[] | null) => {
     setFormData(prev => ({ ...prev, attendees: attendees || [] }));
   };
 
@@ -254,7 +230,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
         id="attendees-select"
         options={attendeeOptions}
         value={formData.attendees}
-        onChange={(event: any, newValue: AttendeeList[] | null) => {
+        onChange={(event: any, newValue: AttendeeWithCheckIn[] | null) => {
           handleAttendeesChange(newValue);
         }}
         size="small"
@@ -276,8 +252,8 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
             {`${option.first_name} ${option.last_name} ${option.checked_in_at ? '' : '(Not Checked In)'}`}
           </li>
         )}
-        renderTags={(value: readonly AttendeeList[], getTagProps) =>
-          value.map((option: AttendeeList, index: number) => (
+        renderTags={(value: readonly AttendeeWithCheckIn[], getTagProps) =>
+          value.map((option: AttendeeWithCheckIn, index: number) => (
             <Chip
               {...getTagProps({ index })}
               label={`${option.first_name} ${option.last_name} `}

@@ -26,7 +26,8 @@ export default function Dashboard() {
   const { data: session, status } = useSession();
   const { 
     user,
-    isJudge
+    isMentor,
+    isParticipant
    } = useAuth();
   const localInitialSetup = localStorage.getItem('initial_setup');
   const [_isOverlayVisible, setOverlayVisible] = useState(false);
@@ -34,6 +35,8 @@ export default function Dashboard() {
   const toggleOverlay = () => {
     setOverlayVisible(prev => !prev);
   };
+
+  const isParticipantOrMentor = useMemo(() => isParticipant || isMentor, [isParticipant, isMentor]);
 
   const getParticipationClassName = (code: string) => {
     switch (code) {
@@ -59,18 +62,9 @@ export default function Dashboard() {
   };
 
   const WelcomeCopy = useMemo(() => {
-    if (isJudge) {
+    if (isParticipantOrMentor) {
       return (
-        <div className="p-6">
-          Now that you&apos;ve RSVP&apos;d to Reality Hack 2026, we look forward to seeing you on Sunday, 
-          January 25, 2026 for judging day. Judges should plan to arrive on-site at noon and 
-          be prepared to stay until 5 or 6pm depending on judging needs. Stay tuned for more 
-          comprehensive information from our Judging Leads.
-        </div>
-      )
-    } else {
-      return (
-      <>
+        <>
         <div className="p-6">
           Now that you&apos;ve RSVP&apos;d to Reality Hack 2026, make sure you
           join our Discord to start chatting with other accepted
@@ -90,18 +84,20 @@ export default function Dashboard() {
         </div>
       </>
       )
-    }
-  }, [isJudge]);
-  
-  const gettingToTheHackCopy = useMemo(() => {
-    if (isJudge) {
+    } else {
       return (
         <div className="p-6">
-          Stay tuned for more information on where to report for 
-          Judge Orientation from our Judging Leads.
+          Now that you&apos;ve RSVP&apos;d to Reality Hack 2026, we look forward to seeing you on Sunday, 
+          January 25, 2026 for judging day. Judges should plan to arrive on-site at noon and 
+          be prepared to stay until 5 or 6pm depending on judging needs. Stay tuned for more 
+          comprehensive information from our Judging Leads.
         </div>
       )
-    } else {
+    }
+  }, [isParticipantOrMentor]);
+  
+  const gettingToTheHackCopy = useMemo(() => {
+    if (isParticipantOrMentor) {
       return (
       <>
         <div className="p-6">
@@ -122,11 +118,30 @@ export default function Dashboard() {
         </div>
       </>
       )
+    } else {
+      return (
+        <div className="p-6">
+          Stay tuned for more information on where to report for 
+          Judge Orientation from our Judging Leads.
+        </div>
+      )
     }
-  }, [isJudge]);
+  }, [isParticipantOrMentor]);
   
   const travelAccomodationsCopy = useMemo(() => {
-    if (isJudge) {
+    if (isParticipantOrMentor) {
+      return (
+        <>
+          <span className="font-bold">
+            You should plan to be in Boston on the evening of January 21st
+            as we begin at 8am on the 22nd.
+          </span>{' '}
+          You can also plan to wrap up by around 5pm EST on the 26th.
+          We&apos;ll release our full schedule later but you can use our
+          guidelines right now to plan travel. <br /> <br />
+        </>
+      )
+    } else {
       return (
         <>
         Reality Hack at MIT runs from January 22 to 26, 2026.{' '}
@@ -136,20 +151,8 @@ export default function Dashboard() {
         Judges should plan to arrive on-site at noon and be prepared to stay until 5 or 6pm depending on judging needs. Stay tuned for more comprehensive information from our Judging Leads. 
         </>
       )
-    } else {
-      return (
-      <>
-        <span className="font-bold">
-          You should plan to be in Boston on the evening of January 21st
-          as we begin at 8am on the 22nd.
-        </span>{' '}
-        You can also plan to wrap up by around 5pm EST on the 26th.
-        We&apos;ll release our full schedule later but you can use our
-        guidelines right now to plan travel. <br /> <br />
-      </>
-      )
     }
-  }, [isJudge]);
+  }, [isParticipantOrMentor]);
 
   function SetupModal({ toggleOverlay }: SetupModalProps) {
     const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
@@ -294,8 +297,8 @@ export default function Dashboard() {
             {WelcomeCopy}
           </div>
 
-          <div className="p-4 w-full bg-gradient-to-br from-[#59BFDC] to-[#3C60F9] rounded-[10px] shadow mb-6">
-            {user?.id && (
+          {user?.id && user?.event_rsvp?.participation_class && (
+            <div className="p-4 w-full bg-gradient-to-br from-[#59BFDC] to-[#3C60F9] rounded-[10px] shadow mb-6">
               <div className="grid px-8 py-4 md:grid-cols-2 gap-x-2">
                 <div className="flex flex-col items-center justify-center">
                   {user.id && (
@@ -305,8 +308,8 @@ export default function Dashboard() {
                     <span>{user.first_name}</span>{' '}
                     <span>{user.last_name}</span>
                   </div>
-                  <div className="w-32 h-9 bg-neutral-800 rounded-[5px] flex justify-center items-center text-white">
-                    {getParticipationClassName(user.event_rsvp.participation_class ?? '')}
+                    <div className="w-32 h-9 bg-neutral-800 rounded-[5px] flex justify-center items-center text-white">
+                    {getParticipationClassName(user.event_rsvp.participation_class)}
                   </div>
                   <div className="pt-6 pb-4 text-white">
                     Show QR code to check in
@@ -319,8 +322,8 @@ export default function Dashboard() {
                   Please bring valid photo ID with your name and picture.
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {user?.participation_class === 'P' && (
             <div className="">

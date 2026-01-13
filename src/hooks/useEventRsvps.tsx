@@ -1,10 +1,14 @@
 import { useEventrsvpsList } from "@/types/endpoints";
-import { EventRsvp } from "@/types/models";
+import { AttendeeName, EventRsvp } from "@/types/models";
 import { useSession } from "next-auth/react";
 import { useMemo } from "react";
 
+export type AttendeeWithCheckIn = AttendeeName & { checked_in_at: string | null };
+
 type UseEventRsvpsReturn = {
   eventRsvps: EventRsvp[] | undefined;
+  rsvpAttendees: AttendeeName[] | undefined;
+  rsvpAttendeesWithCheckIn: AttendeeWithCheckIn[] | undefined;
   isLoading: boolean;
   error: Error | null;
   mutate: () => void;
@@ -37,6 +41,21 @@ export const useEventRsvps = (): UseEventRsvpsReturn => {
     return attendeeIdRsvpMap?.[attendeeId];
   };
 
+  const rsvpAttendees = useMemo(() => {
+    if (!data) return [];
+    return data.map((rsvp: EventRsvp) => rsvp.attendee)
+      .filter((attendee: AttendeeName | undefined): attendee is AttendeeName => attendee !== undefined);
+  }, [data]);
+
+  const rsvpAttendeesWithCheckIn = useMemo((): AttendeeWithCheckIn[] => {
+    if (!data) return [];
+    return data
+      .filter((rsvp: EventRsvp) => rsvp.attendee !== undefined)
+      .map((rsvp: EventRsvp) => ({
+        ...rsvp.attendee!,
+        checked_in_at: rsvp.checked_in_at ?? null,
+      }));
+  }, [data]);
 
   const getTotalCount = useMemo(() => {
     return data?.length || 0;
@@ -64,6 +83,8 @@ export const useEventRsvps = (): UseEventRsvpsReturn => {
 
   return {
     eventRsvps: data,
+    rsvpAttendees,
+    rsvpAttendeesWithCheckIn,
     isLoading,
     error: error as Error | null,
     mutate,
