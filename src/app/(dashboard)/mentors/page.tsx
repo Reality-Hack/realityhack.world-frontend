@@ -132,7 +132,7 @@ export default function Page() {
     if (selectedTab === 0) {
       result = allHelpRequests.filter(r => r.status === 'R')
       if (selectedItems.length > 0) {
-        result = result.filter(r => selectedItems.includes(r.topic[0]))
+        result = result.filter(r => r.topic.some(t => selectedItems.includes(t)))
       }
     } else if (selectedTab === 1) {
       result = allHelpRequests.filter(r => r.mentor === user?.id);
@@ -193,14 +193,16 @@ export default function Page() {
           );
         })}
       </Tabs>
-      <SelectToolWithOther
-        canSubmit={() => true}
-        mentorTopics={formattedOptions.map(option => option.label)}
-        placeholder={'Select Your Skill'}
-        selectedItems={selectedItems}
-        setSelectedItems={setSelectedItems}
-        formattedOptions={formattedOptions}
-      />
+      {selectedTab === 0 && 
+        <SelectToolWithOther
+          canSubmit={() => true}
+          mentorTopics={formattedOptions.map(option => option.label)}
+          placeholder={'Select Your Skill'}
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
+          formattedOptions={formattedOptions}
+        />
+      }
       <div>
         <div className="p-4">
           <div className="flex flex-wrap w-20"></div>
