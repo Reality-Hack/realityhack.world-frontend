@@ -1,19 +1,16 @@
-import { useSession } from "next-auth/react";
 import { useState, useMemo } from "react";
-import { toast } from "sonner";
-import { AttendeeList } from "@/types/models";
 import CustomSelect from "@/components/CustomSelect";
 import QRCodeReader from '@/components/admin/QRCodeReader';
-import { getAttendee } from '@/app/api/attendee';
+import { AttendeeWithCheckIn } from '@/hooks/useEventRsvps';
 
 export default function UserScanner({
     user,
     setUser,
     attendees
   }: {
-    user: AttendeeList | null;
-    setUser: (user: AttendeeList | null) => void;
-    attendees: AttendeeList[];
+    user: AttendeeWithCheckIn | null;
+    setUser: (user: AttendeeWithCheckIn | null) => void;
+    attendees: AttendeeWithCheckIn[];
   }) {
     const [selectedValue, setSelectedValue] = useState<string>('');
     const attendeeOptions = useMemo(
@@ -41,7 +38,6 @@ export default function UserScanner({
         })),
       [attendees]
     );
-    const { data: session, status } = useSession();
     return (
       <div>
         <div className="m-4 flex flex-row space-x-2">
@@ -68,9 +64,10 @@ export default function UserScanner({
             qrbox: 500
           }}
           onScanSuccess={(id: string) => {
-            getAttendee(session!.access_token, id).then(attendee => {
+            const attendee = attendees.find(a => a.id === id);
+            if (attendee) {
               setUser(attendee);
-            });
+            }
           }}
         ></QRCodeReader>
       </div>
