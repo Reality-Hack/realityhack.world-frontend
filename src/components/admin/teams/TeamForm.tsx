@@ -16,7 +16,7 @@ import { Button } from 'antd';
 import { useSession } from 'next-auth/react';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-
+import { useRouter } from 'next/navigation';
 import { TeamDetail, TeamTable } from '@/types/models';
 import { TeamCreateRequest, TeamRequest } from '@/types/models';
 import { useTeamsCreate, useTeamsUpdate, useTeamsDestroy } from '@/types/endpoints';
@@ -41,6 +41,7 @@ type TeamFormProps = {
 };
 
 export default function TeamForm({ initialData, onSuccess, onError, onCancel }: TeamFormProps) {
+  const router = useRouter();
   const { data: session } = useSession();
   const { 
     rsvpAttendeesWithCheckIn: attendees,
@@ -145,6 +146,14 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
 
   const handleSave = useCallback(async () => {
     if (!validateForm()) return;
+    if (!formData.attendees.length) {
+      toast.error('Please add at least one attendee');
+      return;
+    }
+    if (!formData.name.trim()) {
+      toast.error('Please enter a team name');
+      return;
+    }
 
     try {
       const payload = {
@@ -183,6 +192,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
       await deleteMutation.trigger();
       toast.success('Team deleted successfully');
       onSuccess?.(null as any);
+      router.push('/admin/teams');
     } catch (error) {
       const errorMessage = `Error deleting team: ${error}`;
       toast.error(errorMessage);
@@ -288,13 +298,15 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
             Cancel
           </button>
         )}
-        <button
-          className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] transition-all disabled:opacity-50"
-          onClick={handleReset}
-          disabled={isLoading || !isDirty}
-        >
-          Reset
-        </button>
+        {initialData &&
+          <button
+            className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] transition-all disabled:opacity-50"
+            onClick={handleReset}
+            disabled={isLoading || !isDirty}
+          >
+            Reset
+          </button>
+        }
         {isEdit && (
           <button
             className="gap-1.5s flex mt-0 mb-4 bg-red-600 hover:bg-red-700 text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm transition-all disabled:opacity-50"

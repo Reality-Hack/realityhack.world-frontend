@@ -61,8 +61,6 @@ export default function RsvpTable({ type }: RsvpTableProps) {
     participationClass: buildChoiceMap(options, 'participation_class'),
   }), [options]);
 
-  console.log(choiceMaps);
-
   const { 
     total, 
     shirtSizes, 
@@ -71,39 +69,39 @@ export default function RsvpTable({ type }: RsvpTableProps) {
   } = useRSVPStats();
 
   const mappedEventRsvps = useMemo(() => {
-    if (!eventRsvps) return [];
-  return eventRsvps
-    .map((rsvp: EventRsvp) => {
-      const { 
-        application, 
-        attendee, 
-        event,
-        app_in_store,
-        currently_build_for_xr,
-        currently_use_xr,
-        non_xr_talents,
-        ar_vr_ap_in_store,
-        participation_role,
-        shirt_size,
-        dietary_restrictions,
-        dietary_allergies,
-        participation_class,
-        ...rsvpData 
-      } = rsvp;
-      return {
-        first_name: rsvp.application?.first_name,
-        last_name: rsvp.application?.last_name,
-        email: rsvp.application?.email,
-        ...rsvpData,
-        shirt_size: shirt_size ? choiceMaps.shirtSize[shirt_size] : null,
-        participation_role: participation_role ? choiceMaps.participationRole[participation_role] : null,
-        dietary_restrictions: dietary_restrictions?.map((restriction: string) => choiceMaps.dietaryRestrictions[restriction]).join(', '),
-        dietary_allergies: dietary_allergies?.map((allergy: string) => choiceMaps.dietaryAllergies[allergy]).join(', '),
-        participation_class: participation_class ? choiceMaps.participationClass[participation_class] : null,
-      }
-    })
+    if (!eventRsvps || Object.keys(options).length === 0) return [];
+    return eventRsvps
+      .map((rsvp: EventRsvp) => {
+        const { 
+          application, 
+          attendee, 
+          event,
+          app_in_store,
+          currently_build_for_xr,
+          currently_use_xr,
+          non_xr_talents,
+          ar_vr_ap_in_store,
+          participation_role,
+          shirt_size,
+          dietary_restrictions,
+          dietary_allergies,
+          participation_class,
+          ...rsvpData 
+        } = rsvp;
+        return {
+          first_name: rsvp.application?.first_name,
+          last_name: rsvp.application?.last_name,
+          email: rsvp.application?.email,
+          ...rsvpData,
+          shirt_size: shirt_size ? choiceMaps.shirtSize[shirt_size] : null,
+          participation_role: participation_role ? choiceMaps.participationRole[participation_role] : null,
+          dietary_restrictions: dietary_restrictions?.map((restriction: string) => choiceMaps.dietaryRestrictions[restriction]).join(', '),
+          dietary_allergies: dietary_allergies?.map((allergy: string) => choiceMaps.dietaryAllergies[allergy]).join(', '),
+          participation_class: participation_class ? choiceMaps.participationClass[participation_class] : null,
+        }
+      })
 
-  }, [eventRsvps]);
+    }, [eventRsvps]);
 
   const columnHelper = createColumnHelper<any>();
   const columns = useMemo<ColumnDef<any, any>[]>(
