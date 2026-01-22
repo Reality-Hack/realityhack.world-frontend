@@ -23,6 +23,10 @@ interface AuthContextType {
   isMentor: boolean;
   isParticipant: boolean;
   isJudge: boolean;
+  isOrganizer: boolean;
+  isGuardian: boolean;
+  isVolunteer: boolean;
+  isMedia: boolean;
   canAccessSponsor: boolean;
   canAccessMentor: boolean;
   canAccessParticipant: boolean;
@@ -40,6 +44,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const isAdmin = useMemo(() => status === 'authenticated' && session?.roles?.includes('admin'), [session, status])
+  const isOrganizer = useMemo(() => status === 'authenticated' && session?.roles?.includes('organizer'), [session, status])
+  const isGuardian = useMemo(() => status === 'authenticated' && session?.roles?.includes('guardian'), [session, status])
+  const isVolunteer = useMemo(() => status === 'authenticated' && session?.roles?.includes('volunteer'), [session, status])
+  const isMedia = useMemo(() => status === 'authenticated' && session?.roles?.includes('media'), [session, status])
   const isSponsor = useMemo(() => status === 'authenticated' && session?.roles?.includes('sponsor'), [session, status])
   const isMentor = useMemo(() => status === 'authenticated' && session?.roles?.includes('mentor'), [session, status])
   const isParticipant = useMemo(() => status === 'authenticated' && session?.roles?.includes('attendee'), [session, status])
@@ -73,6 +81,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isMentor,
     isParticipant,
     isJudge,
+    isOrganizer,
+    isGuardian,
+    isVolunteer,
+    isMedia,
     canAccessSponsor,
     canAccessMentor,
     canAccessParticipant,

@@ -25,7 +25,8 @@ import {
   isValidRequest,
   HardwareRequestTableRow,
   HardwareRequestStatusOptionsCheckedOut,
-  HardwareRequestStatusOptionsFull,
+  HardwareRequestStatusOptionsDefault,
+  HardwareRequestStatusOptionsNoDevice,
   HardwareRequestStatusOptions
 } from './utils';
 
@@ -225,8 +226,11 @@ export default function HardwareRequestTable({
     if (currentStatus == HardwareRequestStatusEnum.C) {
       return [HardwareRequestStatusOptionsCheckedOut];
     }
+    if (!requestedDeviceId) {
+      return HardwareRequestStatusOptionsNoDevice;
+    }
     if (hardwareDeviceTypeMap?.[requestedDeviceId]?.available < 1) {
-      return HardwareRequestStatusOptionsFull;
+      return HardwareRequestStatusOptionsDefault;
     }
     return HardwareRequestStatusOptions;
   }

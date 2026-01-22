@@ -6,7 +6,8 @@ import CustomSelect from '@/components/CustomSelect';
 import { Modal, Box, Alert } from '@mui/material';
 import { eventrsvpsPartialUpdate } from '@/types/endpoints';
 import { EventRsvp } from '@/types/models';
-import { useEventRsvps } from '@/hooks/useEventRsvps';
+import { useEventParticipants } from '@/contexts/EventParticipantsContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const modalStyle = {
   position: 'absolute' as const,
@@ -50,6 +51,7 @@ type AlertState = {
 
 export default function Checkin() {
   const { data: session, status } = useSession();
+  const { isAdmin, isVolunteer, isOrganizer } = useAuth();
   
   const { 
     eventRsvps, 
@@ -57,8 +59,8 @@ export default function Checkin() {
     getCheckedInCount,
     participationClassCounts, 
     rsvpByAttendeeId,
-    mutate
-  } = useEventRsvps();
+    mutateRsvps: mutate
+  } = useEventParticipants();
 
   const [selectedValue, setSelectedValue] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,7 +70,7 @@ export default function Checkin() {
     selectedValue ? rsvpByAttendeeId(selectedValue) : null
   , [selectedValue, eventRsvps]);
 
-  const isAdmin = session && (session as any).roles?.includes('admin');
+  const canCheckinUsers = isAdmin || isVolunteer || isOrganizer;
 
   const selectOptions = useMemo(() => 
     eventRsvps?.map((rsvp: EventRsvp) => ({
@@ -130,7 +132,7 @@ export default function Checkin() {
     setIsModalOpen(false);
   }, [rsvpByAttendeeId, session?.access_token, mutate]);
 
-  if (!isAdmin) {
+  if (!canCheckinUsers) {
     return <div>You are not authorized to access this page</div>;
   }
 
@@ -138,7 +140,7 @@ export default function Checkin() {
     <div className="h-screen p-6">
       {status === 'authenticated' && (
         <>
-          <h1 className="mb-16 text-2xl">User Checkin</h1>
+          <h1 className="mb-16 text-2xl">User Check In</h1>
           <hr className="mb-6" />
           <span className="pb-6 text-lg font-medium">Search Participants</span>
           <div className="grid gap-4 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1">

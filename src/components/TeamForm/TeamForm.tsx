@@ -170,11 +170,48 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
       toast.error('Please select a table');
       return;
     }
-
+    // TODO: pull into helper function
     if (!teamId) {
       toast.error('No team ID found');
       return;
     }
+    if (!formData.projectName.trim()) {
+      toast.error('Please enter a project name');
+      return;
+    }
+    if (!formData.description.trim()) {
+      toast.error('Please enter a project description');
+      return;
+    }
+    if (!formData.selectedTracks.length) {
+      toast.error('Please select at least one track');
+      return;
+    }
+    if (!formData.selectedHardware.length) {
+      toast.error('Please select at least one hardware');
+      return;
+    }
+    if (!formData.github.trim()) {
+      toast.error('Please enter a GitHub URL');
+      return;
+    }
+    if (!formData.devpost.trim()) {
+      toast.error('Please enter a DevPost URL');
+      return;
+    }
+    if (!formData.github.trim().startsWith('http://') && !formData.github.trim().startsWith('https://')) {
+      toast.error('GitHub URL must start with http:// or https://');
+      return;
+    }
+    if (!formData.devpost.trim().startsWith('http://') && !formData.devpost.trim().startsWith('https://')) {
+      toast.error('DevPost URL must start with http:// or https://');
+      return;
+    }
+    if (!formData.name.trim()) {
+      toast.error('Please enter a team name');
+      return;
+    }
+
     const tableRequest: TableRequestWithId = {
       id: formData.selectedTable.id,
       number: formData.selectedTable.number,
@@ -208,8 +245,8 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
 
   return (
     <>
-      <h1 className="text-md text-[#4D97E8] mb-7 font-semibold">MANAGE TEAM</h1>
-
+      <h1 className="text-md text-[#4D97E8] font-semibold">MANAGE TEAM</h1>
+      <div className="text-xs/8 mb-8 md:mb-4 text-gray-800">Please note: all fields are required for submission. You can use placeholder URLs for DevPost and GitHub if you don't have one yet.</div>
       <div className="flex flex-col mb-4 w-full md:w-1/2">
         <label className="text-xs/8">TEAM NAME</label>
         <TextInput

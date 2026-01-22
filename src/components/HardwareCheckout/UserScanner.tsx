@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import CustomSelect from "@/components/CustomSelect";
 import QRCodeReader from '@/components/admin/QRCodeReader';
-import { AttendeeWithCheckIn } from '@/hooks/useEventRsvps';
+import { AttendeeWithCheckIn } from '@/contexts/EventParticipantsContext';
 
 export default function UserScanner({
     user,

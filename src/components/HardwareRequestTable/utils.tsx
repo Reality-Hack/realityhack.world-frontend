@@ -20,7 +20,7 @@ export const HardwareRequestStatusOptionsCheckedOut: HardwareRequestStatusOption
   value: HardwareRequestStatusEnum.C
 }
 
-export const HardwareRequestStatusOptionsFull: HardwareRequestStatusOption[] = [
+export const HardwareRequestStatusOptionsDefault: HardwareRequestStatusOption[] = [
   {
     label: 'Pending',
     value: HardwareRequestStatusEnum.P
@@ -31,13 +31,20 @@ export const HardwareRequestStatusOptionsFull: HardwareRequestStatusOption[] = [
   },
 ];
 
+const HardwareRequestStatusApproved: HardwareRequestStatusOption = {
+  label: 'Approved',
+  value: HardwareRequestStatusEnum.A
+}
+
+export const HardwareRequestStatusOptionsNoDevice: HardwareRequestStatusOption[] = [
+  ...HardwareRequestStatusOptionsDefault,
+  HardwareRequestStatusApproved,
+];
+
 export const HardwareRequestStatusOptions: HardwareRequestStatusOption[] = [
-  {
-    label: 'Approved',
-    value: HardwareRequestStatusEnum.A
-  },
+  HardwareRequestStatusApproved,
   HardwareRequestStatusOptionsCheckedOut,
-  ...HardwareRequestStatusOptionsFull
+  ...HardwareRequestStatusOptionsDefault
 ];
 
 /**

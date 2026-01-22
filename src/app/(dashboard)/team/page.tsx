@@ -63,8 +63,8 @@ export default function Team() {
   return (
     <div className="h-screen p-6 flex flex-col items-start">
       <div className="pb-8 flex flex-col items-start w-full">
-        <h1 className="text-3xl pb-9 mb-10 font-semibold">Teams</h1>
-        <hr className="w-full mt-2 border-t-2 border-gray-300 mt-4" />
+        <h1 className="text-3xl mb-4 font-semibold">My Team</h1>
+        <hr className="w-full mt-2 border-t-2 border-gray-300" />
       </div>
       
       {teamId && teamData ? (

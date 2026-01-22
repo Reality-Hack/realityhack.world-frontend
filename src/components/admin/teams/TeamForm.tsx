@@ -22,7 +22,7 @@ import { TeamCreateRequest, TeamRequest } from '@/types/models';
 import { useTeamsCreate, useTeamsUpdate, useTeamsDestroy } from '@/types/endpoints';
 import { TeamOperationResult } from '@/types/types2';
 import LinearProgress from '@mui/material/LinearProgress';
-import { useEventRsvps, AttendeeWithCheckIn } from '@/hooks/useEventRsvps';
+import { useEventParticipants, AttendeeWithCheckIn } from '@/contexts/EventParticipantsContext';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />
@@ -45,8 +45,10 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
   const { data: session } = useSession();
   const { 
     rsvpAttendeesWithCheckIn: attendees,
-    isLoading: attendeesLoading,
-  } = useEventRsvps();
+    isLoadingRsvps: attendeesLoading,
+    teamByAttendeeId,
+    attendeeIdRsvpMap,
+  } = useEventParticipants();
   const isEdit = !!initialData?.id;
 
   const [formData, setFormData] = useState<TeamFormData>(() => ({
@@ -106,20 +108,13 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
   }, [attendees]);
 
   const isDirty = useMemo(() => {
-    console.group('isDirty')
-    console.log('originalData', originalData)
-    console.log('formData', formData)
     if (!originalData) return true;
-    console.log('JSON.stringify(formData)', JSON.stringify(formData))
-    console.log('JSON.stringify(originalData)', JSON.stringify(originalData))
-    console.log('JSON.stringify(formData) !== JSON.stringify(originalData)', JSON.stringify(formData) !== JSON.stringify(originalData))
-    console.groupEnd()
     return JSON.stringify(formData) !== JSON.stringify(originalData);
   }, [formData, originalData]);
 
   const validateForm = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = 'Team name is required';
     }
@@ -146,6 +141,19 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
 
   const handleSave = useCallback(async () => {
     if (!validateForm()) return;
+
+    const participantTeams = formData.attendees.map(a => {
+      const team = teamByAttendeeId(a.id ?? '');
+      if (!team) return undefined;
+      const participant = attendeeIdRsvpMap[a.id ?? ''];
+      return team ? { teamName: team.name, participant: `${participant?.attendee?.first_name} ${participant?.attendee?.last_name}` } : undefined;
+    }).filter(t => t !== undefined);
+
+    if (participantTeams.length > 0) {
+      toast.error(`Attendees cannot be on multiple teams ${participantTeams.map(t => `Team: ${t?.teamName} - ${t?.participant}`).join(', ')}`);
+      return;
+    }
+
     if (!formData.attendees.length) {
       toast.error('Please add at least one attendee');
       return;

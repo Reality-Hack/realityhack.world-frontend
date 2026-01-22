@@ -71,11 +71,11 @@ export default function HardwareEditor({
       </button>
       <HardwareCategoryFilter/>
       <div className="flex flex-wrap justify-left gap-6 ml-6 mt-14">
-        {filteredHardware.map((item: any, i: number) => (
+        {filteredHardware.map((item: HardwareCount, i: number) => (
           <EditableHardwareCard
             item={item}
             removeUserCreatedHardware={removeUserCreatedHardware}
-            key={`${item.id}-${item.name}-${i}`}
+            key={item.id || `new-${item.name}`}
             hardwareCategories={hardwareCategories}
             topLevelProps={{
               'data-testid': `hardware-request-hardware-${i}`

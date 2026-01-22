@@ -2,7 +2,7 @@
 import HardwareRequestTable from '@/components/HardwareRequestTable/HardwareRequestTable';
 import { useState } from 'react';
 import { HardwareWithType } from '@/types/types2';
-import { AttendeeWithCheckIn } from '@/hooks/useEventRsvps';
+import { AttendeeWithCheckIn } from '@/contexts/EventParticipantsContext';
 import HardwareDeviceScanner from './HardwareDeviceScanner';
 import UserScanner from './UserScanner';
 

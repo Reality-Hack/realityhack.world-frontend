@@ -1,5 +1,6 @@
 'use client';
 import { Tab } from '@/components/Tab';
+import { useAuth } from '@/contexts/AuthContext';
 import { usePathname } from 'next/navigation';
 
 export default function ApplicationLayout({
@@ -8,6 +9,10 @@ export default function ApplicationLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { isAdmin } = useAuth();
+  if (!isAdmin) {
+    return <div>You are not authorized to access this page</div>;
+  }
   return (
     <div className="h-screen p-6 pt-8 pl-2">
       <h1 className="text-3xl">Applications</h1>

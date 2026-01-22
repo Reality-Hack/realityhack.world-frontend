@@ -1,26 +1,15 @@
 'use client';
-import {
-  applicationOptions,
-  getAllHackerApplications,
-  updateApplication
-} from '@/app/api/application';
-import { getUploadedFile } from '@/app/api/uploaded_files';
-import CustomSelect from '@/components/CustomSelect';
 import Table from '@/components/Table';
-import { Application, status } from '@/types/types';
-import { getAllRSVPs, rsvpOptions } from '@/app/api/rsvp';
-import Box from '@mui/material/Box';
-import { ColumnDef, Row, createColumnHelper } from '@tanstack/react-table';
+import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
 import { useSession } from 'next-auth/react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Modal from '../Modal';
 import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 import { useEventrsvpsList } from '@/types/endpoints';
-import { EventRsvp, EventrsvpsListParticipationClass, ShirtSizeEnum } from '@/types/models';
+import { EventRsvp, EventrsvpsListParticipationClass } from '@/types/models';
 import Loader from '@/components/Loader';
-import { useRSVPStats, ShirtSizeLabel, SHIRT_SIZE_MAP } from '@/hooks/useRSVPStats';
-import { buildChoiceMap } from '@/app/utils/buildChoiceMap';
+import { useEventParticipants } from '@/contexts/EventParticipantsContext';
 
 interface RsvpTableProps {
   type: EventrsvpsListParticipationClass | undefined;
@@ -44,32 +33,16 @@ export default function RsvpTable({ type }: RsvpTableProps) {
     }
   });
 
-  const [options, setOptions] = useState<any>({});
-  useEffect(() => {
-    const getData = async () => {
-      const options = await rsvpOptions({});
-      setOptions(options);
-    };
-    getData();
-  }, []);
-
-  const choiceMaps = useMemo(() => ({
-    participationRole: buildChoiceMap(options, 'participation_role'),
-    shirtSize: buildChoiceMap(options, 'shirt_size'),
-    dietaryRestrictions: buildChoiceMap(options, 'dietary_restrictions'),
-    dietaryAllergies: buildChoiceMap(options, 'dietary_allergies'),
-    participationClass: buildChoiceMap(options, 'participation_class'),
-  }), [options]);
-
   const { 
-    total, 
-    shirtSizes, 
+    choiceMaps,
+    getTotalCount: total,
+    shirtSizeCounts,
     specialInterestTrackOneCounts, 
     specialInterestTrackTwoCounts,
-  } = useRSVPStats();
+  } = useEventParticipants();
 
   const mappedEventRsvps = useMemo(() => {
-    if (!eventRsvps || Object.keys(options).length === 0) return [];
+    if (!eventRsvps || !Object.keys(choiceMaps.shirtSize).length) return [];
     return eventRsvps
       .map((rsvp: EventRsvp) => {
         const { 
@@ -101,7 +74,7 @@ export default function RsvpTable({ type }: RsvpTableProps) {
         }
       })
 
-    }, [eventRsvps]);
+    }, [eventRsvps, choiceMaps]);
 
   const columnHelper = createColumnHelper<any>();
   const columns = useMemo<ColumnDef<any, any>[]>(
@@ -204,46 +177,16 @@ export default function RsvpTable({ type }: RsvpTableProps) {
           T Shirts Sizes
         </span>
         <div className="flex flex-row flex-wrap justify-center gap-2 mb-4">
-          <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
-            <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-              S
-            </span>
-            <span className="text-lg font-semibold text-black text-opacity-90">
-              { shirtSizes[ShirtSizeLabel.S] }
-            </span>
-          </div>
-          <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
-            <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-              M
-            </span>
-            <span className="text-lg font-semibold text-black text-opacity-90">
-              { shirtSizes[ShirtSizeLabel.M] }
-            </span>
-          </div>
-          <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
-            <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-              L
-            </span>
-            <span className="text-lg font-semibold text-black text-opacity-90">
-              { shirtSizes[ShirtSizeLabel.L] }
-            </span>
-          </div>
-          <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
-            <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-              XL
-            </span>
-            <span className="text-lg font-semibold text-black text-opacity-90">
-              { shirtSizes[ShirtSizeLabel.XL] }
-            </span>
-          </div>
-          <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
-            <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-              XXL
-            </span>
-            <span className="text-lg font-semibold text-black text-opacity-90">
-              { shirtSizes[ShirtSizeLabel.XXL] }
-            </span>
-          </div>
+          {Object.entries(shirtSizeCounts).map(([size, count]) => (
+            <div key={size} className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
+              <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
+                {size}
+              </span>
+              <span className="text-lg font-semibold text-black text-opacity-90">
+                {count}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
