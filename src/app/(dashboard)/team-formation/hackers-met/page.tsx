@@ -1,13 +1,10 @@
-'use client';
 import CustomSelectTyping from '@/components/CustomSelectTyping';
 import { useAuth } from '@/contexts/AuthContext';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import CustomDialog from './Dialogue';
+import QRCodeReader from '@/components/admin/QRCodeReader';
 import { LinearProgress } from '@mui/material';
-import { toast } from 'sonner';
 import './Styles.css';
-import { useEventParticipants } from '@/contexts/EventParticipantsContext';
-import { AttendeeName, AttendeePreference, PreferenceEnum } from '@/types/models';
 import {
   useAttendeepreferencesList,
   attendeepreferencesCreate,
@@ -17,6 +14,9 @@ import {
 } from '@/types/endpoints';
 import { useSWRConfig } from 'swr';
 import { useSession } from '@/auth/client';
+import { toast } from 'sonner';
+import { useEventParticipants } from '@/contexts/EventParticipantsContext';
+import { AttendeeName, AttendeePreference, PreferenceEnum } from '@/types/models';
 
 // Type for connection profile data
 interface ConnectionProfile {
@@ -84,6 +84,7 @@ function ConnectionCard({ connection }: { connection: ConnectionProfile }) {
     </div>
   );
 }
+
 
 export default function HackersMet() {
   const { data: session } = useSession();
