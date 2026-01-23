@@ -1,222 +1,372 @@
 'use client';
-import CustomSelectTyping from '@/components/CustomSelectTyping';
-import { useAuth } from '@/contexts/AuthContext';
-import React, { useMemo, useState } from 'react';
-import CustomDialog from './Dialogue';
-import { LinearProgress } from '@mui/material';
-import { toast } from 'sonner';
-import './Styles.css';
-import { useEventParticipants } from '@/contexts/EventParticipantsContext';
-import { AttendeeName, AttendeePreference, PreferenceEnum } from '@/types/models';
+import { getAllAttendees } from '@/app/api/attendee';
 import {
-  useAttendeepreferencesList,
-  attendeepreferencesCreate,
-  attendeepreferencesPartialUpdate,
-  attendeepreferencesDestroy,
-  getAttendeepreferencesListKey
-} from '@/types/endpoints';
-import { useSWRConfig } from 'swr';
+  getPreferencesByAttendeeId,
+  addPreference,
+  updatePreference,
+  deletePreference
+} from '@/app/api/preferences';
+import CustomSelectTyping from '@/components/CustomSelectTyping';
 import { useSession } from 'next-auth/react';
+import { useAuth } from '@/contexts/AuthContext';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
+import CustomDialog from './Dialogue';
+import QRCodeReader from '@/components/admin/QRCodeReader';
+import { getAvailableTracks } from '@/app/api/teamformation';
+import { LinearProgress } from '@mui/material';
+import { FaStar, FaShieldAlt, FaRocket } from 'react-icons/fa';
+import './Styles.css';
 
-// Type for connection profile data
-interface ConnectionProfile {
-  id: string;
-  preferenceId: string;
+interface Connection {
   name: string;
-  email: string;
-  participationClass: string;
-  participationRole: string | null;
-  discord: string;
-  preference: PreferenceEnum;
-  teamName: string | null;
+  role: string;
+  date: JSX.Element;
+  icon?: JSX.Element;
 }
 
-// Reusable ConnectionCard component
-function ConnectionCard({ connection }: { connection: ConnectionProfile }) {
-  const preferenceLabel = connection.preference === PreferenceEnum.Y 
-    ? 'Preferred' 
-    : connection.preference === PreferenceEnum.N 
-      ? 'Excluded' 
-      : 'Connected';
-  const preferenceColor = connection.preference === PreferenceEnum.Y 
-    ? 'text-green-600 bg-green-50' 
-    : connection.preference === PreferenceEnum.N 
-      ? 'text-red-600 bg-red-50' 
-      : 'text-gray-600 bg-gray-50';
-
-  return (
-    <div className="w-full p-4 border border-gray-300 rounded-md shadow-sm bg-white">
-      <div className="flex justify-between items-start">
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold">
-            {connection.name}
-          </h3>
-          <p className="text-gray-600 text-sm">
-            {connection.participationClass}
-            {connection.participationRole && (
-              <span className="text-blue-600 ml-2">• {connection.participationRole}</span>
-            )}
-          </p>
-          {connection.email && (
-            <p className="text-gray-500 text-xs mt-1">
-              {connection.email}
-            </p>
-          )}
-          {connection.discord && (
-            <p className="text-indigo-500 text-xs mt-1">
-              Discord: {connection.discord}
-            </p>
-          )}
-          {connection.teamName ? (
-            <p className="text-orange-600 text-xs mt-1 font-medium">
-              Team: {connection.teamName}
-            </p>
-          ) : (
-            <p className="text-green-600 text-xs mt-1">
-              Looking for a team
-            </p>
-          )}
-        </div>
-        <span className={`px-2 py-1 rounded text-xs font-medium ${preferenceColor}`}>
-          {preferenceLabel}
-        </span>
-      </div>
-    </div>
-  );
+interface Attendee {
+  participation_class?: string;
+  first_name: string;
+  last_name: string;
+  id: string;
+}
+interface Preference {
+  id: string;
+  preference: 'Y' | 'N' | 'T';
+  preferee: string;
+  preferer: string;
+}
+interface PreferenceInput {
+  preference: 'Y' | 'N' | 'T';
+  preferee: string;
+  preferer: string;
 }
 
-export default function HackersMet() {
+export default function HackersMet({}) {
   const { data: session } = useSession();
   const { user } = useAuth();
-  const { rsvpByAttendeeId, rsvpAttendees, isLoadingRsvps, choiceMaps, teamByAttendeeId } = useEventParticipants();
-  const { mutate } = useSWRConfig();
 
-  const requestConfig = useMemo(() => ({
-    swr: { enabled: !!session?.access_token && !!user?.id },
-    request: {
-      headers: { 'Authorization': `JWT ${session?.access_token}` }
-    }
-  }), [session?.access_token, user?.id]);
-  
-  const { data: preferences, isLoading: isLoadingPreferences } = useAttendeepreferencesList(
-    { preferer: user?.id },
-    requestConfig
-  );
-
-  const [openDialog, setOpenDialog] = useState(false);
-
-  // Derive available attendee options from rsvpAttendees and preferences
-  const availableAttendeeOptions = useMemo(() => {
-    if (!rsvpAttendees || !preferences) return [];
-    return rsvpAttendees
-      .filter(attendee => 
-        attendee.id !== user?.id && 
-        !preferences.some(pref => pref.preferee === attendee.id)
+  const connections: Connection[] = [
+    {
+      name: 'Alice Johnson',
+      role: 'Software Engineer at TechCorp',
+      date: (
+        <div className="inline-flex items-top gap-2 mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-4 h-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
+            />
+          </svg>
+          <span>2023-05-15</span>
+        </div>
+      ),
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="#EBB818"
+          style={{ width: '24px', height: '24px', display: 'block' }}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+          />
+        </svg>
       )
-      .map(attendee => ({
-        label: `${attendee.first_name || ''} ${attendee.last_name || ''}`.trim(),
-        value: attendee.id || ''
-      }));
-  }, [rsvpAttendees, preferences, user?.id]);
-
-  // Derive connections for the dialog
-  const connections = useMemo(() => {
-    if (!preferences) return [];
-    return preferences.map(preference => {
-      const rsvp = rsvpByAttendeeId(preference.preferee);
-      const attendee = rsvp?.attendee;
-      const application = rsvp?.application;
-      const participationClassCode = rsvp?.participation_class || '';
-      const participationClassLabel = choiceMaps.participationClass[participationClassCode] || participationClassCode || 'Unknown';
-      const participationRoleCode = application?.participation_role ? application.participation_role : rsvp?.participation_role || '';
-      const participationRoleLabel = participationRoleCode 
-        ? (choiceMaps.participationRole[participationRoleCode] || participationRoleCode)
-        : null;
-      const team = teamByAttendeeId(preference.preferee);
-      
-      return {
-        id: preference.id || '',
-        preferenceId: preference.id || '',
-        name: attendee ? `${attendee.first_name || ''} ${attendee.last_name || ''}`.trim() : '',
-        email: attendee?.email || '',
-        participationClass: participationClassLabel,
-        participationRole: participationRoleLabel,
-        discord: rsvp?.communication_platform_username || '',
-        preference: preference.preference,
-        teamName: team?.name || null,
-      };
-    });
-  }, [preferences, rsvpByAttendeeId, choiceMaps.participationClass, choiceMaps.participationRole, teamByAttendeeId]);
-
-  // Revalidate preferences list after mutations
-  const revalidatePreferences = () => {
-    mutate(getAttendeepreferencesListKey({ preferer: user?.id }));
-  };
-
-  const authHeaders = useMemo(() => ({
-    headers: { 'Authorization': `JWT ${session?.access_token}` }
-  }), [session?.access_token]);
-
-  async function addPreferences(preferee: string, preferenceStatus: PreferenceEnum) {
-    const userId = user?.id;
-    const eventId = user?.event_rsvp?.event;
-
-    if (!userId || !eventId || !session?.access_token) {
-      toast.error('User or session information missing.');
-      return;
+    },
+    {
+      name: 'Bob Smith',
+      role: 'Startup Founder, interested in AI',
+      date: (
+        <div className="inline-flex items-top gap-2 mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-4 h-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
+            />
+          </svg>
+          <span>2023-06-02</span>
+        </div>
+      ),
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="#35CA6C"
+          style={{ width: '24px', height: '24px', display: 'block' }}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
+          />
+        </svg>
+      )
+    },
+    {
+      name: 'Charlie Brown',
+      role: 'Marketing Specialist',
+      date: (
+        <div className="inline-flex items-top gap-2 mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-4 h-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
+            />
+          </svg>
+          <span>2023-06-20</span>
+        </div>
+      ),
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="#F69494"
+          style={{ width: '22px', height: '22px', display: 'block' }}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 21.85a2 2 0 0 1-1-.25l-.3-.17A15.17 15.17 0 0 1 3 8.23v-.14a2 2 0 0 1 1-1.75l7-3.94a2 2 0 0 1 2 0l7 3.94a2 2 0 0 1 1 1.75v.14a15.17 15.17 0 0 1-7.72 13.2l-.3.17a2 2 0 0 1-.98.25m0-17.7L5 8.09v.14a13.15 13.15 0 0 0 6.7 11.45l.3.17l.3-.17A13.15 13.15 0 0 0 19 8.23v-.14Z"
+          />
+        </svg>
+      )
+    },
+    {
+      name: 'Diana Prince',
+      role: 'Data Scientist, expert in machine learning',
+      date: (
+        <div className="inline-flex items-top gap-2 mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-4 h-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
+            />
+          </svg>
+          <span>2023-07-10</span>
+        </div>
+      ),
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="#EBB818"
+          style={{ width: '24px', height: '24px', display: 'block' }}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+          />
+        </svg>
+      )
+    },
+    {
+      name: 'Ethan Hunt',
+      role: 'UX Designer with 5 years of experience',
+      date: (
+        <div className="inline-flex items-top gap-2 mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-4 h-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
+            />
+          </svg>
+          <span>2023-07-25</span>
+        </div>
+      ),
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="#35CA6C"
+          style={{ width: '24px', height: '24px', display: 'block' }}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
+          />
+        </svg>
+      )
     }
+  ];
+  const [attendeesLoading, setAttendeesLoading] = useState(false);
+  const [preferencesLoading, setPreferencesLoading] = useState(false);
 
-    try {
-      await attendeepreferencesCreate({
+  const [attendees, setAttendeeInfo] = useState<Attendee[]>();
+  const [personalPreferences, setPersonalPreferences] = useState<Preference[]>(
+    []
+  );
+  const [newPreference, setNewPreference] = useState<Preference>();
+  const [availableAttendeeOptions, setAvailableAttendeeOptions] = useState<
+    { label: string; value: string }[] | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (session?.access_token) {
+      setAttendeesLoading(true);
+      getAllAttendees(session.access_token)
+        .then(apps => {
+          // Filter attendees with participation class "P"
+          const filteredAttendees = apps.filter(
+            (attendees: any) =>
+              (attendees.participation_class === 'P' ||
+                typeof attendees.participation_class === 'undefined') &&
+              attendees.id != user?.id
+          );
+          setAttendeeInfo(filteredAttendees);
+        })
+        .catch(error => {
+          // Handle error if necessary
+          console.error('Error fetching attendees:', error);
+        })
+        .finally(() => setAttendeesLoading(false));
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (session && user) {
+      setPreferencesLoading(true);
+      getPreferencesByAttendeeId(session.access_token, user.id)
+        .then(prefs => {
+          setPersonalPreferences(prefs);
+          console.log(prefs, 'prefs');
+        })
+        .catch(error => {
+          // Handle error if necessary
+          console.error('Error fetching attendees:', error);
+        })
+        .finally(() => setPreferencesLoading(false));
+    }
+  }, [session, user]);
+
+  async function addPreferences(
+    preferee: string,
+    preferenceStatus: 'Y' | 'N' | 'T'
+  ) {
+    //HOW DO I GET THE ATTENDEE ID
+    if (session) {
+      const pref: PreferenceInput = {
         preference: preferenceStatus,
-        preferer: userId,
-        preferee: preferee,
-        event: eventId
-      }, authHeaders);
-      revalidatePreferences();
-      toast.success('Connection added!');
-    } catch (error: unknown) {
-      console.error('Error adding preference:', error);
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      toast.error('Failed to add connection: ' + message);
+        preferer: user?.id,
+        preferee: preferee
+      };
+      const retrievedPref = await addPreference(session?.access_token, pref);
+      console.log(retrievedPref);
+      setPersonalPreferences(prev => [...prev, retrievedPref]); // Remove the trailing comma here
     }
   }
 
   async function deletePreferences(preferenceId: string) {
-    if (!session?.access_token) {
-      toast.error('Session information missing.');
-      return;
-    }
-
-    try {
-      await attendeepreferencesDestroy(preferenceId, authHeaders);
-      revalidatePreferences();
-      toast.success('Connection removed.');
-    } catch (error: unknown) {
-      console.error('Error deleting preference:', error);
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      toast.error('Failed to remove connection: ' + message);
+    if (session) {
+      setPreferencesLoading(true);
+      await deletePreference(session?.access_token, preferenceId);
+      let oldPrefIdx = personalPreferences.findIndex(
+        el => el.id === preferenceId
+      );
+      let newPrefList = personalPreferences.slice();
+      newPrefList.splice(oldPrefIdx, 1);
+      setPersonalPreferences(newPrefList);
+      setPreferencesLoading(false);
     }
   }
 
-  async function updatePreferences(preference: PreferenceEnum, preferenceId: string) {
-    if (!session?.access_token) {
-      toast.error('Session information missing.');
-      return;
-    }
-
-    try {
-      await attendeepreferencesPartialUpdate(preferenceId, { preference }, authHeaders);
-      revalidatePreferences();
-      toast.success('Connection updated!');
-    } catch (error: unknown) {
-      console.error('Error updating preference:', error);
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      toast.error('Failed to update connection: ' + message);
+  async function updatePreferences(
+    preference: 'Y' | 'N',
+    preferenceId: string
+  ) {
+    if (session) {
+      setPreferencesLoading(true);
+      await updatePreference(session?.access_token, preferenceId, preference);
+      let oldPrefIdx = personalPreferences.findIndex(
+        el => el.id === preferenceId
+      );
+      let newPrefList = personalPreferences.slice();
+      if (oldPrefIdx != -1) {
+        newPrefList[oldPrefIdx].preference = preference;
+      }
+      setPersonalPreferences(newPrefList);
+      setPreferencesLoading(false);
     }
   }
 
-  const isLoading = isLoadingRsvps || isLoadingPreferences;
+  //need useEffect to get people's preferences
+
+  //this function formats the attendee options ased off api attendee collection
+  useEffect(() => {
+    const filteredHackerOptions =
+      attendees?.filter((attendee: Attendee) => {
+        // Check if the attendee's id is not the user's id and not present in personalPreferences
+        const isUser = attendee.id === user?.id;
+        const isPresentInPrefs = personalPreferences?.some(
+          (pref: Preference) => pref.preferee === attendee.id
+        );
+        return !isUser && !isPresentInPrefs;
+      }) || [];
+
+    // making the labels for the options
+    const hackerOptions =
+      filteredHackerOptions.map((attendee: Attendee) => ({
+        label: `${attendee.first_name} ${attendee.last_name}`,
+        value: attendee.id
+      })) || [];
+
+    setAvailableAttendeeOptions(hackerOptions);
+  }, [personalPreferences, attendees]);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -225,7 +375,6 @@ export default function HackersMet() {
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
-
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center justify-center">
@@ -233,28 +382,37 @@ export default function HackersMet() {
         <button
           className="ml-auto p-2 rounded-lg bg-blue-300 text-white hover:opacity-60 drop-shadow-lg"
           onClick={handleOpenDialog}
-          disabled={isLoading}
+          disabled={attendeesLoading || preferencesLoading}
         >
-          Connection Profiles
-        </button>
+          Team Formation Preferences
+        </button>{' '}
       </div>
 
       <PreferenceRowForm
-        options={availableAttendeeOptions}
+        name={newPreference?.preferee}
+        // status={newPreference.status}
+        status={newPreference?.preference}
+        profilePicSrc={'newPreference.src'}
+        options={availableAttendeeOptions || []}
         addToPreferences={addPreferences}
-        enabled={!isLoading}
+        enabled={!attendeesLoading}
       />
       <div>
-        {isLoading ? (
+        {attendeesLoading || preferencesLoading ? (
           <LinearProgress />
         ) : (
-          connections.map((connection) => (
+          personalPreferences &&
+          attendees &&
+          personalPreferences.map((pref: Preference, index: number) => (
             <PersonRow
-              key={connection.id}
-              connection={connection}
+              key={index}
+              id={pref.id}
+              preferee={attendees.find(el => el.id == pref.preferee)}
+              status={pref.preference}
+              // Pass your other functions or event handlers if needed
               deletePref={() => {
-                if (!connection.preferenceId) return;
-                deletePreferences(connection.preferenceId);
+                if (!pref.id) return;
+                deletePreferences(pref.id);
               }}
             />
           ))
@@ -262,27 +420,45 @@ export default function HackersMet() {
 
         {/* CustomDialog component with children */}
         <CustomDialog open={openDialog} onClose={handleCloseDialog}>
-          <div className="container-fluid bg-[#F3F4F6]">
-            <div className="p-8 pb-10 m-0">
-              <h2 className="text-2xl font-bold mb-4">Team Formation Preferences</h2>
-              <input
-                type="text"
-                placeholder="Search connections..."
-                className="w-full p-2 border border-gray-300 rounded-md mb-4"
-              />
-              {isLoadingPreferences ? (
-                <LinearProgress />
-              ) : connections.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">No connections yet. Start connecting with other hackers!</p>
-              ) : (
-                <div className="space-y-3">
-                  {connections.map((connection) => (
-                    <ConnectionCard key={connection.id} connection={connection} />
+          {/* Dialog content goes here */}
+          {personalPreferences && attendees && (
+            <div className="container-fluid bg-[#F3F4F6]">
+
+              {/* Display the preference value */}
+              <div className="p-8 pb-10 m-0 ">
+                <h2 className="text-2xl font-bold mb-4">Past Connections</h2>
+                <input
+                  type="text"
+                  placeholder="Search connections..."
+                  className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                />
+                <div className="space-y-4 ">
+                  {connections.map((connection, index) => (
+                    <div
+                      key={index}
+                      className="w-full p-3 pb-0 pt-2 border border-gray-300 rounded-md shadow-sm bg-white"
+                    >
+                      <div>
+                        <div className="flex justify-between">
+                          <h3 className="text-lg font-semibold mb-1 mt-2">
+                            {connection.name}
+                          </h3>
+                          <div className="mt-2">{connection.icon}</div>
+                        </div>
+
+                        <p className="text-gray-600 text-sm mb-1">
+                          {connection.role}
+                        </p>
+                        <p className="text-gray-500 text-sm mb-1">
+                          {connection.date}
+                        </p>
+                      </div>
+                    </div>
                   ))}
                 </div>
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </CustomDialog>
       </div>
     </div>
@@ -290,44 +466,36 @@ export default function HackersMet() {
 }
 
 interface PersonRowProps {
-  connection: ConnectionProfile;
-  deletePref: () => void;
+  preferee?: Attendee;
+  status: string;
+  deletePref: (preferenceId: string) => void;
+  id: string;
 }
 
-function PersonRow({ connection, deletePref }: PersonRowProps) {
-  const [showProfile, setShowProfile] = useState(false);
+function PersonRow({ preferee, id, deletePref }: PersonRowProps) {
+  if (!preferee) return <></>;
 
   return (
-    <>
-      <div className="flex flex-row pb-2 my-2 border-b-2 border-black">
-        <div className="flex flex-row mr-auto gap-2 items-center">
-          <div
-            onClick={deletePref}
-            className="bg-white text-black border-2 p-2 rounded-lg hover:cursor-pointer hover:opacity-60"
-          >
-            Forget
-          </div>
-          <div 
-            className="text-lg font-semibold hover:text-blue-600 hover:underline cursor-pointer"
-            onClick={() => setShowProfile(true)}
-          >
-            {connection.name}
-          </div>
-        </div>
+    <div className="flex flex-row items-center justify-between p-4 my-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex-1">
+        <h4 className="text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors cursor-pointer">
+          {`${preferee.first_name} ${preferee.last_name}`}
+        </h4>
       </div>
-      <CustomDialog open={showProfile} onClose={() => setShowProfile(false)}>
-        <div className="p-4">
-          <ConnectionCard connection={connection} />
-        </div>
-      </CustomDialog>
-    </>
+      <button
+        onClick={() => deletePref(id)}
+        className="text-white bg-gray-500 hover:bg-red-600 hover:cursor-pointer p-2 h-10 rounded-lg w-24 md:w-32 text-center transition-colors"
+      >
+        Forget
+      </button>
+    </div>
   );
 }
 interface ModalPersonRowProps {
-  preferee?: AttendeeName;
-  status: PreferenceEnum;
+  preferee?: Attendee;
+  status: string;
   deletePref: () => void;
-  updatePref: (preference: PreferenceEnum, preferenceId: string) => void;
+  updatePref: (preference: 'Y' | 'N', preferenceId: string) => void;
   id: string;
 }
 
@@ -338,40 +506,52 @@ function ModalPersonRow({
   updatePref,
   id
 }: ModalPersonRowProps) {
-  if (!preferee) return null;
-
-  const getConnectionRowValues = () => {
-    if (status === PreferenceEnum.T) {
-      return { textColor: 'text-gray-500', statusText: 'Connected' };
-    } else if (status === PreferenceEnum.Y) {
-      return { textColor: 'text-green-600', statusText: 'Preferred' };
+  if (!preferee) return <></>;
+  const connectionRowValues = () => {
+    if (status == 'T') {
+      return {
+        textColor: 'text-gray-500',
+        statusText: 'Connected'
+      };
+    } else if (status == 'Y') {
+      return {
+        textColor: 'text-green-600',
+        statusText: 'Preferred'
+      };
     } else {
-      return { textColor: 'text-red-400', statusText: 'Excluded' };
+      return {
+        textColor: 'text-red-400',
+        statusText: 'Excluded'
+      };
     }
   };
-
-  const { textColor, statusText } = getConnectionRowValues();
-
+  const { textColor, statusText } = connectionRowValues();
   return (
-    <div className="flex flex-row pb-2 my-2 border-b-2 border-black">
+    <div className={`flex flex-row pb-2 my-2 border-b-2 border-black`}>
       <div className="flex flex-row mr-auto gap-2 items-center">
+        {/* <img src={"profilePicSrc"} width={20} height={20} alt="person" /> */}
         <div className="flex flex-col">
-          <div className="text-lg font-semibold">{`${preferee.first_name || ''} ${preferee.last_name || ''}`}</div>
-          <div className={`${textColor} text-center drop-shadow-lg p-2 rounded-lg`}>
+          <div className="text-lg font-semibold">{`${preferee.first_name} ${preferee.last_name}`}</div>
+          <div
+            className={`${textColor} text-center drop-shadow-lg p-2 rounded-lg`}
+          >
             {statusText}
           </div>
         </div>
       </div>
       <div className="flex flex-col ml-auto gap-2">
         <div
-          onClick={() => updatePref(PreferenceEnum.Y, id)}
-          className="bg-green-500 text-white text-center drop-shadow-lg p-2 rounded-lg hover:cursor-pointer"
+          className={`${textColor} text-center drop-shadow-lg p-2 rounded-lg hover:cursor-pointer`}
+        ></div>
+        <div
+          onClick={() => updatePref('Y', id)}
+          className={`bg-green-500 text-white text-center drop-shadow-lg p-2 rounded-lg hover:cursor-pointer`}
         >
           Favorite
         </div>
         <div
-          onClick={() => updatePref(PreferenceEnum.N, id)}
-          className="bg-red-500 text-white text-center drop-shadow-lg p-2 rounded-lg hover:cursor-pointer"
+          onClick={() => updatePref('N', id)}
+          className={`bg-red-500 text-white text-center drop-shadow-lg p-2 rounded-lg hover:cursor-pointer`}
         >
           Exclude
         </div>
@@ -385,54 +565,79 @@ function ModalPersonRow({
     </div>
   );
 }
-interface PreferenceFormRowProps {
+interface PreferenceFormRow {
+  profilePicSrc?: string;
+  name?: string;
+  src?: string;
+  status?: string;
   options: { label: string; value: string }[];
-  addToPreferences: (preferee: string, preferenceStatus: PreferenceEnum) => void;
+  addToPreferences: (
+    preferee: string,
+    preferenceStatus: 'Y' | 'N' | 'T'
+  ) => void;
   enabled: boolean;
 }
 
 function PreferenceRowForm({
+  profilePicSrc,
+  name,
+  status,
   options,
   addToPreferences,
   enabled
-}: PreferenceFormRowProps) {
+}: PreferenceFormRow) {
+  // const { user } = useAuth();
   const [fellowAttendee, setFellowAttendee] = useState('');
 
   function handleAttendeeSelection(value: string) {
     setFellowAttendee(value);
   }
 
-  function handlePreferenceSelection(preference: PreferenceEnum) {
-    if (!fellowAttendee) return;
+  function handlePreferenceSelection(preference: 'Y' | 'N' | 'T') {
     addToPreferences(fellowAttendee, preference);
     setFellowAttendee('');
   }
 
-  if (!enabled) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div className="flex flex-row gap-2 items-center">
-      <CustomSelectTyping
-        width="100%"
-        label="Select an attendee"
-        options={options}
-        value={fellowAttendee}
-        onChange={handleAttendeeSelection}
-      />
-      <div className="flex flex-col md:flex-row ml-auto gap-2">
-        <div
-          onClick={() => handlePreferenceSelection(PreferenceEnum.T)}
-          className={`text-white ${
-            fellowAttendee === ''
-              ? 'cursor-not-allowed bg-gray-500'
-              : 'hover:cursor-pointer hover:opacity-60 bg-green-500'
-          } p-2 h-10 rounded-lg w-24 md:w-32 text-center drop-shadow-lg`}
-        >
-          Connect
-        </div>
-      </div>
+    <div>
+      {enabled ? (
+        <>
+          <div className="flex flex-row gap-2 items-center">
+            <CustomSelectTyping
+              width="100%"
+              label="Select a status"
+              options={options}
+              value={fellowAttendee}
+              onChange={handleAttendeeSelection}
+            />
+
+            <div className="flex flex-col md:flex-row ml-auto gap-2">
+              {/* <div>
+          <QRCodeReader />
+        </div> */}
+              <div
+                onClick={() => handlePreferenceSelection('T')}
+                className={`text-white ${
+                  fellowAttendee === ''
+                    ? `cursor-not-allowed bg-gray-500`
+                    : `hover:cursor-pointer hover:opacity-60 bg-green-500`
+                }
+               p-2 h-10 rounded-lg w-24 md:w-32 text-center drop-shadow-lg`}
+              >
+                Connect
+              </div>
+            </div>
+          </div>
+          <div className={`flex flex-row pb-2 my-2 border-b-2`}>
+            <div className="flex flex-row mr-auto gap-2 items-center">
+              {/* <img src={profilePicSrc} width={20} height={20} alt="person" /> */}
+              <div className="text-lg font-semibold">{name}</div>
+            </div>
+          </div>
+        </>
+      ) : (
+        'Loading...'
+      )}
     </div>
   );
 }
