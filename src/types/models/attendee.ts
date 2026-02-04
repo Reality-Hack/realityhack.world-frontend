@@ -41,6 +41,8 @@ export interface Attendee {
    */
   sponsor_company?: string | null;
   participation_class?: ParticipationClassEnum;
+  readonly intended_event_tracks?: string;
+  readonly prefers_event_destiny_hardware?: string;
   readonly created_at?: string;
   readonly updated_at?: string;
 }

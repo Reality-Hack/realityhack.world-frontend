@@ -299,7 +299,7 @@ export default function HardwareRequestTable({
       cell: info =>
         info.getValue() == null
           ? null
-          : hardwareDeviceMap?.[info.getValue()]?.serial?.slice(0, 12)?.concat('...')
+          : hardwareDeviceMap?.[info.getValue()]?.serial
     }),
     columnHelper.accessor('status', {
       header: () => 'Status',

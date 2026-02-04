@@ -38,6 +38,8 @@ export interface PatchedTeamUpdateRequest {
   team_description?: string | null;
   tracks?: TrackEnum[];
   destiny_hardware?: DestinyHardwareEnum[];
+  event_tracks?: string[];
+  event_destiny_hardware?: string[];
   project?: ProjectRequest;
   hardware_hack?: boolean;
   startup_hack?: boolean;

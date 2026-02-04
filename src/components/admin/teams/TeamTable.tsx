@@ -16,7 +16,7 @@ export default function TeamTable() {
     data: teams = [],
     error,
     isLoading: loading
-  } = useTeamsList(undefined, {
+  } = useTeamsList({}, {
     swr: {
       enabled: !!(session?.access_token && isAdmin)
     },

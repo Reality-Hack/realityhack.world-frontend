@@ -32,5 +32,12 @@ export interface PatchedDestinyTeamUpdateRequest {
   hardware_hack?: boolean;
   destiny_hardware?: DestinyHardwareEnum;
   event?: string;
+  /**
+   * Event-scoped track selection
+   * @nullable
+   */
+  event_track?: string | null;
   attendees?: string[];
+  /** Event-scoped destiny hardware selections */
+  event_destiny_hardware?: string[];
 }

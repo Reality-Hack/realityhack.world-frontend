@@ -7,8 +7,8 @@ import type { AttendeeName } from './attendeeName';
 import type { TeamTable } from './teamTable';
 import type { TeamProject } from './teamProject';
 import type { TeamLightHouse } from './teamLightHouse';
-import type { TrackEnum } from './trackEnum';
-import type { DestinyHardwareEnum } from './destinyHardwareEnum';
+import type { TeamDetailTracks } from './teamDetailTracks';
+import type { TeamDetailDestinyHardware } from './teamDetailDestinyHardware';
 
 export interface TeamDetail {
   readonly id?: string;
@@ -26,8 +26,12 @@ export interface TeamDetail {
   startup_hack?: boolean;
   project: TeamProject;
   lighthouse: TeamLightHouse;
-  tracks?: TrackEnum;
-  destiny_hardware?: DestinyHardwareEnum;
+  /** @nullable */
+  tracks?: TeamDetailTracks;
+  /** @nullable */
+  destiny_hardware?: TeamDetailDestinyHardware;
+  readonly event_tracks?: string;
+  readonly event_destiny_hardware?: string;
   /**
    * @maxLength 2000
    * @nullable

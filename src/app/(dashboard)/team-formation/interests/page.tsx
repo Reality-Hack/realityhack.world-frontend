@@ -1,7 +1,6 @@
 'use client';
 import { updateAttendee } from '@/app/api/attendee';
-import { useSpecialTracks, Track } from '@/hooks/useSpecialTracks';
-import CustomSelectMultipleTyping from '@/components/CustomSelectMultipleTyping';
+import { useSpecialTracks } from '@/hooks/useSpecialTracks';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -57,8 +56,10 @@ export default function Interests() {
           <SpecialTrackSelect
             selectedTracks={selectedTracks}
             onChange={setSelectedTracks}
+            options={tracks}
             maxSelections={2}
             labelClass="font-semibold"
+            type="track"
           />
           <div className="flex flex-row gap-2  items-center">
             <input

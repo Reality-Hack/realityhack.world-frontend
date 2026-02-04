@@ -7,6 +7,8 @@
 /**
  * * `ST` - Stata
 * `WK` - Walker
+* `SC` - Student Center (Straton)
+* `BC` - Barcelona
  */
 export type BuildingEnum = typeof BuildingEnum[keyof typeof BuildingEnum];
 
@@ -15,4 +17,6 @@ export type BuildingEnum = typeof BuildingEnum[keyof typeof BuildingEnum];
 export const BuildingEnum = {
   ST: 'ST',
   WK: 'WK',
+  SC: 'SC',
+  BC: 'BC',
 } as const;

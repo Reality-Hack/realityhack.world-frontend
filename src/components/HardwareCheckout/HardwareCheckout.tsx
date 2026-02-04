@@ -1,12 +1,23 @@
 'use client';
 import HardwareRequestTable from '@/components/HardwareRequestTable/HardwareRequestTable';
-import { useState } from 'react';
+import AdminHardwareRequestDialog from '@/components/admin/hardware/AdminHardwareRequestDialog';
+import { useState, useMemo } from 'react';
 import { HardwareWithType } from '@/types/types2';
 import { AttendeeWithCheckIn } from '@/contexts/EventParticipantsContext';
+import { useHardwareContext } from '@/contexts/HardwareContext';
 import HardwareDeviceScanner from './HardwareDeviceScanner';
 import UserScanner from './UserScanner';
+import { toast } from 'sonner';
+import { HardwareRequestList } from '@/types/models';
 
 type ScanMode = 'user' | 'hardware';
+
+type LastDeviceByType = {
+  hardwareTypeId: string;
+  hardwareTypeName: string;
+  device: HardwareWithType;
+  request: HardwareRequestList;
+};
 
 export default function HardwareCheckout({
   attendees,
@@ -18,6 +29,53 @@ export default function HardwareCheckout({
   const [user, setUser] = useState<AttendeeWithCheckIn | null>(null);
   const [hardwareDevice, setHardwareDevice] = useState<HardwareWithType | null>(null);
   const [scanMode, setScanMode] = useState<ScanMode>('user');
+  const [createRequestDialogOpen, setCreateRequestDialogOpen] = useState(false);
+
+  // Get hardware requests from context
+  const { hardwareRequests, hardwareDeviceTypeMap } = useHardwareContext();
+
+  // Group hardware requests by type and get the last device associated with each type
+  const lastDevicesByType = useMemo((): LastDeviceByType[] => {
+    if (!hardwareRequests || hardwareRequests.length === 0) return [];
+
+    // Filter to requests that have a device assigned and sort by updated_at descending
+    const requestsWithDevices = hardwareRequests
+      .filter(req => req.hardware_device)
+      .sort((a, b) => {
+        const dateA = a.updated_at ? new Date(a.updated_at).getTime() : 0;
+        const dateB = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+        return dateB - dateA;
+      });
+
+    const byType = new Map<string, LastDeviceByType>();
+
+    for (const request of requestsWithDevices) {
+      const hardwareTypeId = request.hardware;
+      
+      // Only keep the first (most recent) request for each hardware type
+      if (byType.has(hardwareTypeId)) continue;
+
+      // Find the matching device in hardware list
+      const matchingDevice = hardware.find(h => h.id === request.hardware_device);
+      if (!matchingDevice) continue;
+
+      const hardwareTypeName = hardwareDeviceTypeMap[hardwareTypeId]?.name || 'Unknown';
+
+      byType.set(hardwareTypeId, {
+        hardwareTypeId,
+        hardwareTypeName,
+        device: matchingDevice,
+        request,
+      });
+    }
+
+    return Array.from(byType.values());
+  }, [hardwareRequests, hardware, hardwareDeviceTypeMap]);
+
+  const selectDevice = (device: HardwareWithType) => {
+    setHardwareDevice(device);
+    toast.success(`Selected device: ${device.serial}`);
+  };
 
   return (
     <div className="h-screen p-6">
@@ -80,6 +138,17 @@ export default function HardwareCheckout({
               >
                 Close user
               </button>
+              <button
+                className="cursor-pointer text-white bg-[#493B8A] p-4 m-4 rounded-full disabled:opacity-50 transition-all h-15 self-end"
+                onClick={() => setCreateRequestDialogOpen(true)}
+              >
+                Create new request
+              </button>
+              <AdminHardwareRequestDialog
+                open={createRequestDialogOpen}
+                onClose={() => setCreateRequestDialogOpen(false)}
+                preselectedAttendee={user}
+              />
             </>
           )}
         </>
@@ -118,11 +187,31 @@ export default function HardwareCheckout({
               </button>
             </>
           ) : (
-            <HardwareDeviceScanner
-              device={hardwareDevice}
-              setDevice={setHardwareDevice}
-              hardware={hardware}
-            />
+            <>
+              <HardwareDeviceScanner
+                device={hardwareDevice}
+                setDevice={setHardwareDevice}
+                hardware={hardware}
+              />
+              {/* Last registered device buttons by hardware type */}
+              {lastDevicesByType.length > 0 && (
+                <div className="m-4">
+                  <h3 className="text-sm font-medium text-gray-600 mb-2">Quick select last registered:</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {lastDevicesByType.map((item) => (
+                      <button
+                        key={item.hardwareTypeId}
+                        className="cursor-pointer text-white bg-[#493B8A] px-4 py-2 rounded-full disabled:opacity-50 transition-all text-sm hover:bg-[#5a4a9e]"
+                        onClick={() => selectDevice(item.device)}
+                        title={`Serial: ${item.device.serial}`}
+                      >
+                        Last {item.hardwareTypeName}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </>
       )}

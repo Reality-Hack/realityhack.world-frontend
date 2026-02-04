@@ -32,4 +32,6 @@ export interface PatchedHardwareCreateRequest {
   tags?: TagsEnum[];
   /** @nullable */
   relates_to_destiny_hardware?: PatchedHardwareCreateRequestRelatesToDestinyHardware;
+  /** @nullable */
+  relates_to_event_destiny_hardware?: string | null;
 }

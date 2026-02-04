@@ -12,6 +12,8 @@ import type { WorkshopAttendeeWorkshopDetail } from './workshopAttendeeWorkshopD
 import type { ParticipationClassEnum } from './participationClassEnum';
 import type { DestinyHardwareEnum } from './destinyHardwareEnum';
 import type { TrackEnum } from './trackEnum';
+import type { EventTrack } from './eventTrack';
+import type { EventDestinyHardware } from './eventDestinyHardware';
 
 export interface AttendeeDetail {
   readonly id?: string;
@@ -50,6 +52,8 @@ export interface AttendeeDetail {
   sponsor_handler?: string | null;
   intended_tracks: TrackEnum[];
   intended_hardware_hack?: boolean;
+  readonly intended_event_tracks?: readonly EventTrack[];
+  readonly prefers_event_destiny_hardware?: readonly EventDestinyHardware[];
   readonly created_at?: string;
   readonly updated_at?: string;
 }

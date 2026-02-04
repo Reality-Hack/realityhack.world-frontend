@@ -17,12 +17,13 @@ import { useSession } from 'next-auth/react';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { TeamDetail, TeamTable } from '@/types/models';
+import { TeamDetail, TeamTable, Table } from '@/types/models';
 import { TeamCreateRequest, TeamRequest } from '@/types/models';
-import { useTeamsCreate, useTeamsUpdate, useTeamsDestroy } from '@/types/endpoints';
+import { useTeamsCreate, useTeamsUpdate, useTeamsDestroy, useTablesList } from '@/types/endpoints';
 import { TeamOperationResult } from '@/types/types2';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useEventParticipants, AttendeeWithCheckIn } from '@/contexts/EventParticipantsContext';
+import { getSelectedTableFromOptions, getTableLabel } from '@/components/TeamForm/utils';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />
@@ -60,6 +61,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
   const [originalData, setOriginalData] = useState<TeamFormData | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [tableOptions, setTableOptions] = useState<Table[] | null>(null);
 
   const createMutation = useTeamsCreate({
     request: {
@@ -88,7 +90,24 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
     }
   });
 
+  const { data: tables, isLoading: isTablesLoading, mutate: mutateTables } = useTablesList({}, {
+    swr: { enabled: !!session?.access_token}, 
+    request: {
+      headers: {
+        'Authorization': `JWT ${session?.access_token}`
+      }
+    }
+  });
+
   const isLoading = createMutation.isMutating || updateMutation.isMutating || deleteMutation.isMutating;
+
+  useEffect(() => {
+    if (tables) {
+      const filteredTables = tables
+        .filter(table => !table.is_claimed || table.id === initialData?.table?.id);
+      setTableOptions(filteredTables);
+    }
+  }, [tables, initialData?.table?.id]);
 
   useEffect(() => {
     if (initialData) {
@@ -139,12 +158,25 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
     setFormData(prev => ({ ...prev, attendees: attendees || [] }));
   };
 
+  const handleTableChange = useCallback((table: Table | null | undefined): void => {
+    if (table) {
+      const mappedTable: TeamTable = {
+        id: table.id || '',
+        number: table.number || 0,
+        location: table.location || null
+      };
+      setFormData(prev => ({ ...prev, table: mappedTable }));
+    } else {
+      setFormData(prev => ({ ...prev, table: null }));
+    }
+  }, []);
+
   const handleSave = useCallback(async () => {
     if (!validateForm()) return;
 
     const participantTeams = formData.attendees.map(a => {
       const team = teamByAttendeeId(a.id ?? '');
-      if (!team) return undefined;
+      if (!team || initialData?.id === team.id) return undefined;
       const participant = attendeeIdRsvpMap[a.id ?? ''];
       return team ? { teamName: team.name, participant: `${participant?.attendee?.first_name} ${participant?.attendee?.last_name}` } : undefined;
     }).filter(t => t !== undefined);
@@ -179,6 +211,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
 
       if (result) {
         toast.success(`Team ${isEdit ? 'updated' : 'created'} successfully`);
+        mutateTables();
         onSuccess?.(result);
       }
     } catch (error) {
@@ -228,21 +261,21 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
         size="small"
         disabled={isLoading}
       />
-      {/* <Autocomplete
+      <Autocomplete
         id="table-select"
-        value={team.table}
-        loading={loading}
+        value={getSelectedTableFromOptions(formData.table?.id || null, tableOptions || [])}
+        loading={isTablesLoading}
         onChange={(event: any, newValue: Table | null | undefined) => {
-          changeTable(newValue);
+          handleTableChange(newValue);
         }}
-        options={tableOptions}
-        getOptionLabel={option => getTableLabel(option?.number)}
+        options={tableOptions || []}
+        getOptionLabel={option => getTableLabel(option)}
         getOptionKey={option => option?.id ?? ''}
         isOptionEqualToValue={(a, b) => a?.id === b?.id}
         renderInput={params => (
-          <TextField {...params} label="Table" size="small" />
+          <TextField {...params} label="Table" size="small" fullWidth={true} />
         )}
-      /> */}
+      />
       <Autocomplete
         multiple
         id="attendees-select"

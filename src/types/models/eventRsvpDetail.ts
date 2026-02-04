@@ -155,6 +155,8 @@ export interface EventRsvpDetail {
    * @nullable
    */
   device_preference_ranked?: string | null;
+  readonly intended_event_tracks?: string;
+  readonly prefers_event_destiny_hardware?: string;
   readonly created_at?: string;
   readonly updated_at?: string;
 }
