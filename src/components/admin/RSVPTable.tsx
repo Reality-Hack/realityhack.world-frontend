@@ -1,25 +1,15 @@
 'use client';
-import {
-  applicationOptions,
-  getAllHackerApplications,
-  updateApplication
-} from '@/app/api/application';
-import { getUploadedFile } from '@/app/api/uploaded_files';
-import CustomSelect from '@/components/CustomSelect';
 import Table from '@/components/Table';
-import { Application, status } from '@/types/types';
-import { getAllRSVPs, rsvpOptions } from '@/app/api/rsvp';
-import Box from '@mui/material/Box';
-import { ColumnDef, Row, createColumnHelper } from '@tanstack/react-table';
+import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
 import { useSession } from 'next-auth/react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Modal from '../Modal';
 import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 import { useEventrsvpsList } from '@/types/endpoints';
-import { EventRsvp, EventrsvpsListParticipationClass, ShirtSizeEnum } from '@/types/models';
+import { EventRsvp, EventrsvpsListParticipationClass } from '@/types/models';
 import Loader from '@/components/Loader';
-import { useRSVPStats, ShirtSizeLabel, SHIRT_SIZE_MAP } from '@/hooks/useRSVPStats';
+import { useEventParticipants } from '@/contexts/EventParticipantsContext';
 
 interface RsvpTableProps {
   type: EventrsvpsListParticipationClass | undefined;
@@ -44,26 +34,47 @@ export default function RsvpTable({ type }: RsvpTableProps) {
   });
 
   const { 
-    total, 
-    shirtSizes, 
+    choiceMaps,
+    getTotalCount: total,
+    shirtSizeCounts,
     specialInterestTrackOneCounts, 
     specialInterestTrackTwoCounts,
-  } = useRSVPStats();
+  } = useEventParticipants();
 
   const mappedEventRsvps = useMemo(() => {
-    if (!eventRsvps) return [];
-  return eventRsvps.map((rsvp: EventRsvp) => {
-    const shirtSize = rsvp.shirt_size ? SHIRT_SIZE_MAP[rsvp.shirt_size] : null;
-    return {
-      ...rsvp,
-      first_name: rsvp.application?.first_name,
-      last_name: rsvp.application?.last_name,
-      email: rsvp.application?.email,
-      shirt_size: shirtSize,
-    }
-  })
+    if (!eventRsvps || !Object.keys(choiceMaps.shirtSize).length) return [];
+    return eventRsvps
+      .map((rsvp: EventRsvp) => {
+        const { 
+          application, 
+          attendee, 
+          event,
+          app_in_store,
+          currently_build_for_xr,
+          currently_use_xr,
+          non_xr_talents,
+          ar_vr_ap_in_store,
+          participation_role,
+          shirt_size,
+          dietary_restrictions,
+          dietary_allergies,
+          participation_class,
+          ...rsvpData 
+        } = rsvp;
+        return {
+          first_name: rsvp.application?.first_name,
+          last_name: rsvp.application?.last_name,
+          email: rsvp.application?.email,
+          ...rsvpData,
+          shirt_size: shirt_size ? choiceMaps.shirtSize[shirt_size] : null,
+          participation_role: participation_role ? choiceMaps.participationRole[participation_role] : null,
+          dietary_restrictions: dietary_restrictions?.map((restriction: string) => choiceMaps.dietaryRestrictions[restriction]).join(', '),
+          dietary_allergies: dietary_allergies?.map((allergy: string) => choiceMaps.dietaryAllergies[allergy]).join(', '),
+          participation_class: participation_class ? choiceMaps.participationClass[participation_class] : null,
+        }
+      })
 
-  }, [eventRsvps]);
+    }, [eventRsvps, choiceMaps]);
 
   const columnHelper = createColumnHelper<any>();
   const columns = useMemo<ColumnDef<any, any>[]>(
@@ -166,50 +177,20 @@ export default function RsvpTable({ type }: RsvpTableProps) {
           T Shirts Sizes
         </span>
         <div className="flex flex-row flex-wrap justify-center gap-2 mb-4">
-          <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
-            <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-              S
-            </span>
-            <span className="text-lg font-semibold text-black text-opacity-90">
-              { shirtSizes[ShirtSizeLabel.S] }
-            </span>
-          </div>
-          <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
-            <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-              M
-            </span>
-            <span className="text-lg font-semibold text-black text-opacity-90">
-              { shirtSizes[ShirtSizeLabel.M] }
-            </span>
-          </div>
-          <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
-            <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-              L
-            </span>
-            <span className="text-lg font-semibold text-black text-opacity-90">
-              { shirtSizes[ShirtSizeLabel.L] }
-            </span>
-          </div>
-          <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
-            <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-              XL
-            </span>
-            <span className="text-lg font-semibold text-black text-opacity-90">
-              { shirtSizes[ShirtSizeLabel.XL] }
-            </span>
-          </div>
-          <div className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
-            <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
-              XXL
-            </span>
-            <span className="text-lg font-semibold text-black text-opacity-90">
-              { shirtSizes[ShirtSizeLabel.XXL] }
-            </span>
-          </div>
+          {Object.entries(shirtSizeCounts).map(([size, count]) => (
+            <div key={size} className="flex flex-col items-center px-4 py-2 w-20 h-[72px] bg-white rounded-md shadow border border-black border-opacity-5">
+              <span className="text-sm font-normal text-black text-opacity-90 whitespace-nowrap">
+                {size}
+              </span>
+              <span className="text-lg font-semibold text-black text-opacity-90">
+                {count}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
-      <ExportButton onExport={() => exportToCsv(eventRsvps || [], 'rsvps.csv')} disabled={isLoadingEventRsvps}>
+      <ExportButton onExport={() => exportToCsv(mappedEventRsvps || [], 'rsvps.csv')} disabled={isLoadingEventRsvps}>
         Export CSV
       </ExportButton>
       <div className="z-50 px-6 py-6 overflow-y-scroll bg-[#FCFCFC] border-gray-300 rounded-2xl">

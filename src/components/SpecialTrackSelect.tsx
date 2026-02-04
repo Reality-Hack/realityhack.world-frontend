@@ -1,24 +1,28 @@
 import { useState } from 'react';
-import { useSpecialTracks } from '@/hooks/useSpecialTracks';
-import CustomSelectMultipleTyping from './CustomSelectMultipleTyping';
+import CustomSelectMultipleTyping, { Option } from './CustomSelectMultipleTyping';
 
 interface SpecialTrackSelectProps {
   selectedTracks: string[];
   onChange: (tracks: string[]) => void;
+  options: Option[];
   maxSelections?: number;
   labelClass?: string;
   type?: 'track' | 'hardware';
+  limitSelection?: boolean;
+  disabled?: boolean;
 }
 
 export function SpecialTrackSelect({ 
   selectedTracks, 
-  onChange, 
+  onChange,
+  options,
+  limitSelection = true,
   maxSelections = 2,
   labelClass = '',
-  type = 'track'
+  type = 'track',
+  disabled = false
 }: SpecialTrackSelectProps) {
   const [warning, setWarning] = useState<string>('');
-  const { tracks, hardwareTracks, isLoading, error } = useSpecialTracks();
 
   const handleSelection = (selected: string[]) => {
     if (selected.length > maxSelections) {
@@ -26,19 +30,14 @@ export function SpecialTrackSelect({
       return;
     }
     setWarning('');
-    console.log(`Selected ${type}:`, selected);
     onChange(selected);
   };
 
-  if (isLoading) return <div>Loading {type === 'track' ? 'tracks' : 'hardware'}...</div>;
-  if (error) return <div className="text-red-500">Error loading {type === 'track' ? 'tracks' : 'hardware'}: {error}</div>;
-
-  const options = type === 'track' ? tracks : hardwareTracks;
   const label = type === 'track' ? 'TOPICS' : 'TECHNOLOGIES';
 
   return (
     <div className="space-y-2">
-      <div className={labelClass}>{label} (Select {maxSelections})</div>
+      <div className={labelClass}>{label} {limitSelection ? `(Select up to ${maxSelections})` : ''}</div>
       {warning && <div className="text-lg text-red-400">{warning}</div>}
       <CustomSelectMultipleTyping
         width="100%"
@@ -46,6 +45,7 @@ export function SpecialTrackSelect({
         options={options}
         value={selectedTracks}
         onChange={handleSelection}
+        disabled={disabled}
       />
     </div>
   );

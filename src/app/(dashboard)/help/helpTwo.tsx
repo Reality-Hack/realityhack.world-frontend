@@ -70,37 +70,49 @@ export default function Help2() {
 
   // get our help requests
   useEffect(() => {
-    if (session?.access_token && user?.team?.id) {
-      getAllMyTeamsHelpRequests(session.access_token, user?.team?.id).then(
-        helpReqs => {
+    const token = session?.access_token;
+    const teamId = user?.team?.id;
+
+    if (token && teamId) {
+      getAllMyTeamsHelpRequests(token, teamId)
+        .then(helpReqs => {
           const sortedHelpReqs = helpReqs.sort(
             (a, b) =>
               new Date(a.created_at).getTime() -
               new Date(b.created_at).getTime()
           );
           setHelpRequests(sortedHelpReqs);
-        }
-      );
+        })
+        .catch(err => {
+          console.error('Error fetching team help requests:', err);
+          toast.error('Failed to load help requests: ' + err.message);
+        });
     }
   }, [session, user, showCompletedRequests]);
 
   //get tables
   useEffect(() => {
-    if (user && session?.access_token) {
-      getAllTables(session.access_token).then(tables => {});
+    const token = session?.access_token;
+    if (user && token) {
+      getAllTables(token).then(tables => {});
     }
-  }, [user]);
+  }, [user, session]);
 
   // //get all historical help requests
   useEffect(() => {
-    if (session?.access_token && user?.team) {
-      getAllHelpRequestsFromHistory(session.access_token).then(
-        historicalHelpReqs => {
+    const token = session?.access_token;
+    const hasTeam = !!user?.team;
+
+    if (token && hasTeam) {
+      getAllHelpRequestsFromHistory(token)
+        .then(historicalHelpReqs => {
           setHistoricalHelpRequests(historicalHelpReqs);
-        }
-      );
+        })
+        .catch(err => {
+          console.error('Error fetching historical requests:', err);
+        });
     }
-  }, [user]);
+  }, [user, session]);
 
   //subscribe to the websocket
   useEffect(() => {
@@ -141,7 +153,7 @@ export default function Help2() {
   }[readyState];
 
   // mentorhelprequestpost endpoint
-  function onNewHelpRequest(
+  async function onNewHelpRequest(
     topics: string[],
     team: string,
     description?: string,
@@ -150,26 +162,28 @@ export default function Help2() {
     category?: string,
     category_specialty?: string,
   ) {
+    const token = session?.access_token;
+    if (!token) {
+      toast.error('Session missing. Please log in again.');
+      return;
+    }
+
     const newHelpRequest: CreateHelpRequest = {
       description: description,
       topic: topics,
       team: team,
       reporter_location: reporter_location
-      // reporter: reporter,
-      // category: category,
-      // category_specialty:category_specialty,
     };
-    if (session) {
-      addMentorHelpRequest(session?.access_token, newHelpRequest)
-        .then(response => {})
-        .catch(error => {
-          console.error('Error deleting request:', error);
-        })
-        .finally(() => {
-          if (setShowCompletedRequests) {
-            setShowCompletedRequests(trigger => (trigger ?? 0) + 1);
-          }
-        });
+
+    try {
+      await addMentorHelpRequest(token, newHelpRequest);
+      toast.success('Help request submitted!');
+      if (setShowCompletedRequests) {
+        setShowCompletedRequests(trigger => (trigger ?? 0) + 1);
+      }
+    } catch (error: any) {
+      console.error('Error submitting help request:', error);
+      toast.error('Failed to submit request: ' + error.message);
     }
   }
 
@@ -219,7 +233,7 @@ export default function Help2() {
 
       <div className="flex flex-wrap justify-center gap-2 ">
         {allHelpRequests
-          .filter(el => el.team?.id || el.team == user?.team?.id)
+          .filter(el => el.team?.id === user?.team?.id)
           .map((req, idx) => (
             <Posting
               key={req.id}

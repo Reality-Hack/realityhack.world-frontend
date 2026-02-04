@@ -35,7 +35,9 @@ export default function useNavigationAccess(): NavItems {
     canAccessSponsor, 
     canAccessMentor, 
     canAccessParticipant, 
-    session
+    session,
+    isVolunteer,
+    isOrganizer,
   } = useAuth();
 
   const navItems = useMemo(() => {
@@ -47,7 +49,7 @@ export default function useNavigationAccess(): NavItems {
         icon: '/icons/dashboard/home.svg'
       })
     }
-    if (isAdmin && isAdminEnabled) {
+    if ((isAdmin || isVolunteer || isOrganizer) && isAdminEnabled) {
       navItems.push({
         href: '/admin',
         title: 'Admin',

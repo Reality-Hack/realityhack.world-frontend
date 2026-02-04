@@ -3,6 +3,7 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
+import type { LocationRequest } from './locationRequest';
 
 /**
  * Base serializer that automatically scopes foreign key fields to the current event.
@@ -23,6 +24,17 @@ export interface TableRequest {
    * @maximum 9223372036854776000
    */
   number: number;
-  /** @nullable */
-  location?: string | null;
+  location: LocationRequest;
+  /**
+   * Optional notes about the table
+   * @maxLength 1000
+   * @nullable
+   */
+  notes?: string | null;
+  /**
+   * Optional free-form floor descriptor
+   * @maxLength 50
+   * @nullable
+   */
+  floor?: string | null;
 }

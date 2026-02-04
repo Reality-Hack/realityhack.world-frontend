@@ -2,10 +2,52 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { Dispatch, SetStateAction, useEffect, memo, useCallback } from 'react';
 import Loader from './Loader';
 import LogoutButton from './auth/LogoutButton';
 import useNavigationAccess, { NavItem } from '@/hooks/useNavigationAccess';
+
+interface NavItemComponentProps {
+  item: NavItem;
+  isActive: boolean;
+  collapsed: boolean;
+  onNavigate: () => void;
+}
+
+const NavItemComponent = memo(function NavItemComponent({
+  item,
+  isActive,
+  collapsed,
+  onNavigate
+}: NavItemComponentProps) {
+  return (
+    <li
+      className={`transition-all w-[156px] ml-6 h-11 ${isActive ? 'text-blue-600 font-medium' : ''}`}
+    >
+      <div>
+        <Link
+          href={item.href}
+          className="h-14 flex flex-row items-center justify-start pr-4 py-2 transition-all duration-200 rounded-md"
+          onClick={onNavigate}
+        >
+          <img
+            src={item.icon}
+            alt={item.title}
+            className={`filter-svg mr-3 ${isActive ? 'filter-svg-active' : ''}`}
+          />
+          <span
+            className={`text-sm whitespace-nowrap transition-all ${
+              collapsed ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            {item.title}
+          </span>
+        </Link>
+      </div>
+    </li>
+  );
+});
 
 interface NavProps {
   navOpen: boolean;
@@ -22,6 +64,7 @@ export default function Nav({
 }: NavProps) {
   const { session, status } = useAuth();
   const { navItems } = useNavigationAccess();
+  const pathname = usePathname();
 
   const { user, isParticipant } = useAuth();
 
@@ -57,35 +100,7 @@ export default function Nav({
     }
   };
 
-  const renderNavItem = (item: NavItem) => {
-    return (
-      <li
-        key={item.href}
-        className={`transition-all w-[156px] ml-6 h-11`}
-      >
-        <div className="filter-svg">
-          <Link
-            href={item.href}
-            className={`h-14 flex flex-row items-center justify-start pr-4 py-2 transition-all duration-200 rounded-md`}
-            onClick={() => setNavOpen(false)}
-          >
-            <img
-              src={item.icon}
-              alt={`${item.title}`}
-              className="mr-3"
-            />
-            <span
-              className={`text-sm whitespace-nowrap transition-all ${
-                collapsed ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              {item.title}
-            </span>
-          </Link>
-        </div>
-      </li>
-    );
-  }
+  const handleNavigate = useCallback(() => setNavOpen(false), [setNavOpen]);
 
   const renderTeamName = () => {
     if (!isParticipant) {
@@ -123,7 +138,7 @@ export default function Nav({
                   <div className="flex items-center gap-2">
                     {renderProfileImage()}
                     <div className="flex flex-col">
-                      <span className="text-white">
+                      <span className="text-white text-wrap">
                         {user?.first_name} {user?.last_name}
                       </span>
                       {renderTeamName()}
@@ -140,7 +155,21 @@ export default function Nav({
           )}
         </div>
         <ul className="bg-gradient-to-b h-screen from-white to-neutral-50 border-r-[1px]">
-          {navItems.map((item: NavItem) => renderNavItem(item))}
+          {navItems.map((item: NavItem) => {
+            const isActive = item.href === '/'
+              ? pathname === item.href
+              : pathname === item.href || pathname?.startsWith(`${item.href}/`);
+            
+            return (
+              <NavItemComponent
+                key={item.href}
+                item={item}
+                isActive={!!isActive}
+                collapsed={collapsed}
+                onNavigate={handleNavigate}
+              />
+            );
+          })}
 
           {!navOpen && (
             <div className="filter-svg">

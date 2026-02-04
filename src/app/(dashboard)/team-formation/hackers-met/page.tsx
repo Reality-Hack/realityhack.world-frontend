@@ -476,17 +476,18 @@ function PersonRow({ preferee, id, deletePref }: PersonRowProps) {
   if (!preferee) return <></>;
 
   return (
-    <div className={`flex flex-row pb-2 my-2 border-b-2 border-black`}>
-      <div className="flex flex-row mr-auto gap-2 items-center">
-        {/* <img src={"profilePicSrc"} width={20} height={20} alt="person" /> */}
-        <div
-          onClick={() => deletePref(id)}
-          className="bg-white text-black border-2 p-2 rounded-lg hover:cursor-pointer hover:opacity-60"
-        >
-          Forget
-        </div>
-        <div className="text-lg font-semibold">{`${preferee.first_name} ${preferee.last_name}`}</div>
+    <div className="flex flex-row items-center justify-between p-4 my-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex-1">
+        <h4 className="text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors cursor-pointer">
+          {`${preferee.first_name} ${preferee.last_name}`}
+        </h4>
       </div>
+      <button
+        onClick={() => deletePref(id)}
+        className="text-white bg-gray-500 hover:bg-red-600 hover:cursor-pointer p-2 h-10 rounded-lg w-24 md:w-32 text-center transition-colors"
+      >
+        Forget
+      </button>
     </div>
   );
 }

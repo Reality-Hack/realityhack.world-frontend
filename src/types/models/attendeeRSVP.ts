@@ -114,6 +114,12 @@ export interface AttendeeRSVP {
   /** @nullable */
   special_interest_track_two?: AttendeeRSVPSpecialInterestTrackTwo;
   /**
+   * List other devices you are interested in ranked by preference.
+   * @maxLength 1000
+   * @nullable
+   */
+  device_preference_ranked?: string | null;
+  /**
    * @maxLength 2000
    * @nullable
    */

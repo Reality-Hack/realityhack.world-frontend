@@ -59,7 +59,7 @@ export default function HardwareDevicesEditor({ hardware }: { hardware: CreateHa
             <CircularProgress />
           ) : (
             devices && devices.length > 0 ?
-            devices
+            [...devices]
               .reverse()
               .map((device, i) => (
                 <HardwareDeviceEditor

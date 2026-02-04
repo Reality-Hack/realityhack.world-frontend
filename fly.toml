@@ -12,7 +12,7 @@ primary_region = 'ewr'
   [build.args]
     NEXT_PUBLIC_BACKEND_URL="https://dev-api.realityhack.world"
     NEXT_PUBLIC_BACKEND_WS_URL="wss://dev-api.realityhack.world"
-    NEXT_PUBLIC_TEAM_FORMATION_STAGE="1"
+    NEXT_PUBLIC_TEAM_FORMATION_STAGE="0"
 
     # default features
     NEXT_PUBLIC_IS_HOME_ENABLED="true"
@@ -24,6 +24,7 @@ primary_region = 'ewr'
     NEXT_PUBLIC_IS_TEAMS_ENABLED="true"
     NEXT_PUBLIC_IS_HACKER_HELP_ENABLED="true"
     NEXT_PUBLIC_IS_MENTOR_HELP_ENABLED="true"
+    NEXT_PUBLIC_SPECIAL_TRACKS_ENABLED="true"
     
     # WIP features
     NEXT_PUBLIC_IS_SCHEDULE_ENABLED="false"

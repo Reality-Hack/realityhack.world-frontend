@@ -1,50 +1,53 @@
 import { Track } from "@/hooks/useSpecialTracks";
-import { DestinyHardwareEnum, Table, TrackEnum } from "@/types/models";
+import { BuildingEnum, Table, EventTrack, EventDestinyHardware } from "@/types/models";
 
-export const convertTracksFromTeamData = (
-    trackData: TrackEnum | TrackEnum[] | string | undefined,
-    availableTracks: Track[]
-  ): string[] => {
-    if (!trackData || availableTracks.length === 0) return [];
-    
-    const trackValues = Array.isArray(trackData) 
-      ? trackData 
-      : typeof trackData === 'string' 
-        ? trackData.split(',') 
-        : [trackData];
-        
-    return trackValues
-      .map((trackValue: string) => availableTracks.find(t => t.value[0] === trackValue))
-      .filter((track: Track | undefined): track is Track => track !== undefined)
-      .map((track: Track) => track.value);
-  };
+/**
+ * Convert event tracks from team data to array of UUIDs for form state.
+ * The team data returns EventTrack[] objects, we extract the IDs.
+ */
+export const convertEventTracksFromTeamData = (
+  eventTracks: EventTrack[] | undefined
+): string[] => {
+  if (!eventTracks || eventTracks.length === 0) return [];
+  return eventTracks
+    .map((track) => track.id)
+    .filter((id): id is string => id !== undefined);
+};
 
-  export const convertHardwareFromTeamData = (
-    hardwareData: DestinyHardwareEnum | DestinyHardwareEnum[] | string | undefined,
-    availableHardware: Track[]
-  ): string[] => {
-    if (!hardwareData || availableHardware.length === 0) return [];
-    
-    const hardwareValues = Array.isArray(hardwareData) 
-      ? hardwareData 
-      : typeof hardwareData === 'string' 
-        ? hardwareData.split(',') 
-        : [hardwareData];
-        
-    return hardwareValues
-      .map((hwValue: string) => availableHardware.find(h => h.value[0] === hwValue))
-      .filter((hw: Track | undefined): hw is Track => hw !== undefined)
-      .map((hw: Track) => hw.value);
-  };
+/**
+ * Convert event destiny hardware from team data to array of UUIDs for form state.
+ * The team data returns EventDestinyHardware[] objects, we extract the IDs.
+ */
+export const convertEventHardwareFromTeamData = (
+  eventHardware: EventDestinyHardware[] | undefined
+): string[] => {
+  if (!eventHardware || eventHardware.length === 0) return [];
+  return eventHardware
+    .map((hw) => hw.id)
+    .filter((id): id is string => id !== undefined);
+};
 
+export const getSelectedTableFromOptions = (
+  tableId: string | null,
+  tableOptions: Table[] | null
+): Table | null => {
+  if (!tableId) return null;
+  return tableOptions?.find(table => table.id === tableId) || null;
+};
 
-  export const getSelectedTableFromOptions = (tableId: string | null, tableOptions: Table[] | null): Table | null => {
-    if (!tableId) return null;
-    return tableOptions?.find(table => table.id === tableId) || null;
-  };
+const buildingLabels: Record<string, string> = {
+  [BuildingEnum.ST]: 'Stata',
+  [BuildingEnum.WK]: 'Walker',
+  [BuildingEnum.SC]: 'Student Center (Straton)',
+  [BuildingEnum.BC]: 'Barcelona',
+};
 
-  export const getTableLabel = (table: number | void): string => {
-    if (!table) return `Table #${table}`;
-    if (table <= 48) return `Walker: Table #${table}`;
-    return `Stata: Table #${table}`;
-  };
+export const getTableLabel = (table: Table | undefined | null): string => {
+  if (!table) return 'No table';
+  
+  const building = table.location?.building 
+    ? buildingLabels[table.location.building] || 'Unknown' 
+    : 'Unknown';
+  
+  return `${building}: Table #${table.number} ${table.notes}`;
+};

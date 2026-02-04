@@ -3,9 +3,11 @@ import { Tab } from '../../../../components/Tab';
 import { usePathname } from 'next/navigation';
 import { HardwareProvider } from '@/contexts/HardwareContext';
 import { useMemo } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Hardware({ children }: { children: any }) {
   const pathname = usePathname();
+  const { isAdmin } = useAuth();
   const pageTitle = useMemo(() => {
     if (pathname == '/admin/hardware/request') {
       return 'Hardware requests';
@@ -36,11 +38,13 @@ export default function Hardware({ children }: { children: any }) {
               isSelected={pathname == '/admin/hardware/checkout'}
               title="Checkout"
             ></Tab>
-            <Tab
-              href="/admin/hardware/register"
-              isSelected={pathname == '/admin/hardware/register'}
-              title="Register new hardware"
-            ></Tab>
+            {isAdmin && 
+              <Tab
+                href="/admin/hardware/register"
+                isSelected={pathname == '/admin/hardware/register'}
+                title="Register new hardware"
+              ></Tab>
+            }
           </div>
         </div>
        {children}

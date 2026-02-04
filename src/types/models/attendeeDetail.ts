@@ -6,11 +6,14 @@
 import type { SkillProficiencyAttendee } from './skillProficiencyAttendee';
 import type { FileUpload } from './fileUpload';
 import type { Team } from './team';
+import type { EventRsvpSummary } from './eventRsvpSummary';
 import type { HardwareDeviceDetail } from './hardwareDeviceDetail';
 import type { WorkshopAttendeeWorkshopDetail } from './workshopAttendeeWorkshopDetail';
 import type { ParticipationClassEnum } from './participationClassEnum';
 import type { DestinyHardwareEnum } from './destinyHardwareEnum';
 import type { TrackEnum } from './trackEnum';
+import type { EventTrack } from './eventTrack';
+import type { EventDestinyHardware } from './eventDestinyHardware';
 
 export interface AttendeeDetail {
   readonly id?: string;
@@ -25,6 +28,7 @@ export interface AttendeeDetail {
   /** @nullable */
   checked_in_at?: string | null;
   team: Team;
+  event_rsvp: EventRsvpSummary;
   hardware_devices: HardwareDeviceDetail[];
   /**
    * I.e., a Discord username
@@ -48,6 +52,8 @@ export interface AttendeeDetail {
   sponsor_handler?: string | null;
   intended_tracks: TrackEnum[];
   intended_hardware_hack?: boolean;
+  readonly intended_event_tracks?: readonly EventTrack[];
+  readonly prefers_event_destiny_hardware?: readonly EventDestinyHardware[];
   readonly created_at?: string;
   readonly updated_at?: string;
 }

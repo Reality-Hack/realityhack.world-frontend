@@ -16,20 +16,21 @@ import { Button } from 'antd';
 import { useSession } from 'next-auth/react';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-
-import { useAttendees } from '@/hooks/useAttendees';
-import { AttendeeList, TeamDetail, TeamTable, AttendeeName } from '@/types/models';
+import { useRouter } from 'next/navigation';
+import { TeamDetail, TeamTable, Table } from '@/types/models';
 import { TeamCreateRequest, TeamRequest } from '@/types/models';
-import { useTeamsCreate, useTeamsUpdate, useTeamsDestroy } from '@/types/endpoints';
+import { useTeamsCreate, useTeamsUpdate, useTeamsDestroy, useTablesList } from '@/types/endpoints';
 import { TeamOperationResult } from '@/types/types2';
 import LinearProgress from '@mui/material/LinearProgress';
+import { useEventParticipants, AttendeeWithCheckIn } from '@/contexts/EventParticipantsContext';
+import { getSelectedTableFromOptions, getTableLabel } from '@/components/TeamForm/utils';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />
 
 type TeamFormData = {
   name: string;
-  attendees: AttendeeList[]; 
+  attendees: AttendeeWithCheckIn[]; 
   table?: { id: string } | TeamTable | null;
 };
 
@@ -41,46 +42,26 @@ type TeamFormProps = {
 };
 
 export default function TeamForm({ initialData, onSuccess, onError, onCancel }: TeamFormProps) {
+  const router = useRouter();
   const { data: session } = useSession();
-  const { attendees, isLoading: attendeesLoading } = useAttendees();
+  const { 
+    rsvpAttendeesWithCheckIn: attendees,
+    isLoadingRsvps: attendeesLoading,
+    teamByAttendeeId,
+    attendeeIdRsvpMap,
+  } = useEventParticipants();
   const isEdit = !!initialData?.id;
-
-  const convertToAttendeeList = useCallback((inputAttendees: (AttendeeList | AttendeeName)[]): AttendeeList[] => {
-    return inputAttendees.map(attendee => {
-      if ('prefers_destiny_hardware' in attendee) {
-        return attendee as AttendeeList;
-      }
-      const fullAttendee = attendees?.find(a => a.id === attendee.id);
-      if (fullAttendee) {
-        return fullAttendee;
-      }
-      return {
-        ...attendee,
-        checked_in_at: null,
-        initial_setup: false,
-        guardian_of: [],
-        sponsor_handler: null,
-        prefers_destiny_hardware: [],
-        communications_platform_username: null,
-        intended_tracks: [],
-        intended_hardware_hack: false,
-        sponsor_company: null,
-        participation_class: undefined,
-        created_at: '',
-        updated_at: ''
-      } as AttendeeList;
-    });
-  }, [attendees]);
 
   const [formData, setFormData] = useState<TeamFormData>(() => ({
     name: initialData?.name || '',
-    attendees: initialData?.attendees ? convertToAttendeeList(initialData.attendees) : [],
+    attendees: (initialData?.attendees || []).map(a => ({ ...a, checked_in_at: null })),
     table: initialData?.table || null
   }));
 
   const [originalData, setOriginalData] = useState<TeamFormData | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [tableOptions, setTableOptions] = useState<Table[] | null>(null);
 
   const createMutation = useTeamsCreate({
     request: {
@@ -109,40 +90,50 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
     }
   });
 
+  const { data: tables, isLoading: isTablesLoading, mutate: mutateTables } = useTablesList({}, {
+    swr: { enabled: !!session?.access_token}, 
+    request: {
+      headers: {
+        'Authorization': `JWT ${session?.access_token}`
+      }
+    }
+  });
+
   const isLoading = createMutation.isMutating || updateMutation.isMutating || deleteMutation.isMutating;
+
+  useEffect(() => {
+    if (tables) {
+      const filteredTables = tables
+        .filter(table => !table.is_claimed || table.id === initialData?.table?.id);
+      setTableOptions(filteredTables);
+    }
+  }, [tables, initialData?.table?.id]);
 
   useEffect(() => {
     if (initialData) {
       const data = {
         name: initialData.name,
-        attendees: convertToAttendeeList(initialData.attendees || []),
+        attendees: (initialData.attendees || []).map(a => ({ ...a, checked_in_at: null })),
         table: initialData.table || null
       };
       setFormData(data);
       setOriginalData(data);
     }
-  }, [initialData, convertToAttendeeList]);
+  }, [initialData]);
 
-  const attendeeOptions = useMemo(() => {
+  const attendeeOptions = useMemo((): AttendeeWithCheckIn[] => {
     if (!attendees) return [];
     return attendees;
   }, [attendees]);
 
   const isDirty = useMemo(() => {
-    console.group('isDirty')
-    console.log('originalData', originalData)
-    console.log('formData', formData)
     if (!originalData) return true;
-    console.log('JSON.stringify(formData)', JSON.stringify(formData))
-    console.log('JSON.stringify(originalData)', JSON.stringify(originalData))
-    console.log('JSON.stringify(formData) !== JSON.stringify(originalData)', JSON.stringify(formData) !== JSON.stringify(originalData))
-    console.groupEnd()
     return JSON.stringify(formData) !== JSON.stringify(originalData);
   }, [formData, originalData]);
 
   const validateForm = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = 'Team name is required';
     }
@@ -163,12 +154,46 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
     }
   };
 
-  const handleAttendeesChange = (attendees: AttendeeList[] | null) => {
+  const handleAttendeesChange = (attendees: AttendeeWithCheckIn[] | null) => {
     setFormData(prev => ({ ...prev, attendees: attendees || [] }));
   };
 
+  const handleTableChange = useCallback((table: Table | null | undefined): void => {
+    if (table) {
+      const mappedTable: TeamTable = {
+        id: table.id || '',
+        number: table.number || 0,
+        location: table.location || null
+      };
+      setFormData(prev => ({ ...prev, table: mappedTable }));
+    } else {
+      setFormData(prev => ({ ...prev, table: null }));
+    }
+  }, []);
+
   const handleSave = useCallback(async () => {
     if (!validateForm()) return;
+
+    const participantTeams = formData.attendees.map(a => {
+      const team = teamByAttendeeId(a.id ?? '');
+      if (!team || initialData?.id === team.id) return undefined;
+      const participant = attendeeIdRsvpMap[a.id ?? ''];
+      return team ? { teamName: team.name, participant: `${participant?.attendee?.first_name} ${participant?.attendee?.last_name}` } : undefined;
+    }).filter(t => t !== undefined);
+
+    if (participantTeams.length > 0) {
+      toast.error(`Attendees cannot be on multiple teams ${participantTeams.map(t => `Team: ${t?.teamName} - ${t?.participant}`).join(', ')}`);
+      return;
+    }
+
+    if (!formData.attendees.length) {
+      toast.error('Please add at least one attendee');
+      return;
+    }
+    if (!formData.name.trim()) {
+      toast.error('Please enter a team name');
+      return;
+    }
 
     try {
       const payload = {
@@ -186,6 +211,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
 
       if (result) {
         toast.success(`Team ${isEdit ? 'updated' : 'created'} successfully`);
+        mutateTables();
         onSuccess?.(result);
       }
     } catch (error) {
@@ -207,6 +233,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
       await deleteMutation.trigger();
       toast.success('Team deleted successfully');
       onSuccess?.(null as any);
+      router.push('/admin/teams');
     } catch (error) {
       const errorMessage = `Error deleting team: ${error}`;
       toast.error(errorMessage);
@@ -234,27 +261,27 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
         size="small"
         disabled={isLoading}
       />
-      {/* <Autocomplete
+      <Autocomplete
         id="table-select"
-        value={team.table}
-        loading={loading}
+        value={getSelectedTableFromOptions(formData.table?.id || null, tableOptions || [])}
+        loading={isTablesLoading}
         onChange={(event: any, newValue: Table | null | undefined) => {
-          changeTable(newValue);
+          handleTableChange(newValue);
         }}
-        options={tableOptions}
-        getOptionLabel={option => getTableLabel(option?.number)}
+        options={tableOptions || []}
+        getOptionLabel={option => getTableLabel(option)}
         getOptionKey={option => option?.id ?? ''}
         isOptionEqualToValue={(a, b) => a?.id === b?.id}
         renderInput={params => (
-          <TextField {...params} label="Table" size="small" />
+          <TextField {...params} label="Table" size="small" fullWidth={true} />
         )}
-      /> */}
+      />
       <Autocomplete
         multiple
         id="attendees-select"
         options={attendeeOptions}
         value={formData.attendees}
-        onChange={(event: any, newValue: AttendeeList[] | null) => {
+        onChange={(event: any, newValue: AttendeeWithCheckIn[] | null) => {
           handleAttendeesChange(newValue);
         }}
         size="small"
@@ -276,8 +303,8 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
             {`${option.first_name} ${option.last_name} ${option.checked_in_at ? '' : '(Not Checked In)'}`}
           </li>
         )}
-        renderTags={(value: readonly AttendeeList[], getTagProps) =>
-          value.map((option: AttendeeList, index: number) => (
+        renderTags={(value: readonly AttendeeWithCheckIn[], getTagProps) =>
+          value.map((option: AttendeeWithCheckIn, index: number) => (
             <Chip
               {...getTagProps({ index })}
               label={`${option.first_name} ${option.last_name} `}
@@ -312,13 +339,15 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
             Cancel
           </button>
         )}
-        <button
-          className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] transition-all disabled:opacity-50"
-          onClick={handleReset}
-          disabled={isLoading || !isDirty}
-        >
-          Reset
-        </button>
+        {initialData &&
+          <button
+            className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] transition-all disabled:opacity-50"
+            onClick={handleReset}
+            disabled={isLoading || !isDirty}
+          >
+            Reset
+          </button>
+        }
         {isEdit && (
           <button
             className="gap-1.5s flex mt-0 mb-4 bg-red-600 hover:bg-red-700 text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm transition-all disabled:opacity-50"

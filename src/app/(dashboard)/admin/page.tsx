@@ -1,8 +1,13 @@
+'use client';
+
 import type { NextPage } from 'next';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 
 const isEventsEnabled = process.env.NEXT_PUBLIC_IS_EVENTS_ENABLED === 'true';
+const isWorkshopsEnabled = process.env.NEXT_PUBLIC_IS_WORKSHOPS_ENABLED === 'true';
 const Dashboard: NextPage = ({}: any) => {
+  const { isAdmin } = useAuth();
   return (
     <div className="h-screen">
       <h1 className="mt-6 mb-5 ml-6 text-3xl text">Admin Dashboard</h1>
@@ -14,20 +19,24 @@ const Dashboard: NextPage = ({}: any) => {
             </span>
           </div>
         </Link>
-        <Link href="/admin/rsvp/participants">
-          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">
-              Attendees
-            </span>
-          </div>
-        </Link>
-        <Link href="/admin/applications/participants">
-          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">
-              Applications
-            </span>
-          </div>
-        </Link>
+        {isAdmin && 
+          <Link href="/admin/rsvp/participants">
+            <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
+              <span className="text-xl text-center text-[#40337F]">
+                Attendees
+              </span>
+            </div>
+          </Link>
+        }
+        {isAdmin && 
+          <Link href="/admin/applications/participants">
+            <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
+              <span className="text-xl text-center text-[#40337F]">
+                Applications
+              </span>
+            </div>
+          </Link>
+        }
         {isEventsEnabled && 
           <Link href="/admin/events">
             <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
@@ -51,13 +60,15 @@ const Dashboard: NextPage = ({}: any) => {
             </span>
           </div>
         </Link>
-        <Link href="/admin/workshops">
+        {isWorkshopsEnabled && (
+          <Link href="/admin/workshops">
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
             <span className="text-xl text-center text-[#40337F]">
               Workshop check in
             </span>
-          </div>
-        </Link>
+            </div>
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -146,7 +146,17 @@ export interface EventRsvpDetail {
    */
   breakthrough_hacks_interest?: string | null;
   /** @nullable */
+  checked_in_at?: string | null;
+  /** @nullable */
   loaner_headset_preference?: EventRsvpDetailLoanerHeadsetPreference;
+  /**
+   * List other devices you are interested in ranked by preference.
+   * @maxLength 1000
+   * @nullable
+   */
+  device_preference_ranked?: string | null;
+  readonly intended_event_tracks?: string;
+  readonly prefers_event_destiny_hardware?: string;
   readonly created_at?: string;
   readonly updated_at?: string;
 }

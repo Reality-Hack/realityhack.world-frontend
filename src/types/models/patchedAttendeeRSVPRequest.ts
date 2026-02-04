@@ -137,6 +137,12 @@ export interface PatchedAttendeeRSVPRequest {
   /** @nullable */
   special_interest_track_two?: PatchedAttendeeRSVPRequestSpecialInterestTrackTwo;
   /**
+   * List other devices you are interested in ranked by preference.
+   * @maxLength 1000
+   * @nullable
+   */
+  device_preference_ranked?: string | null;
+  /**
    * @minLength 1
    * @maxLength 2000
    * @nullable

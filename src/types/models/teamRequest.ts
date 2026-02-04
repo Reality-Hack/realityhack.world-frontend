@@ -3,8 +3,8 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
-import type { TrackEnum } from './trackEnum';
-import type { DestinyHardwareEnum } from './destinyHardwareEnum';
+import type { TeamRequestTracks } from './teamRequestTracks';
+import type { TeamRequestDestinyHardware } from './teamRequestDestinyHardware';
 
 /**
  * Base serializer that automatically scopes foreign key fields to the current event.
@@ -34,8 +34,10 @@ export interface TeamRequest {
   attendees?: string[];
   /** @nullable */
   table?: string | null;
-  tracks?: TrackEnum;
-  destiny_hardware?: DestinyHardwareEnum;
+  /** @nullable */
+  tracks?: TeamRequestTracks;
+  /** @nullable */
+  destiny_hardware?: TeamRequestDestinyHardware;
   /**
    * @minLength 1
    * @maxLength 2000

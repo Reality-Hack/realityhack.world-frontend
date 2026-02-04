@@ -1,5 +1,6 @@
 'use client';
 import { Tab } from '@/components/Tab';
+import { EventParticipantsProvider } from '@/contexts/EventParticipantsContext';
 import { usePathname } from 'next/navigation';
 
 export default function TeamFormationLayout({
@@ -26,11 +27,11 @@ export default function TeamFormationLayout({
             isSelected={pathname === '/team-formation/interests'}
             title="My Interests"
           />
-          <Tab
+          {/* <Tab
             href="/team-formation/profile"
             isSelected={pathname === '/team-formation/profile'}
             title="My Reality Hack Profile"
-          />
+          /> */}
           {TEAM_FORMATION_STAGE === '1' && (
             <Tab
               href="/team-formation/round-one"
@@ -62,7 +63,9 @@ export default function TeamFormationLayout({
         </div>
         <hr className="dark:border-borderDark" />
       </div>
-      {children}
+      <EventParticipantsProvider>
+        {children}
+      </EventParticipantsProvider>
     </div>
   );
 }

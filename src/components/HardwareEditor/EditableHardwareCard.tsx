@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useHardwareContext } from "@/contexts/HardwareContext";
 import { 
@@ -43,12 +43,19 @@ export default function EditableHardwareCard({
     const [description, setDescription] = useState(item.description);
     const [tags, setTags] = useState(item.tags);
     const { mutateHardwareDeviceTypes } = useHardwareContext();
-    const hasChanged =
-      name !== item.name ||
-      quantity !== item.total ||
-      description !== item.description ||
-      image?.id !== item.image?.id ||
-      tags !== item.tags;
+    const hasChanged = useMemo(() => {
+      const tagsChanged = 
+        tags.length !== item.tags.length || 
+        tags.some((tag, i) => tag !== item.tags[i]);
+      
+      return (
+        name !== item.name ||
+        quantity !== item.total ||
+        description !== item.description ||
+        image?.id !== item.image?.id ||
+        tagsChanged
+      );
+    }, [name, quantity, description, image?.id, tags, item.name, item.total, item.description, item.image?.id, item.tags]);
     const [addTagOpen, setAddTagOpen] = useState(false);
     const [hardwareDevicesEditorOpen, setHardwareDevicesEditorOpen] =
       useState(false);
@@ -100,6 +107,10 @@ export default function EditableHardwareCard({
         })
         .then(res => {
           toast.success('Hardware updated successfully');
+          setName(res.name);
+          setDescription(res.description);
+          setImage(res.image ? { id: res.image, file: res.image } : null);
+          setTags(res.tags);
           mutateHardwareDeviceTypes();
         })
         .catch(err => {
@@ -137,7 +148,6 @@ export default function EditableHardwareCard({
     return (
       <div
         {...topLevelProps}
-        key={item?.id || item?.name}
         className="flex-col gap-2 w-[355px] bg-gradient-to-t from-[#FFFFFF] to-[#FFFFFF] border border-blue-500 rounded-[10px] shadow flex justify-center items-center p-2"
       >
         {editingImage ? (
@@ -202,7 +212,7 @@ export default function EditableHardwareCard({
         ></textarea>
         <div className="flex w-full flex-wrap flex-initial">
           {tags.map((tag, idx) => (
-            <span className="bg-gray-200 rounded-full px-2 py-1 m-1" key={`item-${item.id}-tag-${idx}-${tag}`}>
+            <span className="bg-gray-200 rounded-full px-2 py-1 m-1" key={tag}>
               {hardware_categories[tag] /*tag.display_name*/}
               <button
                 onClick={() =>
@@ -227,7 +237,7 @@ export default function EditableHardwareCard({
                     // TODO: filter out tags that are already in the list
                     .filter(cat => !tags.includes(cat.value))
                     .map((cat: HardwareCategory, idx: number) => (
-                      <div className="m-1" key={`item-${item.id}-tag-${idx}-${cat.value}`}>
+                      <div className="m-1" key={cat.value}>
                         <button
                           className="cursor-pointer text-white bg-[#493B8A] px-4 rounded-full disabled:opacity-50 transition-all flex-shrink h-10 self-end"
                           // set the updated tags for the current item

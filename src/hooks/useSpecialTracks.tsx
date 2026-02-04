@@ -1,45 +1,65 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useSession } from 'next-auth/react';
-import { getAvailableTracks } from '@/app/api/teamformation';
+import { useEventtracksList, useEventdestinyhardwareList } from '@/types/endpoints';
+import type { EventTrack, EventDestinyHardware } from '@/types/models';
 
 export interface Track {
+  id: string;
   label: string;
   value: string;
 }
 
 export function useSpecialTracks() {
-  const [tracks, setTracks] = useState<Track[]>([]);
-  const [hardwareTracks, setHardwareTracks] = useState<Track[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
 
-  useEffect(() => {
-    if (session?.access_token) {
-      getAvailableTracks(session.access_token)
-        .then(result => {
-          if (result) {
-            const formattedTracks = result.track.choices.map(track => ({
-              label: track.display_name,
-              value: track.value
-            }));
-
-            const formattedHardwareTracks = result.destiny_hardware.choices.map(track => ({
-              label: track.display_name,
-              value: track.value
-            }));
-
-            setTracks(formattedTracks);
-            setHardwareTracks(formattedHardwareTracks);
-          }
-          setIsLoading(false);
-        })
-        .catch(error => {
-          setError(error.message);
-          setIsLoading(false);
-        });
+  const {
+    data: eventTracks,
+    isLoading: isTracksLoading,
+    error: tracksError
+  } = useEventtracksList(
+    {},
+    {
+      swr: { enabled: !!session?.access_token },
+      request: {
+        headers: { 'Authorization': `JWT ${session?.access_token}` }
+      }
     }
-  }, [session]);
+  );
+
+  const {
+    data: eventHardware,
+    isLoading: isHardwareLoading,
+    error: hardwareError
+  } = useEventdestinyhardwareList(
+    {},
+    {
+      swr: { enabled: !!session?.access_token },
+      request: {
+        headers: { 'Authorization': `JWT ${session?.access_token}` }
+      }
+    }
+  );
+
+  const tracks: Track[] = useMemo(() => 
+    (eventTracks ?? []).map((t: EventTrack) => ({
+      id: t.id ?? '',
+      label: t.name,
+      value: t.id ?? ''
+    })),
+    [eventTracks]
+  );
+
+  const hardwareTracks: Track[] = useMemo(() => 
+    (eventHardware ?? []).map((h: EventDestinyHardware) => ({
+      id: h.id ?? '',
+      label: h.name,
+      value: h.id ?? ''
+    })),
+    [eventHardware]
+  );
+
+  const isLoading = isTracksLoading || isHardwareLoading;
+  const error = tracksError?.message || hardwareError?.message || null;
 
   return { tracks, hardwareTracks, isLoading, error };
 }

@@ -25,7 +25,8 @@ import {
   isValidRequest,
   HardwareRequestTableRow,
   HardwareRequestStatusOptionsCheckedOut,
-  HardwareRequestStatusOptionsFull,
+  HardwareRequestStatusOptionsDefault,
+  HardwareRequestStatusOptionsNoDevice,
   HardwareRequestStatusOptions
 } from './utils';
 
@@ -225,8 +226,11 @@ export default function HardwareRequestTable({
     if (currentStatus == HardwareRequestStatusEnum.C) {
       return [HardwareRequestStatusOptionsCheckedOut];
     }
+    if (!requestedDeviceId) {
+      return HardwareRequestStatusOptionsNoDevice;
+    }
     if (hardwareDeviceTypeMap?.[requestedDeviceId]?.available < 1) {
-      return HardwareRequestStatusOptionsFull;
+      return HardwareRequestStatusOptionsDefault;
     }
     return HardwareRequestStatusOptions;
   }
@@ -295,7 +299,7 @@ export default function HardwareRequestTable({
       cell: info =>
         info.getValue() == null
           ? null
-          : hardwareDeviceMap?.[info.getValue()]?.serial?.slice(0, 12)?.concat('...')
+          : hardwareDeviceMap?.[info.getValue()]?.serial
     }),
     columnHelper.accessor('status', {
       header: () => 'Status',

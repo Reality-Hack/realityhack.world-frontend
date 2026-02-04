@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useSession } from 'next-auth/react';
 import React, { MouseEvent, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface Workshop {
   workshop: any;
@@ -84,6 +85,12 @@ function Workshop({
 
   const handleSubmit = async (e: MouseEvent) => {
     e.preventDefault();
+    const userId = user?.id;
+    if (!userId) {
+      toast.error('User ID is missing. Please try again.');
+      return;
+    }
+
     if (loading) return;
 
     setLoading(true);
@@ -95,12 +102,16 @@ function Workshop({
         );
         if (workshopToRemove) {
           await removeInterestInWorkshop(workshopToRemove.id);
+          toast.success('Removed from schedule');
         }
       } else {
-        await showInterestInWorkshop(user.id, workshop.id);
+        await showInterestInWorkshop(userId, workshop.id);
+        toast.success('Added to schedule');
       }
     } catch (error) {
-      console.error('Error in handling workshop interest:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Error in handling workshop interest:', errorMessage);
+      toast.error('Failed to update schedule: ' + errorMessage);
     } finally {
       setRefreshTrigger((prev: number) => prev + 1);
       setLoading(false);
@@ -327,52 +338,59 @@ const Page: React.FC<PageProps> = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const token = session?.access_token;
+      const userId = user?.id;
+
+      if (!token || !userId) return;
+
       setLoading(true);
       try {
-        if (session?.access_token && user) {
-          const data = await getMyWorkshops(session.access_token, user.id);
-          setMyWorkshops(data);
-        }
-      } catch (error) {
+        const data = await getMyWorkshops(token, userId);
+        setMyWorkshops(data);
+      } catch (error: any) {
         console.error('Error fetching myWorkshops:', error);
+        toast.error('Failed to load your workshops: ' + error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    if (session?.access_token && user) {
-      fetchData();
-    }
+    fetchData();
   }, [session, user, refreshTrigger]);
 
   useEffect(() => {
-    if (session?.access_token && isAdmin) {
-      setLoading(true);
-      getAllWorkshops(session.access_token)
-        .then(data => {
-          const workshopsWithAdditionalInfo = data.map((workshop: any) => {
-            const { roomLocation, title, curriculum } = parseWorkshopName(
-              workshop.name
-            );
-            const { speakers, description } = splitDescription(
-              workshop.description
-            );
-            return {
-              ...workshop,
-              roomLocation,
-              title,
-              curriculum,
-              speakers,
-              description
-            };
-          });
-          setWorkshops(workshopsWithAdditionalInfo);
-        })
-        .finally(() => {
-          setLoading(false);
+    const token = session?.access_token;
+    if (!token || !isAdmin) return;
+
+    setLoading(true);
+    getAllWorkshops(token)
+      .then(data => {
+        const workshopsWithAdditionalInfo = data.map((workshop: any) => {
+          const { roomLocation, title, curriculum } = parseWorkshopName(
+            workshop.name
+          );
+          const { speakers, description } = splitDescription(
+            workshop.description
+          );
+          return {
+            ...workshop,
+            roomLocation,
+            title,
+            curriculum,
+            speakers,
+            description
+          };
         });
-    }
-  }, [session]);
+        setWorkshops(workshopsWithAdditionalInfo);
+      })
+      .catch(err => {
+        console.error('Error fetching all workshops:', err);
+        toast.error('Failed to load workshop schedule: ' + err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [session, isAdmin]);
 
   useEffect(() => {
     const selected = workshops.filter(workshop => workshop.selected);

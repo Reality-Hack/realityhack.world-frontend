@@ -57,6 +57,7 @@ export default function CustomSelect({
           onSearch={onSearch}
           filterOption={filterOptions}
           options={options}
+          getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
         />
       ) : (
         <Select
@@ -67,6 +68,7 @@ export default function CustomSelect({
           placeholder={label}
           onChange={onChange}
           options={options}
+          getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
         />
       )}
     </div>

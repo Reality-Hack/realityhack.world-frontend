@@ -53,10 +53,6 @@ const SelectToolWithOther: React.FC<SelectToolWithOtherProps> = ({
   };
 
   function handleSelection(selectedLabel: string) {
-    // console.log('prevSelectedItems: ', selectedItems);
-    // console.log('selectedLabel: ', selectedLabel);
-    // console.log('formattedOptions: ', formattedOptions);
-
     setSelectedItems(prevSelectedItems => {
       const option = formattedOptions.find(
         option => option.label === selectedLabel
@@ -67,24 +63,12 @@ const SelectToolWithOther: React.FC<SelectToolWithOtherProps> = ({
         return prevSelectedItems;
       }
 
-      const numericValue = parseInt(option.value, 10);
+      const value = option.value;
 
-      if (isNaN(numericValue)) {
-        console.error(
-          'Invalid value for label: ',
-          selectedLabel,
-          'Value:',
-          option.value
-        );
-        return prevSelectedItems;
-      }
-
-      if (!prevSelectedItems.includes(numericValue.toString())) {
-        return [...prevSelectedItems, numericValue.toString()];
+      if (!prevSelectedItems.includes(value)) {
+        return [...prevSelectedItems, value];
       } else {
-        return prevSelectedItems.filter(
-          item => item !== numericValue.toString()
-        );
+        return prevSelectedItems.filter(item => item !== value);
       }
     });
   }

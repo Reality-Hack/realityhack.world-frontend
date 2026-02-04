@@ -2,13 +2,12 @@
 import HardwareCheckout from '@/components/HardwareCheckout/HardwareCheckout';
 import { useSession } from 'next-auth/react';
 import { useHardwareContext } from '@/contexts/HardwareContext';
-import { useAttendeesList } from '@/types/endpoints';
+import { useEventParticipants } from '@/contexts/EventParticipantsContext';
 import { HardwareDevice } from '@/types/models';
 import { useState, useEffect } from 'react';
 import { HardwareWithType } from '@/types/types2';
 
 export default function Checkout() {
-  const { data: session } = useSession();
   const [mappedHardwareDevices, setMappedHardwareDevices] = useState<HardwareWithType[]>([])
   const { hardwareDevices, hardwareDeviceTypeMap, isLoadingHardwareDevices } = useHardwareContext();
 
@@ -24,20 +23,10 @@ export default function Checkout() {
     setMappedHardwareDevices(mappedDevices);
   }, [hardwareDevices, hardwareDeviceTypeMap])
 
-  const {data: attendees, isLoading: isLoadingAttendees} = useAttendeesList({}, {
-    swr: { enabled: !!session?.access_token}, 
-    request: {
-      headers: {
-        'Authorization': `JWT ${session?.access_token}`
-      }
-    }
-  });
-
-  const isAdmin = session && ['admin', 'organizer'].some(role => session?.roles?.includes(role));
-
-  if (!isAdmin) {
-    return <div>You are not authorized to access this page</div>;
-  }
+  const { 
+    rsvpAttendeesWithCheckIn: attendees,
+    isLoadingRsvps: isLoadingAttendees 
+  } = useEventParticipants();
   
   return (
     isLoadingAttendees || isLoadingHardwareDevices ? (
