@@ -35,5 +35,12 @@ export interface DestinyTeamUpdate {
   readonly created_at?: string;
   readonly updated_at?: string;
   event: string;
+  /**
+   * Event-scoped track selection
+   * @nullable
+   */
+  event_track?: string | null;
   attendees?: string[];
+  /** Event-scoped destiny hardware selections */
+  event_destiny_hardware?: string[];
 }

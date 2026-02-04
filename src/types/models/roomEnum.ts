@@ -11,6 +11,12 @@
 * `24` - 32-124
 * `44` - 32-144
 * `41` - 32-141
+* `MZ` - Mezzanine
+* `TC` - Twenty Chimneys
+* `301` - W20-301+302
+* `SP` - Sala de Puerto Rico
+* `401` - W20-401
+* `RM` - Remote
  */
 export type RoomEnum = typeof RoomEnum[keyof typeof RoomEnum];
 
@@ -23,4 +29,10 @@ export const RoomEnum = {
   NUMBER_24: '24',
   NUMBER_44: '44',
   NUMBER_41: '41',
+  MZ: 'MZ',
+  TC: 'TC',
+  NUMBER_301: '301',
+  SP: 'SP',
+  NUMBER_401: '401',
+  RM: 'RM',
 } as const;

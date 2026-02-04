@@ -73,7 +73,9 @@ export default function Page() {
 
   const buildingLabelsMap = {
     'ST': 'Stata',
-    'WK': 'Walker'
+    'WK': 'Walker',
+    'SC': 'Student Center (Straton)',
+    'BC': 'Barcelona'
   }
 
   const getTableLabel = (table: HelpRequestTable | undefined) => {

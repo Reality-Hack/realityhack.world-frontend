@@ -24,6 +24,7 @@ primary_region = 'ewr'
     VITE_IS_TEAMS_ENABLED="true"
     VITE_IS_HACKER_HELP_ENABLED="true"
     VITE_IS_MENTOR_HELP_ENABLED="true"
+    VITE_SPECIAL_TRACKS_ENABLED="true"
     
     # WIP features
     VITE_IS_SCHEDULE_ENABLED="false"

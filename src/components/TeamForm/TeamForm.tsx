@@ -1,33 +1,30 @@
 'use client';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSession } from '@/auth/client';
 import { toast } from 'sonner';
-import { TextField, Autocomplete } from '@mui/material';
-import { useSpecialTracks, Track } from '@/hooks/useSpecialTracks';
+import { TextField, Autocomplete, Checkbox, FormControlLabel } from '@mui/material';
+import { useSpecialTracks } from '@/hooks/useSpecialTracks';
 import { SpecialTrackSelect } from '@/components/SpecialTrackSelect';
 import { TextInput, TextAreaInput } from '@/components/Inputs';
 import type {
   PatchedTeamUpdateRequest,
   TeamDetail,
   TeamTable,
-  PatchedTeamUpdateRequestTable,
   Table,
   TableRequest,
-  AttendeeName
+  AttendeeName,
+  LocationRequest,
+  EventTrack,
+  EventDestinyHardware
 } from '@/types/models';
 import { 
   useTeamsPartialUpdate,
   useTablesList,
-  useTablesUpdate,
 } from '@/types/endpoints';
-import type { 
-  ProjectRequest,
-  TrackEnum,
-  DestinyHardwareEnum
-} from '@/types/models';
+import type { ProjectRequest } from '@/types/models';
 import { 
-  convertTracksFromTeamData, 
-  convertHardwareFromTeamData, 
+  convertEventTracksFromTeamData, 
+  convertEventHardwareFromTeamData, 
   getSelectedTableFromOptions, 
   getTableLabel 
 } from './utils';
@@ -56,6 +53,9 @@ interface TeamFormData {
   projectName: string;
   selectedTracks: string[];
   selectedHardware: string[];
+  hardwareHack: boolean;
+  startupHack: boolean;
+  communityHack: boolean;
 }
 
 interface TeamFormProps {
@@ -63,6 +63,8 @@ interface TeamFormProps {
   teamId: string;
   onUpdateSuccess: () => void;
 }
+
+const isSpecialTracksEnabled = process.env.NEXT_PUBLIC_SPECIAL_TRACKS_ENABLED === 'true';
 
 export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
   const { data: session } = useSession();
@@ -81,11 +83,16 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
     description: '',
     projectName: '',
     selectedTracks: [],
-    selectedHardware: []
+    selectedHardware: [],
+    hardwareHack: false,
+    startupHack: false,
+    communityHack: false
   });
 
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [tableOptions, setTableOptions] = useState<Table[] | null>(null);
+  const formInitializedRef = useRef(false);
+  const [isFormReady, setIsFormReady] = useState(false);
 
   const { tracks, hardwareTracks, isLoading: isTracksLoading } = useSpecialTracks();
   const { data: tables, isLoading: isTablesLoading, mutate: mutateTables } = useTablesList({}, {
@@ -103,50 +110,59 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
         .filter(table => !table.is_claimed || table.id === teamData?.table?.id);
       setTableOptions(filteredTables);
     }
-  }, [tables]);
+  }, [tables, teamData?.table?.id]);
 
   useMemo(() => {
     return getSelectedTableFromOptions(formData.tableId, tableOptions);
   }, [formData.tableId, tableOptions]);
 
+  // Initialize form data from teamData - only runs once when all data is ready
   useEffect(() => {
-    if (teamData && !isTracksLoading && !isTablesLoading && tableOptions !== null) {
-      if (tracks.length < 1) {
-        toast.error('No tracks available');
-      }
-      if (hardwareTracks.length < 1) {
-        toast.error('No hardware tracks available');
-      }
-      if (tableOptions && tableOptions.length < 1) {
-        toast.error('No tables available');
-      }
+    if (formInitializedRef.current) return;
+    if (!teamData || isTracksLoading || isTablesLoading || tableOptions === null) return;
 
-      const members: TeamMember[] = teamData.attendees.map((attendee: AttendeeName) => {
-        const member: TeamMember = {
-          id: attendee.id || '',
-          first_name: attendee.first_name || '',
-          last_name: attendee.last_name || '',
-          role: attendee.participation_role || '',
-          profile_image: attendee.profile_image || { file: '' }
-        };
-      return member;
-    });
-      
-      setTeamMembers(members);
-      
-      setFormData({
-        name: teamData.name || '',
-        devpost: teamData.project?.submission_location || '',
-        github: teamData.project?.repository_location || '',
-        tableId: teamData.table?.id || null,
-        selectedTable: teamData.table || null,
-        description: teamData.project?.description || '',
-        projectName: teamData.project?.name || '',
-        selectedTracks: convertTracksFromTeamData(teamData.tracks, tracks),
-        selectedHardware: convertHardwareFromTeamData(teamData.destiny_hardware, hardwareTracks)
-      });
+    formInitializedRef.current = true;
+
+    if (tracks.length < 1) {
+      toast.error('No tracks available');
     }
-  }, [teamData, tracks, hardwareTracks, convertTracksFromTeamData, convertHardwareFromTeamData, isTracksLoading, isTablesLoading, tableOptions]);
+    if (hardwareTracks.length < 1) {
+      toast.error('No hardware tracks available');
+    }
+    if (tableOptions.length < 1) {
+      toast.error('No tables available');
+    }
+
+    const members: TeamMember[] = teamData.attendees.map((attendee: AttendeeName) => ({
+      id: attendee.id || '',
+      first_name: attendee.first_name || '',
+      last_name: attendee.last_name || '',
+      role: attendee.participation_role || '',
+      profile_image: attendee.profile_image || { file: '' }
+    }));
+    
+    setTeamMembers(members);
+
+    // Cast event_tracks and event_destiny_hardware since types may not be regenerated yet
+    const eventTracks = (teamData as unknown as { event_tracks?: EventTrack[] }).event_tracks;
+    const eventHardware = (teamData as unknown as { event_destiny_hardware?: EventDestinyHardware[] }).event_destiny_hardware;
+    
+    setFormData({
+      name: teamData.name || '',
+      devpost: teamData.project?.submission_location || '',
+      github: teamData.project?.repository_location || '',
+      tableId: teamData.table?.id || null,
+      selectedTable: teamData.table || null,
+      description: teamData.project?.description || '',
+      projectName: teamData.project?.name || '',
+      selectedTracks: convertEventTracksFromTeamData(eventTracks),
+      selectedHardware: convertEventHardwareFromTeamData(eventHardware),
+      hardwareHack: teamData.hardware_hack ?? false,
+      startupHack: teamData.startup_hack ?? false,
+      communityHack: (teamData as unknown as { community_hack?: boolean }).community_hack ?? false
+    });
+    setIsFormReady(true);
+  }, [teamData, tracks, hardwareTracks, isTracksLoading, isTablesLoading, tableOptions]);
 
   const updateFormData = useCallback(<K extends keyof TeamFormData>(
     field: K, 
@@ -160,8 +176,8 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
     const mappedTable: TeamTable = {
       id: table?.id || '',
       number: table?.number || 0,
-      location: { id: table?.location || undefined }
-    };
+      location: table?.location as Location | null
+    } as TeamTable;
     updateFormData('selectedTable', mappedTable || null);
   }, [updateFormData]);
 
@@ -170,7 +186,6 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
       toast.error('Please select a table');
       return;
     }
-    // TODO: pull into helper function
     if (!teamId) {
       toast.error('No team ID found');
       return;
@@ -183,14 +198,14 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
       toast.error('Please enter a project description');
       return;
     }
-    if (!formData.selectedTracks.length) {
-      toast.error('Please select at least one track');
-      return;
-    }
-    if (!formData.selectedHardware.length) {
-      toast.error('Please select at least one hardware');
-      return;
-    }
+    // if (isSpecialTracksEnabled && !formData.selectedTracks.length) {
+    //   toast.error('Please select at least one track');
+    //   return;
+    // }
+    // if (isSpecialTracksEnabled && !formData.selectedHardware.length) {
+    //   toast.error('Please select at least one hardware');
+    //   return;
+    // }
     if (!formData.github.trim()) {
       toast.error('Please enter a GitHub URL');
       return;
@@ -215,22 +230,29 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
     const tableRequest: TableRequestWithId = {
       id: formData.selectedTable.id,
       number: formData.selectedTable.number,
+      location: formData.selectedTable.location as LocationRequest
     };
 
     try {
-      const updateRequest: PatchedTeamUpdateRequest = {
+      // Build update request with event-scoped fields
+      // Cast to include new fields until types are regenerated
+      const updateRequest = {
         name: formData.name,
         attendees: teamMembers.map(member => member.id),
         table: tableRequest,
-        tracks: formData.selectedTracks as TrackEnum[],
-        destiny_hardware: formData.selectedHardware as DestinyHardwareEnum[],
+        event_tracks: formData.selectedTracks,
+        event_destiny_hardware: formData.selectedHardware,
+        hardware_hack: formData.hardwareHack,
+        startup_hack: formData.startupHack,
+        community_hack: formData.communityHack,
         project: {
           name: formData.projectName,
           description: formData.description,
           repository_location: formData.github,
           submission_location: formData.devpost
         } as ProjectRequest
-      };
+      } as PatchedTeamUpdateRequest;
+
       await updateTeam(updateRequest);
       
       toast.success('Team updated successfully');
@@ -243,10 +265,21 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
     }
   };
 
+  if (!isFormReady) {
+    return (
+      <div className="flex flex-col items-start">
+        <h1 className="text-md text-[#4D97E8] font-semibold">MANAGE TEAM</h1>
+        <div className="mt-4 text-gray-600">Loading team data...</div>
+      </div>
+    );
+  }
+
   return (
     <>
       <h1 className="text-md text-[#4D97E8] font-semibold">MANAGE TEAM</h1>
-      <div className="text-xs/8 mb-8 md:mb-4 text-gray-800">Please note: all fields are required for submission. You can use placeholder URLs for DevPost and GitHub if you don't have one yet.</div>
+      <div className="text-xs/8 mb-8 md:mb-4 text-gray-800">
+        Please note: all fields are required for submission. You can use placeholder URLs for DevPost and GitHub if you don't have one yet.
+      </div>
       <div className="flex flex-col mb-4 w-full md:w-1/2">
         <label className="text-xs/8">TEAM NAME</label>
         <TextInput
@@ -285,11 +318,11 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
           id="table-select"
           value={getSelectedTableFromOptions(formData.tableId, tableOptions || [])}
           loading={isTracksLoading}
-          onChange={(event: any, newValue: Table | null | undefined) => {
+          onChange={(event: unknown, newValue: Table | null | undefined) => {
             handleTableChange(newValue);
           }}
           options={tableOptions || []}
-          getOptionLabel={option => getTableLabel(option?.number)}
+          getOptionLabel={option => getTableLabel(option)}
           getOptionKey={option => option?.id ?? ''}
           isOptionEqualToValue={(a, b) => a?.id === b?.id}
           renderInput={params => (
@@ -317,25 +350,73 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
         </TextAreaInput>
       </div>
 
-      <div className="flex flex-col mb-4 w-full md:w-1/2">
-        <SpecialTrackSelect
-          selectedTracks={formData.selectedTracks}
-          onChange={(tracks: string[]) => updateFormData('selectedTracks', tracks)}
-          maxSelections={2}
-          labelClass="text-xs/8"
-          type="track"
-        />
-      </div>
+      {isSpecialTracksEnabled && (
+        <>
+          <div className="flex flex-col mb-4 w-full md:w-1/2">
+            <SpecialTrackSelect
+              selectedTracks={formData.selectedTracks}
+              onChange={(selectedTracks: string[]) => updateFormData('selectedTracks', selectedTracks)}
+              options={tracks}
+              maxSelections={1}
+              limitSelection={false}
+              labelClass="text-xs/8"
+              type="track"
+              disabled={true}
+            />
+          </div>
+          <div className="flex flex-col mb-4 w-full md:w-1/2">
+            <SpecialTrackSelect
+              selectedTracks={formData.selectedHardware}
+              onChange={(selectedHardware: string[]) => updateFormData('selectedHardware', selectedHardware)}
+              options={hardwareTracks}
+              maxSelections={3}
+              limitSelection={false}
+              labelClass="text-xs/8"
+              type="hardware"
+              disabled={true}
+            />
+          </div>
 
-      <div className="flex flex-col mb-4 w-full md:w-1/2">
-        <SpecialTrackSelect
-          selectedTracks={formData.selectedHardware}
-          onChange={(hardware: string[]) => updateFormData('selectedHardware', hardware)}
-          maxSelections={1}
-          labelClass="text-xs/8"
-          type="hardware"
-        />
-      </div>
+          <div className="flex flex-col mb-4 w-full md:w-1/2">
+            <label className="text-xs/8 mb-2">SPECIAL CATEGORIES</label>
+            <div className="flex flex-col gap-1">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.hardwareHack}
+                    onChange={(e) => updateFormData('hardwareHack', e.target.checked)}
+                    size="small"
+                  />
+                }
+                label="Hardware Hack"
+                slotProps={{ typography: { className: 'text-sm' } }}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.startupHack}
+                    onChange={(e) => updateFormData('startupHack', e.target.checked)}
+                    size="small"
+                  />
+                }
+                label="Founders Lab"
+                slotProps={{ typography: { className: 'text-sm' } }}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.communityHack}
+                    onChange={(e) => updateFormData('communityHack', e.target.checked)}
+                    size="small"
+                  />
+                }
+                label="Community Hack"
+                slotProps={{ typography: { className: 'text-sm' } }}
+              />
+            </div>
+          </div>
+        </>
+      )}
 
       <div className="flex flex-col mb-4 w-full md:w-1/2">
         <label className="text-xs/8">TEAM MEMBERS</label>

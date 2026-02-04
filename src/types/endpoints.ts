@@ -45,11 +45,15 @@ import type {
   DestinyteamsListParams,
   DiscordUsernameRole,
   Event,
+  EventDestinyHardware,
   EventRsvp,
   EventRsvpDetail,
   EventRsvpRequest,
+  EventTrack,
+  EventdestinyhardwareListParams,
   EventrsvpsListParams,
   EventsListParams,
+  EventtracksListParams,
   FileUpload,
   FileUploadRequest,
   GroupDetail,
@@ -1844,6 +1848,79 @@ export const useDiscordDestroy = <TError = ErrorType<unknown>>(
 }
 
 /**
+ * API endpoint for viewing event-scoped destiny hardware choices.
+ */
+export const eventdestinyhardwareList = (
+    params?: EventdestinyhardwareListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventDestinyHardware[]>(
+    {url: `/eventdestinyhardware/`, method: 'GET',
+        params
+    },
+    options);
+  }
+
+
+
+export const getEventdestinyhardwareListKey = (params?: EventdestinyhardwareListParams,) => [`/eventdestinyhardware/`, ...(params ? [params]: [])] as const;
+
+export type EventdestinyhardwareListQueryResult = NonNullable<Awaited<ReturnType<typeof eventdestinyhardwareList>>>
+export type EventdestinyhardwareListQueryError = ErrorType<unknown>
+
+export const useEventdestinyhardwareList = <TError = ErrorType<unknown>>(
+  params?: EventdestinyhardwareListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof eventdestinyhardwareList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getEventdestinyhardwareListKey(params) : null);
+  const swrFn = () => eventdestinyhardwareList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for viewing event-scoped destiny hardware choices.
+ */
+export const eventdestinyhardwareRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventDestinyHardware>(
+    {url: `/eventdestinyhardware/${id}/`, method: 'GET'
+    },
+    options);
+  }
+
+
+
+export const getEventdestinyhardwareRetrieveKey = (id: string,) => [`/eventdestinyhardware/${id}/`] as const;
+
+export type EventdestinyhardwareRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof eventdestinyhardwareRetrieve>>>
+export type EventdestinyhardwareRetrieveQueryError = ErrorType<unknown>
+
+export const useEventdestinyhardwareRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof eventdestinyhardwareRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getEventdestinyhardwareRetrieveKey(id) : null);
+  const swrFn = () => eventdestinyhardwareRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
  * API endpoint that allows event RSVPs to be viewed or edited.
  */
 export const eventrsvpsList = (
@@ -2239,6 +2316,79 @@ export const useEventsPartialUpdate = <TError = ErrorType<unknown>>(
   const swrFn = getEventsPartialUpdateMutationFetcher(id, requestOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for viewing event-scoped track choices.
+ */
+export const eventtracksList = (
+    params?: EventtracksListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventTrack[]>(
+    {url: `/eventtracks/`, method: 'GET',
+        params
+    },
+    options);
+  }
+
+
+
+export const getEventtracksListKey = (params?: EventtracksListParams,) => [`/eventtracks/`, ...(params ? [params]: [])] as const;
+
+export type EventtracksListQueryResult = NonNullable<Awaited<ReturnType<typeof eventtracksList>>>
+export type EventtracksListQueryError = ErrorType<unknown>
+
+export const useEventtracksList = <TError = ErrorType<unknown>>(
+  params?: EventtracksListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof eventtracksList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getEventtracksListKey(params) : null);
+  const swrFn = () => eventtracksList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for viewing event-scoped track choices.
+ */
+export const eventtracksRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventTrack>(
+    {url: `/eventtracks/${id}/`, method: 'GET'
+    },
+    options);
+  }
+
+
+
+export const getEventtracksRetrieveKey = (id: string,) => [`/eventtracks/${id}/`] as const;
+
+export type EventtracksRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof eventtracksRetrieve>>>
+export type EventtracksRetrieveQueryError = ErrorType<unknown>
+
+export const useEventtracksRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof eventtracksRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getEventtracksRetrieveKey(id) : null);
+  const swrFn = () => eventtracksRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
