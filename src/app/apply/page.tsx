@@ -23,7 +23,7 @@ import {
   race_ethnic_group
 } from '@/types/application_form_types';
 import type { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { getAvailableTracks } from '@/app/api/teamformation';
 
 export interface Track {

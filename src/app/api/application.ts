@@ -6,7 +6,7 @@ export async function getAllHackerApplications(accessToken: string) {
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 
@@ -83,7 +83,7 @@ export async function fileUpload(accessToken: any, file: File) {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        Authorization: 'JWT ' + accessToken
+        Authorization: 'Bearer ' + accessToken
       },
       body: formData
     });
@@ -132,7 +132,7 @@ export async function updateApplication(
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify(data)
   });

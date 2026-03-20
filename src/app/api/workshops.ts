@@ -9,7 +9,7 @@ export async function getAllWorkshops(accessToken: string) {
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 
@@ -25,7 +25,7 @@ export async function getAllAttendedWorkshops(accessToken: string) {
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 
@@ -43,7 +43,7 @@ export async function getMyWorkshops(accessToken: string, userId: string) {
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 
@@ -59,7 +59,7 @@ export async function getWorkshop(accessToken: string, id: string) {
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 

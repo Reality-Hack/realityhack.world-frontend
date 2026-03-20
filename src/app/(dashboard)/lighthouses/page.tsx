@@ -8,7 +8,7 @@ import {
 } from '@/app/api/lighthouse';
 import LighthouseFloorView from '@/components/lighthouse/LighthouseFloorView';
 import LighthouseTable from '@/components/lighthouse/LighthouseTable';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 
 import { useEffect, useState } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';

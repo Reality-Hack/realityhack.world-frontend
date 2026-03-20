@@ -11,7 +11,7 @@ import SkillsExpertiseForm from '@/components/applications/SkillsExpertiseForm';
 import AnyApp from '@/components/applications/applicationAny';
 import { form_data } from '@/types/application_form_types';
 import type { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';

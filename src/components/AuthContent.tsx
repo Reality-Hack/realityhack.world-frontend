@@ -1,7 +1,7 @@
 'use client';
 
 import Nav from '@/components/Nav';
-import { signOut, useSession } from 'next-auth/react';
+import { signOut, useSession } from '@/auth/client';
 import { ReactNode, useEffect, useState, useRef, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Loader from './Loader';

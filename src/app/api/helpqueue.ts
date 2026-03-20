@@ -115,7 +115,7 @@ export async function getAllHelpRequests(
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -143,7 +143,7 @@ export async function getAllMyTeamsHelpRequests(
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -171,7 +171,7 @@ export async function getAllMyTeamsHistoricalHelpRequests(
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken,
+      Authorization: 'Bearer ' + accessToken,
       teamId: teamId
     }
   });
@@ -198,7 +198,7 @@ export async function getAllHelpRequestsFromHistory(
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -245,7 +245,7 @@ export async function getAllTables(accessToken: string): Promise<Table[]> {
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -290,7 +290,7 @@ export async function addMentorHelpRequest(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify(newRequest)
   });
@@ -318,7 +318,7 @@ export async function deleteMentorHelpRequest(
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 
@@ -347,7 +347,7 @@ export async function updateHelpRequestStatus(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify({
       status

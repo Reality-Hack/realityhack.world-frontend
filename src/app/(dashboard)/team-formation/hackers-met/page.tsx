@@ -16,7 +16,7 @@ import {
   getAttendeepreferencesListKey
 } from '@/types/endpoints';
 import { useSWRConfig } from 'swr';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 
 // Type for connection profile data
 interface ConnectionProfile {
@@ -94,7 +94,7 @@ export default function HackersMet() {
   const requestConfig = useMemo(() => ({
     swr: { enabled: !!session?.access_token && !!user?.id },
     request: {
-      headers: { 'Authorization': `JWT ${session?.access_token}` }
+      headers: { 'Authorization': `Bearer ${session?.access_token}` }
     }
   }), [session?.access_token, user?.id]);
   
@@ -154,7 +154,7 @@ export default function HackersMet() {
   };
 
   const authHeaders = useMemo(() => ({
-    headers: { 'Authorization': `JWT ${session?.access_token}` }
+    headers: { 'Authorization': `Bearer ${session?.access_token}` }
   }), [session?.access_token]);
 
   async function addPreferences(preferee: string, preferenceStatus: PreferenceEnum) {

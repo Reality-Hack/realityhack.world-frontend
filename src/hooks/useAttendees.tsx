@@ -1,6 +1,6 @@
 'use client';
 import { useMemo } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { 
   useAttendeesList, 
   AttendeesListQueryResult, 
@@ -71,7 +71,7 @@ export const useAttendees = (options: UseAttendeesOptions = {}): UseAttendeesRet
     swr: { enabled: enabled && !!session?.access_token }, 
     request: {
       headers: {
-        'Authorization': `JWT ${session?.access_token}`
+        'Authorization': `Bearer ${session?.access_token}`
       }
     }
   });
@@ -164,7 +164,7 @@ export const useAttendee = (
     }, 
     request: {
       headers: {
-        'Authorization': `JWT ${session?.access_token}`
+        'Authorization': `Bearer ${session?.access_token}`
       }
     }
   });

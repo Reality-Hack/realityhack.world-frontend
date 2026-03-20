@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEventrsvpsList, useTeamsList } from '@/types/endpoints';
 import { AttendeeName, EventRsvp, Team, ThemeInterestTrackEnum } from '@/types/models';
 import { rsvpOptions } from '@/app/api/rsvp';
@@ -85,7 +85,7 @@ export const EventParticipantsProvider = ({ children }: EventParticipantsProvide
   const requestConfig = useMemo(() => ({
     swr: { enabled: !!session?.access_token },
     request: {
-      headers: { 'Authorization': `JWT ${session?.access_token}` }
+      headers: { 'Authorization': `Bearer ${session?.access_token}` }
     }
   }), [session?.access_token]);
 

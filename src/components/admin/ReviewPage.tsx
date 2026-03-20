@@ -12,7 +12,7 @@ import {
 } from '@/types/application_form_types';
 import { participation_role } from '@/types/types';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { CheckboxInput } from '../Inputs';
 import { heardAboutUsLabels } from '../applications/ClosingForm';
 import {
@@ -45,7 +45,7 @@ export default function ReviewPage({
     swr: { enabled: !!session?.access_token && !!allInfo.id },
     request: {
       headers: {
-        'Authorization': `JWT ${session?.access_token}`
+        'Authorization': `Bearer ${session?.access_token}`
       }
     }
   })

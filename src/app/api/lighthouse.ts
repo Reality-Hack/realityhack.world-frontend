@@ -50,7 +50,7 @@ export async function getAllTables(accessToken: string): Promise<Table[]> {
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();

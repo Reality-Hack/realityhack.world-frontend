@@ -3,7 +3,7 @@ import { updateAttendee } from '@/app/api/attendee';
 import { useSpecialTracks, Track } from '@/hooks/useSpecialTracks';
 import CustomSelectMultipleTyping from '@/components/CustomSelectMultipleTyping';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEffect, useState } from 'react';
 import { SpecialTrackSelect } from '@/components/SpecialTrackSelect';
 import { toast } from 'sonner';

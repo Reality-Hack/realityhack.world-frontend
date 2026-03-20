@@ -13,7 +13,7 @@ import {
 import { QuestionDialog } from '@/components/helpQueue/hackerView/NewRequestComps';
 import { Posting } from '@/components/helpQueue/hackerView/PostingComps';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEffect, useState } from 'react';
 
 import { MentorTopics } from '@/types/types';

@@ -19,7 +19,7 @@ export default function HardwareDevicesEditor({ hardware }: { hardware: CreateHa
       swr: { enabled: !!session?.access_token}, 
       request: {
         headers: {
-          'Authorization': `JWT ${session?.access_token}`
+          'Authorization': `Bearer ${session?.access_token}`
         }
       }
     });
