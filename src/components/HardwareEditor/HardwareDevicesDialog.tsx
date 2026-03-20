@@ -1,6 +1,6 @@
 import { useHardwaredevicesList } from "@/types/endpoints";
 import { CreateHardware } from "@/types/types2";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/auth/client";
 import { useState, useEffect } from "react";
 import { HardwareDevice } from "@/types/models";
 import { CircularProgress } from "@mui/material";

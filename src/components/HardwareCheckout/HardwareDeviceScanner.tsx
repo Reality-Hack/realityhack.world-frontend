@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useSession } from "@/auth/client";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { HardwareWithType } from "@/types/types2";
