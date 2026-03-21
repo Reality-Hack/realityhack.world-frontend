@@ -1,7 +1,6 @@
-import type { NextPage } from 'next';
-import Link from 'next/link';
+import { AppLink as Link } from '@/routing';
 
-const Dashboard: NextPage = ({}: any) => {
+const Dashboard = () => {
   return (
     <div className="h-screen">
       <h1 className="mt-6 mb-5 ml-6 text-3xl text">Sponsor Dashboard</h1>

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { AppLink as Link } from '@/routing';
 
 type TabProps = {
   href: string;

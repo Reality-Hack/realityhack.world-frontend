@@ -1,14 +1,13 @@
-'use client';
 import { useTeamsList, TeamsListQueryResult } from '@/types/endpoints';
 import Table from '@/components/Table';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useSession } from '@/auth/client';
+import { useAppNavigate } from '@/routing';
 import { useMemo } from 'react';
 
 export default function TeamTable() {
-  const router = useRouter();
+  const router = useAppNavigate();
   const { data: session } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
 
@@ -22,7 +21,7 @@ export default function TeamTable() {
     },
     request: {
       headers: {
-        Authorization: `JWT ${session?.access_token}`
+        Authorization: `Bearer ${session?.access_token}`
       }
     }
   });

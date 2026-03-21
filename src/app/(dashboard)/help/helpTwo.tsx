@@ -13,13 +13,13 @@ import {
 import { QuestionDialog } from '@/components/helpQueue/hackerView/NewRequestComps';
 import { Posting } from '@/components/helpQueue/hackerView/PostingComps';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEffect, useState } from 'react';
 
 import { MentorTopics } from '@/types/types';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { toast } from 'sonner';
-const LighthousesSocketURL = `${process.env.NEXT_PUBLIC_BACKEND_WS_URL}/ws/lighthouses/`;
+const LighthousesSocketURL = `${import.meta.env.VITE_BACKEND_WS_URL}/ws/lighthouses/`;
 
 
 type LighthouseInfo = {
@@ -42,9 +42,9 @@ export default function Help2() {
 
   //websocket state/hooks
   const [loading, setLoading] = useState<boolean>(false);
-  const { sendMessage, lastMessage, readyState } = useWebSocket(
-    `${LighthousesSocketURL}`
-  );
+  // const { sendMessage, lastMessage, readyState } = useWebSocket(
+  //   `${LighthousesSocketURL}`
+  // );
 
   const [lighthouses, setLighthouses] = useState<LighthouseInfo[]>([]);
   const [myLighthouse, setLighthouse] = useState<LighthouseInfo>();
@@ -115,42 +115,42 @@ export default function Help2() {
   }, [user, session]);
 
   //subscribe to the websocket
-  useEffect(() => {
-    setLoading(true);
-    if (lastMessage !== null) {
-      const payload: LightHouseMessage[] | { message: LightHouseMessage } =
-        JSON.parse(lastMessage.data);
-      if (Array.isArray(payload)) {
-        // console.log(
-        //   'lighthouse messages: ',
-        //   JSON.parse(lastMessage.data).filter(
-        //     (el: LightHouseMessage) => el.mentor_requested
-        //   )
-        // );
+  // useEffect(() => {
+  //   setLoading(true);
+  //   if (lastMessage !== null) {
+  //     const payload: LightHouseMessage[] | { message: LightHouseMessage } =
+  //       JSON.parse(lastMessage.data);
+  //     if (Array.isArray(payload)) {
+  //       // console.log(
+  //       //   'lighthouse messages: ',
+  //       //   JSON.parse(lastMessage.data).filter(
+  //       //     (el: LightHouseMessage) => el.mentor_requested
+  //       //   )
+  //       // );
 
-        const myLighthouse = payload.find(l => l.table == myTable?.number);
-        if (myLighthouse) {
-          setLighthouse(myLighthouse);
-        }
-      } else {
-        let lighthouse = payload.message as LightHouseMessage;
-        const table = tables.find(t => t.number === lighthouse.table);
+  //       const myLighthouse = payload.find(l => l.table == myTable?.number);
+  //       if (myLighthouse) {
+  //         setLighthouse(myLighthouse);
+  //       }
+  //     } else {
+  //       let lighthouse = payload.message as LightHouseMessage;
+  //       const table = tables.find(t => t.number === lighthouse.table);
 
-        if (table == myTable?.number) {
-          setLighthouse(lighthouse);
-        }
-      }
-    }
-    setLoading(false);
-  }, [myTable, lastMessage, locations, tables]);
+  //       if (table == myTable?.number) {
+  //         setLighthouse(lighthouse);
+  //       }
+  //     }
+  //   }
+  //   setLoading(false);
+  // }, [myTable, lastMessage, locations, tables]);
 
-  const connectionStatus = {
-    [ReadyState.CONNECTING]: 'Connecting',
-    [ReadyState.OPEN]: 'Open',
-    [ReadyState.CLOSING]: 'Closing',
-    [ReadyState.CLOSED]: 'Closed',
-    [ReadyState.UNINSTANTIATED]: 'Uninstantiated'
-  }[readyState];
+  // const connectionStatus = {
+  //   [ReadyState.CONNECTING]: 'Connecting',
+  //   [ReadyState.OPEN]: 'Open',
+  //   [ReadyState.CLOSING]: 'Closing',
+  //   [ReadyState.CLOSED]: 'Closed',
+  //   [ReadyState.UNINSTANTIATED]: 'Uninstantiated'
+  // }[readyState];
 
   // mentorhelprequestpost endpoint
   async function onNewHelpRequest(

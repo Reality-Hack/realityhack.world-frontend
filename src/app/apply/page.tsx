@@ -1,7 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-console */
-'use client';
-
 import { CheckboxInput, validateField } from '@/components/Inputs';
 import Loader from '@/components/Loader';
 import ReviewPage from '@/components/admin/ReviewPage';
@@ -22,10 +18,8 @@ import {
   participation_role,
   race_ethnic_group
 } from '@/types/application_form_types';
-import type { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useSession } from '@/auth/client';
+import { AppLink as Link, useAppNavigate } from '@/routing';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { applicationOptions } from '../api/application';
 import { useApplicationquestionsList } from '@/types/endpoints';
@@ -37,7 +31,7 @@ import {
   getQuestionForField
 } from '@/utils/dynamicQuestions';
 
-const Application: NextPage = ({}: any) => {
+const Application = () => {
   const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
   const [rejectedFiles, setRejectedFiles] = useState<any>(null);
   const [countries, setCountries] = useState<any>(null);
@@ -82,7 +76,7 @@ const Application: NextPage = ({}: any) => {
   });
 
   const { data: session, status } = useSession();
-  const router = useRouter();
+  const router = useAppNavigate();
 
 
   const { data: dynamicQuestions } = useApplicationquestionsList();

@@ -1,10 +1,8 @@
-'use client';
-
-import { getMe } from '@/app/api/attendee';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useMemo } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useAppNavigate, useAppPathname, type AppNavigate } from '@/routing';
 import { AttendeeDetail } from '@/types/models';
+import { AuthSession } from '@/auth/types';
 import {
   ReactNode,
   createContext,
@@ -13,8 +11,8 @@ import {
 import { useMeRetrieve } from '@/types/endpoints';
 
 interface AuthContextType {
-  session: any;
-  router: any;
+  session: AuthSession | null;
+  router: AppNavigate;
   pathname: string;
   user: AttendeeDetail | null;
   isLoading: boolean;
@@ -41,8 +39,8 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { data: session, status } = useSession();
-  const router = useRouter();
-  const pathname = usePathname();
+  const router = useAppNavigate();
+  const pathname = useAppPathname();
   const isAdmin = useMemo(() => status === 'authenticated' && session?.roles?.includes('admin'), [session, status])
   const isOrganizer = useMemo(() => status === 'authenticated' && session?.roles?.includes('organizer'), [session, status])
   const isGuardian = useMemo(() => status === 'authenticated' && session?.roles?.includes('guardian'), [session, status])
@@ -63,7 +61,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     },
     request: {
       headers: {
-        'Authorization': `JWT ${session?.access_token}`
+        'Authorization': `Bearer ${session?.access_token}`
       }
     }
   });
@@ -76,18 +74,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     pathname,
     user: userData ?? null,
     isLoading,
-    isAdmin,
-    isSponsor,
-    isMentor,
-    isParticipant,
-    isJudge,
-    isOrganizer,
-    isGuardian,
-    isVolunteer,
-    isMedia,
-    canAccessSponsor,
-    canAccessMentor,
-    canAccessParticipant,
+    isAdmin: isAdmin ?? false,
+    isSponsor: isSponsor ?? false,
+    isMentor: isMentor ?? false,
+    isParticipant: isParticipant ?? false,
+    isJudge: isJudge ?? false,
+    isOrganizer: isOrganizer ?? false,
+    isGuardian: isGuardian ?? false,
+    isVolunteer: isVolunteer ?? false,
+    isMedia: isMedia ?? false,
+    canAccessSponsor: canAccessSponsor ?? false,
+    canAccessMentor: canAccessMentor ?? false,
+    canAccessParticipant: canAccessParticipant ?? false,
     status
   };
 

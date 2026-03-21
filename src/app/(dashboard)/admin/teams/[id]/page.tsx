@@ -1,20 +1,17 @@
-'use client';
-
 import TeamForm from '@/components/admin/teams/TeamForm';
 import { useTeamsRetrieve } from '@/types/endpoints';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { TeamOperationResult } from '@/types/types2';
+import { useSession } from '@/auth/client';
+import { useAppParams } from '@/routing';
 
-export default function TeamPage({ params }: { params: { id: string } }) {
+export default function TeamPage() {
+  const { id = '' } = useAppParams();
   const { data: session } = useSession();
-  const router = useRouter();
 
-  const { data: team } = useTeamsRetrieve(params.id, {
+  const { data: team } = useTeamsRetrieve(id, {
     request: {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'JWT ' + session?.access_token
+        Authorization: 'Bearer ' + session?.access_token
       }
     }
   });

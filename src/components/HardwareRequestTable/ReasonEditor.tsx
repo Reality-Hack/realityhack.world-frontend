@@ -23,7 +23,7 @@ export default function ReasonEditor({
       setLoading(true);
       hardwarerequestsPartialUpdate(id, { reason: newReason}, {
         headers: {
-          'Authorization': `JWT ${access_token}`
+          'Authorization': `Bearer ${access_token}`
         }
       }).then(() => {
         setValue(newReason);

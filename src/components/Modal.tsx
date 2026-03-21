@@ -1,4 +1,4 @@
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEffect, useRef } from 'react';
 type ModalProps = {
   toggleOverlay: () => void;

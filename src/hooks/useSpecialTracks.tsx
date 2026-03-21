@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEventtracksList, useEventdestinyhardwareList } from '@/types/endpoints';
 import type { EventTrack, EventDestinyHardware } from '@/types/models';
 
@@ -21,7 +21,7 @@ export function useSpecialTracks() {
     {
       swr: { enabled: !!session?.access_token },
       request: {
-        headers: { 'Authorization': `JWT ${session?.access_token}` }
+        headers: { 'Authorization': `Bearer ${session?.access_token}` }
       }
     }
   );
@@ -35,7 +35,7 @@ export function useSpecialTracks() {
     {
       swr: { enabled: !!session?.access_token },
       request: {
-        headers: { 'Authorization': `JWT ${session?.access_token}` }
+        headers: { 'Authorization': `Bearer ${session?.access_token}` }
       }
     }
   );

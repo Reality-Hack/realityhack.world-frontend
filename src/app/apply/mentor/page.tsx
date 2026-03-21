@@ -1,6 +1,3 @@
-/* eslint-disable no-console */
-'use client';
-
 import { applicationOptions } from '@/app/api/application';
 import { CheckboxInput, validateField } from '@/components/Inputs';
 import ReviewPage from '@/components/admin/ReviewPage';
@@ -10,13 +7,11 @@ import DiversityInclusionForm from '@/components/applications/DiversityInclusion
 import SkillsExpertiseForm from '@/components/applications/SkillsExpertiseForm';
 import AnyApp from '@/components/applications/applicationAny';
 import { form_data } from '@/types/application_form_types';
-import type { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useSession } from '@/auth/client';
+import { AppLink as Link, useAppNavigate } from '@/routing';
 import React, { useCallback, useEffect, useState } from 'react';
 
-const MentorApp: NextPage = ({}: any) => {
+const MentorApp = () => {
   const [formData, setFormData] = useState<Partial<form_data>>({
     participation_class: 'M',
     disclaimer_schedule: null,
@@ -96,7 +91,7 @@ const MentorApp: NextPage = ({}: any) => {
   const [industries, setIndustries] = useState<any>(null);
 
   const { data: session } = useSession();
-  const router = useRouter();
+  const router = useAppNavigate();
 
   useEffect(() => {
     if (session) {

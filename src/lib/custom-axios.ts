@@ -1,8 +1,26 @@
 import Axios, { AxiosRequestConfig, AxiosError } from 'axios';
+import { getAccessToken } from '@/auth/token-store';
 
-// Configure the axios instance to use the backend URL
 export const AXIOS_INSTANCE = Axios.create({ 
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'
+  baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
+});
+
+AXIOS_INSTANCE.interceptors.request.use((config) => {
+  const token = getAccessToken();
+  if (token) {
+    config.headers = config.headers ?? {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+AXIOS_INSTANCE.interceptors.request.use((config) => {
+  const token = getAccessToken();
+  if (token) {
+    config.headers = config.headers ?? {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 export const customAxios = <T>(

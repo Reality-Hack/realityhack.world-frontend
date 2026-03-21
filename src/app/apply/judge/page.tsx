@@ -1,22 +1,17 @@
-/* eslint-disable no-console */
-'use client';
-
 import { validateField } from '@/components/Inputs';
 import ClosingForm from '@/components/applications/ClosingForm';
 import DiversityInclusionForm from '@/components/applications/DiversityInclusionForm';
 import SkillsExpertiseForm from '@/components/applications/SkillsExpertiseForm';
 import AdditionalPersonalInformationForm from '@/components/applications/AdditionalPersonalInformationForm';
 import AnyApp from '@/components/applications/applicationAny';
-import type { NextPage } from 'next';
-import Link from 'next/link';
+import { AppLink as Link, useAppNavigate } from '@/routing';
 import React, { useCallback, useEffect, useState } from 'react';
 import { form_data } from '../../../types/application_form_types';
 import { applicationOptions } from '@/app/api/application';
 import ReviewPage from '@/components/admin/ReviewPage';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useSession } from '@/auth/client';
 
-const JudgeApp: NextPage = ({}: any) => {
+const JudgeApp = () => {
   const [formData, setFormData] = useState<Partial<form_data>>({
     participation_class: 'J',
     judge_invited_by: null,
@@ -87,7 +82,7 @@ const JudgeApp: NextPage = ({}: any) => {
   const [options, setOptions] = useState<any>(null);
 
   const { data: session } = useSession();
-  const router = useRouter();
+  const router = useAppNavigate();
 
   useEffect(() => {
     if (session) {

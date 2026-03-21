@@ -1,12 +1,8 @@
 'use client';
 
-import { getHardwareCategories } from '@/app/api/hardware';
-import { useHardwareList } from '@/types/endpoints';
-import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useSession } from '@/auth/client';
 import FilteredHardwareRequestViewer from '@/components/RequestHardware/FilteredHardwareRequestViewer';
 import Loader from '@/components/Loader';
-import { HardwareCategory } from '@/types/types2';
 import { useHardwareContext } from '@/contexts/HardwareContext';
 
 export default function HardwareRequest() {

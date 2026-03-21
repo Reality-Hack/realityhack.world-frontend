@@ -1,16 +1,15 @@
-'use client';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import TeamForm from './TeamForm';
 import { TeamOperationResult } from '@/types/types2';
-import { useRouter } from 'next/navigation';
+import { useAppNavigate } from '@/routing';
 
 type Props = {
   open: boolean;
   onClose: () => void;
 };
 export default function TeamDialog({ open, onClose }: Props) {
-  const router = useRouter();
+  const router = useAppNavigate();
   const handleSuccess = (result: TeamOperationResult | null) => {
     if (result && 'id' in result) {
       router.replace(`/admin/teams/${result.id as string}`);

@@ -2,7 +2,7 @@ export async function getPreferencesByAttendeeId(
   accessToken: string,
   prefererId: string
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/attendeepreferences/?preferer=${prefererId}`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/attendeepreferences/?preferer=${prefererId}`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -19,7 +19,7 @@ export async function getPreferencesByAttendeeId(
 export async function getAllPreferences(
   accessToken: string,
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/attendeepreferences/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/attendeepreferences/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ interface AttendeePreferenceInput {
     accessToken: string,
     preferenceInfo: AttendeePreferenceInput
   ) {
-    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/attendeepreferences/`;
+    const url = `${import.meta.env.VITE_BACKEND_URL}/attendeepreferences/`;
     
     const resp = await fetch(url, {
       method: 'POST', // Set the HTTP method to POST for adding a new preference
@@ -74,7 +74,7 @@ interface UpdateRequestBody {
     preference?: "Y" | "N" | "T",
     preferee?: string
   ) {
-    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/attendeepreferences/${preferenceId}/`;
+    const url = `${import.meta.env.VITE_BACKEND_URL}/attendeepreferences/${preferenceId}/`;
   
     const bodyData: UpdateRequestBody = {};
   
@@ -109,7 +109,7 @@ export async function deletePreference(
   accessToken: string,
   preferenceId: string
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/attendeepreferences/${preferenceId}`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/attendeepreferences/${preferenceId}`;
 
   const resp = await fetch(url, {
     method: 'DELETE', // Set the HTTP method to DELETE

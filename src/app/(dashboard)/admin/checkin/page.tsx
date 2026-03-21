@@ -1,5 +1,5 @@
 'use client';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import QRCodeReader from '@/components/admin/QRCodeReader';
 import CustomSelect from '@/components/CustomSelect';

@@ -1,12 +1,12 @@
 import { Application } from '@/types/models';
 
 export async function getAllHackerApplications(accessToken: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/applications/`;
 
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 
@@ -17,7 +17,7 @@ export async function getAllHackerApplications(accessToken: string) {
 }
 
 export async function getApplication(id: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/${id}`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/applications/${id}`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export async function getApplication(id: string) {
 }
 
 export async function applicationOptions() {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/applications/`;
   try {
     const response = await fetch(url, {
       method: 'OPTIONS',
@@ -53,7 +53,7 @@ export async function applicationOptions() {
 }
 
 export async function createApplication(data: any) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/applications/`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -75,7 +75,7 @@ export async function createApplication(data: any) {
 }
 
 export async function fileUpload(accessToken: any, file: File) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploaded_files/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/uploaded_files/`;
   const formData = new FormData();
   formData.append('file', file);
 
@@ -83,7 +83,7 @@ export async function fileUpload(accessToken: any, file: File) {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        Authorization: 'JWT ' + accessToken
+        Authorization: 'Bearer ' + accessToken
       },
       body: formData
     });
@@ -99,7 +99,7 @@ export async function fileUpload(accessToken: any, file: File) {
 }
 
 export async function patchFileUpload(fileId: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploaded_files/${fileId}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/uploaded_files/${fileId}/`;
 
   try {
     const response = await fetch(url, {
@@ -127,12 +127,12 @@ export async function updateApplication(
   data: object,
   accessToken: string
 ): Promise<Application | void> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/applications/${appID}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/applications/${appID}/`;
   const resp = await fetch(url, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify(data)
   });
@@ -144,7 +144,7 @@ export async function updateApplication(
 }
 
 export async function deleteApplication(id: string) {
-  const url = `${process.env.BACKEND_URL}/applications/${id}`;
+  const url = `${import.meta.env.BACKEND_URL}/applications/${id}`;
   const resp = await fetch(url, {
     method: 'DELETE',
     headers: {

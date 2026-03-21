@@ -7,7 +7,7 @@ import {
 } from '@/app/api/workshops';
 import { useAuth } from '@/contexts/AuthContext';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import React, { MouseEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 

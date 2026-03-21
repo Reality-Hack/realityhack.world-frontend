@@ -1,5 +1,5 @@
 'use client';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEffect, useMemo, useState } from 'react';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import Table from '@/components/Table';
@@ -133,7 +133,7 @@ export default function HardwareRequestTable({
         selectedDevicePayload,
         {
           headers: {
-            'Authorization': `JWT ${session?.access_token}`
+            'Authorization': `Bearer ${session?.access_token}`
           }
         }
       )
@@ -169,7 +169,7 @@ export default function HardwareRequestTable({
     // TODO: can we optimistically update?
     hardwarerequestsPartialUpdate(hardwareRequestId, updateRequestBody, {
       headers: {
-        'Authorization': `JWT ${accessToken}`
+        'Authorization': `Bearer ${accessToken}`
       }
     })
       .then(() => refreshHardwareData())
@@ -196,7 +196,7 @@ export default function HardwareRequestTable({
       setIsUpdating(true);
       hardwarerequestsDestroy(hardwareRequestId, {
         headers: {
-          'Authorization': `JWT ${session?.access_token}`
+          'Authorization': `Bearer ${session?.access_token}`
         }
       })
       .then(() => refreshHardwareData())

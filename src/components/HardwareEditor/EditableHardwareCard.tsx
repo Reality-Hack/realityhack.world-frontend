@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/auth/client";
 import { useHardwareContext } from "@/contexts/HardwareContext";
 import { 
     HardwareCategory, 

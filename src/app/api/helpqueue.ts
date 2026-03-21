@@ -110,12 +110,12 @@ export type Team = {
 export async function getAllHelpRequests(
   accessToken: string
 ): Promise<HelpRequest[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/mentorhelprequests/`;
 
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -139,11 +139,11 @@ export async function getAllMyTeamsHelpRequests(
   accessToken: string,
   teamId: string
 ): Promise<HelpRequest[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests?team=${teamId}`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/mentorhelprequests?team=${teamId}`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -167,11 +167,11 @@ export async function getAllMyTeamsHistoricalHelpRequests(
   accessToken: string,
   teamId: string
 ): Promise<HelpRequestHistory[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequestshistory/?team=${teamId}`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/mentorhelprequestshistory/?team=${teamId}`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken,
+      Authorization: 'Bearer ' + accessToken,
       teamId: teamId
     }
   });
@@ -194,11 +194,11 @@ export async function getAllHelpRequestsFromHistory(
   accessToken: string,
   mentorTopcis?: string[]
 ): Promise<HelpRequestHistory[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequestshistory/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/mentorhelprequestshistory/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -218,7 +218,7 @@ export async function getAllHelpRequestsFromHistory(
  * @returns teamId string
  */
 // export async function getTeamIdFromAttendeeId(attendeeId:string): Promise<Team[]> {
-//   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams?attendees=${attendeeId}`;
+//   const url = `${import.meta.env.VITE_BACKEND_URL}/teams?attendees=${attendeeId}`;
 //   const resp = await fetch(url, {
 //     headers: {
 //       'Content-Type': 'application/json'
@@ -241,11 +241,11 @@ export async function getAllHelpRequestsFromHistory(
  * @returns list of table objects
  */
 export async function getAllTables(accessToken: string): Promise<Table[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/tables/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/tables/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -264,7 +264,7 @@ export async function editMentorHelpRequest(
   requestId: string,
   updatedData: Partial<EditHelpRequest>
 ): Promise<HelpRequest> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/${requestId}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/mentorhelprequests/${requestId}/`;
   const resp = await fetch(url, {
     method: 'PATCH',
     headers: {
@@ -284,13 +284,13 @@ export async function addMentorHelpRequest(
   accessToken: string,
   newRequest: CreateHelpRequest
 ): Promise<HelpRequest> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/mentorhelprequests/`;
 
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify(newRequest)
   });
@@ -312,13 +312,13 @@ export async function deleteMentorHelpRequest(
   accessToken: string,
   requestId: string
 ): Promise<HelpRequest> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequests/${requestId}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/mentorhelprequests/${requestId}/`;
 
   const response = await fetch(url, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 
@@ -341,13 +341,13 @@ export async function updateHelpRequestStatus(
   requestId: string,
   status: 'R' | 'A' | 'E' | 'F'
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/mentorhelprequest/${requestId}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/mentorhelprequest/${requestId}/`;
 
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify({
       status

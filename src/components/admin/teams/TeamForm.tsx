@@ -1,5 +1,3 @@
-'use client';
-
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -13,10 +11,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Button } from 'antd';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useAppNavigate } from '@/routing';
 import { TeamDetail, TeamTable, Table } from '@/types/models';
 import { TeamCreateRequest, TeamRequest } from '@/types/models';
 import { useTeamsCreate, useTeamsUpdate, useTeamsDestroy, useTablesList } from '@/types/endpoints';
@@ -42,7 +40,7 @@ type TeamFormProps = {
 };
 
 export default function TeamForm({ initialData, onSuccess, onError, onCancel }: TeamFormProps) {
-  const router = useRouter();
+  const router = useAppNavigate();
   const { data: session } = useSession();
   const { 
     rsvpAttendeesWithCheckIn: attendees,
@@ -67,7 +65,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
     request: {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'JWT ' + session?.access_token
+        Authorization: 'Bearer ' + session?.access_token
       }
     }
   });
@@ -76,7 +74,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
     request: {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'JWT ' + session?.access_token
+        Authorization: 'Bearer ' + session?.access_token
       }
     }
   });
@@ -85,7 +83,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
     request: {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'JWT ' + session?.access_token
+        Authorization: 'Bearer ' + session?.access_token
       }
     }
   });
@@ -94,7 +92,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
     swr: { enabled: !!session?.access_token}, 
     request: {
       headers: {
-        'Authorization': `JWT ${session?.access_token}`
+        'Authorization': `Bearer ${session?.access_token}`
       }
     }
   });

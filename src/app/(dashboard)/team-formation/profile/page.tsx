@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import Loader from '@/components/Loader';
 import './profile.css';
 export default function RoundOne() {

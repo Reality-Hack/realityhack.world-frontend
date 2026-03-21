@@ -1,6 +1,6 @@
 import Markdown from 'react-markdown';
 
-export default async function MarkdownPreview() {
+export default function MarkdownPreview() {
   try {
     const markdown = `
 \`\`\`python
