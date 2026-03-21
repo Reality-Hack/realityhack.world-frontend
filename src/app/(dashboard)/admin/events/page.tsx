@@ -7,7 +7,7 @@ import { DateTime } from 'luxon';
 import Loader from '@/components/Loader';
 import { toast } from 'sonner';
 
-const isEventsEnabled = process.env.NEXT_PUBLIC_IS_EVENTS_ENABLED === 'true';
+const isEventsEnabled = import.meta.env.VITE_IS_EVENTS_ENABLED === 'true';
 export default function EventsAdminPage() {
   const { data: session } = useSession();
 

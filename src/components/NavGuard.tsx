@@ -1,6 +1,4 @@
-'use client';
-
-import { usePathname, useRouter } from 'next/navigation';
+import { useAppNavigate, useAppPathname } from '@/routing';
 import { ReactNode, useCallback, useEffect } from 'react';
 import useNavigationAccess from '@/hooks/useNavigationAccess';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,8 +8,8 @@ interface NavGuardProviderProps {
 }
 
 export const NavGuardProvider = ({ children }: NavGuardProviderProps) => {
-  const router = useRouter();
-  const pathname = usePathname();
+  const router = useAppNavigate();
+  const pathname = useAppPathname();
   const { availableRoutes } = useNavigationAccess();
   const { session, status } = useAuth();
 

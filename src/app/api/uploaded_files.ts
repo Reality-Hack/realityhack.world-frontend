@@ -6,7 +6,7 @@ export async function getUploadedFile(
   id: string,
   accessToken: string
 ): Promise<FileUpload> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploaded_files/${id}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/uploaded_files/${id}/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -21,5 +21,5 @@ export async function getUploadedFile(
 }
 
 export function fixFileLink(file: string) {
-  return (file.startsWith("http") ? "" : process.env.NEXT_PUBLIC_BACKEND_URL) + file;
+  return (file.startsWith("http") ? "" : import.meta.env.VITE_BACKEND_URL) + file;
 }

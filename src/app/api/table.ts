@@ -3,7 +3,7 @@ import { components } from '@/types/schema';
 export type Table = components['schemas']['Table'];
 
 export async function getAllTables(accessToken: string): Promise<Table[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/tables/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/tables/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',

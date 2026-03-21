@@ -51,11 +51,11 @@ function parseIssuer(issuer: string): { url: string; realm: string } {
 }
 
 function getIssuer(): string {
-  return process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER ?? '';
+  return import.meta.env.VITE_KEYCLOAK_ISSUER ?? '';
 }
 
 function getClientId(): string {
-  return process.env.NEXT_PUBLIC_KEYCLOAK_ID ?? '';
+  return import.meta.env.VITE_KEYCLOAK_ID ?? '';
 }
 
 /**
@@ -67,7 +67,7 @@ function getClientId(): string {
  */
 function getKeycloakAppRedirectUri(): string {
   if (typeof window === 'undefined') return '';
-  const explicit = process.env.NEXT_PUBLIC_KEYCLOAK_REDIRECT_URI?.trim();
+  const explicit = import.meta.env.VITE_KEYCLOAK_REDIRECT_URI?.trim();
   if (explicit) return explicit;
   return `${window.location.origin}/signin`;
 }
@@ -149,7 +149,7 @@ export function AuthClientProvider({
     const clientId = getClientId();
     if (!issuer || !clientId) {
       console.error(
-        'Missing NEXT_PUBLIC_KEYCLOAK_ISSUER or NEXT_PUBLIC_KEYCLOAK_ID env vars.'
+        'Missing VITE_KEYCLOAK_ISSUER or VITE_KEYCLOAK_ID env vars.'
       );
       setStatus('unauthenticated');
       return;
@@ -183,7 +183,7 @@ export function AuthClientProvider({
         const authenticated = await kc.init({
           pkceMethod: 'S256',
           checkLoginIframe: false,
-          enableLogging: process.env.NODE_ENV === 'development',
+          enableLogging: import.meta.env.NODE_ENV === 'development',
           ...(stored
             ? {
                 token: stored.token,

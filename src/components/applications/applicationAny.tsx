@@ -1,10 +1,7 @@
-'use client';
-
 import { createApplication, fileUpload } from '@/app/api/application';
 import Layout from '@/components/HotkeyLayout';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import type { NextPage } from 'next';
 import { useSession } from '@/auth/client';
 import React, { useState } from 'react';
 import { Modal } from '@mui/material';
@@ -19,7 +16,7 @@ interface AnyAppProps {
   tabNames: string[];
 }
 
-const AnyApp: NextPage<AnyAppProps> = React.memo(function AnyApp({
+const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
   tabs,
   tabNames,
   AppType,

@@ -1,10 +1,9 @@
-'use client';
 import { Tab } from '../../../components/Tab';
-import { usePathname } from 'next/navigation';
+import { useAppPathname } from '@/routing';
 import { HardwareProvider } from '@/contexts/HardwareContext';
 
 export default function Hardware({ children }: { children: any }) {
-  const pathname = usePathname();
+  const pathname = useAppPathname();
   return (
     <main>
       <h1 className="text-4xl">

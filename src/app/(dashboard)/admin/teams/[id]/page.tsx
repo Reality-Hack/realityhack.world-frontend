@@ -1,13 +1,13 @@
-'use client';
-
 import TeamForm from '@/components/admin/teams/TeamForm';
 import { useTeamsRetrieve } from '@/types/endpoints';
 import { useSession } from '@/auth/client';
+import { useAppParams } from '@/routing';
 
-export default function TeamPage({ params }: { params: { id: string } }) {
+export default function TeamPage() {
+  const { id = '' } = useAppParams();
   const { data: session } = useSession();
 
-  const { data: team } = useTeamsRetrieve(params.id, {
+  const { data: team } = useTeamsRetrieve(id, {
     request: {
       headers: {
         'Content-Type': 'application/json',

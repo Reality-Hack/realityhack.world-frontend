@@ -13,7 +13,7 @@ import { useSession } from '@/auth/client';
 import { useEffect, useState } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
-const LighthousesSocketURL = `${process.env.NEXT_PUBLIC_BACKEND_WS_URL}/ws/lighthouses/`;
+const LighthousesSocketURL = `${import.meta.env.VITE_BACKEND_WS_URL}/ws/lighthouses/`;
 
 export type LighthouseInfo = {
   location?: Location;
@@ -62,70 +62,70 @@ export default function LightHouseControlCenter() {
   const [tables, setTables] = useState<Table[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
 
-  const { sendJsonMessage, lastMessage, readyState } =
-    useWebSocket(LighthousesSocketURL);
+  // const { sendJsonMessage, lastMessage, readyState } =
+  //   useWebSocket(LighthousesSocketURL);
 
   const isAdmin = session && session?.roles?.includes('admin');
   const isMentor = session && session?.roles?.includes('mentor');
 
-  useEffect(() => {
-    setLoading(true);
-    if (session?.access_token) {
-      getAllTables(session.access_token).then(tables => {
-        setTables(tables);
-      });
-      getAllLocations().then(locations => {
-        setLocations(locations);
-      });
-    }
-    setLoading(false);
-  }, [session]);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   if (session?.access_token) {
+  //     getAllTables(session.access_token).then(tables => {
+  //       setTables(tables);
+  //     });
+  //     getAllLocations().then(locations => {
+  //       setLocations(locations);
+  //     });
+  //   }
+  //   setLoading(false);
+  // }, [session]);
 
-  useEffect(() => {
-    setLoading(true);
-    if (lastMessage !== null) {
-      const payload: LightHouseMessage[] | { message: LightHouseMessage } =
-        JSON.parse(lastMessage.data);
-      if (Array.isArray(payload)) {
-        let lighthouseInfos = payload.map(lhMessage => {
-          const table = tables.find(t => t.number === lhMessage.table);
-          const location = locations.find(l => l.id === table?.location);
-          return {
-            ...lhMessage,
-            location
-          };
-        });
-        setLighthouses(lighthouseInfos);
-      } else {
-        let lighthouse = payload.message as LightHouseMessage;
-        const table = tables.find(t => t.number === lighthouse.table);
-        const location = locations.find(l => l.id === table?.location);
-        let newLighthouse = {
-          ...lighthouse,
-          location
-        };
-        setLighthouses(prevLighthouses => {
-          let newLighthouses = prevLighthouses.slice();
-          let index = newLighthouses.findIndex(
-            l => l.table === newLighthouse.table
-          );
-          if (index != -1) {
-            newLighthouses[index] = newLighthouse;
-          }
-          return newLighthouses;
-        });
-      }
-    }
-    setLoading(false);
-  }, [lastMessage, locations, tables]);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   if (lastMessage !== null) {
+  //     const payload: LightHouseMessage[] | { message: LightHouseMessage } =
+  //       JSON.parse(lastMessage.data);
+  //     if (Array.isArray(payload)) {
+  //       let lighthouseInfos = payload.map(lhMessage => {
+  //         const table = tables.find(t => t.number === lhMessage.table);
+  //         const location = locations.find(l => l.id === table?.location);
+  //         return {
+  //           ...lhMessage,
+  //           location
+  //         };
+  //       });
+  //       setLighthouses(lighthouseInfos);
+  //     } else {
+  //       let lighthouse = payload.message as LightHouseMessage;
+  //       const table = tables.find(t => t.number === lighthouse.table);
+  //       const location = locations.find(l => l.id === table?.location);
+  //       let newLighthouse = {
+  //         ...lighthouse,
+  //         location
+  //       };
+  //       setLighthouses(prevLighthouses => {
+  //         let newLighthouses = prevLighthouses.slice();
+  //         let index = newLighthouses.findIndex(
+  //           l => l.table === newLighthouse.table
+  //         );
+  //         if (index != -1) {
+  //           newLighthouses[index] = newLighthouse;
+  //         }
+  //         return newLighthouses;
+  //       });
+  //     }
+  //   }
+  //   setLoading(false);
+  // }, [lastMessage, locations, tables]);
 
-  const connectionStatus = {
-    [ReadyState.CONNECTING]: 'Connecting',
-    [ReadyState.OPEN]: 'Open',
-    [ReadyState.CLOSING]: 'Closing',
-    [ReadyState.CLOSED]: 'Closed',
-    [ReadyState.UNINSTANTIATED]: 'Uninstantiated'
-  }[readyState];
+  // const connectionStatus = {
+  //   [ReadyState.CONNECTING]: 'Connecting',
+  //   [ReadyState.OPEN]: 'Open',
+  //   [ReadyState.CLOSING]: 'Closing',
+  //   [ReadyState.CLOSED]: 'Closed',
+  //   [ReadyState.UNINSTANTIATED]: 'Uninstantiated'
+  // }[readyState];
 
   return (
     <div className="h-screen p-6 pt-8 pl-2">
@@ -147,8 +147,8 @@ export default function LightHouseControlCenter() {
         </div>
         <hr className="dark:border-borderDark" />
       </div>
-      <span>The Lighthouse Connection is currently {connectionStatus}</span>
-      <div className="pb-8">
+      {/* <span>The Lighthouse Connection is currently {connectionStatus}</span> */}
+      {/* <div className="pb-8">
         {viewType === 'floor' && (
           <LighthouseFloorView
             sendJsonMessage={sendJsonMessage}
@@ -166,7 +166,7 @@ export default function LightHouseControlCenter() {
             loading={loading}
           />
         )}
-      </div>
+      </div> */}
     </div>
   );
 }

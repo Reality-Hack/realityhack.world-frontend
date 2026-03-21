@@ -1,9 +1,7 @@
-'use client';
 import { useAuth } from '@/contexts/AuthContext';
 import { signOut } from '@/auth/client';
 import { AUTH_ERROR_TYPES } from '@/constants/auth';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { AppLink as Link, useAppPathname } from '@/routing';
 import { Dispatch, SetStateAction, useEffect, memo, useCallback } from 'react';
 import Loader from './Loader';
 import LogoutButton from './auth/LogoutButton';
@@ -65,7 +63,7 @@ export default function Nav({
 }: NavProps) {
   const { session, status } = useAuth();
   const { navItems } = useNavigationAccess();
-  const pathname = usePathname();
+  const pathname = useAppPathname();
 
   const { user, isParticipant } = useAuth();
 

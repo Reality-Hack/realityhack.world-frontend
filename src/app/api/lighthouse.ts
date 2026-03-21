@@ -46,7 +46,7 @@ export enum MentorRequestStatus {
  * @returns list of table objects
  */
 export async function getAllTables(accessToken: string): Promise<Table[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/tables/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/tables/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export async function getAllTables(accessToken: string): Promise<Table[]> {
 }
 
 export async function getAllLocations(): Promise<Location[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/locations/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/locations/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json'

@@ -4,7 +4,7 @@
 //USER SCHEDULE FOR WORKSHOP
 
 export async function getAllWorkshops(accessToken: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshops/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/workshops/`;
 
   const resp = await fetch(url, {
     headers: {
@@ -20,7 +20,7 @@ export async function getAllWorkshops(accessToken: string) {
 }
 
 export async function getAllAttendedWorkshops(accessToken: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/workshopattendees/`;
 
   const resp = await fetch(url, {
     headers: {
@@ -38,7 +38,7 @@ export async function getAllAttendedWorkshops(accessToken: string) {
 //GET USER'S SPECIFIC WORKSHOP SCHEDULE
 export async function getMyWorkshops(accessToken: string, userId: string) {
   // const id = '6612aecb-4157-466f-8c51-ef1044af9964';
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/?attendee=${userId}`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/workshopattendees/?attendee=${userId}`;
 
   const resp = await fetch(url, {
     headers: {
@@ -54,7 +54,7 @@ export async function getMyWorkshops(accessToken: string, userId: string) {
 }
 
 export async function getWorkshop(accessToken: string, id: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshops/${id}`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/workshops/${id}`;
 
   const resp = await fetch(url, {
     headers: {
@@ -71,7 +71,7 @@ export async function getWorkshop(accessToken: string, id: string) {
 
 // take attendance for workshop (user signs in to a specific workshop)
 export async function signinToWorkshop(id: string, data: any) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/${id}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/workshopattendees/${id}/`;
   const response = await fetch(url, {
     method: 'PATCH',
     headers: {
@@ -95,7 +95,7 @@ export async function signinToWorkshop(id: string, data: any) {
 }
 
 export async function showInterestInWorkshop(id: string, workshopId: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/workshopattendees/`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -120,7 +120,7 @@ export async function showInterestInWorkshop(id: string, workshopId: string) {
 }
 
 export async function removeInterestInWorkshop(workshopId: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/workshopattendees/${workshopId}`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/workshopattendees/${workshopId}`;
 
   const response = await fetch(url, {
     method: 'DELETE',

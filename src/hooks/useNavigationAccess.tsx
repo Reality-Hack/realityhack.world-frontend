@@ -12,22 +12,22 @@ export interface NavItems {
   availableRoutes: string[];
 }
 
-const isHomeEnabled = process.env.NEXT_PUBLIC_IS_HOME_ENABLED === 'true';
-const isAdminEnabled = process.env.NEXT_PUBLIC_IS_ADMIN_ENABLED === 'true';
-const isScheduleEnabled = process.env.NEXT_PUBLIC_IS_SCHEDULE_ENABLED === 'true';
-const isSponsorDashboardEnabled = process.env.NEXT_PUBLIC_IS_SPONSOR_DASHBOARD_ENABLED === 'true';
-const isShowcaseEnabled = process.env.NEXT_PUBLIC_IS_SHOWCASE_ENABLED === 'true';
-const isTracksEnabled = process.env.NEXT_PUBLIC_IS_TRACKS_ENABLED === 'true';
-const isHardwareCheckoutEnabled = process.env.NEXT_PUBLIC_IS_HARDWARE_CHECKOUT_ENABLED === 'true';
-const isTeamsEnabled = process.env.NEXT_PUBLIC_IS_TEAMS_ENABLED === 'true';
-const isHackerHelpEnabled = process.env.NEXT_PUBLIC_IS_HACKER_HELP_ENABLED === 'true';
-const isMentorHelpEnabled = process.env.NEXT_PUBLIC_IS_MENTOR_HELP_ENABLED === 'true';
-const isWorkshopsEnabled = process.env.NEXT_PUBLIC_IS_WORKSHOPS_ENABLED === 'true';
-const isResourcesTabEnabled = process.env.NEXT_PUBLIC_IS_RESOURCES_TAB_ENABLED === 'true';
-const isEventGuideEnabled = process.env.NEXT_PUBLIC_IS_EVENT_GUIDE_ENABLED === 'true';
-const isSettingsTabEnabled = process.env.NEXT_PUBLIC_IS_SETTINGS_TAB_ENABLED === 'true';
-const isHackersMetEnabled = process.env.NEXT_PUBLIC_IS_HACKERS_MET_ENABLED === 'true';
-const isLighthousesEnabled = process.env.NEXT_PUBLIC_IS_LIGHTHOUSES_ENABLED === 'true';
+const isHomeEnabled = import.meta.env.VITE_IS_HOME_ENABLED === 'true';
+const isAdminEnabled = import.meta.env.VITE_IS_ADMIN_ENABLED === 'true';
+const isScheduleEnabled = import.meta.env.VITE_IS_SCHEDULE_ENABLED === 'true';
+const isSponsorDashboardEnabled = import.meta.env.VITE_IS_SPONSOR_DASHBOARD_ENABLED === 'true';
+const isShowcaseEnabled = import.meta.env.VITE_IS_SHOWCASE_ENABLED === 'true';
+const isTracksEnabled = import.meta.env.VITE_IS_TRACKS_ENABLED === 'true';
+const isHardwareCheckoutEnabled = import.meta.env.VITE_IS_HARDWARE_CHECKOUT_ENABLED === 'true';
+const isTeamsEnabled = import.meta.env.VITE_IS_TEAMS_ENABLED === 'true';
+const isHackerHelpEnabled = import.meta.env.VITE_IS_HACKER_HELP_ENABLED === 'true';
+const isMentorHelpEnabled = import.meta.env.VITE_IS_MENTOR_HELP_ENABLED === 'true';
+const isWorkshopsEnabled = import.meta.env.VITE_IS_WORKSHOPS_ENABLED === 'true';
+const isResourcesTabEnabled = import.meta.env.VITE_IS_RESOURCES_TAB_ENABLED === 'true';
+const isEventGuideEnabled = import.meta.env.VITE_IS_EVENT_GUIDE_ENABLED === 'true';
+const isSettingsTabEnabled = import.meta.env.VITE_IS_SETTINGS_TAB_ENABLED === 'true';
+const isHackersMetEnabled = import.meta.env.VITE_IS_HACKERS_MET_ENABLED === 'true';
+const isLighthousesEnabled = import.meta.env.VITE_IS_LIGHTHOUSES_ENABLED === 'true';
 
 export default function useNavigationAccess(): NavItems {
   const { 

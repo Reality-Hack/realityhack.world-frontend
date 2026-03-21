@@ -3,7 +3,7 @@ import { components } from '@/types/schema';
 export type Attendee = components['schemas']['Attendee'];
 
 export async function getMe(accessToken: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/me/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/me/`;
 
   const resp = await fetch(url, {
     headers: {
@@ -19,7 +19,7 @@ export async function getMe(accessToken: string) {
 }
 
 export async function patchMe(accessToken: string, data: any) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/me/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/me/`;
 
   const resp = await fetch(url, {
     method: 'PATCH',
@@ -37,7 +37,7 @@ export async function patchMe(accessToken: string, data: any) {
 }
 
 export async function updateAttendee(accessToken: string, data: any) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/attendees/${data.id}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/attendees/${data.id}/`;
 
   try {
     const response = await fetch(url, {
@@ -60,7 +60,7 @@ export async function updateAttendee(accessToken: string, data: any) {
 }
 
 export async function getAllAttendees(accessToken: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/attendees/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/attendees/`;
 
   const resp = await fetch(url, {
     headers: {
@@ -77,7 +77,7 @@ export async function getAllAttendees(accessToken: string) {
 }
 
 export async function getAttendee(accessToken: string, id: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/attendees/${id}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/attendees/${id}/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',

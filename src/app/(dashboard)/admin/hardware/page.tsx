@@ -1,5 +1,10 @@
-import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
+import { useAppNavigate } from '@/routing';
 
-export default function Hardware() {
-  redirect('/admin/hardware/requests');
+export default function AdminHardware() {
+  const router = useAppNavigate();
+  useEffect(() => {
+    router.replace('/admin/hardware/requests');
+  }, [router]);
+  return null;
 }

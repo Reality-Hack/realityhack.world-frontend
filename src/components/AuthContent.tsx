@@ -1,9 +1,6 @@
-'use client';
-
 import Nav from '@/components/Nav';
 import { signOut, useSession } from '@/auth/client';
 import { ReactNode, useEffect, useState, useRef, useCallback } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
 import Loader from './Loader';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ErrorDisplay } from './ErrorDisplay';
@@ -23,7 +20,6 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
   const [navOpen, setNavOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
   const { data: session, status } = useSession();
-  const router = useRouter();
 
   const navRef = useRef<HTMLDivElement>(null);
 
@@ -72,7 +68,7 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
       });
     }, 400);
 
-  }, [session, status, router]);
+  }, [session, status]);
 
   useEffect(() => {
     if (session) {

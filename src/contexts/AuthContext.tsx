@@ -1,8 +1,6 @@
-'use client';
-
 import { useSession } from '@/auth/client';
 import { useMemo } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useAppNavigate, useAppPathname, type AppNavigate } from '@/routing';
 import { AttendeeDetail } from '@/types/models';
 import { AuthSession } from '@/auth/types';
 import {
@@ -14,7 +12,7 @@ import { useMeRetrieve } from '@/types/endpoints';
 
 interface AuthContextType {
   session: AuthSession | null;
-  router: ReturnType<typeof useRouter>;
+  router: AppNavigate;
   pathname: string;
   user: AttendeeDetail | null;
   isLoading: boolean;
@@ -41,8 +39,8 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { data: session, status } = useSession();
-  const router = useRouter();
-  const pathname = usePathname();
+  const router = useAppNavigate();
+  const pathname = useAppPathname();
   const isAdmin = useMemo(() => status === 'authenticated' && session?.roles?.includes('admin'), [session, status])
   const isOrganizer = useMemo(() => status === 'authenticated' && session?.roles?.includes('organizer'), [session, status])
   const isGuardian = useMemo(() => status === 'authenticated' && session?.roles?.includes('guardian'), [session, status])

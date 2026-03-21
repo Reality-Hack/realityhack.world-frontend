@@ -1,15 +1,13 @@
-'use client';
-
 import Loader from '@/components/Loader';
 import { signIn, useSession } from '@/auth/client';
-import { useRouter } from 'next/navigation';
+import { useAppNavigate } from '@/routing';
 import { ReactElement, useEffect, useState } from 'react';
 
 const LOGIN_ATTEMPT_KEY = 'rh.auth.login_attempted';
 
 export default function SignIn(): ReactElement {
   const { data: session, status } = useSession();
-  const router = useRouter();
+  const router = useAppNavigate();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

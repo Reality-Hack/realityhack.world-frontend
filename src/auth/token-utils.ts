@@ -2,7 +2,7 @@ import { DecodedToken } from '@/auth/types';
 
 export function getClientRolesFromToken(decodedToken: DecodedToken): string[] {
   const clientId =
-    process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER_CLIENT_ID || process.env.KEYCLOAK_ISSUER_CLIENT_ID || '';
+    import.meta.env.VITE_KEYCLOAK_ISSUER_CLIENT_ID || process.env.KEYCLOAK_ISSUER_CLIENT_ID || '';
 
   if (!clientId) {
     return [];
@@ -13,7 +13,7 @@ export function getClientRolesFromToken(decodedToken: DecodedToken): string[] {
 
 export function filterEventRoles(roles: string[]): string[] {
   const eventYear =
-    process.env.NEXT_PUBLIC_EVENT_YEAR || process.env.EVENT_YEAR || '';
+    import.meta.env.VITE_EVENT_YEAR || process.env.EVENT_YEAR || '';
 
   if (!eventYear) {
     return roles;

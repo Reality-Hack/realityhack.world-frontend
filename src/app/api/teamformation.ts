@@ -10,7 +10,7 @@ export async function postVibeCheck(
   attendeeId: string,
   destinyTeam: string
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteamattendeevibes/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/destinyteamattendeevibes/`;
 
   const resp = await fetch(url, {
     method: 'POST',
@@ -37,7 +37,7 @@ export async function updateIntendedTrack(
   intendedTracks: string[],
   attendeeId: string
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/${attendeeId}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/${attendeeId}/`;
 
   const resp = await fetch(url, {
     method: 'PATCH', // Set the HTTP method to PATCH
@@ -62,7 +62,7 @@ export async function setHardwareTrackPreference(
   intendedTracks: string,
   attendeeId: string
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/${attendeeId}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/${attendeeId}/`;
 
   const resp = await fetch(url, {
     method: 'PATCH', // Set the HTTP method to PATCH
@@ -87,7 +87,7 @@ export async function getAvailableTracks(
   accessToken: string
 ): Promise<{ track: { choices: { value: string; display_name: string }[] }; 
   destiny_hardware: { choices: { value: string; display_name: string }[] } } | undefined> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteams/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/destinyteams/`;
 
   try {
     const response: Response = await fetch(url, {
@@ -124,7 +124,7 @@ export async function getDestinyTeamsByAttendee(
   attendeeId: string,
   round: number
 ): Promise<DestinyTeam[]> {
-  let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteams/?attendees=${attendeeId}&round=${round}`;
+  let url = `${import.meta.env.VITE_BACKEND_URL}/destinyteams/?attendees=${attendeeId}&round=${round}`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ export async function getAttendeeVibeForTeam(
   destinyTeamId: string,
   attendeeId: string
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteamattendeevibes/?destiny_team=${destinyTeamId}&attendee=${attendeeId}`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/destinyteamattendeevibes/?destiny_team=${destinyTeamId}&attendee=${attendeeId}`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ export async function createAttendeeVibeForTeam(
   attendeeId: string,
   vibe: number
 ): Promise<DestinyTeamAttendeeVibe> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteamattendeevibes/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/destinyteamattendeevibes/`;
   const resp = await fetch(url, {
     method: 'POST',
     headers: {
@@ -200,7 +200,7 @@ export async function updateAttendeeVibeForTeam(
   attendeevibeId: string,
   vibe: number
 ): Promise<DestinyTeamAttendeeVibe> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/destinyteamattendeevibes/${attendeevibeId}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/destinyteamattendeevibes/${attendeevibeId}/`;
   const resp = await fetch(url, {
     method: 'PATCH',
     headers: {

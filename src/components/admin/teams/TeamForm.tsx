@@ -1,5 +1,3 @@
-'use client';
-
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -16,7 +14,7 @@ import { Button } from 'antd';
 import { useSession } from '@/auth/client';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useAppNavigate } from '@/routing';
 import { TeamDetail, TeamTable } from '@/types/models';
 import { TeamCreateRequest, TeamRequest } from '@/types/models';
 import { useTeamsCreate, useTeamsUpdate, useTeamsDestroy } from '@/types/endpoints';
@@ -41,7 +39,7 @@ type TeamFormProps = {
 };
 
 export default function TeamForm({ initialData, onSuccess, onError, onCancel }: TeamFormProps) {
-  const router = useRouter();
+  const router = useAppNavigate();
   const { data: session } = useSession();
   const { 
     rsvpAttendeesWithCheckIn: attendees,
