@@ -64,7 +64,7 @@ interface TeamFormProps {
   onUpdateSuccess: () => void;
 }
 
-const isSpecialTracksEnabled = process.env.NEXT_PUBLIC_SPECIAL_TRACKS_ENABLED === 'true';
+const isSpecialTracksEnabled = import.meta.env.VITE_SPECIAL_TRACKS_ENABLED === 'true';
 
 export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
   const { data: session } = useSession();
