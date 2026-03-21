@@ -128,7 +128,7 @@ export async function getDestinyTeamsByAttendee(
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -151,7 +151,7 @@ export async function getAttendeeVibeForTeam(
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -176,7 +176,7 @@ export async function createAttendeeVibeForTeam(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify({
       vibe: vibe,
@@ -205,7 +205,7 @@ export async function updateAttendeeVibeForTeam(
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify({
       vibe: vibe

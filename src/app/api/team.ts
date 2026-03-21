@@ -36,7 +36,7 @@ export async function getAllTeams(accessToken: string): Promise<Team[]> {
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -64,7 +64,7 @@ export async function getTeam(
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 
@@ -96,7 +96,7 @@ export async function updateTeam(
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify(data)
   });
@@ -127,7 +127,7 @@ export async function createTeam(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify(team)
   });
@@ -149,7 +149,7 @@ export async function deleteTeam(teamID: string, accessToken: string) {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 

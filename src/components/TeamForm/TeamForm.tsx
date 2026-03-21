@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { toast } from 'sonner';
 import { TextField, Autocomplete, Checkbox, FormControlLabel } from '@mui/material';
 import { useSpecialTracks } from '@/hooks/useSpecialTracks';
@@ -99,7 +99,7 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
     swr: { enabled: !!session?.access_token}, 
     request: {
       headers: {
-        'Authorization': `JWT ${session?.access_token}`
+        'Authorization': `Bearer ${session?.access_token}`
       }
     }
   });

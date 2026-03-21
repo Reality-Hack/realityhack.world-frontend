@@ -1,16 +1,9 @@
 'use client';
 
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signIn, signOut, useSession } from '@/auth/client';
 import { ReactElement, useEffect } from 'react';
+import { AUTH_ERROR_TYPES } from '@/constants/auth';
 import Loader from './Loader';
-
-async function keycloakSessionLogOut(): Promise<void> {
-  try {
-    await fetch('/api/auth/logout', { method: 'GET' });
-  } catch (err) {
-    console.error(err);
-  }
-}
 
 export default function AuthStatus(): ReactElement {
   const { data: session, status } = useSession();
@@ -18,8 +11,7 @@ export default function AuthStatus(): ReactElement {
   useEffect(() => {
     if (
       status !== 'loading' &&
-      session &&
-      (session as any).error === 'RefreshAccessTokenError'
+      session?.error === AUTH_ERROR_TYPES.REFRESH_TOKEN_ERROR
     ) {
       signOut({ callbackUrl: '/' });
     }
@@ -34,9 +26,7 @@ export default function AuthStatus(): ReactElement {
         <br />
         <button
           className="px-2 py-1 font-bold text-white border rounded border-gray-50 w-20"
-          onClick={() => {
-            keycloakSessionLogOut().then(() => signOut({ callbackUrl: '/' }));
-          }}
+          onClick={() => signOut()}
         >
           Log out
         </button>

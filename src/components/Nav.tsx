@@ -1,6 +1,7 @@
 'use client';
 import { useAuth } from '@/contexts/AuthContext';
-import { signOut } from 'next-auth/react';
+import { signOut } from '@/auth/client';
+import { AUTH_ERROR_TYPES } from '@/constants/auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dispatch, SetStateAction, useEffect, memo, useCallback } from 'react';
@@ -71,8 +72,7 @@ export default function Nav({
   useEffect(() => {
     if (
       status !== 'loading' &&
-      session &&
-      (session as any).error === 'RefreshAccessTokenError'
+      session?.error === AUTH_ERROR_TYPES.REFRESH_TOKEN_ERROR
     ) {
       signOut({ callbackUrl: '/' });
     }

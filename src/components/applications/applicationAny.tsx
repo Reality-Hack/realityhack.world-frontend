@@ -5,7 +5,7 @@ import Layout from '@/components/HotkeyLayout';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import type { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import React, { useState } from 'react';
 import { Modal } from '@mui/material';
 import Loader from '../Loader';

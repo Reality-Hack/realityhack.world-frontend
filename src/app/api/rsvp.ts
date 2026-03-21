@@ -22,7 +22,7 @@ export async function getAllRSVPs(accessToken: string) {
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 

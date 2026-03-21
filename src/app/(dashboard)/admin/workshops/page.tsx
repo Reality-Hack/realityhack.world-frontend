@@ -9,7 +9,7 @@ import {
 import CustomSelect from '@/components/CustomSelect';
 import QRCodeReader from '@/components/admin/QRCodeReader';
 import { Alert, Box, Modal } from '@mui/material';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEffect, useState } from 'react';
 
 export default function Checkin() {

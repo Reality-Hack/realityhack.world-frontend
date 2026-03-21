@@ -9,7 +9,7 @@ export async function getHardwareCategories(
     method: 'OPTIONS',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 
@@ -29,7 +29,7 @@ export async function deleteHardwareRequest(accessToken: string, id: string) {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 

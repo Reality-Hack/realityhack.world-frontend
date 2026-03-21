@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEventtracksList, useEventdestinyhardwareList } from '@/types/endpoints';
 import type { EventTrack, EventDestinyHardware } from '@/types/models';
 

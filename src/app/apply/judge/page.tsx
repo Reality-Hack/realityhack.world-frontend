@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { form_data } from '../../../types/application_form_types';
 import { applicationOptions } from '@/app/api/application';
 import ReviewPage from '@/components/admin/ReviewPage';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useRouter } from 'next/navigation';
 
 const JudgeApp: NextPage = ({}: any) => {

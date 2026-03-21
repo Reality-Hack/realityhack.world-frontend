@@ -1,10 +1,10 @@
 'use client';
 
-import { getMe } from '@/app/api/attendee';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useMemo } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { AttendeeDetail } from '@/types/models';
+import { AuthSession } from '@/auth/types';
 import {
   ReactNode,
   createContext,
@@ -13,8 +13,8 @@ import {
 import { useMeRetrieve } from '@/types/endpoints';
 
 interface AuthContextType {
-  session: any;
-  router: any;
+  session: AuthSession | null;
+  router: ReturnType<typeof useRouter>;
   pathname: string;
   user: AttendeeDetail | null;
   isLoading: boolean;
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     },
     request: {
       headers: {
-        'Authorization': `JWT ${session?.access_token}`
+        'Authorization': `Bearer ${session?.access_token}`
       }
     }
   });
@@ -76,18 +76,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     pathname,
     user: userData ?? null,
     isLoading,
-    isAdmin,
-    isSponsor,
-    isMentor,
-    isParticipant,
-    isJudge,
-    isOrganizer,
-    isGuardian,
-    isVolunteer,
-    isMedia,
-    canAccessSponsor,
-    canAccessMentor,
-    canAccessParticipant,
+    isAdmin: isAdmin ?? false,
+    isSponsor: isSponsor ?? false,
+    isMentor: isMentor ?? false,
+    isParticipant: isParticipant ?? false,
+    isJudge: isJudge ?? false,
+    isOrganizer: isOrganizer ?? false,
+    isGuardian: isGuardian ?? false,
+    isVolunteer: isVolunteer ?? false,
+    isMedia: isMedia ?? false,
+    canAccessSponsor: canAccessSponsor ?? false,
+    canAccessMentor: canAccessMentor ?? false,
+    canAccessParticipant: canAccessParticipant ?? false,
     status
   };
 

@@ -1,5 +1,5 @@
 'use client';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import Help2 from './helpTwo';
 import React, { useState } from 'react';
 export default function Help() {

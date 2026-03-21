@@ -2,7 +2,7 @@
 import { useHardwaredevicesList, useHardwareList, useHardwarerequestsList } from '@/types/endpoints';
 import { HardwareCount, HardwareDevice, HardwareRequestList, HardwarerequestsListParams } from '@/types/models';
 import { HardwareCategory } from '@/types/types2'
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { getHardwareCategories } from '@/app/api/hardware';
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 
@@ -88,7 +88,7 @@ export const HardwareProvider = ({ children }: { children: ReactNode }) => {
     swr: { enabled: !!session?.access_token}, 
     request: {
       headers: {
-        'Authorization': `JWT ${session?.access_token}`
+        'Authorization': `Bearer ${session?.access_token}`
       }
     }
   });
@@ -102,7 +102,7 @@ export const HardwareProvider = ({ children }: { children: ReactNode }) => {
     swr: { enabled: !!session?.access_token}, 
     request: {
       headers: {
-        'Authorization': `JWT ${session?.access_token}`
+        'Authorization': `Bearer ${session?.access_token}`
       }
     }
   });
@@ -116,7 +116,7 @@ export const HardwareProvider = ({ children }: { children: ReactNode }) => {
     swr: { enabled: !!session?.access_token}, 
     request: {
       headers: {
-        'Authorization': `JWT ${session?.access_token}`
+        'Authorization': `Bearer ${session?.access_token}`
       }
     }
   });

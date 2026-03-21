@@ -7,7 +7,7 @@ import {
 } from '@/types/schedule-types';
 import ScheduleRoom from '@/components/dashboard/schedule/ScheduleItem';
 import TimeComponent from '@/components/dashboard/schedule/TimeComponent';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { getAllWorkshops, getMyWorkshops } from '@/app/api/workshops';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';

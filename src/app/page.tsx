@@ -4,7 +4,7 @@ import Loader from '@/components/Loader';
 import Modal from '@/components/Modal';
 import QRCodeGenerator from '@/components/dashboard/QRCodeGenerator';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { fileUpload } from './api/application';

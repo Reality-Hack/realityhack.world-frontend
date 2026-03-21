@@ -3,7 +3,7 @@ import {
   deleteMentorHelpRequest
 } from '@/app/api/helpqueue';
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { DateTime } from 'luxon';
 
 interface CompletedPostingProps {

@@ -9,7 +9,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import LinearProgress from '@mui/material/LinearProgress';
 import { Radio, RadioChangeEvent } from 'antd';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEffect, useState } from 'react';
 import Loader from '@/components/Loader';
 import { toast } from 'sonner';

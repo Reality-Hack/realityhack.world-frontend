@@ -10,7 +10,7 @@ import Table from '@/components/Table';
 import { Application, status } from '@/types/types';
 import { ColumnDef, Row, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../Modal';
 
