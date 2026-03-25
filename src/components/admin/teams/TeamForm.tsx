@@ -61,40 +61,14 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [tableOptions, setTableOptions] = useState<Table[] | null>(null);
 
-  const createMutation = useTeamsCreate({
-    request: {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + session?.access_token
-      }
-    }
-  });
+  const createMutation = useTeamsCreate();
 
-  const updateMutation = useTeamsUpdate(initialData?.id || '', {
-    request: {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + session?.access_token
-      }
-    }
-  });
+  const updateMutation = useTeamsUpdate(initialData?.id || '');
 
-  const deleteMutation = useTeamsDestroy(initialData?.id || '', {
-    request: {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + session?.access_token
-      }
-    }
-  });
+  const deleteMutation = useTeamsDestroy(initialData?.id || '');
 
   const { data: tables, isLoading: isTablesLoading, mutate: mutateTables } = useTablesList({}, {
-    swr: { enabled: !!session?.access_token}, 
-    request: {
-      headers: {
-        'Authorization': `Bearer ${session?.access_token}`
-      }
-    }
+    swr: { enabled: !!session?.access_token}
   });
 
   const isLoading = createMutation.isMutating || updateMutation.isMutating || deleteMutation.isMutating;
@@ -195,6 +169,7 @@ export default function TeamForm({ initialData, onSuccess, onError, onCancel }: 
 
     try {
       const payload = {
+        ...initialData,
         name: formData.name,
         attendees: formData.attendees.map(a => a.id),
         table: formData.table?.id || null

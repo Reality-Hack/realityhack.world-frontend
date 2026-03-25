@@ -112,11 +112,6 @@ export default function Checkin() {
       
       await eventrsvpsPartialUpdate(rsvp.id, {
         checked_in_at: newCheckedInAt
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token}`
-        }
       });
       
       mutate();

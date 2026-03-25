@@ -68,12 +68,7 @@ export const useAttendees = (options: UseAttendeesOptions = {}): UseAttendeesRet
     error, 
     mutate 
   } = useAttendeesList(params, {
-    swr: { enabled: enabled && !!session?.access_token }, 
-    request: {
-      headers: {
-        'Authorization': `Bearer ${session?.access_token}`
-      }
-    }
+    swr: { enabled: enabled && !!session?.access_token }
   });
 
   const attendeesMap = useMemo((): Record<string, AttendeeList> => {
@@ -161,11 +156,6 @@ export const useAttendee = (
   } = useAttendeesRetrieve(attendeeId || '', {
     swr: { 
       enabled: enabled && fetchIndividual && !!attendeeId && !!session?.access_token,
-    }, 
-    request: {
-      headers: {
-        'Authorization': `Bearer ${session?.access_token}`
-      }
     }
   });
 

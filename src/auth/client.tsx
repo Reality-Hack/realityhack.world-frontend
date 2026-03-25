@@ -109,9 +109,7 @@ function clearStoredTokens(): void {
 function buildSessionFromKeycloak(kc: KeycloakInstance): AuthSession {
   const decoded = kc.tokenParsed as DecodedToken | undefined;
   const clientRoles = decoded ? getClientRolesFromToken(decoded) : [];
-  console.log("clientRoles", clientRoles);
   const filteredRoles = filterEventRoles(clientRoles);
-  console.log("filteredRoles", filteredRoles);
   const error = hasClientRoles(clientRoles)
     ? undefined
     : AUTH_ERROR_TYPES.NO_CLIENT_ROLES;

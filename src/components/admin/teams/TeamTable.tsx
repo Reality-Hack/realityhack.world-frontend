@@ -18,11 +18,6 @@ export default function TeamTable() {
   } = useTeamsList({}, {
     swr: {
       enabled: !!(session?.access_token && isAdmin)
-    },
-    request: {
-      headers: {
-        Authorization: `Bearer ${session?.access_token}`
-      }
     }
   });
 

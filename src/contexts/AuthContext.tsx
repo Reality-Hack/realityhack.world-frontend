@@ -59,11 +59,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     swr: {
       enabled: !!session?.access_token
     },
-    request: {
-      headers: {
-        'Authorization': `Bearer ${session?.access_token}`
-      }
-    }
   });
 
   const isLoading = status === 'loading' || isLoadingUser;

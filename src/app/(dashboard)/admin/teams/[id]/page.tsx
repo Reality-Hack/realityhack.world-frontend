@@ -8,12 +8,7 @@ export default function TeamPage() {
   const { data: session } = useSession();
 
   const { data: team } = useTeamsRetrieve(id, {
-    request: {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + session?.access_token
-      }
-    }
+    swr: { enabled: !!session?.access_token }
   });
 
   const handleError = (error: any) => {

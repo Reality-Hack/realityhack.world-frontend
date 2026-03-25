@@ -85,12 +85,7 @@ export const HardwareProvider = ({ children }: { children: ReactNode }) => {
   } = useHardwarerequestsList({
     ...hardwareRequestParams,
   }, {
-    swr: { enabled: !!session?.access_token}, 
-    request: {
-      headers: {
-        'Authorization': `Bearer ${session?.access_token}`
-      }
-    }
+    swr: { enabled: !!session?.access_token}
   });
 
   const { 
@@ -99,12 +94,7 @@ export const HardwareProvider = ({ children }: { children: ReactNode }) => {
     error: hardwareDeviceTypesError,
     mutate: mutateHardwareDeviceTypes
   } = useHardwareList({}, {
-    swr: { enabled: !!session?.access_token}, 
-    request: {
-      headers: {
-        'Authorization': `Bearer ${session?.access_token}`
-      }
-    }
+    swr: { enabled: !!session?.access_token}
   });
 
   const {
@@ -113,12 +103,7 @@ export const HardwareProvider = ({ children }: { children: ReactNode }) => {
     error: hardwareDevicesError,
     mutate: mutateHardwareDevices
   } = useHardwaredevicesList({}, {
-    swr: { enabled: !!session?.access_token}, 
-    request: {
-      headers: {
-        'Authorization': `Bearer ${session?.access_token}`
-      }
-    }
+    swr: { enabled: !!session?.access_token}
   });
 
   const filteredHardwareTypes = useMemo(() => {

@@ -84,9 +84,6 @@ export const EventParticipantsProvider = ({ children }: EventParticipantsProvide
 
   const requestConfig = useMemo(() => ({
     swr: { enabled: !!session?.access_token },
-    request: {
-      headers: { 'Authorization': `Bearer ${session?.access_token}` }
-    }
   }), [session?.access_token]);
 
   const {

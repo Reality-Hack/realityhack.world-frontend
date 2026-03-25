@@ -93,10 +93,7 @@ export default function HackersMet() {
   const { mutate } = useSWRConfig();
 
   const requestConfig = useMemo(() => ({
-    swr: { enabled: !!session?.access_token && !!user?.id },
-    request: {
-      headers: { 'Authorization': `Bearer ${session?.access_token}` }
-    }
+    swr: { enabled: !!session?.access_token && !!user?.id }
   }), [session?.access_token, user?.id]);
   
   const { data: preferences, isLoading: isLoadingPreferences } = useAttendeepreferencesList(
@@ -154,10 +151,6 @@ export default function HackersMet() {
     mutate(getAttendeepreferencesListKey({ preferer: user?.id }));
   };
 
-  const authHeaders = useMemo(() => ({
-    headers: { 'Authorization': `Bearer ${session?.access_token}` }
-  }), [session?.access_token]);
-
   async function addPreferences(preferee: string, preferenceStatus: PreferenceEnum) {
     const userId = user?.id;
     const eventId = user?.event_rsvp?.event;
@@ -173,7 +166,7 @@ export default function HackersMet() {
         preferer: userId,
         preferee: preferee,
         event: eventId
-      }, authHeaders);
+      });
       revalidatePreferences();
       toast.success('Connection added!');
     } catch (error: unknown) {
@@ -190,7 +183,7 @@ export default function HackersMet() {
     }
 
     try {
-      await attendeepreferencesDestroy(preferenceId, authHeaders);
+      await attendeepreferencesDestroy(preferenceId);
       revalidatePreferences();
       toast.success('Connection removed.');
     } catch (error: unknown) {
@@ -207,7 +200,7 @@ export default function HackersMet() {
     }
 
     try {
-      await attendeepreferencesPartialUpdate(preferenceId, { preference }, authHeaders);
+      await attendeepreferencesPartialUpdate(preferenceId, { preference });
       revalidatePreferences();
       toast.success('Connection updated!');
     } catch (error: unknown) {

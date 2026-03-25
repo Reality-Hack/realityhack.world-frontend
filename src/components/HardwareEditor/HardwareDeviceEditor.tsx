@@ -44,9 +44,7 @@ export default function HardwareDeviceEditor({
       if (!isPersistedToDB) {
         const payload: HardwareDeviceRequest = { ...deviceData };
         setLoading(true);
-        hardwaredevicesCreate(payload, {
-          headers: { Authorization: `Bearer ${access_token}` }
-        })
+        hardwaredevicesCreate(payload)
         .then(res => {
           setDevice({
             id: res.id,
@@ -71,11 +69,7 @@ export default function HardwareDeviceEditor({
         const payload: PatchedHardwareDeviceRequest = {
           ...deviceData,
         }
-        hardwaredevicesPartialUpdate(device.id, payload, {
-          headers: {
-            Authorization: `Bearer ${access_token}`
-          }
-        })
+        hardwaredevicesPartialUpdate(device.id, payload)
           .then(res => {
             setDevice({
               ...device,
@@ -97,11 +91,7 @@ export default function HardwareDeviceEditor({
         deleteDevice();
       } else if (access_token) {
         setLoading(true);
-        hardwaredevicesDestroy(device.id, {
-          headers: {
-            Authorization: `Bearer ${access_token}`
-          }
-        })
+        hardwaredevicesDestroy(device.id)
           .then(() => {
             deleteDevice();
           })

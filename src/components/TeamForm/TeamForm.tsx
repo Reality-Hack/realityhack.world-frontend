@@ -96,12 +96,7 @@ export function TeamForm({ teamData, teamId, onUpdateSuccess }: TeamFormProps) {
 
   const { tracks, hardwareTracks, isLoading: isTracksLoading } = useSpecialTracks();
   const { data: tables, isLoading: isTablesLoading, mutate: mutateTables } = useTablesList({}, {
-    swr: { enabled: !!session?.access_token}, 
-    request: {
-      headers: {
-        'Authorization': `Bearer ${session?.access_token}`
-      }
-    }
+    swr: { enabled: !!session?.access_token}
   });
 
   useEffect(() => {

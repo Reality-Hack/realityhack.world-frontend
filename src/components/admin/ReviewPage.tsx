@@ -42,12 +42,7 @@ export default function ReviewPage({
     isLoading: isApplicationLoading, 
     error: applicationError 
 } = useApplicationsRetrieve(allInfo.id, {
-    swr: { enabled: !!session?.access_token && !!allInfo.id },
-    request: {
-      headers: {
-        'Authorization': `Bearer ${session?.access_token}`
-      }
-    }
+    swr: { enabled: !!session?.access_token && !!allInfo.id }
   })
 
   const formatParticipation = (participationType: string) => {

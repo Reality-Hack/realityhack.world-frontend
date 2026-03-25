@@ -42,13 +42,7 @@ export default function AdminHardwareRequestForm({
   const [selectedHardware, setSelectedHardware] = useState<HardwareCount | null>(null);
   const [reason, setReason] = useState('');
 
-  const { trigger: createHardwareRequest, isMutating } = useHardwarerequestsCreate({
-    request: {
-      headers: {
-        Authorization: `Bearer ${session?.access_token}`
-      }
-    }
-  });
+  const { trigger: createHardwareRequest, isMutating } = useHardwarerequestsCreate();
 
   // Get team for selected attendee
   const selectedTeam = useMemo(() => {

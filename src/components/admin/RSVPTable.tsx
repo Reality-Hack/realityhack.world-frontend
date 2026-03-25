@@ -25,12 +25,7 @@ export default function RsvpTable({ type }: RsvpTableProps) {
   } = useEventrsvpsList({
     participation_class: type
   }, {
-    swr: { enabled: !!session?.access_token },
-    request: {
-      headers: {
-        'Authorization': `Bearer ${session?.access_token}`
-      }
-    }
+    swr: { enabled: !!session?.access_token }
   });
 
   const { 

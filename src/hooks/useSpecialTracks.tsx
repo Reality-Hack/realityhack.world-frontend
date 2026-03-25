@@ -20,9 +20,6 @@ export function useSpecialTracks() {
     {},
     {
       swr: { enabled: !!session?.access_token },
-      request: {
-        headers: { 'Authorization': `Bearer ${session?.access_token}` }
-      }
     }
   );
 
@@ -34,9 +31,6 @@ export function useSpecialTracks() {
     {},
     {
       swr: { enabled: !!session?.access_token },
-      request: {
-        headers: { 'Authorization': `Bearer ${session?.access_token}` }
-      }
     }
   );
 

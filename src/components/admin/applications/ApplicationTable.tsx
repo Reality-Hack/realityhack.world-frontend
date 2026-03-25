@@ -66,11 +66,6 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
     participation_class: type
   }, {
     swr: { enabled: !!session?.access_token },
-    request: {
-      headers: {
-        'Authorization': `Bearer ${session?.access_token}`
-      }
-    }
   });
 
   useEffect(() => {

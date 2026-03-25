@@ -17,11 +17,6 @@ export default function EventsAdminPage() {
     mutate: mutateEvents
   } = useEventsList({}, {
 		swr: { enabled: !!session?.access_token },
-		request: {
-			headers: {
-				'Authorization': `Bearer ${session?.access_token}`
-			}
-		}
 	})
 
   const { 
@@ -32,11 +27,7 @@ export default function EventsAdminPage() {
   } = useApplicationquestionsList();
 
 	const handleActivateEvent = async (eventId: string) => {
-		await eventsActivateCreate(eventId, {
-			headers: {
-				'Authorization': `Bearer ${session?.access_token}`
-			}
-		});
+		await eventsActivateCreate(eventId);
     toast.success('Event activated successfully');
     mutateThematicQuestions();
     mutateEvents();

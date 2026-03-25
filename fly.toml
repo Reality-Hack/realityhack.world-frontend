@@ -42,6 +42,7 @@ primary_region = 'ewr'
     VITE_KEYCLOAK_ID="reality-hack-web"
     VITE_KEYCLOAK_ISSUER_CLIENT_ID="reality-hack-2024"
     VITE_EVENT_YEAR="2026"
+
 [http_service]
   internal_port = 3000
   force_https = true
