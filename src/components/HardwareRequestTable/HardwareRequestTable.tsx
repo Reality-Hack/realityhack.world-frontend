@@ -1,5 +1,5 @@
 'use client';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEffect, useMemo, useState } from 'react';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import Table from '@/components/Table';
@@ -129,14 +129,7 @@ export default function HardwareRequestTable({
       const selectedDevicePayload:PatchedHardwareDeviceRequest = {
         checked_out_to: validCheckout ? hardwareRequest.id : null
       }
-      hardwaredevicesPartialUpdate(userSelectedHardwareDevice?.id || '', 
-        selectedDevicePayload,
-        {
-          headers: {
-            'Authorization': `JWT ${session?.access_token}`
-          }
-        }
-      )
+      hardwaredevicesPartialUpdate(userSelectedHardwareDevice?.id || '', selectedDevicePayload)
     }
 
     return (
@@ -167,11 +160,7 @@ export default function HardwareRequestTable({
     setIsUpdating(true);
     const accessToken = session.access_token;
     // TODO: can we optimistically update?
-    hardwarerequestsPartialUpdate(hardwareRequestId, updateRequestBody, {
-      headers: {
-        'Authorization': `JWT ${accessToken}`
-      }
-    })
+    hardwarerequestsPartialUpdate(hardwareRequestId, updateRequestBody)
       .then(() => refreshHardwareData())
       .catch((error) => {
       console.error(error);
@@ -194,11 +183,7 @@ export default function HardwareRequestTable({
         return null;
       }
       setIsUpdating(true);
-      hardwarerequestsDestroy(hardwareRequestId, {
-        headers: {
-          'Authorization': `JWT ${session?.access_token}`
-        }
-      })
+      hardwarerequestsDestroy(hardwareRequestId)
       .then(() => refreshHardwareData())
       .catch((error) => {
         console.error(error);

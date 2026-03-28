@@ -1,8 +1,7 @@
-'use client';
 import { useAuth } from '@/contexts/AuthContext';
-import { signOut } from 'next-auth/react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { signOut } from '@/auth/client';
+import { AUTH_ERROR_TYPES } from '@/constants/auth';
+import { AppLink as Link, useAppPathname } from '@/routing';
 import { Dispatch, SetStateAction, useEffect, memo, useCallback } from 'react';
 import Loader from './Loader';
 import LogoutButton from './auth/LogoutButton';
@@ -64,15 +63,14 @@ export default function Nav({
 }: NavProps) {
   const { session, status } = useAuth();
   const { navItems } = useNavigationAccess();
-  const pathname = usePathname();
+  const pathname = useAppPathname();
 
   const { user, isParticipant } = useAuth();
 
   useEffect(() => {
     if (
       status !== 'loading' &&
-      session &&
-      (session as any).error === 'RefreshAccessTokenError'
+      session?.error === AUTH_ERROR_TYPES.REFRESH_TOKEN_ERROR
     ) {
       signOut({ callbackUrl: '/' });
     }

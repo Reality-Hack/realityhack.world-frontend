@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/auth/client";
 import { useHardwareContext } from "@/contexts/HardwareContext";
 import { 
     HardwareCategory, 
@@ -78,12 +78,7 @@ export default function EditableHardwareCard({
       const fileUploadRequest: FileUploadRequest = {
         file: validFile
       };
-      uploadedFilesCreate(fileUploadRequest, {
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      }).then(res => {
+      uploadedFilesCreate(fileUploadRequest).then(res => {
         setImage(res);
         setEditingImage(false);
       }).catch(err => {
@@ -100,11 +95,7 @@ export default function EditableHardwareCard({
           image: image?.id,
           tags: tags.map(tag => tag)
         };
-        hardwarePartialUpdate(item.id, payload, {
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`
-          }
-        })
+        hardwarePartialUpdate(item.id, payload)
         .then(res => {
           toast.success('Hardware updated successfully');
           setName(res.name);
@@ -126,11 +117,7 @@ export default function EditableHardwareCard({
           image: image?.id,
           tags: tags.map(tag => tag)
         };
-        hardwareCreate(payload, {
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`
-          }
-        })
+        hardwareCreate(payload)
         .then(res => {
           toast.success('Hardware created successfully');
           mutateHardwareDeviceTypes();
@@ -272,11 +259,7 @@ export default function EditableHardwareCard({
                 return;
               } else {
                 setSending(true);
-                hardwareDestroy(item.id, {
-                  headers: {
-                    Authorization: `Bearer ${session?.access_token}`
-                  }
-                }).then(() => {
+                hardwareDestroy(item.id).then(() => {
                   toast.success('Hardware deleted successfully');
                   mutateHardwareDeviceTypes();
                   setSending(false);

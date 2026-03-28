@@ -1,5 +1,5 @@
 "use client"
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 
 import FinalRound from "@/components/team-formation/FinalRound";
 

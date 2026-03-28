@@ -13,7 +13,7 @@ import { Application, ApplicationDetail, ApplicationsListParticipationClass } fr
 import Box from '@mui/material/Box';
 import { ColumnDef, Row, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../Modal';
 import ReviewPage from '../ReviewPage';
@@ -66,11 +66,6 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
     participation_class: type
   }, {
     swr: { enabled: !!session?.access_token },
-    request: {
-      headers: {
-        'Authorization': `JWT ${session?.access_token}`
-      }
-    }
   });
 
   useEffect(() => {

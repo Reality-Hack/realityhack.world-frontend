@@ -1,13 +1,12 @@
-'use client';
 import { Tab } from '@/components/Tab';
-import { usePathname } from 'next/navigation';
+import { useAppPathname } from '@/routing';
 
 export default function ApplicationLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
+  const pathname = useAppPathname();
   return (
     <div className="h-screen p-6 pt-8 pl-2">
       <h1 className="text-3xl">Users</h1>

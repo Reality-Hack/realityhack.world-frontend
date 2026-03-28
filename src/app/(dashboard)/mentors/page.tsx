@@ -10,7 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { MentorTopics, getKeyByValue, mentor_help_status } from '@/types/types';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useEffect, useMemo, useState } from 'react';
 import SelectToolWithOther from './SelectToolWithOther';
 import { toast } from 'sonner';

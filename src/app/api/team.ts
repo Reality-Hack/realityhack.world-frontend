@@ -32,11 +32,11 @@ export type TeamCreate = {
  * @returns list of team objects
  */
 export async function getAllTeams(accessToken: string): Promise<Team[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/teams/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
   const result = await resp.json();
@@ -60,11 +60,11 @@ export async function getTeam(
   teamID: string,
   accessToken: string
 ): Promise<SerializedTeam> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams/${teamID}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/teams/${teamID}/`;
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 
@@ -91,12 +91,12 @@ export async function updateTeam(
   data: PatchedTeam,
   accessToken: string
 ): Promise<Team | void> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams/${teamID}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/teams/${teamID}/`;
   const resp = await fetch(url, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify(data)
   });
@@ -122,12 +122,12 @@ export async function createTeam(
   team: TeamCreate,
   accessToken: string
 ): Promise<Team> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/teams/`;
   const resp = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     },
     body: JSON.stringify(team)
   });
@@ -144,12 +144,12 @@ export async function createTeam(
 }
 
 export async function deleteTeam(teamID: string, accessToken: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/teams/${teamID}/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/teams/${teamID}/`;
   const resp = await fetch(url, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 

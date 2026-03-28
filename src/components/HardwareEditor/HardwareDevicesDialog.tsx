@@ -1,6 +1,6 @@
 import { useHardwaredevicesList } from "@/types/endpoints";
 import { CreateHardware } from "@/types/types2";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/auth/client";
 import { useState, useEffect } from "react";
 import { HardwareDevice } from "@/types/models";
 import { CircularProgress } from "@mui/material";
@@ -15,14 +15,7 @@ export default function HardwareDevicesEditor({ hardware }: { hardware: CreateHa
       mutate: mutateHardwareDevices
     } = useHardwaredevicesList({
       hardware: hardware.id
-    }, {
-      swr: { enabled: !!session?.access_token}, 
-      request: {
-        headers: {
-          'Authorization': `JWT ${session?.access_token}`
-        }
-      }
-    });
+    }, { swr: { enabled: !!session?.access_token }});
     const [devices, setDevices] = useState<Partial<HardwareDevice>[]>([]);
     useEffect(() => {
       if (hardwareDevices) {

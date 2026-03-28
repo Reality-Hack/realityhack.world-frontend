@@ -1,5 +1,5 @@
 'use client';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 
 export default function Resources() {
   const { data: session, status } = useSession();

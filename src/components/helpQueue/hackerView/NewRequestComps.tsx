@@ -2,7 +2,6 @@ import SelectToolWithOther from '@/app/(dashboard)/mentors/SelectToolWithOther';
 import { useAuth } from '@/contexts/AuthContext';
 import { MentorTopics } from '@/types/types';
 import { ThemeProvider, createTheme } from '@mui/material';
-import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -15,7 +14,7 @@ interface StatBoxProps {
 export function StatBox({ src, label, stat }: StatBoxProps) {
   return (
     <div className="flex flex-row gap-2 p-6 bg-white border-2 border-black rounded-lg w-fit drop-shadow-2xl">
-      <Image src={src} alt={label} height={4} width={50} />
+      <img src={src} alt={label} height={4} width={50} />
       <div className="flex flex-col">
         <div>{label}</div>
         <div className="text-4xl font-bold">{stat}</div>

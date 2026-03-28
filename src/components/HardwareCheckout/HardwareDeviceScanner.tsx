@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useSession } from "@/auth/client";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { HardwareWithType } from "@/types/types2";
@@ -50,11 +50,7 @@ export default function HardwareDeviceScanner({
         toast.error('Hardware Device is missing hardware type ID');
         return null;
       }
-      const hardwareType = await hardwareRetrieve(hardwareTypeId, {
-        headers: {
-          Authorization: `Bearer ${session!.access_token}`
-        }
-      });
+      const hardwareType = await hardwareRetrieve(hardwareTypeId);
       if (!hardwareType) {
         toast.error('Hardware Type not found for device');
         return null;
@@ -65,11 +61,7 @@ export default function HardwareDeviceScanner({
       let device: HardwareWithType | null = null;
       let hardwareType: HardwareCountDetail | null = null;
       if (id) {
-        const deviceRetrieveResponse = await hardwaredevicesRetrieve(id, {
-          headers: {
-            Authorization: `Bearer ${session!.access_token}`
-          }
-        });
+        const deviceRetrieveResponse = await hardwaredevicesRetrieve(id);
         if (!deviceRetrieveResponse.hardware) {
           toast.error('Hardware Type not found for device');
           return;
@@ -86,11 +78,7 @@ export default function HardwareDeviceScanner({
           hardwareType: hardwareType
         }
       } else if (serial) {
-        const deviceListResponse = await hardwaredevicesList({ serial: serial }, {
-          headers: {
-            Authorization: `Bearer ${session!.access_token}`
-          }
-        });
+        const deviceListResponse = await hardwaredevicesList({ serial: serial });
         if (deviceListResponse.length > 1) {
           toast.error('Multiple devices found for serial');
           return;

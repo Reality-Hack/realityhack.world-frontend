@@ -4,7 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 import { Button } from 'antd';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { useHardwarerequestsCreate } from '@/types/endpoints';
@@ -42,13 +42,7 @@ export default function AdminHardwareRequestForm({
   const [selectedHardware, setSelectedHardware] = useState<HardwareCount | null>(null);
   const [reason, setReason] = useState('');
 
-  const { trigger: createHardwareRequest, isMutating } = useHardwarerequestsCreate({
-    request: {
-      headers: {
-        Authorization: `JWT ${session?.access_token}`
-      }
-    }
-  });
+  const { trigger: createHardwareRequest, isMutating } = useHardwarerequestsCreate();
 
   // Get team for selected attendee
   const selectedTeam = useMemo(() => {

@@ -1,14 +1,27 @@
 import { useState } from 'react';
 import { form_data } from '@/types/application_form_types';
-import { Parser } from 'json2csv';
+
+function toCSV(rows: Record<string, unknown>[]): string {
+  if (!rows.length) return '';
+  const headers = Object.keys(rows[0]);
+  const escape = (v: unknown) => {
+    const s = v == null ? '' : String(v);
+    return s.includes(',') || s.includes('"') || s.includes('\n')
+      ? `"${s.replace(/"/g, '""')}"`
+      : s;
+  };
+  return [
+    headers.map(escape).join(','),
+    ...rows.map(row => headers.map(h => escape(row[h])).join(',')),
+  ].join('\n');
+}
 
 export async function exportToCsv(
   applications: form_data[] | any,
   fileName: string
 ) {
   try {
-    const parser = new Parser();
-    const csv = parser.parse(applications);
+    const csv = toCSV(applications as Record<string, unknown>[]);
     downloadFile(
       fileName,
       new Blob([csv], { type: 'text/csv;charset=utf-8;' })

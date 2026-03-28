@@ -21,11 +21,7 @@ export default function ReasonEditor({
     const submit = ((newReason: string) => {
       if (!access_token) return;
       setLoading(true);
-      hardwarerequestsPartialUpdate(id, { reason: newReason}, {
-        headers: {
-          'Authorization': `JWT ${access_token}`
-        }
-      }).then(() => {
+      hardwarerequestsPartialUpdate(id, { reason: newReason}).then(() => {
         setValue(newReason);
         setInitial(newReason);
         mutateHardwareRequests();

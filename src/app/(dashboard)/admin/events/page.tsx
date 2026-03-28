@@ -1,5 +1,5 @@
 'use client';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import React from 'react';
 import { useEventsList, eventsActivateCreate, useApplicationquestionsList } from '@/types/endpoints'
 import { ApplicationQuestion, ApplicationQuestionChoice, Event } from '@/types/models'
@@ -7,7 +7,7 @@ import { DateTime } from 'luxon';
 import Loader from '@/components/Loader';
 import { toast } from 'sonner';
 
-const isEventsEnabled = process.env.NEXT_PUBLIC_IS_EVENTS_ENABLED === 'true';
+const isEventsEnabled = import.meta.env.VITE_IS_EVENTS_ENABLED === 'true';
 export default function EventsAdminPage() {
   const { data: session } = useSession();
 
@@ -17,11 +17,6 @@ export default function EventsAdminPage() {
     mutate: mutateEvents
   } = useEventsList({}, {
 		swr: { enabled: !!session?.access_token },
-		request: {
-			headers: {
-				'Authorization': `JWT ${session?.access_token}`
-			}
-		}
 	})
 
   const { 
@@ -32,11 +27,7 @@ export default function EventsAdminPage() {
   } = useApplicationquestionsList();
 
 	const handleActivateEvent = async (eventId: string) => {
-		await eventsActivateCreate(eventId, {
-			headers: {
-				'Authorization': `JWT ${session?.access_token}`
-			}
-		});
+		await eventsActivateCreate(eventId);
     toast.success('Event activated successfully');
     mutateThematicQuestions();
     mutateEvents();

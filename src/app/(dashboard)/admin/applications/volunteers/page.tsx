@@ -1,3 +1,3 @@
-export default async function Volunteers() {
+export default function Volunteers() {
   return <div>Volunteers TODO</div>;
 }

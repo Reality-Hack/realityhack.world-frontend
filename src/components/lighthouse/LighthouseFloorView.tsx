@@ -1,7 +1,5 @@
-'use client';
 import { LightHouseMessage } from '@/app/api/lighthouse';
-import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import LighthouseDialog from './LighthouseDialog';
 import tablesJson from './tables.json';
 
@@ -22,9 +20,7 @@ export type TableCoordinates = {
   };
 };
 
-const Canvas = dynamic(() => import('@/components/lighthouse/Canvas'), {
-  ssr: false
-});
+const Canvas = lazy(() => import('@/components/lighthouse/Canvas'));
 
 type LighthouseFloorViewProps = {
   sendJsonMessage: (payload: any) => void;
@@ -125,29 +121,33 @@ export default function LighthouseFloorView({
         </div>
       )}
       <h2 className="text-xl text-[#4D97E8] pb-2">MIT Media Lab 6th Floor</h2>
-      <Canvas
-        img={'/images/mit media lab 6th floor.png'}
-        width={800}
-        height={600}
-        lighthouses={lighthouses}
-        tableCoordinates={(tablesJson as TableJSON).ML.tables}
-        selected={pendingMLTables}
-        setSelectedTables={setPendingMLTables}
-        disableMultiSelect={!isAdmin}
-        viewOnly={!isAdmin && !isMentor}
-      />
+      <Suspense fallback={null}>
+        <Canvas
+          img={'/images/mit media lab 6th floor.png'}
+          width={800}
+          height={600}
+          lighthouses={lighthouses}
+          tableCoordinates={(tablesJson as TableJSON).ML.tables}
+          selected={pendingMLTables}
+          setSelectedTables={setPendingMLTables}
+          disableMultiSelect={!isAdmin}
+          viewOnly={!isAdmin && !isMentor}
+        />
+      </Suspense>
       <h2 className="text-xl text-[#4D97E8] pb-2">Walker Memorial</h2>
-      <Canvas
-        img={'/images/walker memorial floor.png'}
-        width={800}
-        height={800}
-        lighthouses={lighthouses}
-        tableCoordinates={(tablesJson as TableJSON).Walker.tables}
-        selected={pendingWTables}
-        setSelectedTables={setPendingWTables}
-        disableMultiSelect={!isAdmin}
-        viewOnly={!isAdmin && !isMentor}
-      />
+      <Suspense fallback={null}>
+        <Canvas
+          img={'/images/walker memorial floor.png'}
+          width={800}
+          height={800}
+          lighthouses={lighthouses}
+          tableCoordinates={(tablesJson as TableJSON).Walker.tables}
+          selected={pendingWTables}
+          setSelectedTables={setPendingWTables}
+          disableMultiSelect={!isAdmin}
+          viewOnly={!isAdmin && !isMentor}
+        />
+      </Suspense>
       <LighthouseDialog
         handleClose={handleClose}
         dialogOpen={dialogOpen}

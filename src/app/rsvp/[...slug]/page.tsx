@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   TextInput,
@@ -20,7 +18,10 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import Alert from '@mui/material/Alert';
 
-export default function RsvpForm({ params }: { params: { slug: string } }) {
+import { useAppParams } from '@/routing';
+
+export default function RsvpForm() {
+  const params = useAppParams();
   const [parentialConsentForms, setParentalConsent] = useState<string>();
   const [under18Disclaimer, setUnder18Disclaimer] = useState<string>();
   const [underEighteen, setUnderEighteen] = useState<string>();
@@ -38,7 +39,7 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
   const [showAlert, setShowAlert] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
 
-  const { slug } = params;
+  const slug = (params['*'] ?? params['slug'] ?? '').split('/');
   const roles = ['mentor', 'judge', 'sponsor'];
   const isParticipant = !roles.includes(slug[0]);
   const applicationId = isParticipant ? slug[0] : slug[1];
@@ -341,12 +342,12 @@ export default function RsvpForm({ params }: { params: { slug: string } }) {
         ) {
           setRenderDiscordError(false);
           setDiscordValidationLoading(true);
-          const url = `${process.env.NEXT_PUBLIC_DISCORD_LOOKUP_URL}${e.target.value}`;
+          const url = `${import.meta.env.VITE_DISCORD_LOOKUP_URL}${e.target.value}`;
           try {
             const resp = await fetch(url, {
               headers: {
                 'Content-Type': 'application/json',
-                authorization: `${process.env.NEXT_PUBLIC_DISCORD_API_KEY}`
+                authorization: `${import.meta.env.VITE_DISCORD_API_KEY}`
               }
             });
 

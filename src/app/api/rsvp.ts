@@ -1,5 +1,5 @@
 export async function createRsvpForm(data: any) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/rsvps/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/rsvps/`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -17,12 +17,12 @@ export async function createRsvpForm(data: any) {
 }
 
 export async function getAllRSVPs(accessToken: string) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/rsvps/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/rsvps/`;
 
   const resp = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'JWT ' + accessToken
+      Authorization: 'Bearer ' + accessToken
     }
   });
 
@@ -33,7 +33,7 @@ export async function getAllRSVPs(accessToken: string) {
 }
 
 export async function rsvpOptions(data: any) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/rsvps/`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/rsvps/`;
   try {
     const response = await fetch(url, {
       method: 'OPTIONS',

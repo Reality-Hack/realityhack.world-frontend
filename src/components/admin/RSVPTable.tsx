@@ -2,7 +2,7 @@
 import Table from '@/components/Table';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useMemo } from 'react';
 import Modal from '../Modal';
 import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
@@ -25,12 +25,7 @@ export default function RsvpTable({ type }: RsvpTableProps) {
   } = useEventrsvpsList({
     participation_class: type
   }, {
-    swr: { enabled: !!session?.access_token },
-    request: {
-      headers: {
-        'Authorization': `JWT ${session?.access_token}`
-      }
-    }
+    swr: { enabled: !!session?.access_token }
   });
 
   const { 

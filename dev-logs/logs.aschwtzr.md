@@ -1,3 +1,10 @@
+**Sun March 22**
+- Refactored to remove Nextjs and NextAuth dependencies
+- Clean up Orval API endpoint token overrides 
+
+What's next
+- Use single form for participant and admin teams to fix bug with event tech and tracks
+
 **Tues October 14**
 - Fix first time setup for local development
 - Fix assignment of participant role (participant => attendee)
@@ -22,7 +29,6 @@ What's next
 **Saturday Sept 27**
 - Fix search in admin hardware requests table
 - Implement frontend semantic versioning
-
 
 What's next
 - Update mentor help queue?

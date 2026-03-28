@@ -1,12 +1,9 @@
-'use client';
-
-import type { NextPage } from 'next';
-import Link from 'next/link';
+import { AppLink as Link } from '@/routing';
 import { useAuth } from '@/contexts/AuthContext';
 
-const isEventsEnabled = process.env.NEXT_PUBLIC_IS_EVENTS_ENABLED === 'true';
-const isWorkshopsEnabled = process.env.NEXT_PUBLIC_IS_WORKSHOPS_ENABLED === 'true';
-const Dashboard: NextPage = ({}: any) => {
+const isEventsEnabled = import.meta.env.VITE_IS_EVENTS_ENABLED === 'true';
+const isWorkshopsEnabled = import.meta.env.VITE_IS_WORKSHOPS_ENABLED === 'true';
+const Dashboard = () => {
   const { isAdmin } = useAuth();
   return (
     <div className="h-screen">

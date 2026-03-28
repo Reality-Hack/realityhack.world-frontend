@@ -1,16 +1,15 @@
-'use client';
 import { Tab } from '@/components/Tab';
 import { EventParticipantsProvider } from '@/contexts/EventParticipantsContext';
-import { usePathname } from 'next/navigation';
+import { useAppPathname } from '@/routing';
 
 export default function TeamFormationLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
+  const pathname = useAppPathname();
 
-  const TEAM_FORMATION_STAGE = process.env.NEXT_PUBLIC_TEAM_FORMATION_STAGE;
+  const TEAM_FORMATION_STAGE = import.meta.env.VITE_TEAM_FORMATION_STAGE;
 
   return (
     <div className="h-screen p-6 pt-8 pl-2">

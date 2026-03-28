@@ -1,12 +1,11 @@
-'use client';
 import { Tab } from '../../../../components/Tab';
-import { usePathname } from 'next/navigation';
+import { useAppPathname } from '@/routing';
 import { HardwareProvider } from '@/contexts/HardwareContext';
 import { useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Hardware({ children }: { children: any }) {
-  const pathname = usePathname();
+  const pathname = useAppPathname();
   const { isAdmin } = useAuth();
   const pageTitle = useMemo(() => {
     if (pathname == '/admin/hardware/request') {

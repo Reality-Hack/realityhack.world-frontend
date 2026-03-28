@@ -1,7 +1,7 @@
 'use client';
 import Dropzone from '@/components/Dropzone';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useState } from 'react';
 import { patchMe } from '../../api/attendee';
 import { fileUpload } from '../../api/application';

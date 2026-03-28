@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/auth/client';
 import { useState } from 'react';
 import { HardwareCount, HardwareRequestCreateRequest } from '@/types/models';
 import { fixFileLink } from '@/app/api/uploaded_files';
@@ -12,13 +12,7 @@ export default function HardwareCard({ item, identifier, teamId }: { item: Hardw
   const [reason, setReason] = useState('');
   const quantity = item.available;
 
-  const { trigger: createHardwareRequest, isMutating, error } = useHardwarerequestsCreate({
-    request: {
-      headers: {
-        Authorization: `JWT ${session?.access_token}`
-      }
-    }
-  });
+  const { trigger: createHardwareRequest, isMutating, error } = useHardwarerequestsCreate();
   
   function sendRequest() {
     if (!item?.id) {

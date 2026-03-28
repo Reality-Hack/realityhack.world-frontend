@@ -1,14 +1,13 @@
-'use client';
 import { Tab } from '@/components/Tab';
 import { useAuth } from '@/contexts/AuthContext';
-import { usePathname } from 'next/navigation';
+import { useAppPathname } from '@/routing';
 
 export default function ApplicationLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
+  const pathname = useAppPathname();
   const { isAdmin } = useAuth();
   if (!isAdmin) {
     return <div>You are not authorized to access this page</div>;
