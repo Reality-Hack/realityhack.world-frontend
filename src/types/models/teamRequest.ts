@@ -5,6 +5,7 @@
  */
 import type { TeamRequestTracks } from './teamRequestTracks';
 import type { TeamRequestDestinyHardware } from './teamRequestDestinyHardware';
+import type { TeamProjectRequest } from './teamProjectRequest';
 
 /**
  * Base serializer that automatically scopes foreign key fields to the current event.
@@ -44,4 +45,8 @@ export interface TeamRequest {
    * @nullable
    */
   team_description?: string | null;
+  project: TeamProjectRequest;
+  startup_hack?: boolean;
+  community_hack?: boolean;
+  hardware_hack?: boolean;
 }

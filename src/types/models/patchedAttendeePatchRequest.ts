@@ -50,6 +50,4 @@ export interface PatchedAttendeePatchRequest {
   sponsor_handler?: string | null;
   intended_tracks?: TrackEnum[];
   intended_hardware_hack?: boolean;
-  intended_event_tracks?: string[];
-  prefers_event_destiny_hardware?: string[];
 }

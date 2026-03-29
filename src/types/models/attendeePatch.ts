@@ -45,8 +45,10 @@ export interface AttendeePatch {
   sponsor_handler?: string | null;
   intended_tracks: TrackEnum[];
   intended_hardware_hack?: boolean;
-  intended_event_tracks?: string[];
-  prefers_event_destiny_hardware?: string[];
+  /** Return IDs of intended event tracks with proper event scoping. */
+  readonly intended_event_tracks?: readonly number[];
+  /** Return IDs of preferred event destiny hardware with proper event scoping. */
+  readonly prefers_event_destiny_hardware?: readonly number[];
   readonly created_at?: string;
   readonly updated_at?: string;
 }

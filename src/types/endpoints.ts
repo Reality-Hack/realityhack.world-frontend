@@ -47,6 +47,7 @@ import type {
   Event,
   EventDestinyHardware,
   EventRsvp,
+  EventRsvpAttendeeOption,
   EventRsvpDetail,
   EventRsvpRequest,
   EventTrack,
@@ -2158,6 +2159,42 @@ export const useEventrsvpsDestroy = <TError = ErrorType<unknown>>(
   const swrFn = getEventrsvpsDestroyMutationFetcher(id, requestOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * Returns a minimal list of attendees (id, first_name, last_name, checked_in_at) from event RSVPs for the active event. Intended for team attendee picker dropdowns.
+ */
+export const eventrsvpsAttendeeOptionsList = (
+    
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventRsvpAttendeeOption[]>(
+    {url: `/eventrsvps/attendee-options/`, method: 'GET'
+    },
+    options);
+  }
+
+
+
+export const getEventrsvpsAttendeeOptionsListKey = () => [`/eventrsvps/attendee-options/`] as const;
+
+export type EventrsvpsAttendeeOptionsListQueryResult = NonNullable<Awaited<ReturnType<typeof eventrsvpsAttendeeOptionsList>>>
+export type EventrsvpsAttendeeOptionsListQueryError = ErrorType<unknown>
+
+export const useEventrsvpsAttendeeOptionsList = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof eventrsvpsAttendeeOptionsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getEventrsvpsAttendeeOptionsListKey() : null);
+  const swrFn = () => eventrsvpsAttendeeOptionsList(requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,

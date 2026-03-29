@@ -86,7 +86,7 @@ export default function Table<T>({
   });
 
   return (
-    <div className="">
+    <div className="h-full">
       {search && (
         <>
           <div className="p-2 text-gray-600 dark:text-gray-400 dark:border-borderDark bg-[#FDFDFD] dark:bg-backgroundDark w-full">
