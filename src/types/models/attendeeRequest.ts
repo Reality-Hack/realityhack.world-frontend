@@ -38,11 +38,5 @@ export interface AttendeeRequest {
   email: string;
   intended_tracks: TrackEnum[];
   intended_hardware_hack?: boolean;
-  /**
-   * @minLength 1
-   * @maxLength 100
-   * @nullable
-   */
-  sponsor_company?: string | null;
   participation_class?: ParticipationClassEnum;
 }

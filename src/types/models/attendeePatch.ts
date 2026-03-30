@@ -33,11 +33,6 @@ export interface AttendeePatch {
   communications_platform_username?: string | null;
   /** @maxLength 254 */
   email: string;
-  /**
-   * @maxLength 100
-   * @nullable
-   */
-  sponsor_company?: string | null;
   participation_class?: ParticipationClassEnum;
   initial_setup?: boolean;
   guardian_of?: string[];

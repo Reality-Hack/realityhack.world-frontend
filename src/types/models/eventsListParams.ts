@@ -5,6 +5,7 @@
  */
 
 export type EventsListParams = {
+id?: string;
 is_active?: boolean;
 /**
  * A search term.

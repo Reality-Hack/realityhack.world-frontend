@@ -33,9 +33,6 @@ export interface EventRsvpSummary {
    */
   communication_platform_username?: string | null;
   participation_class?: ParticipationClassEnum;
-  /**
-   * @maxLength 100
-   * @nullable
-   */
+  /** @nullable */
   sponsor_company?: string | null;
 }

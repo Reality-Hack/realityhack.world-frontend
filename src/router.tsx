@@ -53,6 +53,7 @@ const TeamFormationFinalTeam = lazy(() => import('@/app/(dashboard)/team-formati
 const AdminDashboard = lazy(() => import('@/app/(dashboard)/admin/page'));
 const AdminCheckin = lazy(() => import('@/app/(dashboard)/admin/checkin/page'));
 const AdminEvents = lazy(() => import('@/app/(dashboard)/admin/events/page'));
+const AdminEventsDetail = lazy(() => import('@/app/(dashboard)/admin/events/[id]/page'));
 const AdminMarkdown = lazy(() => import('@/app/(dashboard)/admin/markdown/page'));
 const AdminWorkshops = lazy(() => import('@/app/(dashboard)/admin/workshops/page'));
 const AdminTeams = lazy(() => import('@/app/(dashboard)/admin/teams/page'));
@@ -160,6 +161,7 @@ export const router = createBrowserRouter([
           { index: true, element: <AdminDashboard /> },
           { path: 'checkin', element: <AdminCheckin /> },
           { path: 'events', element: <AdminEvents /> },
+          { path: 'events/:id', element: <AdminEventsDetail /> },
           { path: 'markdown', element: <AdminMarkdown /> },
           { path: 'workshops', element: <AdminWorkshops /> },
           { path: 'teams', element: <AdminTeams /> },

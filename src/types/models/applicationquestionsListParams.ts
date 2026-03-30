@@ -5,6 +5,7 @@
  */
 
 export type ApplicationquestionsListParams = {
+event?: string;
 parent_question?: string;
 question_key?: string;
 /**

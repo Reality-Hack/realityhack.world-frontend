@@ -39,11 +39,6 @@ export interface AttendeeDetail {
   /** @maxLength 254 */
   email: string;
   workshops: WorkshopAttendeeWorkshopDetail[];
-  /**
-   * @maxLength 100
-   * @nullable
-   */
-  sponsor_company?: string | null;
   participation_class?: ParticipationClassEnum;
   initial_setup?: boolean;
   prefers_destiny_hardware: DestinyHardwareEnum[];

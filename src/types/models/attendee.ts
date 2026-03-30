@@ -35,11 +35,6 @@ export interface Attendee {
   email: string;
   intended_tracks: TrackEnum[];
   intended_hardware_hack?: boolean;
-  /**
-   * @maxLength 100
-   * @nullable
-   */
-  sponsor_company?: string | null;
   participation_class?: ParticipationClassEnum;
   readonly intended_event_tracks?: string;
   readonly prefers_event_destiny_hardware?: string;
