@@ -20,7 +20,7 @@ export default function EventsAdminPage() {
   const { data: session } = useSession();
   const [showThematicQuestions, setShowThematicQuestions] = useState(false);
   const [showEventTracks, setShowEventTracks] = useState(false);
-  const [showEventHardware, setShowEventHardware] = useState(false);
+  const [showEventHardwareTracks, setShowEventHardwareTracks] = useState(false);
 
 	const { 
     data: events, 
@@ -86,12 +86,12 @@ export default function EventsAdminPage() {
 
   const eventHardwareHeader = useMemo(() => {
     return (
-      <div className="text-lg font-bold cursor-pointer flex flex-row gap-2 items-center" onClick={() => setShowEventHardware(!showEventHardware)}>
+      <div className="text-lg font-bold cursor-pointer flex flex-row gap-2 items-center" onClick={() => setShowEventHardwareTracks(!showEventHardwareTracks)}>
         Hardware Tracks {eventHardware?.length || 0}
-        <KeyboardArrowRightIcon className={`transition-transform duration-300 ${showEventHardware ? 'rotate-90' : ''}`} />
+        <KeyboardArrowRightIcon className={`transition-transform duration-300 ${showEventHardwareTracks ? 'rotate-90' : ''}`} />
       </div>
     )
-  }, [showEventHardware, eventHardware?.length])
+  }, [showEventHardwareTracks, eventHardware?.length])
 
   if (isLoadingEvents) {
 		return <Loader />
@@ -164,7 +164,7 @@ export default function EventsAdminPage() {
         {isEventHardwareLoading ? <Loader /> : (
         <div className="flex flex-col gap-4">
           {eventHardwareHeader}
-          {showEventHardware && (
+          {showEventHardwareTracks && (
             <div className="flex flex-col gap-4">
               {eventHardware?.map((hardware: EventDestinyHardware) => {
                 return (

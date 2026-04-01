@@ -16,7 +16,7 @@ export const LoaderSVG = () => (
   </svg>
 );
 
-export const Loader = ({ size = 'h-screen', loadingText }: { size?: string, loadingText?: string } = {}) => {
+export const Loader = ({ size = 'h-screen', loadingText, direction = 'flex-col' }: { size?: string, loadingText?: string, direction?: 'flex-col' | 'flex-row' } = {}) => {
   const renderLoadingText = () => {
     if (!loadingText) {
       return <span className="sr-only">Loading...</span>
@@ -27,7 +27,7 @@ export const Loader = ({ size = 'h-screen', loadingText }: { size?: string, load
     <>
       <div
         role="status"
-        className={`z-50 flex flex-col items-center justify-center ${size}`}
+        className={`z-50 flex ${direction} items-center justify-center ${size}`}
       >
         <LoaderSVG />
         {renderLoadingText()}

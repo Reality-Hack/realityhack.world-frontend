@@ -13,6 +13,8 @@ export interface HardwareCount {
   /** @maxLength 1000 */
   description?: string;
   image: FileUpload;
+  /** @nullable */
+  sponsor_company?: string | null;
   available: number;
   checked_out: number;
   total: number;

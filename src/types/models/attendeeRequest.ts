@@ -16,14 +16,13 @@ export interface AttendeeRequest {
   /** @nullable */
   participation_role?: AttendeeRequestParticipationRole;
   /** @nullable */
-  checked_in_at?: string | null;
-  /** @nullable */
   profile_image?: string | null;
   initial_setup?: boolean;
   guardian_of?: string[];
   /** @nullable */
   sponsor_handler?: string | null;
   prefers_destiny_hardware: DestinyHardwareEnum[];
+  intended_hardware_hack?: boolean;
   /**
    * I.e., a Discord username
    * @minLength 1
@@ -37,6 +36,7 @@ export interface AttendeeRequest {
    */
   email: string;
   intended_tracks: TrackEnum[];
-  intended_hardware_hack?: boolean;
   participation_class?: ParticipationClassEnum;
+  /** @nullable */
+  checked_in_at?: string | null;
 }

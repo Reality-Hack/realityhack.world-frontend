@@ -86,7 +86,7 @@ export default function Table<T>({
   });
 
   return (
-    <div className="h-full">
+    <div className="h-full w-full">
       {search && (
         <>
           <div className="p-2 text-gray-600 dark:text-gray-400 dark:border-borderDark bg-[#FDFDFD] dark:bg-backgroundDark w-full">
@@ -110,7 +110,7 @@ export default function Table<T>({
       {/* TODO: revisit this loading bar implementation since the table needs data for search to work */}
       {loading && <LinearProgress />} 
       <div className="relative overflow-x-auto">
-        <table className="relative overflow-x-auto dark:bg-contentDark dark:bg-border-borderDark">
+        <table className="relative overflow-x-auto dark:bg-contentDark dark:bg-border-borderDark w-full">
           <thead className="text-sm text-gray-600 dark:text-gray-400 font-interMedium h-11 bg-[#FDFDFD] dark:bg-backgroundDark sticky top-[-1px] z-10 border-[#EEEEEE]">
             <>
               {table.getHeaderGroups().map(headerGroup => (

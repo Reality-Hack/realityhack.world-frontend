@@ -33,13 +33,13 @@ export interface AttendeePatch {
   communications_platform_username?: string | null;
   /** @maxLength 254 */
   email: string;
+  intended_hardware_hack?: boolean;
   participation_class?: ParticipationClassEnum;
   initial_setup?: boolean;
   guardian_of?: string[];
   /** @nullable */
   sponsor_handler?: string | null;
   intended_tracks: TrackEnum[];
-  intended_hardware_hack?: boolean;
   /** Return IDs of intended event tracks with proper event scoping. */
   readonly intended_event_tracks?: readonly number[];
   /** Return IDs of preferred event destiny hardware with proper event scoping. */

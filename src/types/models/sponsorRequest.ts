@@ -3,8 +3,6 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
-import type { TagsEnum } from './tagsEnum';
-import type { HardwareCreateRequestRelatesToDestinyHardware } from './hardwareCreateRequestRelatesToDestinyHardware';
 
 /**
  * Base serializer that automatically scopes foreign key fields to the current event.
@@ -19,21 +17,10 @@ Usage:
             model = MyModel
             fields = ['id', 'name', 'foreign_key_field']
  */
-export interface HardwareCreateRequest {
+export interface SponsorRequest {
   /**
    * @minLength 1
-   * @maxLength 50
+   * @maxLength 100
    */
   name: string;
-  /** @maxLength 1000 */
-  description?: string;
-  /** @nullable */
-  image?: string | null;
-  tags: TagsEnum[];
-  /** @nullable */
-  sponsor_company?: string | null;
-  /** @nullable */
-  relates_to_destiny_hardware?: HardwareCreateRequestRelatesToDestinyHardware;
-  /** @nullable */
-  relates_to_event_destiny_hardware?: string | null;
 }

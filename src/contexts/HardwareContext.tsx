@@ -1,10 +1,9 @@
-'use client';
 import { useHardwaredevicesList, useHardwareList, useHardwarerequestsList } from '@/types/endpoints';
 import { HardwareCount, HardwareDevice, HardwareRequestList, HardwarerequestsListParams } from '@/types/models';
 import { HardwareCategory } from '@/types/types2'
 import { useSession } from '@/auth/client';
 import { getHardwareCategories } from '@/app/api/hardware';
-import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 
 type HardwareContextType = {
   setHardwareRequestParams: (params: HardwarerequestsListParams) => void;
