@@ -1,4 +1,3 @@
-'use client';
 import { useSession } from '@/auth/client';
 import { useEffect, useMemo, useState } from 'react';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';

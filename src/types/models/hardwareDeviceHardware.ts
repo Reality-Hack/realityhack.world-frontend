@@ -11,4 +11,6 @@ export interface HardwareDeviceHardware {
   name: string;
   /** @nullable */
   tags?: HardwareDeviceHardwareTags;
+  /** @nullable */
+  sponsor_company?: string | null;
 }

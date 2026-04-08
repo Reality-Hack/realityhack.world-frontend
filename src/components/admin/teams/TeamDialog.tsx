@@ -1,6 +1,6 @@
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import TeamForm from './TeamForm';
+import { TeamForm } from '@/components/TeamForm/TeamForm';
 import { TeamOperationResult } from '@/types/types2';
 import { useAppNavigate } from '@/routing';
 
@@ -28,6 +28,7 @@ export default function TeamDialog({ open, onClose }: Props) {
         <div className="p-4 flex flex-col h-full">
           <div className="inline">
             <TeamForm
+              isAdminView={true}
               onSuccess={handleSuccess}
               onError={handleError}
               onCancel={onClose}

@@ -8,11 +8,11 @@ export default function Hardware({ children }: { children: any }) {
   const pathname = useAppPathname();
   const { isAdmin } = useAuth();
   const pageTitle = useMemo(() => {
+    if (pathname === '/admin/hardware' || pathname === '/admin/hardware/') {
+      return 'Hardware overview';
+    }
     if (pathname == '/admin/hardware/request') {
       return 'Hardware requests';
-    }
-    if (pathname == '/admin/hardware/register') {
-      return 'Register new hardware';
     }
     if (pathname == '/admin/hardware/checkout') {
       return 'Hardware checkout';
@@ -28,6 +28,11 @@ export default function Hardware({ children }: { children: any }) {
         <div className="py-4">
           <div className="pb-2">
             <Tab
+              href="/admin/hardware"
+              isSelected={pathname === '/admin/hardware' || pathname === '/admin/hardware/'}
+              title="Hardware catalog"
+            ></Tab>
+            <Tab
               href="/admin/hardware/requests"
               isSelected={pathname == '/admin/hardware/requests'}
               title="All requests"
@@ -37,13 +42,6 @@ export default function Hardware({ children }: { children: any }) {
               isSelected={pathname == '/admin/hardware/checkout'}
               title="Checkout"
             ></Tab>
-            {isAdmin && 
-              <Tab
-                href="/admin/hardware/register"
-                isSelected={pathname == '/admin/hardware/register'}
-                title="Register new hardware"
-              ></Tab>
-            }
           </div>
         </div>
        {children}

@@ -3,6 +3,7 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
+import type { HistoryTypeEnum } from './historyTypeEnum';
 
 export interface HardwareDeviceHistory {
   readonly history_id?: number;
@@ -15,4 +16,5 @@ export interface HardwareDeviceHistory {
   checked_out_to?: string | null;
   readonly created_at?: string;
   readonly updated_at?: string;
+  history_type: HistoryTypeEnum;
 }

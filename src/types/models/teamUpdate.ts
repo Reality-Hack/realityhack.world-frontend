@@ -35,9 +35,8 @@ export interface TeamUpdate {
   team_description?: string | null;
   tracks: TrackEnum[];
   destiny_hardware: DestinyHardwareEnum[];
-  event_tracks?: string[];
-  event_destiny_hardware?: string[];
   project: Project;
   hardware_hack?: boolean;
   startup_hack?: boolean;
+  community_hack?: boolean;
 }

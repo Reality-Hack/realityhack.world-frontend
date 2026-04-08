@@ -7,6 +7,7 @@
 export type HardwaredevicehistoryListParams = {
 checked_out_to?: string;
 hardware?: string;
+id?: string;
 /**
  * A search term.
  */

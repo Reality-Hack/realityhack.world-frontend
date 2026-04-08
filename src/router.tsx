@@ -12,6 +12,7 @@ import WorkshopsLayout from '@/app/(dashboard)/workshops/layout';
 import HardwareLayout from '@/app/(dashboard)/hardware/layout';
 import TeamFormationLayout from '@/app/(dashboard)/team-formation/layout';
 import AdminLayout from '@/app/(dashboard)/admin/layout';
+import AdminSponsorsLayout from '@/app/(dashboard)/admin/sponsors/layout';
 import AdminHardwareLayout from '@/app/(dashboard)/admin/hardware/layout';
 import AdminRsvpLayout from '@/app/(dashboard)/admin/rsvp/layout';
 import AdminApplicationsLayout from '@/app/(dashboard)/admin/applications/layout';
@@ -53,14 +54,16 @@ const TeamFormationFinalTeam = lazy(() => import('@/app/(dashboard)/team-formati
 const AdminDashboard = lazy(() => import('@/app/(dashboard)/admin/page'));
 const AdminCheckin = lazy(() => import('@/app/(dashboard)/admin/checkin/page'));
 const AdminEvents = lazy(() => import('@/app/(dashboard)/admin/events/page'));
+const AdminEventsDetail = lazy(() => import('@/app/(dashboard)/admin/events/[id]/page'));
 const AdminMarkdown = lazy(() => import('@/app/(dashboard)/admin/markdown/page'));
 const AdminWorkshops = lazy(() => import('@/app/(dashboard)/admin/workshops/page'));
 const AdminTeams = lazy(() => import('@/app/(dashboard)/admin/teams/page'));
 const AdminTeamDetail = lazy(() => import('@/app/(dashboard)/admin/teams/[id]/page'));
+const AdminSponsors = lazy(() => import('@/app/(dashboard)/admin/sponsors/page'));
+const AdminSponsorDetail = lazy(() => import('@/app/(dashboard)/admin/sponsors/[id]/page'));
 
 const AdminHardwareIndex = lazy(() => import('@/app/(dashboard)/admin/hardware/page'));
 const AdminHardwareRequests = lazy(() => import('@/app/(dashboard)/admin/hardware/requests/page'));
-const AdminHardwareRegister = lazy(() => import('@/app/(dashboard)/admin/hardware/register/page'));
 const AdminHardwareCheckout = lazy(() => import('@/app/(dashboard)/admin/hardware/checkout/page'));
 
 const AdminRsvpParticipants = lazy(() => import('@/app/(dashboard)/admin/rsvp/participants/page'));
@@ -160,11 +163,19 @@ export const router = createBrowserRouter([
           { index: true, element: <AdminDashboard /> },
           { path: 'checkin', element: <AdminCheckin /> },
           { path: 'events', element: <AdminEvents /> },
+          { path: 'events/:id', element: <AdminEventsDetail /> },
           { path: 'markdown', element: <AdminMarkdown /> },
           { path: 'workshops', element: <AdminWorkshops /> },
           { path: 'teams', element: <AdminTeams /> },
           { path: 'teams/:id', element: <AdminTeamDetail /> },
-
+          {
+            path: 'sponsors',
+            element: <AdminSponsorsLayout><Outlet /></AdminSponsorsLayout>,
+            children: [
+              { index: true, element: <AdminSponsors /> },
+              { path: ':id', element: <AdminSponsorDetail /> },
+            ],
+          },
           // Admin hardware (tabbed layout)
           {
             path: 'hardware',
@@ -172,7 +183,6 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <AdminHardwareIndex /> },
               { path: 'requests', element: <AdminHardwareRequests /> },
-              { path: 'register', element: <AdminHardwareRegister /> },
               { path: 'checkout', element: <AdminHardwareCheckout /> },
             ],
           },

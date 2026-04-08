@@ -1,13 +1,12 @@
-'use client';
 import { useAuth } from '@/contexts/AuthContext';
 import { TeamForm } from '@/components/TeamForm/TeamForm';
-import { toast } from 'sonner';
 import { 
   useTeamsRetrieve
 } from '@/types/endpoints';
+import { useMemo } from 'react';
 
 export default function Team() {
-  const { user } = useAuth();
+  const { user, isLoading: isUserLoading } = useAuth();
   
   // SWR hook for data fetching
   const { 
@@ -19,7 +18,7 @@ export default function Team() {
     user?.team?.id || '', 
     { 
       swr: { 
-        enabled: !!(user?.team?.id),
+        enabled: !!user?.team?.id && !isUserLoading,
         revalidateOnFocus: false 
       }
     }
@@ -28,11 +27,10 @@ export default function Team() {
   // Handle team data revalidation after successful updates
   const handleUpdateSuccess = async (): Promise<void> => {
     await mutateTeam();
-    toast.success('Team updated successfully!');
   };
 
   // Handle loading state
-  if (isTeamLoading) {
+  if (isTeamLoading || isUserLoading) {
     return (
       <div className="h-screen p-6 flex flex-col items-start">
         <div className="pb-8 flex flex-col items-start w-full">
@@ -45,7 +43,7 @@ export default function Team() {
   }
 
   const teamId = user?.team?.id;
-  
+
   if (teamError) {
     return (
       <div className="h-screen p-6 flex flex-col items-start">
@@ -68,10 +66,10 @@ export default function Team() {
       </div>
       
       {teamId && teamData ? (
-        <TeamForm 
+        <TeamForm
           teamData={teamData}
           teamId={teamId}
-          onUpdateSuccess={handleUpdateSuccess}
+          onSuccess={handleUpdateSuccess}
         />
       ) : (
         <h1 className="text-xl">Please register your team first</h1>

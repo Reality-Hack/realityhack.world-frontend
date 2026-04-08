@@ -37,10 +37,12 @@ primary_region = 'ewr'
     VITE_IS_HACKERS_MET_ENABLED="true"
     VITE_IS_LIGHTHOUSES_ENABLED="false"
     VITE_IS_EVENTS_ENABLED="true"
+    VITE_IS_SPONSOR_ADMIN_ENABLED="true"
 
     VITE_KEYCLOAK_ISSUER="https://auth.realityhack.world/realms/reality-hack-2024"
     VITE_KEYCLOAK_ID="reality-hack-web"
     VITE_KEYCLOAK_ISSUER_CLIENT_ID="reality-hack-2024"
+    VITE_KEYCLOAK_REDIRECT_URI="http://localhost:3000/signin"
     VITE_EVENT_YEAR="2026"
 
 [http_service]

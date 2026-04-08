@@ -5,6 +5,7 @@
  */
 
 export type EventtracksListParams = {
+event?: string;
 /**
  * A search term.
  */

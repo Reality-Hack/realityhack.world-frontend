@@ -135,10 +135,7 @@ export interface EventRsvp {
   ar_vr_ap_in_store?: string | null;
   reality_hack_project_to_product?: boolean;
   participation_class?: ParticipationClassEnum;
-  /**
-   * @maxLength 100
-   * @nullable
-   */
+  /** @nullable */
   sponsor_company?: string | null;
   /**
    * @maxLength 2000

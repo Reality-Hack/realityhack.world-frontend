@@ -16,15 +16,21 @@ export const LoaderSVG = () => (
   </svg>
 );
 
-const Loader = () => {
+export const Loader = ({ size = 'h-screen', loadingText, direction = 'flex-col' }: { size?: string, loadingText?: string, direction?: 'flex-col' | 'flex-row' } = {}) => {
+  const renderLoadingText = () => {
+    if (!loadingText) {
+      return <span className="sr-only">Loading...</span>
+    }
+    return <span className="text-sm text-gray-500 mt-2">{loadingText}</span>;
+  }
   return (
     <>
       <div
         role="status"
-        className="z-50 flex flex-col items-center justify-center h-screen"
+        className={`z-50 flex ${direction} items-center justify-center ${size}`}
       >
         <LoaderSVG />
-        <span className="sr-only">Loading...</span>
+        {renderLoadingText()}
       </div>
     </>
   );

@@ -37,19 +37,11 @@ export interface PatchedAttendeePatchRequest {
    * @maxLength 254
    */
   email?: string;
-  /**
-   * @minLength 1
-   * @maxLength 100
-   * @nullable
-   */
-  sponsor_company?: string | null;
+  intended_hardware_hack?: boolean;
   participation_class?: ParticipationClassEnum;
   initial_setup?: boolean;
   guardian_of?: string[];
   /** @nullable */
   sponsor_handler?: string | null;
   intended_tracks?: TrackEnum[];
-  intended_hardware_hack?: boolean;
-  intended_event_tracks?: string[];
-  prefers_event_destiny_hardware?: string[];
 }

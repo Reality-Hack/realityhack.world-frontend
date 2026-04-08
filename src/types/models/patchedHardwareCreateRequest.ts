@@ -31,7 +31,8 @@ export interface PatchedHardwareCreateRequest {
   image?: string | null;
   tags?: TagsEnum[];
   /** @nullable */
-  relates_to_destiny_hardware?: PatchedHardwareCreateRequestRelatesToDestinyHardware;
+  sponsor_company?: string | null;
   /** @nullable */
-  relates_to_event_destiny_hardware?: string | null;
+  relates_to_destiny_hardware?: PatchedHardwareCreateRequestRelatesToDestinyHardware;
+  relates_to_event_destiny_hardware?: string[];
 }

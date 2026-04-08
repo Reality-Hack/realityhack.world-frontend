@@ -5,6 +5,7 @@
  */
 import type { TeamTracks } from './teamTracks';
 import type { TeamDestinyHardware } from './teamDestinyHardware';
+import type { TeamProject } from './teamProject';
 
 /**
  * Base serializer that automatically scopes foreign key fields to the current event.
@@ -43,4 +44,10 @@ export interface Team {
   team_description?: string | null;
   readonly created_at?: string;
   readonly updated_at?: string;
+  project: TeamProject;
+  startup_hack?: boolean;
+  community_hack?: boolean;
+  hardware_hack?: boolean;
+  readonly event_tracks?: string;
+  readonly event_destiny_hardware?: string;
 }

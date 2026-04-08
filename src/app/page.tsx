@@ -1,4 +1,3 @@
-'use client';
 import Dropzone from '@/components/Dropzone';
 import Loader from '@/components/Loader';
 import Modal from '@/components/Modal';

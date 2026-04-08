@@ -4,6 +4,7 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { FileUpload } from './fileUpload';
+import type { HardwareCountRelatesToDestinyHardware } from './hardwareCountRelatesToDestinyHardware';
 import type { TagsEnum } from './tagsEnum';
 
 export interface HardwareCount {
@@ -13,6 +14,11 @@ export interface HardwareCount {
   /** @maxLength 1000 */
   description?: string;
   image: FileUpload;
+  /** @nullable */
+  sponsor_company?: string | null;
+  /** @nullable */
+  relates_to_destiny_hardware?: HardwareCountRelatesToDestinyHardware;
+  readonly relates_to_event_destiny_hardware?: string;
   available: number;
   checked_out: number;
   total: number;

@@ -17,14 +17,13 @@ export interface Attendee {
   /** @nullable */
   participation_role?: AttendeeParticipationRole;
   /** @nullable */
-  checked_in_at?: string | null;
-  /** @nullable */
   profile_image?: string | null;
   initial_setup?: boolean;
   guardian_of?: string[];
   /** @nullable */
   sponsor_handler?: string | null;
   prefers_destiny_hardware: DestinyHardwareEnum[];
+  intended_hardware_hack?: boolean;
   /**
    * I.e., a Discord username
    * @maxLength 40
@@ -34,15 +33,11 @@ export interface Attendee {
   /** @maxLength 254 */
   email: string;
   intended_tracks: TrackEnum[];
-  intended_hardware_hack?: boolean;
-  /**
-   * @maxLength 100
-   * @nullable
-   */
-  sponsor_company?: string | null;
   participation_class?: ParticipationClassEnum;
   readonly intended_event_tracks?: string;
   readonly prefers_event_destiny_hardware?: string;
   readonly created_at?: string;
   readonly updated_at?: string;
+  /** @nullable */
+  checked_in_at?: string | null;
 }

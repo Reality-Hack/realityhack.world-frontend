@@ -6,6 +6,9 @@ import { ApplicationQuestion, ApplicationQuestionChoice, Event } from '@/types/m
 import { DateTime } from 'luxon';
 import Loader from '@/components/Loader';
 import { toast } from 'sonner';
+import Table from '@/components/Table';
+import { AppLink } from '@/routing';
+import { ColumnDef } from '@tanstack/react-table';
 
 const isEventsEnabled = import.meta.env.VITE_IS_EVENTS_ENABLED === 'true';
 export default function EventsAdminPage() {
@@ -37,6 +40,35 @@ export default function EventsAdminPage() {
 		return DateTime.fromISO(date).toLocaleString(DateTime.DATETIME_SHORT);
 	}
 
+	const columns: ColumnDef<Event>[] = [
+		{
+			header: 'Name',
+			accessorKey: 'name',
+		},
+		{
+			header: 'Start Date',
+			accessorKey: 'start_date',
+			cell: ({ row }) => formatDate(row.original.start_date),
+		},
+		{
+			header: 'End Date',
+			accessorKey: 'end_date',
+			cell: ({ row }) => formatDate(row.original.end_date),
+		},
+		{
+			header: 'Is Active',
+			accessorKey: 'is_active',
+			cell: ({ row }) => row.original.is_active ? 'Yes' : 'No',
+		},
+		{
+			header: 'Actions',
+			accessorKey: 'actions',
+			cell: ({ row }) => (
+				<AppLink href={`/admin/events/${row.original.id}`}>View</AppLink>
+			),
+		},
+	]
+
   if (!isEventsEnabled) {
     return <div>Events are not enabled</div>;
   }
@@ -47,48 +79,13 @@ export default function EventsAdminPage() {
 
 	return (
 		<div className="p-6">
-      <div className="flex flex-col gap-4">
-        {events?.sort((a: Event, b: Event) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime()).map((event: Event) => {
-          return (
-            <div key={event.id} className="border-b border-gray-200 pb-4 flex justify-between items-center">
-              <div>
-                <div className="text-lg font-bold">{event.name}</div>
-                <div>{event.is_active ? 'Active Event' : "Inactive"}</div>
-                <div>{formatDate(event.start_date)} - {formatDate(event.end_date)}</div>
-              </div>
-              <div>
-                <button 
-                  className={`bg-blue-500 text-white px-4 py-2 rounded-md ${event.is_active ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  disabled={event.is_active}
-                  onClick={() => handleActivateEvent(event?.id ?? '')}
-                >
-                  Activate
-                </button>
-              </div>
-            </div>
-          )
-        })}
-        <div className="flex flex-col gap-4">
-          <div className="text-lg font-bold">Thematic Questions</div>
-          <div className="flex flex-col gap-4">
-            {thematicQuestions?.map((question: ApplicationQuestion) => {
-              return (
-                <div key={question.id} className="border-b border-gray-200 pb-4 flex flex-col gap-2 justify-between items-start">
-                  <div>{question.question_text}</div>
-                  {question.choices?.map((choice: ApplicationQuestionChoice) => {
-                    return (
-                      <div key={choice.id} className="flex flex-col gap-2 pl-4">
-                        <div key={`${choice.id}-${choice.choice_key}`} className="text-sm text-gray-500">{choice.choice_key}: {choice.choice_text}</div>
-                      </div>
-                    )
-                  })}
-
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
+      <Table
+        data={events ?? []}
+        columns={columns}
+        search={true}
+        pagination={true}
+        loading={isLoadingEvents}
+      />
 		</div>
 	)
 }

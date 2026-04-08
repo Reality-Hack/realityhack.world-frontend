@@ -27,6 +27,19 @@ export const convertEventHardwareFromTeamData = (
     .filter((id): id is string => id !== undefined);
 };
 
+/**
+ * API may return EventDestinyHardware[] (nested) or string[] (ids). Normalize to id[] for forms.
+ */
+export function normalizeRelatesToEventDestinyHardwareIds(
+  value: string[] | EventDestinyHardware[] | undefined,
+): string[] {
+  if (!value || value.length === 0) return [];
+  if (typeof value[0] === 'string') {
+    return value as string[];
+  }
+  return convertEventHardwareFromTeamData(value as EventDestinyHardware[]);
+}
+
 export const getSelectedTableFromOptions = (
   tableId: string | null,
   tableOptions: Table[] | null

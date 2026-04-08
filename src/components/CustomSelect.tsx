@@ -1,76 +1,33 @@
-import { Select } from 'antd';
+import {
+  CustomSelectBase,
+  type CustomSelectSharedProps,
+  type Option,
+} from '@/components/CustomSelectBase';
 
-export interface Option {
-  value: string;
-  label: string | JSX.Element;
-  searchLabel?: string | null;
-}
+export type { Option };
+export { CustomMultiSelect, type CustomMultiSelectProps } from '@/components/CustomMultiSelect';
 
-export interface CustomSelectProps {
-  label: string;
-  options: Option[];
+export interface CustomSelectProps extends CustomSelectSharedProps {
   value: string;
   onChange: (value: string) => void;
-  disabled?: boolean;
-  search?: boolean;
-  onSearch?: (value: string) => void;
-  width?:string;
+  mode?: 'multiple' | 'tags' | undefined;
 }
 
 export default function CustomSelect({
-  label,
-  options,
   value,
   onChange,
-  disabled,
-  search,
-  onSearch,
-  width
-}: CustomSelectProps) {
-  const filterOptions = (input: any, option: any) => {
-    let labelContent;
-
-    if (
-      option.label &&
-      typeof option.label === 'object' &&
-      option.label.props
-    ) {
-      labelContent = option.label.props.children.join('');
+  mode,
+  ...rest
+}: CustomSelectProps): JSX.Element {
+  const handleChange = (next: string | string[]): void => {
+    if (Array.isArray(next)) {
+      onChange(next[0] ?? '');
     } else {
-      labelContent = option.label;
+      onChange(next);
     }
-
-    return labelContent.toLowerCase().includes(input.toLowerCase());
   };
 
   return (
-    <div>
-      {search ? (
-        <Select
-          showSearch
-          value={value}
-          style={{ width: width || 250 }}
-          size="small"
-          disabled={disabled}
-          placeholder={label}
-          onChange={onChange}
-          onSearch={onSearch}
-          filterOption={filterOptions}
-          options={options}
-          getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
-        />
-      ) : (
-        <Select
-          value={value}
-          style={{ width: width || 180 }}
-          size="small"
-          disabled={disabled}
-          placeholder={label}
-          onChange={onChange}
-          options={options}
-          getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
-        />
-      )}
-    </div>
+    <CustomSelectBase {...rest} mode={mode} value={value} onChange={handleChange} />
   );
 }

@@ -179,12 +179,6 @@ export interface AttendeeRSVPCreateRequest {
   participation_class?: ParticipationClassEnum;
   /**
    * @minLength 1
-   * @maxLength 100
-   * @nullable
-   */
-  sponsor_company?: string | null;
-  /**
-   * @minLength 1
    * @maxLength 2000
    * @nullable
    */

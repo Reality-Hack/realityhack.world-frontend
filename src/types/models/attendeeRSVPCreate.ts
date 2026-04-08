@@ -148,11 +148,6 @@ export interface AttendeeRSVPCreate {
   reality_hack_project_to_product?: boolean;
   participation_class?: ParticipationClassEnum;
   /**
-   * @maxLength 100
-   * @nullable
-   */
-  sponsor_company?: string | null;
-  /**
    * @maxLength 2000
    * @nullable
    */

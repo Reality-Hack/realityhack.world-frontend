@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const isEventsEnabled = import.meta.env.VITE_IS_EVENTS_ENABLED === 'true';
 const isWorkshopsEnabled = import.meta.env.VITE_IS_WORKSHOPS_ENABLED === 'true';
+const isSponsorAdminEnabled = import.meta.env.VITE_IS_SPONSOR_ADMIN_ENABLED === 'true';
 const Dashboard = () => {
   const { isAdmin } = useAuth();
   return (
@@ -65,6 +66,15 @@ const Dashboard = () => {
             </span>
             </div>
           </Link>
+        )}
+        {isSponsorAdminEnabled && (
+          <Link href="/admin/sponsors">
+          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
+            <span className="text-xl text-center text-[#40337F]">
+              Sponsors
+            </span>
+          </div>
+        </Link>
         )}
       </div>
     </div>

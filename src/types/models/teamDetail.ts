@@ -24,6 +24,7 @@ export interface TeamDetail {
   table: TeamTable;
   hardware_hack?: boolean;
   startup_hack?: boolean;
+  community_hack?: boolean;
   project: TeamProject;
   lighthouse: TeamLightHouse;
   /** @nullable */

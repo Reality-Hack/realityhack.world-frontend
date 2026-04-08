@@ -31,7 +31,8 @@ export interface HardwareCreateRequest {
   image?: string | null;
   tags: TagsEnum[];
   /** @nullable */
-  relates_to_destiny_hardware?: HardwareCreateRequestRelatesToDestinyHardware;
+  sponsor_company?: string | null;
   /** @nullable */
-  relates_to_event_destiny_hardware?: string | null;
+  relates_to_destiny_hardware?: HardwareCreateRequestRelatesToDestinyHardware;
+  relates_to_event_destiny_hardware?: string[];
 }

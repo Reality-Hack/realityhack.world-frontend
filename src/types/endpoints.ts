@@ -47,6 +47,7 @@ import type {
   Event,
   EventDestinyHardware,
   EventRsvp,
+  EventRsvpAttendeeOption,
   EventRsvpDetail,
   EventRsvpRequest,
   EventTrack,
@@ -111,6 +112,8 @@ import type {
   PatchedProjectRequest,
   PatchedSkillProficiencyCreateRequest,
   PatchedSkillRequest,
+  PatchedSponsorEventEngagementRequest,
+  PatchedSponsorRequest,
   PatchedTableRequest,
   PatchedTeamUpdateRequest,
   PatchedWorkshopAttendeeRequest,
@@ -128,6 +131,12 @@ import type {
   SkillRequest,
   SkillproficienciesListParams,
   SkillsListParams,
+  Sponsor,
+  SponsorEventEngagement,
+  SponsorEventEngagementRequest,
+  SponsorRequest,
+  SponsoreventengagementsListParams,
+  SponsorsListParams,
   Table,
   TableCreate,
   TableCreateRequest,
@@ -2166,6 +2175,42 @@ export const useEventrsvpsDestroy = <TError = ErrorType<unknown>>(
 }
 
 /**
+ * Returns a minimal list of attendees (id, first_name, last_name, checked_in_at) from event RSVPs for the active event. Intended for team attendee picker dropdowns.
+ */
+export const eventrsvpsAttendeeOptionsList = (
+    
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventRsvpAttendeeOption[]>(
+    {url: `/eventrsvps/attendee-options/`, method: 'GET'
+    },
+    options);
+  }
+
+
+
+export const getEventrsvpsAttendeeOptionsListKey = () => [`/eventrsvps/attendee-options/`] as const;
+
+export type EventrsvpsAttendeeOptionsListQueryResult = NonNullable<Awaited<ReturnType<typeof eventrsvpsAttendeeOptionsList>>>
+export type EventrsvpsAttendeeOptionsListQueryError = ErrorType<unknown>
+
+export const useEventrsvpsAttendeeOptionsList = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof eventrsvpsAttendeeOptionsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getEventrsvpsAttendeeOptionsListKey() : null);
+  const swrFn = () => eventrsvpsAttendeeOptionsList(requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
  * API endpoint for editing and viewing Events.
  */
 export const eventsList = (
@@ -2316,6 +2361,42 @@ export const useEventsPartialUpdate = <TError = ErrorType<unknown>>(
   const swrFn = getEventsPartialUpdateMutationFetcher(id, requestOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * Get the active event
+ */
+export const eventsGetActiveRetrieve = (
+    
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Event>(
+    {url: `/events/get-active/`, method: 'GET'
+    },
+    options);
+  }
+
+
+
+export const getEventsGetActiveRetrieveKey = () => [`/events/get-active/`] as const;
+
+export type EventsGetActiveRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof eventsGetActiveRetrieve>>>
+export type EventsGetActiveRetrieveQueryError = ErrorType<unknown>
+
+export const useEventsGetActiveRetrieve = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof eventsGetActiveRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getEventsGetActiveRetrieveKey() : null);
+  const swrFn = () => eventsGetActiveRetrieve(requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
@@ -5485,6 +5566,496 @@ export const useSkillsDestroy = <TError = ErrorType<unknown>>(
 
   const swrKey = swrOptions?.swrKey ?? getSkillsDestroyMutationKey(id);
   const swrFn = getSkillsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsor event engagements to be viewed or edited.
+ */
+export const sponsoreventengagementsList = (
+    params?: SponsoreventengagementsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<SponsorEventEngagement[]>(
+    {url: `/sponsoreventengagements/`, method: 'GET',
+        params
+    },
+    options);
+  }
+
+
+
+export const getSponsoreventengagementsListKey = (params?: SponsoreventengagementsListParams,) => [`/sponsoreventengagements/`, ...(params ? [params]: [])] as const;
+
+export type SponsoreventengagementsListQueryResult = NonNullable<Awaited<ReturnType<typeof sponsoreventengagementsList>>>
+export type SponsoreventengagementsListQueryError = ErrorType<unknown>
+
+export const useSponsoreventengagementsList = <TError = ErrorType<unknown>>(
+  params?: SponsoreventengagementsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof sponsoreventengagementsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getSponsoreventengagementsListKey(params) : null);
+  const swrFn = () => sponsoreventengagementsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsor event engagements to be viewed or edited.
+ */
+export const sponsoreventengagementsCreate = (
+    sponsorEventEngagementRequest: BodyType<SponsorEventEngagementRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<SponsorEventEngagement>(
+    {url: `/sponsoreventengagements/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: sponsorEventEngagementRequest
+    },
+    options);
+  }
+
+
+
+export const getSponsoreventengagementsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: SponsorEventEngagementRequest }): Promise<SponsorEventEngagement> => {
+    return sponsoreventengagementsCreate(arg, options);
+  }
+}
+export const getSponsoreventengagementsCreateMutationKey = () => [`/sponsoreventengagements/`] as const;
+
+export type SponsoreventengagementsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof sponsoreventengagementsCreate>>>
+export type SponsoreventengagementsCreateMutationError = ErrorType<unknown>
+
+export const useSponsoreventengagementsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof sponsoreventengagementsCreate>>, TError, Key, SponsorEventEngagementRequest, Awaited<ReturnType<typeof sponsoreventengagementsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSponsoreventengagementsCreateMutationKey();
+  const swrFn = getSponsoreventengagementsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsor event engagements to be viewed or edited.
+ */
+export const sponsoreventengagementsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<SponsorEventEngagement>(
+    {url: `/sponsoreventengagements/${id}/`, method: 'GET'
+    },
+    options);
+  }
+
+
+
+export const getSponsoreventengagementsRetrieveKey = (id: string,) => [`/sponsoreventengagements/${id}/`] as const;
+
+export type SponsoreventengagementsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof sponsoreventengagementsRetrieve>>>
+export type SponsoreventengagementsRetrieveQueryError = ErrorType<unknown>
+
+export const useSponsoreventengagementsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof sponsoreventengagementsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getSponsoreventengagementsRetrieveKey(id) : null);
+  const swrFn = () => sponsoreventengagementsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsor event engagements to be viewed or edited.
+ */
+export const sponsoreventengagementsUpdate = (
+    id: string,
+    sponsorEventEngagementRequest: BodyType<SponsorEventEngagementRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<SponsorEventEngagement>(
+    {url: `/sponsoreventengagements/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: sponsorEventEngagementRequest
+    },
+    options);
+  }
+
+
+
+export const getSponsoreventengagementsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: SponsorEventEngagementRequest }): Promise<SponsorEventEngagement> => {
+    return sponsoreventengagementsUpdate(id, arg, options);
+  }
+}
+export const getSponsoreventengagementsUpdateMutationKey = (id: string,) => [`/sponsoreventengagements/${id}/`] as const;
+
+export type SponsoreventengagementsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof sponsoreventengagementsUpdate>>>
+export type SponsoreventengagementsUpdateMutationError = ErrorType<unknown>
+
+export const useSponsoreventengagementsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof sponsoreventengagementsUpdate>>, TError, Key, SponsorEventEngagementRequest, Awaited<ReturnType<typeof sponsoreventengagementsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSponsoreventengagementsUpdateMutationKey(id);
+  const swrFn = getSponsoreventengagementsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsor event engagements to be viewed or edited.
+ */
+export const sponsoreventengagementsPartialUpdate = (
+    id: string,
+    patchedSponsorEventEngagementRequest: BodyType<PatchedSponsorEventEngagementRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<SponsorEventEngagement>(
+    {url: `/sponsoreventengagements/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedSponsorEventEngagementRequest
+    },
+    options);
+  }
+
+
+
+export const getSponsoreventengagementsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedSponsorEventEngagementRequest }): Promise<SponsorEventEngagement> => {
+    return sponsoreventengagementsPartialUpdate(id, arg, options);
+  }
+}
+export const getSponsoreventengagementsPartialUpdateMutationKey = (id: string,) => [`/sponsoreventengagements/${id}/`] as const;
+
+export type SponsoreventengagementsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof sponsoreventengagementsPartialUpdate>>>
+export type SponsoreventengagementsPartialUpdateMutationError = ErrorType<unknown>
+
+export const useSponsoreventengagementsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof sponsoreventengagementsPartialUpdate>>, TError, Key, PatchedSponsorEventEngagementRequest, Awaited<ReturnType<typeof sponsoreventengagementsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSponsoreventengagementsPartialUpdateMutationKey(id);
+  const swrFn = getSponsoreventengagementsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsor event engagements to be viewed or edited.
+ */
+export const sponsoreventengagementsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/sponsoreventengagements/${id}/`, method: 'DELETE'
+    },
+    options);
+  }
+
+
+
+export const getSponsoreventengagementsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return sponsoreventengagementsDestroy(id, options);
+  }
+}
+export const getSponsoreventengagementsDestroyMutationKey = (id: string,) => [`/sponsoreventengagements/${id}/`] as const;
+
+export type SponsoreventengagementsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof sponsoreventengagementsDestroy>>>
+export type SponsoreventengagementsDestroyMutationError = ErrorType<unknown>
+
+export const useSponsoreventengagementsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof sponsoreventengagementsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof sponsoreventengagementsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSponsoreventengagementsDestroyMutationKey(id);
+  const swrFn = getSponsoreventengagementsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsors to be viewed or edited.
+ */
+export const sponsorsList = (
+    params?: SponsorsListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Sponsor[]>(
+    {url: `/sponsors/`, method: 'GET',
+        params
+    },
+    options);
+  }
+
+
+
+export const getSponsorsListKey = (params?: SponsorsListParams,) => [`/sponsors/`, ...(params ? [params]: [])] as const;
+
+export type SponsorsListQueryResult = NonNullable<Awaited<ReturnType<typeof sponsorsList>>>
+export type SponsorsListQueryError = ErrorType<unknown>
+
+export const useSponsorsList = <TError = ErrorType<unknown>>(
+  params?: SponsorsListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof sponsorsList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getSponsorsListKey(params) : null);
+  const swrFn = () => sponsorsList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsors to be viewed or edited.
+ */
+export const sponsorsCreate = (
+    sponsorRequest: BodyType<SponsorRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Sponsor>(
+    {url: `/sponsors/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: sponsorRequest
+    },
+    options);
+  }
+
+
+
+export const getSponsorsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: SponsorRequest }): Promise<Sponsor> => {
+    return sponsorsCreate(arg, options);
+  }
+}
+export const getSponsorsCreateMutationKey = () => [`/sponsors/`] as const;
+
+export type SponsorsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof sponsorsCreate>>>
+export type SponsorsCreateMutationError = ErrorType<unknown>
+
+export const useSponsorsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof sponsorsCreate>>, TError, Key, SponsorRequest, Awaited<ReturnType<typeof sponsorsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSponsorsCreateMutationKey();
+  const swrFn = getSponsorsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsors to be viewed or edited.
+ */
+export const sponsorsRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Sponsor>(
+    {url: `/sponsors/${id}/`, method: 'GET'
+    },
+    options);
+  }
+
+
+
+export const getSponsorsRetrieveKey = (id: string,) => [`/sponsors/${id}/`] as const;
+
+export type SponsorsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof sponsorsRetrieve>>>
+export type SponsorsRetrieveQueryError = ErrorType<unknown>
+
+export const useSponsorsRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof sponsorsRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getSponsorsRetrieveKey(id) : null);
+  const swrFn = () => sponsorsRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsors to be viewed or edited.
+ */
+export const sponsorsUpdate = (
+    id: string,
+    sponsorRequest: BodyType<SponsorRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Sponsor>(
+    {url: `/sponsors/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: sponsorRequest
+    },
+    options);
+  }
+
+
+
+export const getSponsorsUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: SponsorRequest }): Promise<Sponsor> => {
+    return sponsorsUpdate(id, arg, options);
+  }
+}
+export const getSponsorsUpdateMutationKey = (id: string,) => [`/sponsors/${id}/`] as const;
+
+export type SponsorsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof sponsorsUpdate>>>
+export type SponsorsUpdateMutationError = ErrorType<unknown>
+
+export const useSponsorsUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof sponsorsUpdate>>, TError, Key, SponsorRequest, Awaited<ReturnType<typeof sponsorsUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSponsorsUpdateMutationKey(id);
+  const swrFn = getSponsorsUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsors to be viewed or edited.
+ */
+export const sponsorsPartialUpdate = (
+    id: string,
+    patchedSponsorRequest: BodyType<PatchedSponsorRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Sponsor>(
+    {url: `/sponsors/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedSponsorRequest
+    },
+    options);
+  }
+
+
+
+export const getSponsorsPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedSponsorRequest }): Promise<Sponsor> => {
+    return sponsorsPartialUpdate(id, arg, options);
+  }
+}
+export const getSponsorsPartialUpdateMutationKey = (id: string,) => [`/sponsors/${id}/`] as const;
+
+export type SponsorsPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof sponsorsPartialUpdate>>>
+export type SponsorsPartialUpdateMutationError = ErrorType<unknown>
+
+export const useSponsorsPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof sponsorsPartialUpdate>>, TError, Key, PatchedSponsorRequest, Awaited<ReturnType<typeof sponsorsPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSponsorsPartialUpdateMutationKey(id);
+  const swrFn = getSponsorsPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint that allows sponsors to be viewed or edited.
+ */
+export const sponsorsDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/sponsors/${id}/`, method: 'DELETE'
+    },
+    options);
+  }
+
+
+
+export const getSponsorsDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return sponsorsDestroy(id, options);
+  }
+}
+export const getSponsorsDestroyMutationKey = (id: string,) => [`/sponsors/${id}/`] as const;
+
+export type SponsorsDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof sponsorsDestroy>>>
+export type SponsorsDestroyMutationError = ErrorType<unknown>
+
+export const useSponsorsDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof sponsorsDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof sponsorsDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getSponsorsDestroyMutationKey(id);
+  const swrFn = getSponsorsDestroyMutationFetcher(id, requestOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions)
 

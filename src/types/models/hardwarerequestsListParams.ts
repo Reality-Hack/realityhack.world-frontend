@@ -3,9 +3,11 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
+import type { HardwarerequestsListStatus } from './hardwarerequestsListStatus';
 
 export type HardwarerequestsListParams = {
 hardware?: string;
+hardware_device?: string;
 requester__first_name?: string;
 requester__id?: string;
 requester__last_name?: string;
@@ -13,5 +15,12 @@ requester__last_name?: string;
  * A search term.
  */
 search?: string;
+/**
+ * * `P` - Pending
+* `A` - Approved
+* `R` - Rejected
+* `C` - Checked out
+ */
+status?: HardwarerequestsListStatus;
 team?: string;
 };

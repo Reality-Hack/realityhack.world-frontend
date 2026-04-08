@@ -43,4 +43,5 @@ export interface PatchedTeamUpdateRequest {
   project?: ProjectRequest;
   hardware_hack?: boolean;
   startup_hack?: boolean;
+  community_hack?: boolean;
 }

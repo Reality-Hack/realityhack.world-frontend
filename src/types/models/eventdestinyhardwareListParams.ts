@@ -5,6 +5,7 @@
  */
 
 export type EventdestinyhardwareListParams = {
+event?: string;
 /**
  * A search term.
  */
