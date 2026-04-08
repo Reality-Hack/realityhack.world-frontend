@@ -1,14 +1,40 @@
 import { useMemo, useState } from 'react';
 import { useAppParams } from "@/routing";
 import Loader from "@/components/Loader";
-import { Button, Chip } from "@mui/material";
-import { EngagementDialog, SponsorRow } from "@/components/admin/sponsors/SponsorTierDialog";
+import { EngagementDialog } from "@/components/admin/sponsors/SponsorTierDialog";
 import { TIER_LABELS } from "@/components/admin/sponsors/SponsorTierSelect";
 import { useSponsors } from '@/contexts/SponsorsContext';
+import AppButton from '@/components/common/AppButton';
+import HardwareForm from '@/components/admin/hardware/HardwareForm';
+import HardwareDeviceCreateForm from '@/components/admin/hardware/HardwareDeviceCreateForm';
+import HardwareDeviceEditForm from '@/components/admin/hardware/HardwareDeviceEditForm';
+import HardwareCatalogDeviceSections from '@/components/admin/hardware/HardwareCatalogDeviceSections';
+import { useHardwareCatalogDeviceAdmin } from '@/components/admin/hardware/useHardwareCatalogDeviceAdmin';
+import {
+  hardwareCountImageUrl,
+  hardwareCountToHardwareCreate,
+} from '@/components/admin/hardware/hardwareCountToHardwareCreate';
+import type { HardwareDevice } from '@/types/models';
+import AppLoader from '@/components/Loader';
 
 export default function AdminSponsorDetailPage() {
   const { id } = useAppParams();
-  const { sponsors, engagements, sponsorHardware, isLoadingSponsors, isLoadingSponsorHardware, mutateEngagements } = useSponsors();
+  const {
+    sponsors,
+    engagements,
+    hardwareDevicesBySponsor,
+    hardwareBySponsor,
+    hardwareById,
+    isLoadingSponsors,
+    isLoadingSponsorHardware,
+    isLoadingHardwareCatalog,
+    isMappingSponsorHardware,
+    isMappingSponsorHardwareDevices,
+    isLoadingEngagements,
+    mutateEngagements,
+    mutateHardware,
+    mutateSponsorHardware,
+  } = useSponsors();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const sponsor = useMemo(
@@ -25,69 +51,137 @@ export default function AdminSponsorDetailPage() {
     return engagement?.tier ? TIER_LABELS[engagement.tier] : '-';
   }, [engagement]);
 
-  const devices = useMemo(
-    () => sponsorHardware[id ?? ''] ?? [],
-    [sponsorHardware, id]
+  const catalogForSponsor = useMemo(
+    () => hardwareBySponsor[id ?? ''] ?? [],
+    [hardwareBySponsor, id],
   );
 
+  const devices = useMemo(
+    () => hardwareDevicesBySponsor[id ?? ''] ?? [],
+    [hardwareDevicesBySponsor, id],
+  );
+
+  const hardwareLoading = isLoadingHardwareCatalog || isLoadingSponsorHardware;
+
+  const deviceTableSponsorCatalog = isLoadingHardwareCatalog
+    ? undefined
+    : catalogForSponsor;
+
+  const {
+    catalogSectionConfig,
+    devicesSectionConfig,
+    showHardwareForm,
+    hardwareRowForForm,
+    closeHardwareForm,
+    showDeviceForm,
+    deviceForForm,
+    closeDeviceForm,
+    deviceHardwareOptions,
+    defaultHardwareId,
+    deviceCreateLockedHardwareId,
+  } = useHardwareCatalogDeviceAdmin({
+    sponsors: sponsors ?? undefined,
+    hardwareCatalog: catalogForSponsor,
+    devices,
+    loading: hardwareLoading,
+    hardwareById,
+    sponsorCompanyId: id ?? null,
+    deviceTableSponsorCatalog,
+  });
+
+  const renderLoadingState = useMemo(() => {
+    let loadingText = ''
+    if (isLoadingEngagements) {
+      loadingText = 'Loading engagements...';
+    } else if (isMappingSponsorHardware) {
+      loadingText = 'Mapping sponsor hardware...';
+    } else if (isMappingSponsorHardwareDevices) {
+      loadingText = 'Mapping sponsor hardware devices...';
+    }
+    if (isLoadingEngagements || isMappingSponsorHardware || isMappingSponsorHardwareDevices) {
+      return <AppLoader loadingText={loadingText} size="h-12" direction="flex-row" />;
+    }
+    return null;
+  }, [isLoadingSponsors, isLoadingSponsorHardware, isLoadingHardwareCatalog, isLoadingEngagements]);
+  
   if (isLoadingSponsors) {
     return <Loader loadingText="Loading sponsor data..." />;
   }
+
   return (
     <main className="pt-8 h-vh">
-			<div className="flex flex-col gap-4">
-				<h1 className="text-2xl font-bold">{sponsor?.name}</h1>
-				<div className="flex flex-row gap-4 justify-between">
-					<div className="flex flex-col">
-						<div className="text-sm font-medium">Current Sponsorship Level: </div>
-						<div className="text-lg font-bold">{displayTier}</div>	
-					</div>
-					<Button variant="contained" onClick={() => setDialogOpen(true)}>
-						{engagement ? 'Update Tier' : 'Add to Event'}
-					</Button>
-				</div>
-				{dialogOpen && (
-					<EngagementDialog
-						sponsor={sponsor!}
-						engagement={engagement ?? null}
-						onClose={() => setDialogOpen(false)}
-						onSuccess={() => mutateEngagements()}
-					/>
-				)}
-				<div className="flex flex-col gap-2 mt-4">
-					<h2 className="text-lg font-semibold">Hardware Devices</h2>
-					{isLoadingSponsorHardware ? (
-						<p className="text-sm text-gray-500">Loading devices...</p>
-					) : devices.length === 0 ? (
-						<p className="text-sm text-gray-500">No devices assigned.</p>
-					) : (
-						<div className="border border-[#EEEEEE] rounded-xl overflow-hidden">
-							<table className="w-full text-sm">
-								<thead className="bg-gray-50 text-left">
-									<tr>
-										<th className="px-4 py-2 font-medium text-gray-600">Serial</th>
-										<th className="px-4 py-2 font-medium text-gray-600">Status</th>
-									</tr>
-								</thead>
-								<tbody>
-									{devices.map((device) => (
-										<tr key={device.id} className="border-t border-[#EEEEEE]">
-											<td className="px-4 py-2 font-mono">{device.serial}</td>
-											<td className="px-4 py-2">
-												{device.checked_out_to ? (
-													<Chip label="Checked Out" size="small" color="warning" />
-												) : (
-													<Chip label="Available" size="small" color="success" />
-												)}
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					)}
-				</div>
-		</div>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-row gap-4 items-center">
+          <h1 className="text-2xl font-bold">{sponsor?.name}</h1>
+          {renderLoadingState}
+        </div>
+        <div className="flex flex-row gap-4 justify-between items-center">
+          <div className="flex flex-col w-full">
+            <div className="text-sm font-medium">Current Sponsorship Level: </div>
+            <div className="text-lg font-bold">{displayTier}</div>
+          </div>
+          <AppButton onClick={() => setDialogOpen(true)}>
+            {engagement ? 'Update Tier' : 'Add to Event'}
+          </AppButton>
+        </div>
+        {dialogOpen && (
+          <EngagementDialog
+            showDialog={dialogOpen}
+            sponsor={sponsor!}
+            engagement={engagement ?? null}
+            onClose={() => setDialogOpen(false)}
+            onSuccess={() => mutateEngagements()}
+          />
+        )}
+
+        <div className="mt-4">
+          <HardwareCatalogDeviceSections
+            catalog={catalogSectionConfig}
+            devices={devicesSectionConfig}
+          />
+        </div>
+      </div>
+      {showHardwareForm && (
+        <HardwareForm
+          hardware={hardwareRowForForm ? hardwareCountToHardwareCreate(hardwareRowForForm) : null}
+          existingImageUrl={
+            hardwareRowForForm ? hardwareCountImageUrl(hardwareRowForForm) : null
+          }
+          initialSponsorCompanyId={id ?? null}
+          sponsors={sponsors ?? []}
+          showDialog={showHardwareForm}
+          onClose={closeHardwareForm}
+          onSuccess={() => {
+            void mutateHardware();
+            void mutateSponsorHardware();
+          }}
+        />
+      )}
+      {showDeviceForm && !deviceForForm ? (
+        <HardwareDeviceCreateForm
+          showDialog={showDeviceForm}
+          hardwareOptions={deviceHardwareOptions}
+          defaultHardwareId={defaultHardwareId}
+          lockedHardwareId={deviceCreateLockedHardwareId}
+          onClose={closeDeviceForm}
+          onSuccess={() => {
+            void mutateHardware();
+            void mutateSponsorHardware();
+          }}
+        />
+      ) : null}
+      {showDeviceForm && deviceForForm ? (
+        <HardwareDeviceEditForm
+          showDialog={showDeviceForm}
+          device={deviceForForm as HardwareDevice & { id: string }}
+          hardwareOptions={deviceHardwareOptions}
+          onClose={closeDeviceForm}
+          onSuccess={() => {
+            void mutateHardware();
+            void mutateSponsorHardware();
+          }}
+        />
+      ) : null}
     </main>
   );
 }

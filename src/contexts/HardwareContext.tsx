@@ -153,6 +153,7 @@ export const HardwareProvider = ({ children }: { children: ReactNode }) => {
     if (!hardwareDevices) return {};
     return Object.fromEntries(hardwareDevices?.map(h => [h.id, h]) || []);
   }, [hardwareDevices]);
+
   return (
     <HardwareContext.Provider value={{
       setHardwareRequestParams,

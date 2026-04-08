@@ -10,12 +10,9 @@ type SponsorsContextType = {
   engagements: SponsorEventEngagement[] | null;
   isLoadingSponsors: boolean;
   isLoadingEngagements: boolean;
-  /** Device rows grouped by sponsor id (via catalog `sponsor_company`). */
   hardwareDevicesBySponsor: Record<string, HardwareDevice[]>;
   hardwareBySponsor: Record<string, HardwareCount[]>;
-  /** Full event-scoped catalog list; use to build `hardwareById` maps. */
   hardwareCatalog: HardwareCount[] | null;
-  /** Catalog id → row for device table name lookups. */  
   hardwareById: Record<string, HardwareCount>;
   isLoadingSponsorHardware: boolean;
   isLoadingHardwareCatalog: boolean;

@@ -153,7 +153,7 @@ export default function SponsorsPage() {
       return <AppLoader loadingText={loadingText} size="h-12" direction="flex-row" />;
     }
     return null;
-  }, [isLoadingEngagements, isMappingSponsorHardware, isMappingSponsorHardwareDevices]);
+  }, [isLoadingEngagements, isMappingSponsorHardware, isMappingSponsorHardwareDevices, isLoadingEngagements]);
 
   return (
     <main className="pt-8 h-vh ">

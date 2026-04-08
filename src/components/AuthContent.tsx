@@ -47,7 +47,7 @@ const AuthContent: React.FC<RootLayoutProps> = ({ children }) => {
     if (status === 'loading') return;
 
     if (session?.error === AUTH_ERROR_TYPES.REFRESH_TOKEN_ERROR) {
-      signOut({ callbackUrl: '/signin', redirect: true });
+      signOut({ redirect: true });
       return;
     }
 

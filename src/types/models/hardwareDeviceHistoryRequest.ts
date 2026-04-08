@@ -3,6 +3,7 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
+import type { HistoryTypeEnum } from './historyTypeEnum';
 
 export interface HardwareDeviceHistoryRequest {
   /** @nullable */
@@ -14,4 +15,5 @@ export interface HardwareDeviceHistoryRequest {
   serial: string;
   /** @nullable */
   checked_out_to?: string | null;
+  history_type: HistoryTypeEnum;
 }

@@ -4,6 +4,7 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { FileUpload } from './fileUpload';
+import type { HardwareCountDetailRelatesToDestinyHardware } from './hardwareCountDetailRelatesToDestinyHardware';
 import type { HardwareDeviceHardwareCountDetail } from './hardwareDeviceHardwareCountDetail';
 import type { TagsEnum } from './tagsEnum';
 
@@ -14,6 +15,9 @@ export interface HardwareCountDetail {
   /** @maxLength 1000 */
   description?: string;
   image: FileUpload;
+  /** @nullable */
+  relates_to_destiny_hardware?: HardwareCountDetailRelatesToDestinyHardware;
+  readonly relates_to_event_destiny_hardware?: string;
   available: number;
   checked_out: number;
   total: number;

@@ -64,7 +64,6 @@ const AdminSponsorDetail = lazy(() => import('@/app/(dashboard)/admin/sponsors/[
 
 const AdminHardwareIndex = lazy(() => import('@/app/(dashboard)/admin/hardware/page'));
 const AdminHardwareRequests = lazy(() => import('@/app/(dashboard)/admin/hardware/requests/page'));
-const AdminHardwareRegister = lazy(() => import('@/app/(dashboard)/admin/hardware/register/page'));
 const AdminHardwareCheckout = lazy(() => import('@/app/(dashboard)/admin/hardware/checkout/page'));
 
 const AdminRsvpParticipants = lazy(() => import('@/app/(dashboard)/admin/rsvp/participants/page'));
@@ -184,7 +183,6 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <AdminHardwareIndex /> },
               { path: 'requests', element: <AdminHardwareRequests /> },
-              { path: 'register', element: <AdminHardwareRegister /> },
               { path: 'checkout', element: <AdminHardwareCheckout /> },
             ],
           },

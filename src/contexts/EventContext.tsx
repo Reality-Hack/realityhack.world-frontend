@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { Event } from '@/types/models';
 import { useEventsGetActiveRetrieve, useEventsList } from '@/types/endpoints';
+import { useSession } from '@/auth/client';
 
 type EventsContextType = {
   selectedEvent: Event | null;
@@ -12,8 +13,17 @@ const EventsContext = createContext<EventsContextType | undefined>(undefined);
 
 export const EventsProvider = ({ children }: { children: ReactNode }) => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const { data: allEvents } = useEventsList({});  
-  const { data: activeEvent } = useEventsGetActiveRetrieve({});
+  const { data: session } = useSession();
+  const { data: allEvents } = useEventsList({}, {
+    swr: {
+      enabled: !!session?.access_token,
+    },
+  });  
+  const { data: activeEvent } = useEventsGetActiveRetrieve({
+    swr: {
+      enabled: !!session?.access_token,
+    },
+  });
   useEffect(() => {
     setSelectedEvent(activeEvent ?? null);
   }, [activeEvent]);

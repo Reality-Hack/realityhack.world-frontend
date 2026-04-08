@@ -18,4 +18,5 @@ export interface EventTrack {
    * @maximum 2147483647
    */
   order?: number;
+  sponsor_companies?: string[];
 }

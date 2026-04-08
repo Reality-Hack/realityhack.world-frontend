@@ -34,6 +34,5 @@ export interface HardwareCreateRequest {
   sponsor_company?: string | null;
   /** @nullable */
   relates_to_destiny_hardware?: HardwareCreateRequestRelatesToDestinyHardware;
-  /** @nullable */
-  relates_to_event_destiny_hardware?: string | null;
+  relates_to_event_destiny_hardware?: string[];
 }

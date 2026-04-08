@@ -23,7 +23,6 @@ export default function AdminHardwareRequestForm({
   onCancel,
   preselectedAttendee = null,
 }: AdminHardwareRequestFormProps) {
-  const { data: session } = useSession();
   const { 
     rsvpAttendeesWithCheckIn: attendees,
     isLoadingRsvps: attendeesLoading,
