@@ -1,6 +1,4 @@
-import { Button } from "@mui/material";
 import AppButton from "./AppButton";
-
 import { Dialog, DialogTitle, DialogActions, DialogContent } from "@mui/material";
 
 type AppDialogProps = {

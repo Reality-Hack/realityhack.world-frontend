@@ -4,7 +4,4 @@
  * OpenAPI spec version: 0.0.0
  */
 
-/**
- * {'choice_key': 'choice_text'} at time of response
- */
 export type ApplicationResponseChoicesSnapshot = {[key: string]: unknown};

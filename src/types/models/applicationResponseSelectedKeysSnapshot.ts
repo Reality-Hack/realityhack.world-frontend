@@ -4,7 +4,4 @@
  * OpenAPI spec version: 0.0.0
  */
 
-/**
- * List of choice_keys selected, preserved snapshot
- */
 export type ApplicationResponseSelectedKeysSnapshot = {[key: string]: unknown};

@@ -12,16 +12,11 @@ import type { ApplicationResponseSelectedKeysSnapshot } from './applicationRespo
 export interface ApplicationResponse {
   readonly id?: string;
   question: string;
-  /** Question text at time of response */
   question_text_snapshot: string;
-  /** {'choice_key': 'choice_text'} at time of response */
   choices_snapshot?: ApplicationResponseChoicesSnapshot;
-  /** List of choice_keys selected, preserved snapshot */
   selected_keys_snapshot?: ApplicationResponseSelectedKeysSnapshot;
   readonly selected_choice_keys?: readonly string[];
-  /** Free-form text response for TEXT question types */
   text_response?: string;
-  /** Snapshot of text response at time of submission */
   text_response_snapshot?: string;
   readonly created_at?: string;
   readonly updated_at?: string;

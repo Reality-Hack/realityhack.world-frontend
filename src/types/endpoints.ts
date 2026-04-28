@@ -46,6 +46,7 @@ import type {
   DiscordUsernameRole,
   Event,
   EventDestinyHardware,
+  EventRequest,
   EventRsvp,
   EventRsvpAttendeeOption,
   EventRsvpDetail,
@@ -2240,6 +2241,49 @@ export const useEventsList = <TError = ErrorType<unknown>>(
   const swrFn = () => eventsList(params, requestOptions)
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for editing and viewing Events.
+ */
+export const eventsCreate = (
+    eventRequest: BodyType<EventRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<Event>(
+    {url: `/events/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: eventRequest
+    },
+    options);
+  }
+
+
+
+export const getEventsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: EventRequest }): Promise<Event> => {
+    return eventsCreate(arg, options);
+  }
+}
+export const getEventsCreateMutationKey = () => [`/events/`] as const;
+
+export type EventsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof eventsCreate>>>
+export type EventsCreateMutationError = ErrorType<unknown>
+
+export const useEventsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventsCreate>>, TError, Key, EventRequest, Awaited<ReturnType<typeof eventsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventsCreateMutationKey();
+  const swrFn = getEventsCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,

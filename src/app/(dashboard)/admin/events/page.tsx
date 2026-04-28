@@ -1,19 +1,23 @@
-'use client';
 import { useSession } from '@/auth/client';
-import React from 'react';
+import { useState } from 'react';
 import { useEventsList, eventsActivateCreate, useApplicationquestionsList } from '@/types/endpoints'
-import { ApplicationQuestion, ApplicationQuestionChoice, Event } from '@/types/models'
+import { Event } from '@/types/models'
 import { DateTime } from 'luxon';
 import Loader from '@/components/Loader';
 import { toast } from 'sonner';
 import Table from '@/components/Table';
 import { AppLink } from '@/routing';
 import { ColumnDef } from '@tanstack/react-table';
+import AppButton from '@/components/common/AppButton';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import CreateEventForm from '@/components/admin/events/CreateEventForm';
 
 const isEventsEnabled = import.meta.env.VITE_IS_EVENTS_ENABLED === 'true';
 export default function EventsAdminPage() {
   const { data: session } = useSession();
-
+  const [createEventOpen, setCreateEventOpen] = useState(false);
 	const { 
     data: events, 
     isLoading: isLoadingEvents,
@@ -79,6 +83,31 @@ export default function EventsAdminPage() {
 
 	return (
 		<div className="p-6">
+    <div className="flex flex-row justify-between items-center">
+      <h1 className="text-3xl">Events</h1>
+      <AppButton onClick={() => setCreateEventOpen(true)}>
+        Create Event
+      </AppButton>
+    </div>
+
+      <Dialog
+        open={createEventOpen}
+        onClose={() => setCreateEventOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Create event</DialogTitle>
+        <DialogContent className="pt-2">
+          <CreateEventForm
+            onCancel={() => setCreateEventOpen(false)}
+            onSuccess={() => {
+              setCreateEventOpen(false);
+              void mutateEvents();
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+
       <Table
         data={events ?? []}
         columns={columns}
