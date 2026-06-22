@@ -9,9 +9,9 @@
  */
 export interface ApplicationQuestionChoiceRequest {
   /**
-   * Short code like 'A', 'B', 'Y', 'N'
+   * Short code like 'A', 'B', 'Y', 'N', or device keys like 'APPLE_VISION_PRO'
    * @minLength 1
-   * @maxLength 10
+   * @maxLength 24
    */
   choice_key: string;
   /**

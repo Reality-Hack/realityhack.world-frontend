@@ -172,6 +172,7 @@ export * from './eventsListParams';
 export * from './eventtracksListParams';
 export * from './fileUpload';
 export * from './fileUploadRequest';
+export * from './formTypeEnum';
 export * from './genderIdentityEnum';
 export * from './groupDetail';
 export * from './groupDetailRequest';

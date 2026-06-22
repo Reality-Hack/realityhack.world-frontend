@@ -10,7 +10,7 @@ WORKDIR /app
 ENV NODE_ENV="production"
 
 # Install pnpm
-RUN npm install -g pnpm@latest
+RUN npm install -g pnpm@10.14.0
 
 # ----- Build stage -----
 FROM base AS build

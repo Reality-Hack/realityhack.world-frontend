@@ -13,6 +13,9 @@
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  },
   "dependencies": {
     "@ant-design/icons": "^5.3.0",
     "@emotion/react": "^11.14.0",

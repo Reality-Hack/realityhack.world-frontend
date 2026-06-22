@@ -174,7 +174,7 @@ import type { ErrorType , BodyType } from '../lib/custom-axios';
 
   
 /**
- * Return all questions for the active event, ordered by order field
+ * Return questions for an event, ordered by order field.
  */
 export const applicationquestionsList = (
     params?: ApplicationquestionsListParams,
