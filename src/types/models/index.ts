@@ -314,6 +314,7 @@ export * from './proficiencyEnum';
 export * from './project';
 export * from './projectRequest';
 export * from './projectsListParams';
+export * from './publicEvent';
 export * from './questionTypeEnum';
 export * from './raceEthnicGroupEnum';
 export * from './recommendedForEnum';

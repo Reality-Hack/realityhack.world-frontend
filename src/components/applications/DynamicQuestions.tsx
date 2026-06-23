@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 import { RadioInput, CheckboxInput, TextAreaInput } from '../Inputs';
-import { useApplicationquestionsList } from '@/types/endpoints';
 import type { ApplicationQuestion } from '@/types/models';
-import { form_data } from '@/types/application_form_types';
 import {
   buildQuestionTree,
   QuestionFormData,
@@ -10,7 +8,8 @@ import {
 } from '@/utils/dynamicQuestions';
 
 interface DynamicQuestionsProps {
-  formData: Partial<form_data>;
+  questions: ApplicationQuestion[];
+  formData: QuestionFormData;
   handleChange: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -25,44 +24,21 @@ interface DynamicQuestionsProps {
 }
 
 const DynamicQuestions: React.FC<DynamicQuestionsProps> = ({
+  questions,
   formData,
   handleChange,
   handleBlur,
   errors,
 }) => {
-  const { data: questions, isLoading, error } = useApplicationquestionsList();
-
   const { topLevelQuestions, childrenByParentRecord, questionById } = useMemo(
     () => buildQuestionTree(questions),
     [questions],
   );
 
-  const dynamicFormData = formData as QuestionFormData;
+  const isQuestionVisible = (question: ApplicationQuestion): boolean =>
+    shouldShowQuestion(question, questions, formData, questionById);
 
-  const isQuestionVisible = (question: ApplicationQuestion): boolean => {
-    if (!questions) {
-      return false;
-    }
-    return shouldShowQuestion(question, questions, dynamicFormData, questionById);
-  };
-
-  if (isLoading) {
-    return (
-      <div className="py-4 text-gray-600">
-        Loading dynamic questions...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="py-4 text-red-600">
-        Error loading dynamic questions. Please try again.
-      </div>
-    );
-  }
-
-  if (!questions || questions.length === 0) {
+  if (questions.length === 0) {
     return (
       <div className="py-4 text-gray-600">
         No dynamic questions configured for this event.
@@ -77,7 +53,7 @@ const DynamicQuestions: React.FC<DynamicQuestionsProps> = ({
           key={question.id ?? question.question_key}
           question={question}
           depth={0}
-          formData={dynamicFormData}
+          formData={formData}
           handleChange={handleChange}
           handleBlur={handleBlur}
           errors={errors}

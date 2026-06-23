@@ -18,12 +18,8 @@ export const EventsProvider = ({ children }: { children: ReactNode }) => {
     swr: {
       enabled: !!session?.access_token,
     },
-  });  
-  const { data: activeEvent } = useEventsGetActiveRetrieve({
-    swr: {
-      enabled: !!session?.access_token,
-    },
   });
+  const { data: activeEvent } = useEventsGetActiveRetrieve();
   useEffect(() => {
     setSelectedEvent(activeEvent ?? null);
   }, [activeEvent]);

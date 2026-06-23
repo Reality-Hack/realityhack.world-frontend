@@ -130,6 +130,7 @@ import type {
   Project,
   ProjectRequest,
   ProjectsListParams,
+  PublicEvent,
   RsvpsListParams,
   Skill,
   SkillProficiency,
@@ -2838,12 +2839,12 @@ export const useEventsPartialUpdate = <TError = ErrorType<unknown>>(
 }
 
 /**
- * Get the active event
+ * Get the active event. Public endpoint — no authentication required.
  */
 export const eventsGetActiveRetrieve = (
     
  options?: SecondParameter<typeof customAxios>) => {
-    return customAxios<Event>(
+    return customAxios<PublicEvent>(
     {url: `/events/get-active/`, method: 'GET'
     },
     options);

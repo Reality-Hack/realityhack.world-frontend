@@ -1,15 +1,22 @@
+import { EngagementDialog } from '@/components/admin/sponsors/SponsorTierDialog';
 import { TIER_LABELS } from '@/components/admin/sponsors/SponsorTierSelect';
-import { useSponsoreventengagementsList } from '@/types/endpoints';
+import {
+  getSponsoreventengagementsListKey,
+  useSponsorsList,
+  useSponsoreventengagementsList,
+} from '@/types/endpoints';
 import { TierEnum } from '@/types/models';
 import { AppLink } from '@/routing';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useSWRConfig } from 'swr';
+import EventAdminSection from './EventAdminSection';
 import {
-  EventPanelEmpty,
   EventPanelError,
   EventPanelLoader,
 } from './EventPanelStates';
 import { useSponsorNameById } from './useSponsorNameById';
 import { useAdminEvent } from '@/contexts/AdminEventContext';
+import { useSession } from '@/auth/client';
 
 const TIER_ORDER: TierEnum[] = [
   TierEnum.EC,
@@ -39,11 +46,19 @@ function sortSponsorsByName(sponsors: EventSponsorRow[]): EventSponsorRow[] {
 
 export default function EventSponsorsPanel(): JSX.Element {
   const { eventId, isQueryEnabled } = useAdminEvent();
+  const { data: session } = useSession();
+  const { mutate } = useSWRConfig();
+  const [showAddDialog, setShowAddDialog] = useState(false);
   const {
     sponsorNameById,
     isLoading: isLoadingSponsors,
     error: sponsorsError,
   } = useSponsorNameById();
+  const {
+    data: allSponsors,
+    isLoading: isLoadingAllSponsors,
+    error: allSponsorsError,
+  } = useSponsorsList({}, { swr: { enabled: !!session?.access_token } });
 
   const {
     data: engagements,
@@ -93,52 +108,93 @@ export default function EventSponsorsPanel(): JSX.Element {
     return sections;
   }, [engagements, sponsorNameById]);
 
+  const availableSponsors = useMemo(() => {
+    const engagedSponsorIds = new Set(
+      (engagements ?? []).map((engagement) => engagement.sponsor),
+    );
+
+    return (allSponsors ?? []).filter(
+      (sponsor) => sponsor.id && !engagedSponsorIds.has(sponsor.id),
+    );
+  }, [allSponsors, engagements]);
+
   const totalSponsors = engagements?.length ?? 0;
 
-  if (isLoadingEngagements || isLoadingSponsors) {
+  const invalidateEngagements = async (): Promise<void> => {
+    await mutate(getSponsoreventengagementsListKey({ event: eventId }));
+  };
+
+  if (
+    isLoadingEngagements ||
+    isLoadingSponsors ||
+    isLoadingAllSponsors
+  ) {
     return <EventPanelLoader />;
   }
 
-  if (engagementsError || sponsorsError) {
+  if (engagementsError || sponsorsError || allSponsorsError) {
     return (
       <EventPanelError message="Failed to load event sponsors. Please try again." />
     );
   }
 
-  if (totalSponsors === 0) {
-    return (
-      <EventPanelEmpty message="No sponsors are configured for this event." />
-    );
-  }
-
   return (
-    <div className="flex flex-col gap-8 pb-8">
-      <p className="text-sm text-gray-600">
-        {totalSponsors} {totalSponsors === 1 ? 'sponsor' : 'sponsors'} configured
-        for this event
-      </p>
-      {tierSections.map((section) => (
-        <section key={section.tierKey} className="flex flex-col gap-3">
-          <h2 className="text-lg font-semibold">
-            {section.title}{' '}
-            <span className="text-sm font-normal text-gray-500">
-              ({section.sponsors.length})
-            </span>
-          </h2>
-          <ul className="flex flex-col gap-2">
-            {section.sponsors.map((sponsor) => (
-              <li key={sponsor.sponsorId}>
-                <AppLink
-                  href={`/admin/sponsors/${sponsor.sponsorId}`}
-                  className="text-themePrimary hover:underline"
-                >
-                  {sponsor.sponsorName}
-                </AppLink>
-              </li>
+    <div className="pb-8">
+      <EventAdminSection
+        title="Event sponsors"
+        description={
+          totalSponsors > 0
+            ? `${totalSponsors} ${totalSponsors === 1 ? 'sponsor' : 'sponsors'} configured for this event`
+            : 'Configure sponsor tier mappings for this event.'
+        }
+        addLabel="Add sponsor"
+        onAdd={() => setShowAddDialog(true)}
+        addDisabled={availableSponsors.length === 0}
+        count={totalSponsors}
+      >
+        {totalSponsors === 0 ? (
+          <p className="text-gray-600">
+            No sponsors are configured for this event yet.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-8">
+            {tierSections.map((section) => (
+              <section key={section.tierKey} className="flex flex-col gap-3">
+                <h3 className="text-lg font-semibold">
+                  {section.title}{' '}
+                  <span className="text-sm font-normal text-gray-500">
+                    ({section.sponsors.length})
+                  </span>
+                </h3>
+                <ul className="flex flex-col gap-2">
+                  {section.sponsors.map((sponsor) => (
+                    <li key={sponsor.sponsorId}>
+                      <AppLink
+                        href={`/admin/sponsors/${sponsor.sponsorId}`}
+                        className="text-themePrimary hover:underline"
+                      >
+                        {sponsor.sponsorName}
+                      </AppLink>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             ))}
-          </ul>
-        </section>
-      ))}
+          </div>
+        )}
+      </EventAdminSection>
+
+      {showAddDialog ? (
+        <EngagementDialog
+          showDialog={showAddDialog}
+          sponsor={null}
+          engagement={null}
+          eventId={eventId}
+          sponsorOptions={availableSponsors}
+          onClose={() => setShowAddDialog(false)}
+          onSuccess={() => void invalidateEngagements()}
+        />
+      ) : null}
     </div>
   );
 }

@@ -660,6 +660,7 @@ const Application = () => {
     />,
     <ThematicForm
       key={5}
+      questions={dynamicQuestions ?? []}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}

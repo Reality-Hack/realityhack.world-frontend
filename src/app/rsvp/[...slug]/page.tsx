@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   TextInput,
   CheckboxInput,
@@ -12,13 +12,26 @@ import {
   dietary_restrictions,
   dietary_allergies
 } from '@/types/application_form_types';
-import { createRsvpForm, rsvpOptions } from '@/app/api/rsvp';
-import { CircularProgress } from '@mui/material';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { createRsvpForm } from '@/app/api/rsvp';
+import DynamicQuestions from '@/components/applications/DynamicQuestions';
+import { Loader } from '@/components/Loader';
+import {
+  getDynamicRequiredFields,
+  getQuestionForField,
+  initializeDynamicQuestions,
+  isConfigurableQuestion,
+  QuestionFormData,
+  validateDynamicQuestion,
+} from '@/utils/dynamicQuestions';
+
 import Alert from '@mui/material/Alert';
 
 import { useAppParams } from '@/routing';
+import {
+  useApplicationquestionsList,
+  useEventsGetActiveRetrieve,
+} from '@/types/endpoints';
+import { ApplicationquestionsListFormType } from '@/types/models';
 
 export default function RsvpForm() {
   const params = useAppParams();
@@ -28,13 +41,26 @@ export default function RsvpForm() {
   const [visaRequired, setVisaRequired] = useState<string>();
   const [letterOfSupport, setLetterOfSupport] = useState<string>();
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [citizenship, setCitizenship] = useState<any>(null);
   const [completed, setCompleted] = useState<boolean>(false);
-  const [discordValidationLoading, setDiscordValidationLoading] =
-    useState<boolean>(false);
-  const [discordValidationResult, setDiscordValidationResult] = useState<
-    string | null
-  >(null);
+  const {
+    data: activeEvent,
+    isLoading: isActiveEventLoading,
+    error: activeEventError,
+  } = useEventsGetActiveRetrieve();
+  const activeEventId = activeEvent?.id;
+  const {
+    data: rsvpQuestions,
+    isLoading: isQuestionsLoading,
+    error: questionsError,
+  } = useApplicationquestionsList(
+    { form_type: ApplicationquestionsListFormType.R, event: activeEventId },
+    { swr: { enabled: !!activeEventId } },
+  );
+  const questions = rsvpQuestions ?? [];
+  const isPageLoading =
+    isActiveEventLoading || (!!activeEventId && isQuestionsLoading);
+  const pageError = activeEventError ?? questionsError;
+
   const [renderDiscordError, setRenderDiscordError] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
@@ -43,14 +69,6 @@ export default function RsvpForm() {
   const roles = ['mentor', 'judge', 'sponsor'];
   const isParticipant = !roles.includes(slug[0]);
   const applicationId = isParticipant ? slug[0] : slug[1];
-
-  useEffect(() => {
-    const getData = async () => {
-      const options = await rsvpOptions(formData);
-      setCitizenship(options.actions.POST.us_visa_support_citizenship.choices);
-    };
-    getData();
-  }, []);
 
   const [formData, setFormData] = useState<Partial<rsvp_data>>({
     application: applicationId,
@@ -86,13 +104,30 @@ export default function RsvpForm() {
     sponsor_company: null,
     us_visa_support_citizenship_option: null
   });
+  const dynamicFormData = formData as QuestionFormData;
 
-  const [requiredFields, setRequiredFields] = useState<Record<string, any>>([
+  const [requiredFields, setRequiredFields] = useState<string[]>([
     'shirt_size',
     'agree_to_rules_code_of_conduct',
     'agree_to_media_release',
     'us_visa_support_is_required'
   ]);
+
+  const dynamicRequiredFields = useMemo(
+    () => getDynamicRequiredFields(questions, dynamicFormData),
+    [questions, dynamicFormData],
+  );
+
+  const allRequiredFields = useMemo(
+    () => [...requiredFields, ...dynamicRequiredFields],
+    [requiredFields, dynamicRequiredFields],
+  );
+
+  useEffect(() => {
+    if (questions.length > 0) {
+      setFormData((prev) => initializeDynamicQuestions(questions, prev));
+    }
+  }, [questions]);
 
   useEffect(() => {
     if (!showAlert) {
@@ -104,16 +139,16 @@ export default function RsvpForm() {
   }, [showAlert]);
 
   useEffect(() => {
-    setRequiredFields((prevFields: any) => {
+    setRequiredFields((prevFields) => {
       let updatedFields = [...prevFields];
 
       if (isParticipant) {
         [
           'under_18_by_date',
-          'special_interest_track_one',
-          'special_interest_track_two',
+          // 'special_interest_track_one',
+          // 'special_interest_track_two',
           'communication_platform_username',
-          'loaner_headset_preference'
+          // 'loaner_headset_preference'
         ].forEach(field => {
           if (!updatedFields.includes(field)) {
             updatedFields.push(field);
@@ -151,12 +186,12 @@ export default function RsvpForm() {
 
       return updatedFields;
     });
-  }, [isParticipant, slug]);
+  }, []);
 
   useEffect(() => {
     const visaRelatedFields = ['visa_support_form_confirmation'];
 
-    setRequiredFields((prevFields: any) => {
+    setRequiredFields((prevFields) => {
       let updatedFields = [...prevFields];
 
       if (formData.us_visa_support_is_required) {
@@ -297,22 +332,39 @@ export default function RsvpForm() {
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
       >
     ) => {
-      let fieldType = e.target.type.toLowerCase();
-
       const fieldName = e.target.name;
-      const fieldTab = Object.entries(requiredFields).find(([_, fields]) =>
-        fields.includes(fieldName)
-      )?.[0];
+      const fieldValue = formData[fieldName as keyof typeof formData];
+      const dynamicQuestion = getQuestionForField(fieldName, questions);
 
-      let isFieldRequired = false;
+      if (dynamicQuestion && isConfigurableQuestion(fieldName, questions)) {
+        const validationError = validateDynamicQuestion(
+          dynamicQuestion,
+          fieldValue,
+          dynamicQuestion.required ?? false,
+        );
+
+        if (validationError) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            [fieldName]: validationError,
+          }));
+        } else {
+          setErrors((prevErrors) => {
+            const newErrors = { ...prevErrors };
+            delete newErrors[fieldName];
+            return newErrors;
+          });
+        }
+        return;
+      }
+
+      let fieldType = e.target.type.toLowerCase();
 
       if (fieldName === 'communication_platform_username') {
         setRenderDiscordError(false);
       }
 
-      if (fieldTab !== undefined) {
-        isFieldRequired = requiredFields[fieldTab].includes(fieldName);
-      }
+      const isFieldRequired = requiredFields.includes(fieldName);
 
       const validationError = validateField(
         fieldType,
@@ -333,82 +385,32 @@ export default function RsvpForm() {
           return newErrors;
         });
       }
-
-      const discordLookup = async () => {
-        setDiscordValidationResult(null);
-        if (
-          fieldName === 'communication_platform_username' &&
-          e.target.value
-        ) {
-          setRenderDiscordError(false);
-          setDiscordValidationLoading(true);
-          const url = `${import.meta.env.VITE_DISCORD_LOOKUP_URL}${e.target.value}`;
-          try {
-            const resp = await fetch(url, {
-              headers: {
-                'Content-Type': 'application/json',
-                authorization: `${import.meta.env.VITE_DISCORD_API_KEY}`
-              }
-            });
-
-            if (!resp.ok) {
-              throw new Error(`HTTP error! status: ${resp.status}`);
-            }
-            const data = await resp.json();
-            if (data.data.check.status === 3) {
-              setDiscordValidationResult('success');
-            } else {
-              setErrors(prevErrors => ({
-                ...prevErrors,
-                communication_platform_username: 'Invalid'
-              }));
-              setDiscordValidationResult('error');
-              setRenderDiscordError(true);
-            }
-          } catch (error: any) {
-            console.error('Error in creating application:', error);
-            setShowAlert(true);
-            setSubmissionError(`${error.message}. Please try again later.`);
-            const timer = setTimeout(() => {
-              setShowAlert(false);
-            }, 4000);
-            return () => clearTimeout(timer);
-          } finally {
-            setDiscordValidationLoading(false);
-          }
-        }
-      };
-
-      // TODO: recover Discord username validation capabilities
-      setDiscordValidationResult('success');
-      //   discordLookup();
     },
-    [requiredFields]
+    [requiredFields, questions, formData]
   );
-
-  const handleSelectChange = (
-    value: string[],
-    name: string,
-    options: { value: string; display_name: string }[]
-  ) => {
-    const selectedOption = options.find(option => option.value === value[0]);
-    const displayName = selectedOption ? selectedOption.display_name : null;
-
-    setFormData(prev => ({
-      ...prev,
-      [name]: value[0],
-      [`${name}_option`]: displayName
-    }));
-  };
 
   const handleSubmit = async () => {
     let newErrors: { [key: string]: string } = {};
     let isValid = true;
 
-    requiredFields.forEach((field: keyof rsvp_data) => {
-      const value = formData[field] as any;
+    allRequiredFields.forEach((field: keyof rsvp_data | string) => {
+      const value = formData[field as keyof typeof formData] as unknown;
+      const dynamicQuestion = getQuestionForField(field, questions);
 
-      // if (field !== 'communications_platform_username') {
+      if (dynamicQuestion && isConfigurableQuestion(field, questions)) {
+        const validationError = validateDynamicQuestion(
+          dynamicQuestion,
+          value,
+          dynamicQuestion.required ?? false,
+        );
+
+        if (validationError) {
+          newErrors = { ...newErrors, [field]: validationError };
+          isValid = false;
+        }
+        return;
+      }
+
       let validationError = '';
 
       if (
@@ -427,13 +429,6 @@ export default function RsvpForm() {
       if (validationError) {
         newErrors = { ...newErrors, [field]: validationError };
       }
-      // } else {
-      //   if (discordValidationResult === 'error') {
-      //     newErrors['communications_platform_username'] =
-      //       'Invalid Discord username.';
-      //     isValid = false;
-      //   }
-      // }
     });
 
     setErrors(newErrors);
@@ -513,7 +508,7 @@ export default function RsvpForm() {
           <div className="w-[250px] h-[250px] mt-8 mx-auto bg-logocolor dark:bg-logobw bg-contain bg-no-repeat bg-center" />
           <div className="pb-8">
             <h1 className="py-1 text-2xl leading-8 text-center text-themeSecondary drop-shadow-md font-ethnocentric">
-              Reality Hack at MIT 2026
+              {activeEvent?.name}
             </h1>
             <h2 className="text-2xl font-bold leading-8 text-center text-themeYellow drop-shadow-md">
               {isParticipant
@@ -526,6 +521,14 @@ export default function RsvpForm() {
         <div className="flex flex-col px-2 md:px-4 py-2 bg-white rounded-lg shadow-md z-[10] mx-8 sm:mx-auto max-w-full md:w-[856px]">
           {!completed ? (
             <div className="p-8">
+              {isPageLoading ? (
+                <Loader size="h-48" loadingText="Loading RSVP form..." />
+              ) : pageError ? (
+                <p className="py-4 text-red-600">
+                  Failed to load RSVP form. Please refresh and try again.
+                </p>
+              ) : (
+                <>
               <div className="mb-4 text-xl font-bold text-purple-900">
                 Fill out this form to confirm your spot!
               </div>
@@ -1059,193 +1062,19 @@ export default function RsvpForm() {
                   />
                 </div>
               </div>
-              {isParticipant && (
+              {isParticipant && questions.length > 0 && (
                 <>
                   <hr className="my-4" />
                   <div className="mb-4 text-xl font-bold text-purple-900">
-                    Equipment Interest
+                    Additional questions
                   </div>
-
-                  <div className="pb-8">
-                    <div>
-                    If you had to choose one device to work with, which would be your top preference? 
-                    Please note that equipment listed may not be available or will be limited to specific prize tracks.{' '}
-                      <span className="text-red-700">*</span>
-                    </div>
-                    <div>
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="META"
-                        onChange={handleChange}
-                        label="Meta Quest 3"
-                        checked={formData.loaner_headset_preference === 'META'}
-                      />
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="RB_META_AI"
-                        onChange={handleChange}
-                        label="Ray-Ban Meta AI glasses"
-                        checked={formData.loaner_headset_preference === 'RB_META_AI'}
-                      />
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="ARDUINO_UNO"
-                        onChange={handleChange}
-                        label="Arduino Uno Kits"
-                        checked={formData.loaner_headset_preference === 'ARDUINO_UNO'}
-                      />
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="SAMSUNG_GALAXY_XR"
-                        onChange={handleChange}
-                        label="Samsung Galaxy XR"
-                        checked={formData.loaner_headset_preference === 'SAMSUNG_GALAXY_XR'}
-                      />
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="RAYNEO"
-                        onChange={handleChange}
-                        label="RayNeo"
-                        checked={formData.loaner_headset_preference === 'RAYNEO'}
-                      />
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="RAVEN_AR"
-                        onChange={handleChange}
-                        label="Raven AR"
-                        checked={formData.loaner_headset_preference === 'RAVEN_AR'}
-                      />
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="SNAP"
-                        onChange={handleChange}
-                        label="Snap Spectacles"
-                        checked={formData.loaner_headset_preference === 'SNAP'}
-                      />
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="APPLE_VISION_PRO"
-                        onChange={handleChange}
-                        label="Apple Vision Pro"
-                        checked={formData.loaner_headset_preference === 'APPLE_VISION_PRO'}
-                      />
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="BLACKMAGIC"
-                        onChange={handleChange}
-                        label="Blackmagic URSA Cine Immersive Camera"
-                        checked={formData.loaner_headset_preference === 'BLACKMAGIC'}
-                      />
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="XREAL"
-                        onChange={handleChange}
-                        label="XREAL"
-                        checked={formData.loaner_headset_preference === 'XREAL'}
-                      />
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="PICO"
-                        onChange={handleChange}
-                        label="Pico"
-                        checked={formData.loaner_headset_preference === 'PICO'}
-                      />
-                      <RadioInput
-                        name="loaner_headset_preference"
-                        value="OPENBCI"
-                        onChange={handleChange}
-                        label="OpenBCI Sensors"
-                        checked={formData.loaner_headset_preference === 'OPENBCI'}
-                      />
-                      {errors.loaner_headset_preference && (
-                        <p className="text-red-500 text-sm">
-                          {errors.loaner_headset_preference}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="pb-8">
-                    From the above list, please list other devices you may be interested in working with ranked in order of preference. 
-                    <TextAreaInput
-                      name="device_preference_ranked"
-                      placeholder="Please describe your interest..."
-                      value={formData.device_preference_ranked || ''}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={errors.device_preference_ranked}
-                      valid={!errors.device_preference_ranked}
-                      rows={4}
-                    >
-                    {' '}
-                    </TextAreaInput>
-                  </div>
-
-                  <hr className="my-4" />
-                  <div className="mb-4 text-xl font-bold text-purple-900">
-                    Special Interests
-                  </div>
-                  <div>
-                    <div className="mb-4">
-                      The RSVP email described a couple special tracks. Please
-                      indicate your interest below.
-                    </div>
-                    <div className="pb-4">
-                    Do you want to register your interest for the Immersion League Continuity Track at this time? 
-                    Please make sure you've filled out the Google Form found in the Track Description in the RSVP email if you 
-                    want to apply to it. <span className="text-red-700">*</span>
-                      <RadioInput
-                        name="special_interest_track_one"
-                        value="Y"
-                        onChange={handleChange}
-                        label="Yes"
-                        checked={formData.special_interest_track_one === 'Y'}
-                      />
-                      <RadioInput
-                        name="special_interest_track_one"
-                        value="N"
-                        onChange={handleChange}
-                        label="No"
-                        checked={formData.special_interest_track_one === 'N'}
-                      />
-                      <p
-                        className={`ml-1 text-xs text-themeSecondary ${
-                          errors.special_interest_track_one
-                            ? 'visible'
-                            : 'invisible'
-                        }`}
-                      >
-                        {errors.special_interest_track_one || ''}
-                      </p>
-                    </div>
-                    <div>
-                    Do you want to register your interest in the Founders Lab Prize Track at this time? This option is open to hackers 
-                    interested in taking extra steps to research their concepts and polish their level of presentation. 
-                    It is not for pre-formed startups. <span className="text-red-700">*</span>
-                      <RadioInput
-                        name="special_interest_track_two"
-                        value="Y"
-                        onChange={handleChange}
-                        label="Yes"
-                        checked={formData.special_interest_track_two === 'Y'}
-                      />
-                      <RadioInput
-                        name="special_interest_track_two"
-                        value="N"
-                        onChange={handleChange}
-                        label="No"
-                        checked={formData.special_interest_track_two === 'N'}
-                      />
-                      <p
-                        className={`ml-1 text-xs text-themeSecondary ${
-                          errors.special_interest_track_two
-                            ? 'visible'
-                            : 'invisible'
-                        }`}
-                      >
-                        {errors.special_interest_track_two || ''}
-                      </p>
-                    </div>
-                  </div>
+                  <DynamicQuestions
+                    questions={questions}
+                    formData={dynamicFormData}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    errors={errors}
+                  />
                 </>
               )}
               <hr className="my-4" />
@@ -1608,6 +1437,8 @@ export default function RsvpForm() {
                   {getFormErrors()}
                 </Alert>
               </div>
+                </>
+              )}
             </div>
           ) : (
             <div className="px-6 py-6 h-[256px]">
