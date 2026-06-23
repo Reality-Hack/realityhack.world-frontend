@@ -60,15 +60,6 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
       }
     }
 
-    if (updatedPayload.hardware_hack_interest === null || 
-        updatedPayload.hardware_hack_interest === undefined) {
-      updatedPayload.hardware_hack_interest = 'A';
-    }
-    
-    if (!Array.isArray(updatedPayload.hardware_hack_detail) || 
-        updatedPayload.hardware_hack_detail.length === 0) {
-      updatedPayload.hardware_hack_detail = ['H'];
-    }
 
     // Assuming updatedPayload.middle_name may contain a "blank" character like a space
     if (updatedPayload.middle_name) {

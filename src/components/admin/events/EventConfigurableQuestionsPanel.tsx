@@ -5,20 +5,25 @@ import {
   ApplicationquestionsListFormType,
 } from '@/types/models';
 import { useMemo } from 'react';
+import AppButton from '@/components/common/AppButton';
 import MetaBadge from './MetaBadge';
 import {
-  EventPanelEmpty,
   EventPanelError,
   EventPanelLoader,
 } from './EventPanelStates';
-import { sortByOrder } from './sortByOrder';
 import { QUESTION_TYPE_LABELS } from './questionTypeLabels';
 import { useAdminEvent } from '@/contexts/AdminEventContext';
+import { buildQuestionTree, getTriggerChoices } from '@/utils/dynamicQuestions';
+import EventAdminSection from './EventAdminSection';
+import EventQuestionForm from './EventQuestionForm';
+import { useQuestionAdmin } from './useQuestionAdmin';
 
 type QuestionRowProps = {
   question: ApplicationQuestion;
   childrenByParent: Map<string, ApplicationQuestion[]>;
   questionById: Map<string, ApplicationQuestion>;
+  onEdit: (q: ApplicationQuestion) => void;
+  onDelete: (q: ApplicationQuestion) => Promise<void>;
   depth?: number;
 };
 
@@ -26,6 +31,8 @@ function QuestionRow({
   question,
   childrenByParent,
   questionById,
+  onEdit,
+  onDelete,
   depth = 0,
 }: QuestionRowProps): JSX.Element {
   const childQuestions = question.id
@@ -36,9 +43,7 @@ function QuestionRow({
   const parentQuestion = question.parent_question
     ? questionById.get(question.parent_question)
     : undefined;
-  const triggerChoices = Array.isArray(question.trigger_choices)
-    ? (question.trigger_choices as string[])
-    : [];
+  const triggerChoices = getTriggerChoices(question);
 
   return (
     <div
@@ -46,11 +51,21 @@ function QuestionRow({
       style={{ marginLeft: depth > 0 ? `${depth * 1.5}rem` : undefined }}
     >
       <div className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-medium">{question.question_text}</span>
-          {question.order !== undefined ? (
-            <MetaBadge>Order {question.order}</MetaBadge>
-          ) : null}
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-medium">{question.question_text}</span>
+            {question.order !== undefined ? (
+              <MetaBadge>Order {question.order}</MetaBadge>
+            ) : null}
+          </div>
+          <div className="flex gap-2">
+            <AppButton size="xs" onClick={() => onEdit(question)}>
+              Edit
+            </AppButton>
+            <AppButton size="xs" onClick={() => void onDelete(question)}>
+              Delete
+            </AppButton>
+          </div>
         </div>
         <div className="text-sm text-gray-500">{question.question_key}</div>
         <div className="flex flex-wrap gap-2">
@@ -79,8 +94,13 @@ function QuestionRow({
             {[...(question.choices ?? [])]
               .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
               .map((choice: ApplicationQuestionChoice) => (
-                <li key={choice.id ?? `${choice.choice_key}-${choice.choice_text}`} className="text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-mono text-xs text-gray-500">{choice.choice_key}</span>
+                <li
+                  key={choice.id ?? `${choice.choice_key}-${choice.choice_text}`}
+                  className="text-sm text-gray-600 dark:text-gray-400"
+                >
+                  <span className="font-mono text-xs text-gray-500">
+                    {choice.choice_key}
+                  </span>
                   {' — '}
                   {choice.choice_text}
                 </li>
@@ -96,6 +116,8 @@ function QuestionRow({
               question={child}
               childrenByParent={childrenByParent}
               questionById={questionById}
+              onEdit={onEdit}
+              onDelete={onDelete}
               depth={depth + 1}
             />
           ))}
@@ -114,7 +136,7 @@ export default function EventConfigurableQuestionsPanel({
   formType,
   questionKindLabel,
 }: EventConfigurableQuestionsPanelProps): JSX.Element {
-  const { eventId, isQueryEnabled } = useAdminEvent();
+  const { eventId, isQueryEnabled, invalidateQuestionsCache } = useAdminEvent();
 
   const {
     data: questions,
@@ -125,28 +147,33 @@ export default function EventConfigurableQuestionsPanel({
     { swr: { enabled: isQueryEnabled } },
   );
 
-  const { topLevelQuestions, childrenByParent, questionById } = useMemo(() => {
-    const sorted = sortByOrder(questions ?? []);
-    const byParent = new Map<string, ApplicationQuestion[]>();
-    const byId = new Map<string, ApplicationQuestion>();
+  const { topLevelQuestions, childrenByParent, questionById } = useMemo(
+    () => buildQuestionTree(questions),
+    [questions],
+  );
 
-    for (const question of sorted) {
-      if (question.id) {
-        byId.set(question.id, question);
-      }
-      if (question.parent_question) {
-        const siblings = byParent.get(question.parent_question) ?? [];
-        siblings.push(question);
-        byParent.set(question.parent_question, siblings);
-      }
-    }
+  const totalQuestionCount = questions?.length ?? 0;
+  const followUpCount = totalQuestionCount - topLevelQuestions.length;
 
-    return {
-      topLevelQuestions: sorted.filter((question) => !question.parent_question),
-      childrenByParent: byParent,
-      questionById: byId,
-    };
-  }, [questions]);
+  const invalidate = useMemo(
+    () => () => invalidateQuestionsCache(formType),
+    [invalidateQuestionsCache, formType],
+  );
+
+  const {
+    showForm,
+    itemForForm,
+    defaultOrder,
+    openCreate,
+    openEdit,
+    closeForm,
+    deleteQuestion,
+    handleFormSuccess,
+  } = useQuestionAdmin({
+    eventId,
+    questions: questions ?? [],
+    invalidateQuestionsCache: invalidate,
+  });
 
   if (isLoading) {
     return <EventPanelLoader />;
@@ -160,31 +187,59 @@ export default function EventConfigurableQuestionsPanel({
     );
   }
 
-  if (topLevelQuestions.length === 0) {
-    return (
-      <EventPanelEmpty
-        message={`No ${questionKindLabel} questions are configured for this event.`}
-      />
-    );
-  }
+  const titleLabel = `${questionKindLabel.charAt(0).toUpperCase()}${questionKindLabel.slice(1)} questions`;
 
   return (
-    <div className="flex flex-col gap-4 pb-8">
-      <p className="text-sm text-gray-600">
-        {topLevelQuestions.length}{' '}
-        {topLevelQuestions.length === 1 ? 'question' : 'questions'}
-        {(questions?.length ?? 0) > topLevelQuestions.length
-          ? ` (${questions?.length} total including conditional follow-ups)`
-          : ''}
-      </p>
-      {topLevelQuestions.map((question) => (
-        <QuestionRow
-          key={question.id ?? question.question_key}
-          question={question}
-          childrenByParent={childrenByParent}
-          questionById={questionById}
+    <div className="pb-8">
+      <EventAdminSection
+        title={titleLabel}
+        description={
+          topLevelQuestions.length > 0
+            ? `${topLevelQuestions.length} top-level ${
+                topLevelQuestions.length === 1 ? 'question' : 'questions'
+              }${
+                followUpCount > 0
+                  ? ` (${totalQuestionCount} total including conditional follow-ups)`
+                  : ''
+              }`
+            : `Configure ${questionKindLabel} questions for this event.`
+        }
+        addLabel="Add question"
+        onAdd={openCreate}
+        count={totalQuestionCount}
+      >
+        {topLevelQuestions.length === 0 ? (
+          <p className="text-gray-600">
+            No {questionKindLabel} questions are configured for this event yet.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {topLevelQuestions.map((question) => (
+              <QuestionRow
+                key={question.id ?? question.question_key}
+                question={question}
+                childrenByParent={childrenByParent}
+                questionById={questionById}
+                onEdit={openEdit}
+                onDelete={deleteQuestion}
+              />
+            ))}
+          </div>
+        )}
+      </EventAdminSection>
+
+      {showForm ? (
+        <EventQuestionForm
+          showDialog={showForm}
+          item={itemForForm}
+          eventId={eventId}
+          formType={formType}
+          defaultOrder={defaultOrder}
+          questions={questions ?? []}
+          onClose={closeForm}
+          onSuccess={() => void handleFormSuccess()}
         />
-      ))}
+      ) : null}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import AppButton from '@/components/common/AppButton';
+import EventAdminSection from '@/components/admin/events/EventAdminSection';
 import HardwareTable, { type HardwareTableProps } from '@/components/admin/hardware/HardwareTable';
 import HardwareDeviceTable, {
   type HardwareDeviceTableProps,
@@ -51,33 +51,26 @@ export default function HardwareCatalogDeviceSections({
   catalogSectionClassName,
   devicesSectionClassName,
 }: HardwareCatalogDeviceSectionsProps): JSX.Element {
-
   return (
     <div className={className}>
-      <section
-        className={['flex flex-col gap-2', catalogSectionClassName].filter(Boolean).join(' ')}
+      <EventAdminSection
+        title={catalog.title}
+        description={catalog.description}
+        addLabel={catalog.addLabel}
+        onAdd={catalog.onAdd}
+        className={['gap-2', catalogSectionClassName].filter(Boolean).join(' ')}
       >
-        <div className="flex flex-row justify-between items-start gap-4">
-          <div>
-            <h2 className="text-xl font-semibold">{catalog.title}</h2>
-            <p className="text-sm text-gray-600">{catalog.description}</p>
-          </div>
-          <AppButton onClick={catalog.onAdd}>{catalog.addLabel}</AppButton>
-        </div>
         <HardwareTable {...catalog.tableProps} />
-      </section>
-      <section
-        className={['flex flex-col gap-2', devicesSectionClassName].filter(Boolean).join(' ')}
+      </EventAdminSection>
+      <EventAdminSection
+        title={devices.title}
+        description={devices.description}
+        addLabel={devices.addLabel}
+        onAdd={devices.onAdd}
+        className={['gap-2', devicesSectionClassName].filter(Boolean).join(' ')}
       >
-        <div className="flex flex-row justify-between items-start gap-4">
-          <div>
-            <h2 className="text-xl font-semibold">{devices.title}</h2>
-            <p className="text-sm text-gray-600">{devices.description}</p>
-          </div>
-          <AppButton onClick={devices.onAdd}>{devices.addLabel}</AppButton>
-        </div>
         <HardwareDeviceTable {...devices.tableProps} />
-      </section>
+      </EventAdminSection>
     </div>
   );
 }

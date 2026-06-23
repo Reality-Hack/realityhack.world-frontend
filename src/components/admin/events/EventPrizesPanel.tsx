@@ -1,12 +1,14 @@
 import {
   useEventdestinyhardwareList,
   useEventtracksList,
+  useSponsoreventengagementsList,
 } from '@/types/endpoints';
 import { EventDestinyHardware, EventTrack } from '@/types/models';
 import { useMemo } from 'react';
+import EventAdminSection from './EventAdminSection';
+import EventPrizeTrackForm from './EventPrizeTrackForm';
 import MetaBadge from './MetaBadge';
 import {
-  EventPanelEmpty,
   EventPanelError,
   EventPanelLoader,
 } from './EventPanelStates';
@@ -16,23 +18,28 @@ import {
   useSponsorNameById,
 } from './useSponsorNameById';
 import { useAdminEvent } from '@/contexts/AdminEventContext';
-
-type PrizeItem = Pick<
-  EventTrack,
-  'id' | 'code' | 'name' | 'order' | 'sponsor_companies'
->;
+import { EventPrizeTrackItem, toPrizeTrackItem } from './eventPrizeTypes';
+import { useEventPrizeAdmin } from './useEventPrizeAdmin';
+import AppButton from '@/components/common/AppButton';
 
 type PrizeItemRowProps = {
-  item: PrizeItem;
+  item: EventPrizeTrackItem;
   sponsorNameById: Map<string, string>;
+  onEdit: () => void;
+  onDelete: () => void;
 };
 
-function PrizeItemRow({ item, sponsorNameById }: PrizeItemRowProps): JSX.Element {
+function PrizeItemRow({
+  item,
+  sponsorNameById,
+  onEdit,
+  onDelete,
+}: PrizeItemRowProps): JSX.Element {
   const sponsorIds = item.sponsor_companies ?? [];
   const sponsorNames = formatSponsorNames(sponsorIds, sponsorNameById);
 
   return (
-    <div className="border-b border-gray-200 pb-4 dark:border-borderDark">
+    <div className="flex flex-col gap-3 border-b border-gray-200 pb-4 dark:border-borderDark sm:flex-row sm:items-start sm:justify-between">
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <span className="font-medium">{item.name}</span>
@@ -51,51 +58,74 @@ function PrizeItemRow({ item, sponsorNameById }: PrizeItemRowProps): JSX.Element
           ) : null}
         </div>
       </div>
+      <div className="flex flex-row gap-2">
+        <AppButton size="small" onClick={onEdit}>
+          Edit
+        </AppButton>
+        <AppButton size="small" onClick={onDelete}>
+          Delete
+        </AppButton>
+      </div>
     </div>
   );
 }
 
-type PrizeSectionProps = {
-  title: string;
-  items: PrizeItem[];
+type PrizeItemListProps = {
+  items: EventPrizeTrackItem[];
   sponsorNameById: Map<string, string>;
   emptyMessage: string;
+  onEdit: (item: EventPrizeTrackItem) => void;
+  onDelete: (item: EventPrizeTrackItem) => void;
 };
 
-function PrizeSection({
-  title,
+function PrizeItemList({
   items,
   sponsorNameById,
   emptyMessage,
-}: PrizeSectionProps): JSX.Element {
+  onEdit,
+  onDelete,
+}: PrizeItemListProps): JSX.Element {
+  if (items.length === 0) {
+    return <p className="text-gray-600">{emptyMessage}</p>;
+  }
+
   return (
-    <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">
-        {title}{' '}
-        <span className="text-sm font-normal text-gray-500">({items.length})</span>
-      </h2>
-      {items.length === 0 ? (
-        <p className="text-gray-600">{emptyMessage}</p>
-      ) : (
-        items.map((item) => (
-          <PrizeItemRow
-            key={item.id ?? `${item.code}-${item.name}`}
-            item={item}
-            sponsorNameById={sponsorNameById}
-          />
-        ))
-      )}
-    </section>
+    <div className="flex flex-col gap-4">
+      {items.map((item) => (
+        <PrizeItemRow
+          key={item.id ?? `${item.code}-${item.name}`}
+          item={item}
+          sponsorNameById={sponsorNameById}
+          onEdit={() => onEdit(item)}
+          onDelete={() => void onDelete(item)}
+        />
+      ))}
+    </div>
   );
 }
 
+const PRIZE_TRACKS_DESCRIPTION =
+  'Prize track options shown to applicants and used in event configuration.';
+const HARDWARE_TRACKS_DESCRIPTION =
+  'Hardware track options linked to destiny hardware and sponsor prizes.';
+
 export default function EventPrizesPanel(): JSX.Element {
-  const { eventId, isQueryEnabled } = useAdminEvent();
+  const { eventId, isQueryEnabled, invalidatePrizesCache } = useAdminEvent();
+
   const {
     sponsorNameById,
     isLoading: isLoadingSponsors,
     error: sponsorsError,
   } = useSponsorNameById();
+
+  const {
+    data: eventEngagements,
+    isLoading: isLoadingEngagements,
+    error: engagementsError,
+  } = useSponsoreventengagementsList(
+    { event: eventId },
+    { swr: { enabled: isQueryEnabled } },
+  );
 
   const {
     data: prizeTracks,
@@ -110,48 +140,104 @@ export default function EventPrizesPanel(): JSX.Element {
   } = useEventdestinyhardwareList({ event: eventId }, { swr: { enabled: isQueryEnabled } });
 
   const sortedPrizeTracks = useMemo(
-    () => sortByOrder((prizeTracks ?? []) as EventTrack[]),
+    () => sortByOrder((prizeTracks ?? []) as EventTrack[]).map(toPrizeTrackItem),
     [prizeTracks],
   );
 
   const sortedHardwareTracks = useMemo(
-    () => sortByOrder((hardwareTracks ?? []) as EventDestinyHardware[]),
+    () =>
+      sortByOrder((hardwareTracks ?? []) as EventDestinyHardware[]).map(
+        toPrizeTrackItem,
+      ),
     [hardwareTracks],
   );
 
-  if (isLoadingTracks || isLoadingHardware || isLoadingSponsors) {
+  const sponsorOptions = useMemo(
+    () =>
+      (eventEngagements ?? [])
+        .filter((engagement) => engagement.tier !== null && engagement.tier !== undefined)
+        .map((engagement) => ({
+          value: engagement.sponsor,
+          label: sponsorNameById.get(engagement.sponsor) ?? engagement.sponsor,
+        })),
+    [eventEngagements, sponsorNameById],
+  );
+
+  const {
+    formKind,
+    showForm,
+    itemForForm,
+    defaultOrder,
+    openCreatePrizeTrack,
+    openCreateHardwareTrack,
+    openEditPrizeTrack,
+    openEditHardwareTrack,
+    closeForm,
+    deletePrizeTrack,
+    deleteHardwareTrack,
+    handleFormSuccess,
+  } = useEventPrizeAdmin({
+    eventId,
+    prizeTracks: sortedPrizeTracks,
+    hardwareTracks: sortedHardwareTracks,
+    invalidatePrizesCache,
+  });
+
+  if (isLoadingTracks || isLoadingHardware || isLoadingSponsors || isLoadingEngagements) {
     return <EventPanelLoader />;
   }
 
-  if (tracksError || hardwareError || sponsorsError) {
+  if (tracksError || hardwareError || sponsorsError || engagementsError) {
     return (
       <EventPanelError message="Failed to load prize configuration. Please try again." />
     );
   }
 
-  const hasAnyPrizes =
-    sortedPrizeTracks.length > 0 || sortedHardwareTracks.length > 0;
-
-  if (!hasAnyPrizes) {
-    return (
-      <EventPanelEmpty message="No prize tracks or hardware tracks are configured for this event." />
-    );
-  }
-
   return (
     <div className="flex flex-col gap-8 pb-8">
-      <PrizeSection
+      <EventAdminSection
         title="Prize tracks"
-        items={sortedPrizeTracks}
-        sponsorNameById={sponsorNameById}
-        emptyMessage="No prize tracks are configured for this event."
-      />
-      <PrizeSection
+        description={PRIZE_TRACKS_DESCRIPTION}
+        addLabel="Add prize track"
+        onAdd={openCreatePrizeTrack}
+        count={sortedPrizeTracks.length}
+      >
+        <PrizeItemList
+          items={sortedPrizeTracks}
+          sponsorNameById={sponsorNameById}
+          emptyMessage="No prize tracks are configured for this event yet."
+          onEdit={openEditPrizeTrack}
+          onDelete={deletePrizeTrack}
+        />
+      </EventAdminSection>
+      <EventAdminSection
         title="Hardware tracks"
-        items={sortedHardwareTracks}
-        sponsorNameById={sponsorNameById}
-        emptyMessage="No hardware tracks are configured for this event."
-      />
+        description={HARDWARE_TRACKS_DESCRIPTION}
+        addLabel="Add hardware track"
+        onAdd={openCreateHardwareTrack}
+        count={sortedHardwareTracks.length}
+      >
+        <PrizeItemList
+          items={sortedHardwareTracks}
+          sponsorNameById={sponsorNameById}
+          emptyMessage="No hardware tracks are configured for this event yet."
+          onEdit={openEditHardwareTrack}
+          onDelete={deleteHardwareTrack}
+        />
+      </EventAdminSection>
+
+      {showForm ? (
+        <EventPrizeTrackForm
+          kind={formKind}
+          showDialog={showForm}
+          item={itemForForm}
+          eventId={eventId}
+          defaultOrder={defaultOrder}
+          sponsorOptions={sponsorOptions}
+          onClose={closeForm}
+          onSuccess={() => void handleFormSuccess()}
+        />
+      ) : null}
     </div>
   );
 }

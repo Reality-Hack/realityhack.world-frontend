@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useAdminFormDialog } from '@/components/admin/events/useAdminFormDialog';
 import type { HardwareCount, HardwareDevice, Sponsor } from '@/types/models';
 import {
   HARDWARE_CATALOG_DESCRIPTION,
@@ -57,10 +58,8 @@ export function useHardwareCatalogDeviceAdmin({
   sponsorCompanyId,
   deviceTableSponsorCatalog,
 }: UseHardwareCatalogDeviceAdminArgs): UseHardwareCatalogDeviceAdminResult {
-  const [showHardwareForm, setShowHardwareForm] = useState(false);
-  const [hardwareRowForForm, setHardwareRowForForm] = useState<HardwareCount | null>(null);
-  const [showDeviceForm, setShowDeviceForm] = useState(false);
-  const [deviceForForm, setDeviceForForm] = useState<HardwareDevice | null>(null);
+  const hardwareDialog = useAdminFormDialog<HardwareCount>();
+  const deviceDialog = useAdminFormDialog<HardwareDevice>();
   const [deviceCreateLockedHardwareId, setDeviceCreateLockedHardwareId] = useState<string | null>(
     null,
   );
@@ -85,46 +84,41 @@ export function useHardwareCatalogDeviceAdmin({
 
   const defaultHardwareId = hardwareCatalog?.[0]?.id ?? null;
 
-  const closeHardwareForm = useCallback(() => {
-    setShowHardwareForm(false);
-    setHardwareRowForForm(null);
-  }, []);
-
-  const closeDeviceForm = useCallback(() => {
-    setShowDeviceForm(false);
-    setDeviceForForm(null);
+  const closeDeviceForm = useCallback((): void => {
+    deviceDialog.closeForm();
     setDeviceCreateLockedHardwareId(null);
-  }, []);
+  }, [deviceDialog]);
 
   const catalogSectionConfig = useMemo(
     (): HardwareCatalogSectionConfig => ({
       title: 'Hardware catalog',
       description: HARDWARE_CATALOG_DESCRIPTION,
       addLabel: 'Add hardware',
-      onAdd: () => {
-        setHardwareRowForForm(null);
-        setShowHardwareForm(true);
-      },
+      onAdd: hardwareDialog.openCreate,
       tableProps: {
         data: hardwareCatalog ?? [],
         loading,
         sponsorNameById,
         sponsorCompanyId,
-        onEdit: (row) => {
-          setHardwareRowForForm(row);
-          setShowHardwareForm(true);
-        },
+        onEdit: hardwareDialog.openEdit,
         onCreateDevices: (row) => {
           if (!row.id) return;
-          setDeviceForForm(null);
           setDeviceCreateLockedHardwareId(row.id);
-          setShowDeviceForm(true);
+          deviceDialog.openCreate();
         },
         search: true,
         pagination: true,
       },
     }),
-    [hardwareCatalog, loading, sponsorNameById, sponsorCompanyId],
+    [
+      hardwareCatalog,
+      hardwareDialog.openCreate,
+      hardwareDialog.openEdit,
+      loading,
+      sponsorCompanyId,
+      sponsorNameById,
+      deviceDialog.openCreate,
+    ],
   );
 
   const devicesSectionConfig = useMemo(
@@ -133,34 +127,37 @@ export function useHardwareCatalogDeviceAdmin({
       description: HARDWARE_DEVICES_DESCRIPTION,
       addLabel: 'Add device',
       onAdd: () => {
-        setDeviceForForm(null);
         setDeviceCreateLockedHardwareId(null);
-        setShowDeviceForm(true);
+        deviceDialog.openCreate();
       },
       tableProps: {
         data: devices ?? [],
         hardwareById,
         loading,
         sponsorCatalog: deviceTableSponsorCatalog,
-        onEdit: (row) => {
-          setDeviceForForm(row);
-          setShowDeviceForm(true);
-        },
+        onEdit: deviceDialog.openEdit,
         search: true,
         pagination: true,
       },
     }),
-    [devices, hardwareById, loading, deviceTableSponsorCatalog],
+    [
+      deviceDialog.openCreate,
+      deviceDialog.openEdit,
+      deviceTableSponsorCatalog,
+      devices,
+      hardwareById,
+      loading,
+    ],
   );
 
   return {
     catalogSectionConfig,
     devicesSectionConfig,
-    showHardwareForm,
-    hardwareRowForForm,
-    closeHardwareForm,
-    showDeviceForm,
-    deviceForForm,
+    showHardwareForm: hardwareDialog.showForm,
+    hardwareRowForForm: hardwareDialog.itemForForm,
+    closeHardwareForm: hardwareDialog.closeForm,
+    showDeviceForm: deviceDialog.showForm,
+    deviceForForm: deviceDialog.itemForForm,
     closeDeviceForm,
     deviceHardwareOptions,
     defaultHardwareId,

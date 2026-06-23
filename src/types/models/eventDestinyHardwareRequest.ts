@@ -6,9 +6,9 @@
 
 export interface EventDestinyHardwareRequest {
   /**
-   * Single char code like 'M', 'Q'
+   * Six char code
    * @minLength 1
-   * @maxLength 1
+   * @maxLength 6
    */
   code: string;
   /**
@@ -21,4 +21,5 @@ export interface EventDestinyHardwareRequest {
    * @maximum 2147483647
    */
   order?: number;
+  sponsor_companies?: string[];
 }

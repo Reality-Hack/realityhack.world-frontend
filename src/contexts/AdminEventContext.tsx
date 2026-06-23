@@ -31,6 +31,11 @@ type AdminEventContextType = {
   mutateEvent: KeyedMutator<Event>;
   activateEvent: () => Promise<void>;
   formatEventDate: (date: string) => string;
+  invalidateEventTabCaches: () => Promise<void>;
+  invalidateQuestionsCache: (
+    formType?: ApplicationquestionsListFormType,
+  ) => Promise<void>;
+  invalidatePrizesCache: () => Promise<void>;
 };
 
 const AdminEventContext = createContext<AdminEventContextType | undefined>(
@@ -60,22 +65,50 @@ export function AdminEventProvider({
     return DateTime.fromISO(date).toLocaleString(DateTime.DATETIME_SHORT);
   }, []);
 
-  const invalidateEventTabCaches = useCallback(async (): Promise<void> => {
+  const invalidateQuestionsCache = useCallback(
+    async (
+      formType?: ApplicationquestionsListFormType,
+    ): Promise<void> => {
+      if (formType) {
+        await mutate(
+          getApplicationquestionsListKey({ event: eventId, form_type: formType }),
+        );
+        return;
+      }
+
+      await Promise.all([
+        mutate(
+          getApplicationquestionsListKey({
+            event: eventId,
+            form_type: ApplicationquestionsListFormType.A,
+          }),
+        ),
+        mutate(
+          getApplicationquestionsListKey({
+            event: eventId,
+            form_type: ApplicationquestionsListFormType.R,
+          }),
+        ),
+      ]);
+    },
+    [eventId, mutate],
+  );
+
+  const invalidatePrizesCache = useCallback(async (): Promise<void> => {
     await Promise.all([
-      mutate(getApplicationquestionsListKey({
-        event: eventId,
-        form_type: ApplicationquestionsListFormType.A,
-      })),
-      mutate(getApplicationquestionsListKey({
-        event: eventId,
-        form_type: ApplicationquestionsListFormType.R,
-      })),
       mutate(getEventtracksListKey({ event: eventId })),
       mutate(getEventdestinyhardwareListKey({ event: eventId })),
+    ]);
+  }, [eventId, mutate]);
+
+  const invalidateEventTabCaches = useCallback(async (): Promise<void> => {
+    await Promise.all([
+      invalidateQuestionsCache(),
+      invalidatePrizesCache(),
       mutate(getSponsoreventengagementsListKey({ event: eventId })),
       mutate(getEventsListKey({})),
     ]);
-  }, [eventId, mutate]);
+  }, [eventId, invalidatePrizesCache, invalidateQuestionsCache, mutate]);
 
   const activateEvent = useCallback(async (): Promise<void> => {
     if (!eventId) {
@@ -98,6 +131,9 @@ export function AdminEventProvider({
       mutateEvent,
       activateEvent,
       formatEventDate,
+      invalidateEventTabCaches,
+      invalidateQuestionsCache,
+      invalidatePrizesCache,
     }),
     [
       activateEvent,
@@ -105,6 +141,9 @@ export function AdminEventProvider({
       event,
       eventId,
       formatEventDate,
+      invalidateEventTabCaches,
+      invalidatePrizesCache,
+      invalidateQuestionsCache,
       isLoading,
       isQueryEnabled,
       mutateEvent,

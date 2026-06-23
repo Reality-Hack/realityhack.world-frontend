@@ -4,18 +4,18 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export interface EventTrackRequest {
+export interface PatchedEventDestinyHardwareRequest {
   /**
    * Six char code
    * @minLength 1
    * @maxLength 6
    */
-  code: string;
+  code?: string;
   /**
    * @minLength 1
    * @maxLength 100
    */
-  name: string;
+  name?: string;
   /**
    * @minimum -2147483648
    * @maximum 2147483647

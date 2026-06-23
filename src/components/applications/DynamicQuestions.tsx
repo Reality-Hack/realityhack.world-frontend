@@ -1,8 +1,13 @@
 import React, { useMemo } from 'react';
 import { RadioInput, CheckboxInput, TextAreaInput } from '../Inputs';
 import { useApplicationquestionsList } from '@/types/endpoints';
-import type { ApplicationQuestion, QuestionTypeEnum } from '@/types/models';
+import type { ApplicationQuestion } from '@/types/models';
 import { form_data } from '@/types/application_form_types';
+import {
+  buildQuestionTree,
+  QuestionFormData,
+  shouldShowQuestion,
+} from '@/utils/dynamicQuestions';
 
 interface DynamicQuestionsProps {
   formData: Partial<form_data>;
@@ -23,57 +28,22 @@ const DynamicQuestions: React.FC<DynamicQuestionsProps> = ({
   formData,
   handleChange,
   handleBlur,
-  errors
+  errors,
 }) => {
-  // Fetch questions from API
   const { data: questions, isLoading, error } = useApplicationquestionsList();
 
-  // Separate top-level and child questions
-  const { topLevelQuestions, childrenByParent } = useMemo(() => {
-    if (!questions) return { topLevelQuestions: [], childrenByParent: {} };
-    
-    const topLevel = questions.filter(q => !q.parent_question);
-    const children = questions.filter(q => q.parent_question);
-    
-    const childMap: Record<string, ApplicationQuestion[]> = {};
-    children.forEach(child => {
-      if (child.parent_question) {
-        if (!childMap[child.parent_question]) {
-          childMap[child.parent_question] = [];
-        }
-        childMap[child.parent_question].push(child);
-      }
-    });
-    
-    return { topLevelQuestions: topLevel, childrenByParent: childMap };
-  }, [questions]);
+  const { topLevelQuestions, childrenByParentRecord, questionById } = useMemo(
+    () => buildQuestionTree(questions),
+    [questions],
+  );
 
-  // Check if a child question should be shown
-  const shouldShowQuestion = (question: ApplicationQuestion): boolean => {
-    if (!question.parent_question) return true;
-    
-    // Get parent question
-    const parentQuestion = questions?.find(q => q.id === question.parent_question);
-    if (!parentQuestion) return false;
-    
-    // Get parent response from formData
-    const parentResponse = formData[parentQuestion.question_key as keyof form_data];
-    if (!parentResponse) return false;
-    
-    // If no trigger_choices specified, show if parent has any response
-    if (!question.trigger_choices || question.trigger_choices.length === 0) {
-      return true;
+  const dynamicFormData = formData as QuestionFormData;
+
+  const isQuestionVisible = (question: ApplicationQuestion): boolean => {
+    if (!questions) {
+      return false;
     }
-    
-    // Check if parent response matches any trigger choice
-    // Handle both single values and arrays
-    const responseArray = Array.isArray(parentResponse) 
-      ? parentResponse 
-      : [parentResponse];
-    
-    return responseArray.some(choice => 
-      question.trigger_choices ? (question.trigger_choices as unknown as string[]).includes(String(choice)) : false
-    );
+    return shouldShowQuestion(question, questions, dynamicFormData, questionById);
   };
 
   if (isLoading) {
@@ -83,7 +53,7 @@ const DynamicQuestions: React.FC<DynamicQuestionsProps> = ({
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="py-4 text-red-600">
@@ -102,18 +72,18 @@ const DynamicQuestions: React.FC<DynamicQuestionsProps> = ({
 
   return (
     <div className="space-y-4">
-      {topLevelQuestions.map(question => (
+      {topLevelQuestions.map((question) => (
         <DynamicQuestion
-          key={question.id}
+          key={question.id ?? question.question_key}
           question={question}
           depth={0}
-          formData={formData}
+          formData={dynamicFormData}
           handleChange={handleChange}
           handleBlur={handleBlur}
           errors={errors}
           questions={questions}
-          childrenByParent={childrenByParent}
-          shouldShowQuestion={shouldShowQuestion}
+          childrenByParent={childrenByParentRecord}
+          isQuestionVisible={isQuestionVisible}
         />
       ))}
     </div>
@@ -122,108 +92,67 @@ const DynamicQuestions: React.FC<DynamicQuestionsProps> = ({
 
 export default DynamicQuestions;
 
+type DynamicQuestionProps = {
+  question: ApplicationQuestion;
+  depth: number;
+  formData: QuestionFormData;
+  handleChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => void;
+  handleBlur: (
+    e: React.FocusEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => void;
+  errors: Record<string, string>;
+  questions: ApplicationQuestion[];
+  childrenByParent: Record<string, ApplicationQuestion[]>;
+  isQuestionVisible: (question: ApplicationQuestion) => boolean;
+};
 
-  // Component for rendering a dynamic question
-  const DynamicQuestion: React.FC<{
-    question: ApplicationQuestion;
-    depth: number;
-    formData: Partial<form_data>;
-    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-    handleBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-    errors: Record<string, string>;
-    questions: ApplicationQuestion[] | undefined;
-    childrenByParent: Record<string, ApplicationQuestion[]>;
-    shouldShowQuestion: (question: ApplicationQuestion) => boolean;
-  }> = ({ question, depth, formData, handleChange, handleBlur, errors, questions, childrenByParent, shouldShowQuestion }) => {
-    const questionKey = useMemo(() => question.question_key, [question]);
-    const questionType = useMemo(() => question.question_type, [question]);
-    const currentValue = useMemo(() => {
-      return formData[questionKey as keyof form_data] || '';
-    }, [formData, questionKey, questionType]);
-  
-    if (questionType === 'T' || questionType === 'L') {
-      return (
-        <div className={depth > 0 ? 'pl-4 pb-4' : 'pb-4'}>
-          <TextAreaInput
-            name={questionKey}
-            placeholder={question.placeholder_text || 'Enter your response here.'}
-            value={String(currentValue || '')}
-            onChange={handleChange}
-            error={errors[questionKey]}
-            valid={!errors[questionKey]}
-            onBlur={handleBlur}
-            rows={questionType === 'L' ? 12 : 4}
-          >
-            {question.question_text}
-            {question.required && (
-              <span className="font-bold text-themeSecondary">*</span>
-            )}
-          </TextAreaInput>
-          
-          {question.id && childrenByParent[question.id]?.map((childQuestion: ApplicationQuestion) => (
-            shouldShowQuestion(childQuestion) && (
-              <DynamicQuestion
-                key={childQuestion.id}
-                question={childQuestion}
-                depth={depth + 1}
-                formData={formData}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-                errors={errors}
-                questions={questions}
-                childrenByParent={childrenByParent}
-                shouldShowQuestion={shouldShowQuestion}
-              />
-            )
-          ))}
-        </div>
-      );
-    }
+const DynamicQuestion: React.FC<DynamicQuestionProps> = ({
+  question,
+  depth,
+  formData,
+  handleChange,
+  handleBlur,
+  errors,
+  questions,
+  childrenByParent,
+  isQuestionVisible,
+}) => {
+  const questionKey = question.question_key;
+  const questionType = question.question_type;
+  const currentValue = formData[questionKey];
 
-    const isMultipleChoice = questionType === 'M';
-    const InputComponent = isMultipleChoice ? CheckboxInput : RadioInput;
-    
+  const childQuestions =
+    question.id !== undefined ? (childrenByParent[question.id] ?? []) : [];
+
+  if (questionType === 'T' || questionType === 'L') {
     return (
       <div className={depth > 0 ? 'pl-4 pb-4' : 'pb-4'}>
-        <p className={`pb-2 ${question.required ? '' : 'mb-4'}`}>
+        <TextAreaInput
+          name={questionKey}
+          placeholder={question.placeholder_text || 'Enter your response here.'}
+          value={String(currentValue || '')}
+          onChange={handleChange}
+          error={errors[questionKey]}
+          valid={!errors[questionKey]}
+          onBlur={handleBlur}
+          rows={questionType === 'L' ? 12 : 4}
+        >
           {question.question_text}
-          {question.required && (
+          {question.required ? (
             <span className="font-bold text-themeSecondary">*</span>
-          )}
-        </p>
-        
-        <div className={isMultipleChoice ? 'pl-4' : ''}>
-          {question.choices?.map(choice => {
-            // Determine if this choice is checked
-            let isChecked = false;
-            if (currentValue) {
-              if (Array.isArray(currentValue)) {
-                isChecked = (currentValue as any[]).includes(choice.choice_key);
-              } else {
-                isChecked = String(currentValue) === choice.choice_key;
-              }
-            }
-            
-            return (
-              <InputComponent
-                key={choice.id}
-                name={questionKey}
-                value={choice.choice_key}
-                checked={isChecked}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                label={choice.choice_text}
-                error={errors[questionKey]}
-              />
-            );
-          })}
-        </div>
-        
-        {/* Render child questions if they should be shown */}
-        {question.id && childrenByParent[question.id]?.map((childQuestion: ApplicationQuestion) => (
-          shouldShowQuestion(childQuestion) && (
+          ) : null}
+        </TextAreaInput>
+
+        {childQuestions.map((childQuestion) =>
+          isQuestionVisible(childQuestion) ? (
             <DynamicQuestion
-              key={childQuestion.id}
+              key={childQuestion.id ?? childQuestion.question_key}
               question={childQuestion}
               depth={depth + 1}
               formData={formData}
@@ -232,10 +161,68 @@ export default DynamicQuestions;
               errors={errors}
               questions={questions}
               childrenByParent={childrenByParent}
-              shouldShowQuestion={shouldShowQuestion}
+              isQuestionVisible={isQuestionVisible}
             />
-          )
-        ))}
+          ) : null,
+        )}
       </div>
     );
-  };
+  }
+
+  const isMultipleChoice = questionType === 'M';
+  const InputComponent = isMultipleChoice ? CheckboxInput : RadioInput;
+
+  return (
+    <div className={depth > 0 ? 'pl-4 pb-4' : 'pb-4'}>
+      <p className={`pb-2 ${question.required ? '' : 'mb-4'}`}>
+        {question.question_text}
+        {question.required ? (
+          <span className="font-bold text-themeSecondary">*</span>
+        ) : null}
+      </p>
+
+      <div className={isMultipleChoice ? 'pl-4' : ''}>
+        {question.choices?.map((choice) => {
+          let isChecked = false;
+          if (currentValue) {
+            if (Array.isArray(currentValue)) {
+              isChecked = currentValue.includes(choice.choice_key);
+            } else {
+              isChecked = String(currentValue) === choice.choice_key;
+            }
+          }
+
+          return (
+            <InputComponent
+              key={choice.id ?? choice.choice_key}
+              name={questionKey}
+              value={choice.choice_key}
+              checked={isChecked}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              label={choice.choice_text}
+              error={errors[questionKey]}
+            />
+          );
+        })}
+      </div>
+
+      {childQuestions.map((childQuestion) =>
+        isQuestionVisible(childQuestion) ? (
+          <DynamicQuestion
+            key={childQuestion.id ?? childQuestion.question_key}
+            question={childQuestion}
+            depth={depth + 1}
+            formData={formData}
+            handleChange={handleChange}
+            handleBlur={handleBlur}
+            errors={errors}
+            questions={questions}
+            childrenByParent={childrenByParent}
+            isQuestionVisible={isQuestionVisible}
+          />
+        ) : null,
+      )}
+    </div>
+  );
+};

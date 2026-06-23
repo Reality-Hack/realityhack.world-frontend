@@ -7,16 +7,19 @@
 /**
  * Serializer for question choices
  */
-export interface ApplicationQuestionChoice {
-  readonly id?: string;
-  question: string;
+export interface PatchedApplicationQuestionChoiceRequest {
+  question?: string;
   /**
    * Short code like 'A', 'B', 'Y', 'N', or device keys like 'APPLE_VISION_PRO'
+   * @minLength 1
    * @maxLength 24
    */
-  choice_key: string;
-  /** @maxLength 500 */
-  choice_text: string;
+  choice_key?: string;
+  /**
+   * @minLength 1
+   * @maxLength 500
+   */
+  choice_text?: string;
   /**
    * @minimum -2147483648
    * @maximum 2147483647

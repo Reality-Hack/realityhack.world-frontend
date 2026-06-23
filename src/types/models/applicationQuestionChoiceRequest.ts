@@ -8,6 +8,7 @@
  * Serializer for question choices
  */
 export interface ApplicationQuestionChoiceRequest {
+  question: string;
   /**
    * Short code like 'A', 'B', 'Y', 'N', or device keys like 'APPLE_VISION_PRO'
    * @minLength 1

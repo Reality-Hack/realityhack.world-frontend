@@ -19,8 +19,11 @@ import type {
   Application,
   ApplicationDetail,
   ApplicationQuestion,
+  ApplicationQuestionChoice,
+  ApplicationQuestionChoiceRequest,
   ApplicationQuestionRequest,
   ApplicationRequest,
+  ApplicationquestionchoicesListParams,
   ApplicationquestionsListParams,
   ApplicationsListParams,
   Attendee,
@@ -46,12 +49,14 @@ import type {
   DiscordUsernameRole,
   Event,
   EventDestinyHardware,
+  EventDestinyHardwareRequest,
   EventRequest,
   EventRsvp,
   EventRsvpAttendeeOption,
   EventRsvpDetail,
   EventRsvpRequest,
   EventTrack,
+  EventTrackRequest,
   EventdestinyhardwareListParams,
   EventrsvpsListParams,
   EventsListParams,
@@ -92,6 +97,7 @@ import type {
   MentorHelpRequestRequest,
   MentorhelprequestsListParams,
   MentorhelprequestshistoryListParams,
+  PatchedApplicationQuestionChoiceRequest,
   PatchedApplicationQuestionRequest,
   PatchedApplicationRequest,
   PatchedAttendeePatchRequest,
@@ -99,8 +105,10 @@ import type {
   PatchedAttendeeRSVPRequest,
   PatchedDestinyTeamAttendeeVibeRequest,
   PatchedDestinyTeamUpdateRequest,
+  PatchedEventDestinyHardwareRequest,
   PatchedEventRequest,
   PatchedEventRsvpRequest,
+  PatchedEventTrackRequest,
   PatchedFileUploadRequest,
   PatchedGroupDetailRequest,
   PatchedHardwareCreateRequest,
@@ -173,6 +181,251 @@ import type { ErrorType , BodyType } from '../lib/custom-axios';
 
 
   
+/**
+ * API endpoint for managing choices for single/multiple choice questions.
+ */
+export const applicationquestionchoicesList = (
+    params?: ApplicationquestionchoicesListParams,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<ApplicationQuestionChoice[]>(
+    {url: `/applicationquestionchoices/`, method: 'GET',
+        params
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionchoicesListKey = (params?: ApplicationquestionchoicesListParams,) => [`/applicationquestionchoices/`, ...(params ? [params]: [])] as const;
+
+export type ApplicationquestionchoicesListQueryResult = NonNullable<Awaited<ReturnType<typeof applicationquestionchoicesList>>>
+export type ApplicationquestionchoicesListQueryError = ErrorType<unknown>
+
+export const useApplicationquestionchoicesList = <TError = ErrorType<unknown>>(
+  params?: ApplicationquestionchoicesListParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof applicationquestionchoicesList>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getApplicationquestionchoicesListKey(params) : null);
+  const swrFn = () => applicationquestionchoicesList(params, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for managing choices for single/multiple choice questions.
+ */
+export const applicationquestionchoicesCreate = (
+    applicationQuestionChoiceRequest: BodyType<ApplicationQuestionChoiceRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<ApplicationQuestionChoice>(
+    {url: `/applicationquestionchoices/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: applicationQuestionChoiceRequest
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionchoicesCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: ApplicationQuestionChoiceRequest }): Promise<ApplicationQuestionChoice> => {
+    return applicationquestionchoicesCreate(arg, options);
+  }
+}
+export const getApplicationquestionchoicesCreateMutationKey = () => [`/applicationquestionchoices/`] as const;
+
+export type ApplicationquestionchoicesCreateMutationResult = NonNullable<Awaited<ReturnType<typeof applicationquestionchoicesCreate>>>
+export type ApplicationquestionchoicesCreateMutationError = ErrorType<unknown>
+
+export const useApplicationquestionchoicesCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationquestionchoicesCreate>>, TError, Key, ApplicationQuestionChoiceRequest, Awaited<ReturnType<typeof applicationquestionchoicesCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationquestionchoicesCreateMutationKey();
+  const swrFn = getApplicationquestionchoicesCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for managing choices for single/multiple choice questions.
+ */
+export const applicationquestionchoicesRetrieve = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<ApplicationQuestionChoice>(
+    {url: `/applicationquestionchoices/${id}/`, method: 'GET'
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionchoicesRetrieveKey = (id: string,) => [`/applicationquestionchoices/${id}/`] as const;
+
+export type ApplicationquestionchoicesRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof applicationquestionchoicesRetrieve>>>
+export type ApplicationquestionchoicesRetrieveQueryError = ErrorType<unknown>
+
+export const useApplicationquestionchoicesRetrieve = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof applicationquestionchoicesRetrieve>>, TError> & { swrKey?: Key, enabled?: boolean }, request?: SecondParameter<typeof customAxios> }
+) => {
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const isEnabled = swrOptions?.enabled !== false && !!(id)
+  const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getApplicationquestionchoicesRetrieveKey(id) : null);
+  const swrFn = () => applicationquestionchoicesRetrieve(id, requestOptions)
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for managing choices for single/multiple choice questions.
+ */
+export const applicationquestionchoicesUpdate = (
+    id: string,
+    applicationQuestionChoiceRequest: BodyType<ApplicationQuestionChoiceRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<ApplicationQuestionChoice>(
+    {url: `/applicationquestionchoices/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: applicationQuestionChoiceRequest
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionchoicesUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: ApplicationQuestionChoiceRequest }): Promise<ApplicationQuestionChoice> => {
+    return applicationquestionchoicesUpdate(id, arg, options);
+  }
+}
+export const getApplicationquestionchoicesUpdateMutationKey = (id: string,) => [`/applicationquestionchoices/${id}/`] as const;
+
+export type ApplicationquestionchoicesUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof applicationquestionchoicesUpdate>>>
+export type ApplicationquestionchoicesUpdateMutationError = ErrorType<unknown>
+
+export const useApplicationquestionchoicesUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationquestionchoicesUpdate>>, TError, Key, ApplicationQuestionChoiceRequest, Awaited<ReturnType<typeof applicationquestionchoicesUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationquestionchoicesUpdateMutationKey(id);
+  const swrFn = getApplicationquestionchoicesUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for managing choices for single/multiple choice questions.
+ */
+export const applicationquestionchoicesPartialUpdate = (
+    id: string,
+    patchedApplicationQuestionChoiceRequest: BodyType<PatchedApplicationQuestionChoiceRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<ApplicationQuestionChoice>(
+    {url: `/applicationquestionchoices/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedApplicationQuestionChoiceRequest
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionchoicesPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedApplicationQuestionChoiceRequest }): Promise<ApplicationQuestionChoice> => {
+    return applicationquestionchoicesPartialUpdate(id, arg, options);
+  }
+}
+export const getApplicationquestionchoicesPartialUpdateMutationKey = (id: string,) => [`/applicationquestionchoices/${id}/`] as const;
+
+export type ApplicationquestionchoicesPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof applicationquestionchoicesPartialUpdate>>>
+export type ApplicationquestionchoicesPartialUpdateMutationError = ErrorType<unknown>
+
+export const useApplicationquestionchoicesPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationquestionchoicesPartialUpdate>>, TError, Key, PatchedApplicationQuestionChoiceRequest, Awaited<ReturnType<typeof applicationquestionchoicesPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationquestionchoicesPartialUpdateMutationKey(id);
+  const swrFn = getApplicationquestionchoicesPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for managing choices for single/multiple choice questions.
+ */
+export const applicationquestionchoicesDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/applicationquestionchoices/${id}/`, method: 'DELETE'
+    },
+    options);
+  }
+
+
+
+export const getApplicationquestionchoicesDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return applicationquestionchoicesDestroy(id, options);
+  }
+}
+export const getApplicationquestionchoicesDestroyMutationKey = (id: string,) => [`/applicationquestionchoices/${id}/`] as const;
+
+export type ApplicationquestionchoicesDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof applicationquestionchoicesDestroy>>>
+export type ApplicationquestionchoicesDestroyMutationError = ErrorType<unknown>
+
+export const useApplicationquestionchoicesDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationquestionchoicesDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof applicationquestionchoicesDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationquestionchoicesDestroyMutationKey(id);
+  const swrFn = getApplicationquestionchoicesDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
 /**
  * Return questions for an event, ordered by order field.
  */
@@ -1858,7 +2111,7 @@ export const useDiscordDestroy = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint for viewing event-scoped destiny hardware choices.
+ * API endpoint for event-scoped hardware track choices.
  */
 export const eventdestinyhardwareList = (
     params?: EventdestinyhardwareListParams,
@@ -1895,7 +2148,50 @@ export const useEventdestinyhardwareList = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint for viewing event-scoped destiny hardware choices.
+ * API endpoint for event-scoped hardware track choices.
+ */
+export const eventdestinyhardwareCreate = (
+    eventDestinyHardwareRequest: BodyType<EventDestinyHardwareRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventDestinyHardware>(
+    {url: `/eventdestinyhardware/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: eventDestinyHardwareRequest
+    },
+    options);
+  }
+
+
+
+export const getEventdestinyhardwareCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: EventDestinyHardwareRequest }): Promise<EventDestinyHardware> => {
+    return eventdestinyhardwareCreate(arg, options);
+  }
+}
+export const getEventdestinyhardwareCreateMutationKey = () => [`/eventdestinyhardware/`] as const;
+
+export type EventdestinyhardwareCreateMutationResult = NonNullable<Awaited<ReturnType<typeof eventdestinyhardwareCreate>>>
+export type EventdestinyhardwareCreateMutationError = ErrorType<unknown>
+
+export const useEventdestinyhardwareCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventdestinyhardwareCreate>>, TError, Key, EventDestinyHardwareRequest, Awaited<ReturnType<typeof eventdestinyhardwareCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventdestinyhardwareCreateMutationKey();
+  const swrFn = getEventdestinyhardwareCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for event-scoped hardware track choices.
  */
 export const eventdestinyhardwareRetrieve = (
     id: string,
@@ -1923,6 +2219,135 @@ export const useEventdestinyhardwareRetrieve = <TError = ErrorType<unknown>>(
   const swrFn = () => eventdestinyhardwareRetrieve(id, requestOptions)
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for event-scoped hardware track choices.
+ */
+export const eventdestinyhardwareUpdate = (
+    id: string,
+    eventDestinyHardwareRequest: BodyType<EventDestinyHardwareRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventDestinyHardware>(
+    {url: `/eventdestinyhardware/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: eventDestinyHardwareRequest
+    },
+    options);
+  }
+
+
+
+export const getEventdestinyhardwareUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: EventDestinyHardwareRequest }): Promise<EventDestinyHardware> => {
+    return eventdestinyhardwareUpdate(id, arg, options);
+  }
+}
+export const getEventdestinyhardwareUpdateMutationKey = (id: string,) => [`/eventdestinyhardware/${id}/`] as const;
+
+export type EventdestinyhardwareUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof eventdestinyhardwareUpdate>>>
+export type EventdestinyhardwareUpdateMutationError = ErrorType<unknown>
+
+export const useEventdestinyhardwareUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventdestinyhardwareUpdate>>, TError, Key, EventDestinyHardwareRequest, Awaited<ReturnType<typeof eventdestinyhardwareUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventdestinyhardwareUpdateMutationKey(id);
+  const swrFn = getEventdestinyhardwareUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for event-scoped hardware track choices.
+ */
+export const eventdestinyhardwarePartialUpdate = (
+    id: string,
+    patchedEventDestinyHardwareRequest: BodyType<PatchedEventDestinyHardwareRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventDestinyHardware>(
+    {url: `/eventdestinyhardware/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedEventDestinyHardwareRequest
+    },
+    options);
+  }
+
+
+
+export const getEventdestinyhardwarePartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedEventDestinyHardwareRequest }): Promise<EventDestinyHardware> => {
+    return eventdestinyhardwarePartialUpdate(id, arg, options);
+  }
+}
+export const getEventdestinyhardwarePartialUpdateMutationKey = (id: string,) => [`/eventdestinyhardware/${id}/`] as const;
+
+export type EventdestinyhardwarePartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof eventdestinyhardwarePartialUpdate>>>
+export type EventdestinyhardwarePartialUpdateMutationError = ErrorType<unknown>
+
+export const useEventdestinyhardwarePartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventdestinyhardwarePartialUpdate>>, TError, Key, PatchedEventDestinyHardwareRequest, Awaited<ReturnType<typeof eventdestinyhardwarePartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventdestinyhardwarePartialUpdateMutationKey(id);
+  const swrFn = getEventdestinyhardwarePartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for event-scoped hardware track choices.
+ */
+export const eventdestinyhardwareDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/eventdestinyhardware/${id}/`, method: 'DELETE'
+    },
+    options);
+  }
+
+
+
+export const getEventdestinyhardwareDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return eventdestinyhardwareDestroy(id, options);
+  }
+}
+export const getEventdestinyhardwareDestroyMutationKey = (id: string,) => [`/eventdestinyhardware/${id}/`] as const;
+
+export type EventdestinyhardwareDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof eventdestinyhardwareDestroy>>>
+export type EventdestinyhardwareDestroyMutationError = ErrorType<unknown>
+
+export const useEventdestinyhardwareDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventdestinyhardwareDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof eventdestinyhardwareDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventdestinyhardwareDestroyMutationKey(id);
+  const swrFn = getEventdestinyhardwareDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
@@ -2449,7 +2874,7 @@ export const useEventsGetActiveRetrieve = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint for viewing event-scoped track choices.
+ * API endpoint for event-scoped prize track choices.
  */
 export const eventtracksList = (
     params?: EventtracksListParams,
@@ -2486,7 +2911,50 @@ export const useEventtracksList = <TError = ErrorType<unknown>>(
 }
 
 /**
- * API endpoint for viewing event-scoped track choices.
+ * API endpoint for event-scoped prize track choices.
+ */
+export const eventtracksCreate = (
+    eventTrackRequest: BodyType<EventTrackRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventTrack>(
+    {url: `/eventtracks/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: eventTrackRequest
+    },
+    options);
+  }
+
+
+
+export const getEventtracksCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: EventTrackRequest }): Promise<EventTrack> => {
+    return eventtracksCreate(arg, options);
+  }
+}
+export const getEventtracksCreateMutationKey = () => [`/eventtracks/`] as const;
+
+export type EventtracksCreateMutationResult = NonNullable<Awaited<ReturnType<typeof eventtracksCreate>>>
+export type EventtracksCreateMutationError = ErrorType<unknown>
+
+export const useEventtracksCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventtracksCreate>>, TError, Key, EventTrackRequest, Awaited<ReturnType<typeof eventtracksCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventtracksCreateMutationKey();
+  const swrFn = getEventtracksCreateMutationFetcher(requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for event-scoped prize track choices.
  */
 export const eventtracksRetrieve = (
     id: string,
@@ -2514,6 +2982,135 @@ export const useEventtracksRetrieve = <TError = ErrorType<unknown>>(
   const swrFn = () => eventtracksRetrieve(id, requestOptions)
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for event-scoped prize track choices.
+ */
+export const eventtracksUpdate = (
+    id: string,
+    eventTrackRequest: BodyType<EventTrackRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventTrack>(
+    {url: `/eventtracks/${id}/`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: eventTrackRequest
+    },
+    options);
+  }
+
+
+
+export const getEventtracksUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: EventTrackRequest }): Promise<EventTrack> => {
+    return eventtracksUpdate(id, arg, options);
+  }
+}
+export const getEventtracksUpdateMutationKey = (id: string,) => [`/eventtracks/${id}/`] as const;
+
+export type EventtracksUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof eventtracksUpdate>>>
+export type EventtracksUpdateMutationError = ErrorType<unknown>
+
+export const useEventtracksUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventtracksUpdate>>, TError, Key, EventTrackRequest, Awaited<ReturnType<typeof eventtracksUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventtracksUpdateMutationKey(id);
+  const swrFn = getEventtracksUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for event-scoped prize track choices.
+ */
+export const eventtracksPartialUpdate = (
+    id: string,
+    patchedEventTrackRequest: BodyType<PatchedEventTrackRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<EventTrack>(
+    {url: `/eventtracks/${id}/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedEventTrackRequest
+    },
+    options);
+  }
+
+
+
+export const getEventtracksPartialUpdateMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: PatchedEventTrackRequest }): Promise<EventTrack> => {
+    return eventtracksPartialUpdate(id, arg, options);
+  }
+}
+export const getEventtracksPartialUpdateMutationKey = (id: string,) => [`/eventtracks/${id}/`] as const;
+
+export type EventtracksPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof eventtracksPartialUpdate>>>
+export type EventtracksPartialUpdateMutationError = ErrorType<unknown>
+
+export const useEventtracksPartialUpdate = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventtracksPartialUpdate>>, TError, Key, PatchedEventTrackRequest, Awaited<ReturnType<typeof eventtracksPartialUpdate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventtracksPartialUpdateMutationKey(id);
+  const swrFn = getEventtracksPartialUpdateMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * API endpoint for event-scoped prize track choices.
+ */
+export const eventtracksDestroy = (
+    id: string,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/eventtracks/${id}/`, method: 'DELETE'
+    },
+    options);
+  }
+
+
+
+export const getEventtracksDestroyMutationFetcher = (id: string, options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, __: { arg: Arguments }): Promise<void> => {
+    return eventtracksDestroy(id, options);
+  }
+}
+export const getEventtracksDestroyMutationKey = (id: string,) => [`/eventtracks/${id}/`] as const;
+
+export type EventtracksDestroyMutationResult = NonNullable<Awaited<ReturnType<typeof eventtracksDestroy>>>
+export type EventtracksDestroyMutationError = ErrorType<unknown>
+
+export const useEventtracksDestroy = <TError = ErrorType<unknown>>(
+  id: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof eventtracksDestroy>>, TError, Key, Arguments, Awaited<ReturnType<typeof eventtracksDestroy>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getEventtracksDestroyMutationKey(id);
+  const swrFn = getEventtracksDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,
