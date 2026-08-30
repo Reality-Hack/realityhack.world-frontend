@@ -17,6 +17,7 @@ import AdminHardwareLayout from '@/app/(dashboard)/admin/hardware/layout';
 import AdminRsvpLayout from '@/app/(dashboard)/admin/rsvp/layout';
 import AdminApplicationsLayout from '@/app/(dashboard)/admin/applications/layout';
 import AdminUsersLayout from '@/app/(dashboard)/admin/users/layout';
+import AdminEventsLayout from '@/app/(dashboard)/admin/events/[id]/layout';
 
 // Lazy-loaded pages
 const ApplyPage = lazy(() => import('@/app/apply/page'));
@@ -54,7 +55,17 @@ const TeamFormationFinalTeam = lazy(() => import('@/app/(dashboard)/team-formati
 const AdminDashboard = lazy(() => import('@/app/(dashboard)/admin/page'));
 const AdminCheckin = lazy(() => import('@/app/(dashboard)/admin/checkin/page'));
 const AdminEvents = lazy(() => import('@/app/(dashboard)/admin/events/page'));
-const AdminEventsDetail = lazy(() => import('@/app/(dashboard)/admin/events/[id]/page'));
+const AdminEventsDetailIndex = lazy(() => import('@/app/(dashboard)/admin/events/[id]/page'));
+const AdminEventsApplicationQuestions = lazy(
+  () => import('@/app/(dashboard)/admin/events/[id]/application-questions/page'),
+);
+const AdminEventsRsvpQuestions = lazy(
+  () => import('@/app/(dashboard)/admin/events/[id]/rsvp-questions/page'),
+);
+const AdminEventsPrizes = lazy(() => import('@/app/(dashboard)/admin/events/[id]/prizes/page'));
+const AdminEventsSponsors = lazy(
+  () => import('@/app/(dashboard)/admin/events/[id]/sponsors/page'),
+);
 const AdminMarkdown = lazy(() => import('@/app/(dashboard)/admin/markdown/page'));
 const AdminWorkshops = lazy(() => import('@/app/(dashboard)/admin/workshops/page'));
 const AdminTeams = lazy(() => import('@/app/(dashboard)/admin/teams/page'));
@@ -163,7 +174,24 @@ export const router = createBrowserRouter([
           { index: true, element: <AdminDashboard /> },
           { path: 'checkin', element: <AdminCheckin /> },
           { path: 'events', element: <AdminEvents /> },
-          { path: 'events/:id', element: <AdminEventsDetail /> },
+          {
+            path: 'events/:id',
+            element: (
+              <AdminEventsLayout>
+                <Outlet />
+              </AdminEventsLayout>
+            ),
+            children: [
+              { index: true, element: <AdminEventsDetailIndex /> },
+              {
+                path: 'application-questions',
+                element: <AdminEventsApplicationQuestions />,
+              },
+              { path: 'rsvp-questions', element: <AdminEventsRsvpQuestions /> },
+              { path: 'prizes', element: <AdminEventsPrizes /> },
+              { path: 'sponsors', element: <AdminEventsSponsors /> },
+            ],
+          },
           { path: 'markdown', element: <AdminMarkdown /> },
           { path: 'workshops', element: <AdminWorkshops /> },
           { path: 'teams', element: <AdminTeams /> },

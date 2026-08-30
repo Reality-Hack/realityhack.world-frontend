@@ -2,10 +2,10 @@ import { createApplication, fileUpload } from '@/app/api/application';
 import Layout from '@/components/HotkeyLayout';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import { useSession } from '@/auth/client';
 import React, { useState } from 'react';
 import { Modal } from '@mui/material';
 import Loader from '../Loader';
+import { useEventsGetActiveRetrieve } from '@/types/endpoints';
 
 interface AnyAppProps {
   tabs: React.ReactNode[];
@@ -24,11 +24,10 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
   acceptedFiles,
   ...formData
 }) {
-  const { data: session } = useSession();
   const DEBUG = false;
   const [selectedTab, setSelectedTab] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
-
+  const { data: activeEvent } = useEventsGetActiveRetrieve();
   const handleTabChange = (_event: any, newValue: number) => {
     setSelectedTab(newValue);
   };
@@ -60,15 +59,6 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
       }
     }
 
-    if (updatedPayload.hardware_hack_interest === null || 
-        updatedPayload.hardware_hack_interest === undefined) {
-      updatedPayload.hardware_hack_interest = 'A';
-    }
-    
-    if (!Array.isArray(updatedPayload.hardware_hack_detail) || 
-        updatedPayload.hardware_hack_detail.length === 0) {
-      updatedPayload.hardware_hack_detail = ['H'];
-    }
 
     // Assuming updatedPayload.middle_name may contain a "blank" character like a space
     if (updatedPayload.middle_name) {
@@ -138,7 +128,7 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
           <div className="w-[250px] h-[250px] mt-8 mx-auto bg-logocolor dark:bg-logobw bg-contain bg-no-repeat bg-center" />
           <div className="pb-8">
             <h1 className="py-1 text-2xl leading-8 text-center text-themeSecondary drop-shadow-md font-ethnocentric">
-              Reality Hack at MIT 2026
+              {activeEvent?.name}
             </h1>
             <h2 className="text-2xl font-bold leading-8 text-center text-themeYellow drop-shadow-md">
               {' '}

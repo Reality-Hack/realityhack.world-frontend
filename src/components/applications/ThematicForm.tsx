@@ -1,11 +1,11 @@
 import React from 'react';
-import {
-  form_data,
-} from '@/types/application_form_types';
+import type { ApplicationQuestion } from '@/types/models';
+import type { QuestionFormData } from '@/utils/dynamicQuestions';
 import DynamicQuestions from './DynamicQuestions';
 
 interface FormProps {
-  formData: Partial<form_data>;
+  questions: ApplicationQuestion[];
+  formData: QuestionFormData;
   handleChange: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -20,20 +20,22 @@ interface FormProps {
 }
 
 const ThematicForm: React.FC<FormProps> = ({
+  questions,
   formData,
   handleChange,
   handleBlur,
-  errors
+  errors,
 }) => {
   return (
     <div className="px-6">
       <p className="mb-4 text-xl font-bold text-purple-900">Thematic</p>
-        <DynamicQuestions
-          formData={formData}
-          handleChange={handleChange}
-          handleBlur={handleBlur}
-          errors={errors}
-        />
+      <DynamicQuestions
+        questions={questions}
+        formData={formData}
+        handleChange={handleChange}
+        handleBlur={handleBlur}
+        errors={errors}
+      />
     </div>
   );
 };

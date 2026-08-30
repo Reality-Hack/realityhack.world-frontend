@@ -3,9 +3,15 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
+import type { ApplicationquestionsListFormType } from './applicationquestionsListFormType';
 
 export type ApplicationquestionsListParams = {
 event?: string;
+/**
+ * * `A` - Application
+* `R` - RSVP
+ */
+form_type?: ApplicationquestionsListFormType;
 parent_question?: string;
 question_key?: string;
 /**

@@ -6,6 +6,7 @@
 import type { QuestionTypeEnum } from './questionTypeEnum';
 import type { ApplicationQuestionTriggerChoices } from './applicationQuestionTriggerChoices';
 import type { ApplicationQuestionChoice } from './applicationQuestionChoice';
+import type { FormTypeEnum } from './formTypeEnum';
 
 /**
  * Serializer for application questions with nested choices
@@ -47,6 +48,7 @@ export interface ApplicationQuestion {
    * @nullable
    */
   min_length?: number | null;
+  form_type?: FormTypeEnum;
   /**
    * Placeholder text for text inputs
    * @maxLength 500

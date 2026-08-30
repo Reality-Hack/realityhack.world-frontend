@@ -27,8 +27,8 @@ import {
   initializeDynamicQuestions,
   getDynamicRequiredFields,
   validateDynamicQuestion,
-  isThematicQuestion,
-  getQuestionForField
+  isConfigurableQuestion,
+  getQuestionForField,
 } from '@/utils/dynamicQuestions';
 
 const Application = () => {
@@ -132,12 +132,9 @@ const Application = () => {
 
   useEffect(() => {
     if (dynamicQuestions && dynamicQuestions.length > 0) {
-      setFormData(prev => {
-        const thematicQuestions = dynamicQuestions.filter(q => 
-          isThematicQuestion(q.question_key)
-        );
-        return initializeDynamicQuestions(thematicQuestions, prev);
-      });
+      setFormData((prev) =>
+        initializeDynamicQuestions(dynamicQuestions, prev),
+      );
     }
   }, [dynamicQuestions]);
 
@@ -289,7 +286,7 @@ const Application = () => {
 
       const dynamicQuestion = getQuestionForField(fieldName, dynamicQuestions);
 
-      if (dynamicQuestion && isThematicQuestion(fieldName)) {
+      if (dynamicQuestion && isConfigurableQuestion(fieldName, dynamicQuestions)) {
         const validationError = validateDynamicQuestion(
           dynamicQuestion,
           fieldValue,
@@ -366,7 +363,7 @@ const Application = () => {
       
       const dynamicQuestion = getQuestionForField(field, dynamicQuestions);
 
-      if (dynamicQuestion && isThematicQuestion(field)) {
+      if (dynamicQuestion && isConfigurableQuestion(field, dynamicQuestions)) {
         const validationError = validateDynamicQuestion(
           dynamicQuestion,
           fieldValue,
@@ -432,13 +429,7 @@ const Application = () => {
         : [])
     ];
 
-    const thematicQuestions = dynamicQuestions?.filter(q => 
-      isThematicQuestion(q.question_key)
-    );
-    const updatedThematic = getDynamicRequiredFields(
-      thematicQuestions,
-      formData
-    );
+    const updatedThematic = getDynamicRequiredFields(dynamicQuestions, formData);
 
     const updatedDiversityInclusion = [
       ...(formData.gender_identity &&
@@ -669,6 +660,7 @@ const Application = () => {
     />,
     <ThematicForm
       key={5}
+      questions={dynamicQuestions ?? []}
       formData={formData}
       handleBlur={handleBlur}
       handleChange={handleChange}

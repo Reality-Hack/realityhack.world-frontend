@@ -11,7 +11,13 @@
     "gen-types": "orval --config ./orval.config.js",
     "test-server": "cp .env.test .env.local && npm run build && npm run preview",
     "test": "npx playwright test",
+    "test:unit": "vitest run",
     "test:debug": "npx playwright test --debug"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.0",
@@ -28,7 +34,6 @@
     "jwt-decode": "^3.1.2",
     "jwt-encode": "^1.0.1",
     "keycloak-js": "^26.2.3",
-    "react-router-dom": "^7.4.0",
     "konva": "^9.3.20",
     "luxon": "^3.6.1",
     "qr-scanner": "^1.4.2",
@@ -39,6 +44,7 @@
     "react-konva": "^18.2.10",
     "react-markdown": "^9.1.0",
     "react-qr-code": "^2.0.15",
+    "react-router-dom": "^7.4.0",
     "react-use-websocket": "^4.13.0",
     "sonner": "^1.7.4",
     "swr": "^2.3.4",
@@ -46,13 +52,12 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.51.1",
-    "@vitejs/plugin-react": "^6.0.1",
-    "vite": "^8.0.1",
     "@tailwindcss/typography": "^0.5.16",
     "@types/luxon": "^3.6.2",
     "@types/node": "20.4.2",
     "@types/react": "18.2.15",
     "@types/react-dom": "18.3.1",
+    "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.57",
     "eslint-config-prettier": "^9.1.0",
@@ -62,6 +67,8 @@
     "postcss": "^8.4.35",
     "prettier": "^3.5.3",
     "tailwindcss": "^3.4.15",
-    "typescript": "5.6.3"
+    "typescript": "5.6.3",
+    "vite": "^8.0.1",
+    "vitest": "^3.2.6"
   }
 }

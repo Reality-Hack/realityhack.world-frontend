@@ -6,9 +6,9 @@
 
 export interface EventTrackRequest {
   /**
-   * Single char code like 'C', 'S'
+   * Six char code
    * @minLength 1
-   * @maxLength 1
+   * @maxLength 6
    */
   code: string;
   /**
@@ -21,4 +21,5 @@ export interface EventTrackRequest {
    * @maximum 2147483647
    */
   order?: number;
+  sponsor_companies?: string[];
 }

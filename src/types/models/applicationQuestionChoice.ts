@@ -9,9 +9,10 @@
  */
 export interface ApplicationQuestionChoice {
   readonly id?: string;
+  question: string;
   /**
-   * Short code like 'A', 'B', 'Y', 'N'
-   * @maxLength 10
+   * Short code like 'A', 'B', 'Y', 'N', or device keys like 'APPLE_VISION_PRO'
+   * @maxLength 24
    */
   choice_key: string;
   /** @maxLength 500 */
