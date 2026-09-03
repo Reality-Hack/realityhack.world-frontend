@@ -12,7 +12,7 @@ primary_region = 'ewr'
   [build.args]
     VITE_BACKEND_URL="https://dev-api.realityhack.world"
     VITE_BACKEND_WS_URL="wss://dev-api.realityhack.world"
-    VITE_TEAM_FORMATION_STAGE="1"
+    VITE_TEAM_FORMATION_STAGE="0"
 
     # default features
     VITE_IS_HOME_ENABLED="true"
@@ -35,6 +35,7 @@ primary_region = 'ewr'
     VITE_IS_RESOURCES_TAB_ENABLED="false"
     VITE_IS_EVENT_GUIDE_ENABLED="false"
     VITE_IS_HACKERS_MET_ENABLED="true"
+    VITE_IS_TEAM_FORMATION_INTERESTS_ENABLED="false"
     VITE_IS_LIGHTHOUSES_ENABLED="false"
     VITE_IS_EVENTS_ENABLED="true"
     VITE_IS_SPONSOR_ADMIN_ENABLED="true"
