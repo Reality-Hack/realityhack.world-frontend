@@ -5,10 +5,8 @@
  */
 
 /**
- * * `AI` - Accepted, In-Person
-* `AO` - Accepted, Online
-* `WI` - Wait-list, In-Person
-* `WO` - Wait-list, Online
+ * * `A` - Accepted
+* `W` - Waitlist
 * `D` - Declined
  */
 export type ApplicationStatusEnum = typeof ApplicationStatusEnum[keyof typeof ApplicationStatusEnum];
@@ -16,9 +14,7 @@ export type ApplicationStatusEnum = typeof ApplicationStatusEnum[keyof typeof Ap
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ApplicationStatusEnum = {
-  AI: 'AI',
-  AO: 'AO',
-  WI: 'WI',
-  WO: 'WO',
+  A: 'A',
+  W: 'W',
   D: 'D',
 } as const;

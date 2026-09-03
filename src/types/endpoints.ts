@@ -177,11 +177,11 @@ import { customAxios } from '../lib/custom-axios';
 import type { ErrorType , BodyType } from '../lib/custom-axios';
 
 
-  
+
   type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
-  
+
 /**
  * API endpoint for managing choices for single/multiple choice questions.
  */
@@ -2038,7 +2038,7 @@ export const useDestinyteamsDestroy = <TError = ErrorType<unknown>>(
  * API Endpoint that allows for Discord information to be viewed or edited.
  */
 export const discordList = (
-    
+
  options?: SecondParameter<typeof customAxios>) => {
     return customAxios<DiscordUsernameRole[]>(
     {url: `/discord/`, method: 'GET'
@@ -2605,7 +2605,7 @@ export const useEventrsvpsDestroy = <TError = ErrorType<unknown>>(
  * Returns a minimal list of attendees (id, first_name, last_name, checked_in_at) from event RSVPs for the active event. Intended for team attendee picker dropdowns.
  */
 export const eventrsvpsAttendeeOptionsList = (
-    
+
  options?: SecondParameter<typeof customAxios>) => {
     return customAxios<EventRsvpAttendeeOption[]>(
     {url: `/eventrsvps/attendee-options/`, method: 'GET'
@@ -2839,10 +2839,10 @@ export const useEventsPartialUpdate = <TError = ErrorType<unknown>>(
 }
 
 /**
- * Get the active event. Public endpoint — no authentication required.
+ * Get the active event. Public endpoint.
  */
 export const eventsGetActiveRetrieve = (
-    
+
  options?: SecondParameter<typeof customAxios>) => {
     return customAxios<PublicEvent>(
     {url: `/events/get-active/`, method: 'GET'
@@ -4348,7 +4348,7 @@ export const useHardwarerequestsDestroy = <TError = ErrorType<unknown>>(
  * API endpoint that allows Reality Kits to be viewed or edited.
  */
 export const lighthousesList = (
-    
+
  options?: SecondParameter<typeof customAxios>) => {
     return customAxios<LightHouse[]>(
     {url: `/lighthouses/`, method: 'GET'
@@ -4672,7 +4672,7 @@ export const useLocationsDestroy = <TError = ErrorType<unknown>>(
  * Get detailed information about an authenticated user.
  */
 export const meRetrieve = (
-    
+
  options?: SecondParameter<typeof customAxios>) => {
     return customAxios<AttendeeDetail>(
     {url: `/me/`, method: 'GET'
@@ -7931,4 +7931,3 @@ export const useWorkshopsDestroy = <TError = ErrorType<unknown>>(
     ...query
   }
 }
-
