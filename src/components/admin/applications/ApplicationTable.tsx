@@ -1,15 +1,19 @@
 'use client';
+import { applicationOptions } from '@/app/api/application';
 import {
-  updateApplication,
-  applicationOptions
-} from '@/app/api/application';
-import { useApplicationsList } from '@/types/endpoints';
+  applicationsPartialUpdate,
+  useApplicationsList,
+} from '@/types/endpoints';
 import { getUploadedFile } from '@/app/api/uploaded_files';
 import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 import CustomSelect from '@/components/CustomSelect';
 import Table from '@/components/Table';
-import { status } from '@/types/types';
-import { Application, ApplicationDetail, ApplicationsListParticipationClass } from '@/types/models';
+import {
+  ApplicationDetail,
+  ApplicationsListParticipationClass,
+  ApplicationStatusEnum,
+  PatchedApplicationRequest,
+} from '@/types/models';
 import Box from '@mui/material/Box';
 import { ColumnDef, Row, createColumnHelper } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
@@ -20,46 +24,33 @@ import ReviewPage from '../ReviewPage';
 import { toast } from 'sonner';
 import Loader from '@/components/Loader';
 
-interface ApplicationTableProps {
-  type: ApplicationsListParticipationClass;
-}
-
 const ApplicationStatusOptions: {
   label: string;
-  value: status;
+  value: ApplicationStatusEnum;
 }[] = [
   {
-    label: 'Accepted In Person',
-    value: status.accepted_in_person
+    label: 'Accepted',
+    value: ApplicationStatusEnum.A
   },
   {
-    label: 'Accepted Online',
-    value: status.accepted_online
-  },
-  {
-    label: 'Waitlist In Person',
-    value: status.waitlist_in_person
-  },
-  {
-    label: 'Waitlist Online',
-    value: status.waitlist_online
+    label: 'Waitlisted',
+    value: ApplicationStatusEnum.W
   },
   {
     label: 'Declined',
-    value: status.declined
+    value: ApplicationStatusEnum.D
   }
 ];
 
-export default function ApplicationTable({ type }: ApplicationTableProps) {
+export default function ApplicationTable({ type }: { type: ApplicationsListParticipationClass }) {
   const [dialogRow, setDialogRow] = useState<any | void>(undefined);
   const [options, setOptions] = useState<any>({});
-  const [transformedApplications, setTransformedApplications] = useState<Application[]>([]);
+  const [isOptionsLoading, setIsOptionsLoading] = useState(true);
   const { data: session } = useSession();
   const isAdmin = session && session.roles?.includes('admin');
-  const [dataTransformFinished, setDataTransformFinished] = useState(false);
 
-  const { 
-    data: applications, 
+  const {
+    data: applications,
     isLoading: isLoadingApplications,
     mutate: revalidateApplications
   } = useApplicationsList({
@@ -70,8 +61,12 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
 
   useEffect(() => {
     const getData = async () => {
-      const options = await applicationOptions();
-      setOptions(options);
+      try {
+        const options = await applicationOptions();
+        setOptions(options);
+      } finally {
+        setIsOptionsLoading(false);
+      }
     };
     getData();
   }, []);
@@ -85,16 +80,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
     setDialogRow(row);
   }, []);
 
-  useEffect(() => {
-    if (applications) {
-      const transformedApps = transformApplications(applications, options);
-      setTransformedApplications(transformedApps);
-      setDataTransformFinished(true);
-    }
-  }, [applications, options]);
-
-  function transformApplications(apps: ApplicationDetail[], options: any): Application[] {
-    setDataTransformFinished(false);
+  function transformApplications(apps: ApplicationDetail[], options: any): ApplicationDetail[] {
 
     function extractThematicResponseValue(response: any): string {
       if (response.text_response) {
@@ -108,7 +94,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
       }
       return '';
     }
-    
+
     const thematicQuestionsMap = new Map<string, string>();
     apps.forEach((app: any) => {
       if (app.question_responses && Array.isArray(app.question_responses)) {
@@ -152,7 +138,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
         const response = transformedApp.question_responses?.find(
           (r: any) => r.question === questionId
         );
-        
+
         const columnKey = `Thematic: ${questionText}`;
         transformedApp[columnKey] = response ? extractThematicResponseValue(response) : '';
       });
@@ -160,39 +146,60 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
       return transformedApp;
     });
 
-    setDataTransformFinished(true);
     return transformedApps;
   }
 
+  const transformedApplications = useMemo(() => {
+    if (!applications) {
+      return [];
+    }
+
+    return transformApplications(applications, options);
+  }, [applications, options]);
+
   const onStatusChange = useCallback(
-    (app: Application) => (value: string) => {
-      if (isLoadingApplications || !applications) {
+    (app: ApplicationDetail) => async (value: string) => {
+      if (isLoadingApplications || !applications || !session?.access_token || !isAdmin) {
         toast.error('Loading applications...');
         return;
       }
-      let status: status | null = value as status;
-      if (status.length === 0) {
-        status = null;
-      }
-      let appId = applications.findIndex((a: ApplicationDetail) => a.id === app.id);
 
-      if (appId >= 0 && session?.access_token && isAdmin) {
-        setDataTransformFinished(false);
-        updateApplication(app?.id ?? '', { status }, session.access_token)
-          .then(response => {
-            if (!response) {
-              toast.error('Failed to update application');
-              return;
+      const status = value.length === 0 ? null : (value as ApplicationStatusEnum);
+      const payload: PatchedApplicationRequest = { status };
+
+      try {
+        await revalidateApplications(
+          async currentApplications => {
+            if (!currentApplications) {
+              return [];
             }
-            revalidateApplications();
-            setTransformedApplications(transformedApplications.map((a: Application) => a.id === app.id ? response : a));
-          })
-          .finally(() => {
-            setDataTransformFinished(true);
-          });
+
+            await applicationsPartialUpdate(app.id ?? '', payload, {
+              headers: {
+                Authorization: `Bearer ${session.access_token}`,
+              },
+            });
+
+            return currentApplications;
+          },
+          {
+            optimisticData: currentApplications =>
+              (currentApplications ?? []).map(currentApplication =>
+                currentApplication.id === app.id
+                  ? { ...currentApplication, status }
+                  : currentApplication
+              ),
+            rollbackOnError: true,
+            populateCache: false,
+            revalidate: true,
+          }
+        );
+      } catch (error) {
+        console.log(error)
+        toast.error(error instanceof Error ? error.message : String(error));
       }
     },
-    [applications, isAdmin, session]
+    [applications, isAdmin, isLoadingApplications, revalidateApplications, session?.access_token]
   );
 
   const getResume = useCallback(
@@ -209,8 +216,8 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
     [isAdmin, session]
   );
 
-  const columnHelper = createColumnHelper<Application>();
-  const columns = useMemo<ColumnDef<Application, any>[]>(
+  const columnHelper = createColumnHelper<ApplicationDetail>();
+  const columns = useMemo<ColumnDef<ApplicationDetail, any>[]>(
     () => [
       columnHelper.accessor('first_name', {
         header: () => 'First Name',
@@ -329,6 +336,33 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
     return <Loader />;
   }
 
+
+  type ReducedApplicationStats = {
+    acceptedCount: number;
+    waitlistedCount: number;
+    deniedCount: number;
+    totalCount: number;
+    percentage: number;
+  };
+  const reducedApplicationStats = (): ReducedApplicationStats => {
+    if (!applications) return { acceptedCount: 0, totalCount: 0, percentage: 0, waitlistedCount: 0, deniedCount: 0 };
+
+    const acceptedCount = applications.filter(
+      app => app?.status === ApplicationStatusEnum.A
+    ).length;
+    const deniedCount = applications.filter(
+      app => app?.status === ApplicationStatusEnum.D
+    ).length;
+    const waitlistedCount = applications.filter(
+      app => app?.status === ApplicationStatusEnum.W
+    ).length;
+    const totalCount = applications.length;
+    const percentage =
+      totalCount > 0 ? (acceptedCount / totalCount) * 100 : 0;
+    return { acceptedCount, waitlistedCount, deniedCount, totalCount, percentage };
+  };
+  const { acceptedCount, waitlistedCount, deniedCount, totalCount, percentage } = reducedApplicationStats();
+
   return (
     <>
       <div className="flex flex-row flex-wrap justify-center gap-2 mb-4">
@@ -337,7 +371,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Total applications
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {applications?.length ?? 0}
+            { totalCount }
           </span>
         </div>
 
@@ -346,11 +380,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Accepted
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {
-              applications?.filter(app => {
-                return app?.status === 'AO' || app?.status === 'AI';
-              }).length
-            }
+            { acceptedCount }
           </span>
         </div>
 
@@ -359,11 +389,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Waitlisted
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {
-              applications?.filter(app => {
-                return app?.status === 'WO' || app?.status === 'WI';
-              }).length
-            }
+            { waitlistedCount }
           </span>
         </div>
 
@@ -372,11 +398,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Rejected
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {
-              applications?.filter(app => {
-                return app?.status === 'D';
-              }).length
-            }
+            { deniedCount }
           </span>
         </div>
 
@@ -385,15 +407,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Accepted rate
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {(() => {
-              const acceptedCount = applications?.filter(
-                app => app?.status === 'AO' || app?.status === 'AI'
-              ).length;
-              const totalCount = applications?.length ?? 0;
-              const percentage =
-                totalCount > 0 ? (acceptedCount ?? 0 / totalCount) * 100 : 0;
-              return `${percentage.toFixed(1)}%`;
-            })()}
+            {percentage.toFixed(acceptedCount / totalCount)}%
           </span>
         </div>
       </div>
@@ -410,7 +424,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             columns={columns}
             search={true}
             pagination={true}
-            loading={isLoadingApplications || !dataTransformFinished}
+            loading={isLoadingApplications || isOptionsLoading}
           />
         </div>
       </div>
@@ -427,8 +441,8 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
 
 type ReviewModalProps = {
   toggleOverlay: () => void;
-  item: Row<Application>;
-  data: Application[];
+  item: Row<ApplicationDetail>;
+  data: ApplicationDetail[];
 };
 
 function ReviewModal({ item, data, toggleOverlay }: ReviewModalProps) {
