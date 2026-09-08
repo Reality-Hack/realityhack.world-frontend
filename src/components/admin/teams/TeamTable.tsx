@@ -1,7 +1,7 @@
 import { useTeamsList, TeamsListQueryResult } from '@/types/endpoints';
 import Table from '@/components/Table';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
-import { DateTime } from 'luxon';
+import { formatDateTime } from '@/app/utils/dateUtils';
 import { useSession } from '@/auth/client';
 import { useAppNavigate } from '@/routing';
 import { useEffect, useMemo, useState } from 'react';
@@ -93,17 +93,11 @@ export default function TeamTable() {
       }),
       columnHelper.accessor('created_at', {
         header: () => 'Created On',
-        cell: info =>
-          DateTime.fromISO(info.getValue()).toLocaleString(
-            DateTime.DATETIME_SHORT
-          )
+        cell: info => formatDateTime(info.getValue())
       }),
       columnHelper.accessor('updated_at', {
         header: () => 'Updated On',
-        cell: info =>
-          DateTime.fromISO(info.getValue()).toLocaleString(
-            DateTime.DATETIME_SHORT
-          )
+        cell: info => formatDateTime(info.getValue())
       })
     ],
     [columnHelper]

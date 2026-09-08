@@ -12,12 +12,10 @@ const Dashboard = () => {
       <div className="flex flex-wrap justify-center gap-6 ml-6 mt-14">
         <Link href="/admin/checkin">
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">
-              Check In
-            </span>
+            <span className="text-xl text-center text-[#40337F]">Check In</span>
           </div>
         </Link>
-        {isAdmin && 
+        {isAdmin && (
           <Link href="/admin/rsvp/participants">
             <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
               <span className="text-xl text-center text-[#40337F]">
@@ -25,56 +23,50 @@ const Dashboard = () => {
               </span>
             </div>
           </Link>
-        }
-        {isAdmin && 
-          <Link href="/admin/applications/participants">
+        )}
+        {isAdmin && (
+          <Link href="/admin/applications/applications">
             <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
               <span className="text-xl text-center text-[#40337F]">
                 Applications
               </span>
             </div>
           </Link>
-        }
-        {isEventsEnabled && 
+        )}
+        {isEventsEnabled && isAdmin && ˝G(
           <Link href="/admin/events">
             <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-              <span className="text-xl text-center text-[#40337F]">
-                Events
-              </span>
+              <span className="text-xl text-center text-[#40337F]">Events</span>
             </div>
           </Link>
-        }
+        )}
         <Link href="/admin/teams">
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">
-              Teams
-            </span>
+            <span className="text-xl text-center text-[#40337F]">Teams</span>
           </div>
         </Link>
         <Link href="/admin/hardware">
           <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">
-              Hardware
-            </span>
+            <span className="text-xl text-center text-[#40337F]">Hardware</span>
           </div>
         </Link>
-        {isWorkshopsEnabled && (
+        {isWorkshopsEnabled && isAdmin && (
           <Link href="/admin/workshops">
-          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">
-              Workshop check in
-            </span>
+            <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
+              <span className="text-xl text-center text-[#40337F]">
+                Workshop check in
+              </span>
             </div>
           </Link>
         )}
-        {isSponsorAdminEnabled && (
+        {isSponsorAdminEnabled && isAdmin && (
           <Link href="/admin/sponsors">
-          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">
-              Sponsors
-            </span>
-          </div>
-        </Link>
+            <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
+              <span className="text-xl text-center text-[#40337F]">
+                Sponsors
+              </span>
+            </div>
+          </Link>
         )}
       </div>
     </div>

@@ -5,10 +5,14 @@
  */
 import type { ApplicationsListParticipationCapacity } from './applicationsListParticipationCapacity';
 import type { ApplicationsListParticipationClass } from './applicationsListParticipationClass';
+import type { ApplicationsListParticipationClassesItem } from './applicationsListParticipationClassesItem';
 import type { ApplicationsListParticipationRole } from './applicationsListParticipationRole';
+import type { ApplicationsListStatus } from './applicationsListStatus';
+import type { ApplicationsListStatusesItem } from './applicationsListStatusesItem';
 
 export type ApplicationsListParams = {
 email?: string;
+has_rsvp?: boolean;
 /**
  * * `S` - Student
 * `P` - Professional
@@ -27,14 +31,38 @@ participation_capacity?: ApplicationsListParticipationCapacity;
  */
 participation_class?: ApplicationsListParticipationClass;
 /**
+ * * `P` - Participant
+* `M` - Mentor
+* `J` - Judge
+* `S` - Sponsor
+* `V` - Volunteer
+* `O` - Organizer
+* `G` - Guardian
+* `E` - Media
+ */
+participation_classes?: ApplicationsListParticipationClassesItem[];
+/**
  * * `A` - Digital/Creative Designer
 * `D` - Developer
 * `S` - Domain or other Specialized Skill Expert
 * `P` - Project Manager
  */
 participation_role?: ApplicationsListParticipationRole;
+rsvp_unsent?: boolean;
 /**
  * A search term.
  */
 search?: string;
+/**
+ * * `A` - Accepted
+* `W` - Waitlist
+* `D` - Declined
+ */
+status?: ApplicationsListStatus;
+/**
+ * * `A` - Accepted
+* `W` - Waitlist
+* `D` - Declined
+ */
+statuses?: ApplicationsListStatusesItem[];
 };

@@ -2,7 +2,7 @@ import { useSession } from '@/auth/client';
 import { useState } from 'react';
 import { useEventsList } from '@/types/endpoints';
 import { Event } from '@/types/models';
-import { DateTime } from 'luxon';
+import { formatDateTime } from '@/app/utils/dateUtils';
 import Loader from '@/components/Loader';
 import Table from '@/components/Table';
 import { AppLink } from '@/routing';
@@ -15,9 +15,6 @@ import CreateEventForm from '@/components/admin/events/CreateEventForm';
 
 const isEventsEnabled = import.meta.env.VITE_IS_EVENTS_ENABLED === 'true';
 
-function formatDate(date: string): string {
-  return DateTime.fromISO(date).toLocaleString(DateTime.DATETIME_SHORT);
-}
 
 export default function EventsAdminPage(): JSX.Element {
   const { data: session } = useSession();
@@ -38,12 +35,12 @@ export default function EventsAdminPage(): JSX.Element {
     {
       header: 'Start Date',
       accessorKey: 'start_date',
-      cell: ({ row }) => formatDate(row.original.start_date),
+      cell: ({ row }) => formatDateTime(row.original.start_date),
     },
     {
       header: 'End Date',
       accessorKey: 'end_date',
-      cell: ({ row }) => formatDate(row.original.end_date),
+      cell: ({ row }) => formatDateTime(row.original.end_date),
     },
     {
       header: 'Is Active',

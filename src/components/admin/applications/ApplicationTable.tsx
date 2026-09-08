@@ -15,19 +15,21 @@ import {
   PatchedApplicationRequest,
 } from '@/types/models';
 import Box from '@mui/material/Box';
-import { ColumnDef, Row, createColumnHelper } from '@tanstack/react-table';
-import { DateTime } from 'luxon';
+import {
+  ColumnDef,
+  Row,
+  RowSelectionState,
+  createColumnHelper
+} from '@tanstack/react-table';
+import { formatDateTime } from '@/app/utils/dateUtils';
 import { useSession } from '@/auth/client';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { HTMLProps, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../Modal';
 import ReviewPage from '../ReviewPage';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import Loader from '@/components/Loader';
 
-const ApplicationStatusOptions: {
-  label: string;
-  value: ApplicationStatusEnum;
-}[] = [
+const APPLICATION_STATUS_OPTIONS: { label: string; value: ApplicationStatusEnum }[] = [
   {
     label: 'Accepted',
     value: ApplicationStatusEnum.A
@@ -42,19 +44,40 @@ const ApplicationStatusOptions: {
   }
 ];
 
-export default function ApplicationTable({ type }: { type: ApplicationsListParticipationClass }) {
+const PARTICIPATION_CLASS_OPTIONS: { label: string; value: ApplicationsListParticipationClass }[] = [
+  { label: 'Participant', value: ApplicationsListParticipationClass.P },
+  { label: 'Mentor',      value: ApplicationsListParticipationClass.M },
+  { label: 'Judge',       value: ApplicationsListParticipationClass.J },
+];
+
+export default function ApplicationTable() {
   const [dialogRow, setDialogRow] = useState<any | void>(undefined);
   const [options, setOptions] = useState<any>({});
   const [isOptionsLoading, setIsOptionsLoading] = useState(true);
+  const [selectedClasses, setSelectedClasses] = useState<ApplicationsListParticipationClass[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<ApplicationStatusEnum[]>([]);
   const { data: session } = useSession();
-  const isAdmin = session && session.roles?.includes('admin');
+  const { isAdmin } = useAuth();
+
+  const toggleClass = (value: ApplicationsListParticipationClass) => {
+    setSelectedClasses(prev =>
+      prev.includes(value) ? prev.filter(c => c !== value) : [...prev, value]
+    );
+  };
+
+  const toggleStatus = (value: ApplicationStatusEnum) => {
+    setSelectedStatuses(prev =>
+      prev.includes(value) ? prev.filter(s => s !== value) : [...prev, value]
+    );
+  };
 
   const {
     data: applications,
     isLoading: isLoadingApplications,
     mutate: revalidateApplications
   } = useApplicationsList({
-    participation_class: type
+    ...(selectedClasses.length > 0 && { participation_classes: selectedClasses }),
+    ...(selectedStatuses.length > 0 && { statuses: selectedStatuses }),
   }, {
     swr: { enabled: !!session?.access_token },
   });
@@ -81,6 +104,17 @@ export default function ApplicationTable({ type }: { type: ApplicationsListParti
   }, []);
 
   function transformApplications(apps: ApplicationDetail[], options: any): ApplicationDetail[] {
+    const OMITTED_APPLICATION_FIELDS = new Set([
+      'theme_essay',
+      'theme_essay_follow_up',
+      'theme_interest_track_one',
+      'theme_interest_track_two',
+      'theme_detail_one',
+      'theme_detail_two',
+      'theme_detail_three',
+      'hardware_hack_interest',
+      'questions_responses'
+    ]);
 
     function extractThematicResponseValue(response: any): string {
       if (response.text_response) {
@@ -108,9 +142,10 @@ export default function ApplicationTable({ type }: { type: ApplicationsListParti
 
     const transformedApps = apps.map((app: any) => {
       const transformedApp = { ...app };
+      // transformedApp.participation_class =
 
       Object.keys(transformedApp).forEach(key => {
-        if (key === 'status') {
+        if (key === 'status' || OMITTED_APPLICATION_FIELDS.has(key)) {
           return;
         }
 
@@ -141,6 +176,10 @@ export default function ApplicationTable({ type }: { type: ApplicationsListParti
 
         const columnKey = `Thematic: ${questionText}`;
         transformedApp[columnKey] = response ? extractThematicResponseValue(response) : '';
+      });
+
+      OMITTED_APPLICATION_FIELDS.forEach(field => {
+        delete transformedApp[field];
       });
 
       return transformedApp;
@@ -254,13 +293,17 @@ export default function ApplicationTable({ type }: { type: ApplicationsListParti
         header: () => 'Email',
         cell: info => info.getValue()
       }),
+      columnHelper.accessor('participation_class', {
+        header: () => 'Participation Class',
+        cell: info => info.getValue()
+      }),
       columnHelper.accessor('status', {
         header: () => 'Status',
         cell: info => (
           <Box sx={{ minWidth: 120 }}>
             <CustomSelect
               label="Select a status"
-              options={ApplicationStatusOptions}
+              options={APPLICATION_STATUS_OPTIONS}
               value={info.getValue()}
               onChange={onStatusChange(info.row.original)}
             />
@@ -290,52 +333,37 @@ export default function ApplicationTable({ type }: { type: ApplicationsListParti
           </a>
         )
       }),
-      ...(type === 'P'
-        ? [
-            columnHelper.accessor('current_city', {
-              header: () => 'City',
-              cell: info => info.getValue()
-            }),
-            columnHelper.accessor('current_country', {
-              header: () => 'Country',
-              cell: info => info.getValue()
-            }),
-            columnHelper.accessor('nationality', {
-              header: () => 'Nationality',
-              cell: info => info.getValue()
-            }),
-            columnHelper.accessor('age_group', {
-              header: () => 'Age',
-              cell: info => info.getValue()
-            })
-          ]
-        : []),
+      columnHelper.accessor('current_city', {
+        header: () => 'City',
+        cell: info => info.getValue()
+      }),
+      columnHelper.accessor('current_country', {
+        header: () => 'Country',
+        cell: info => info.getValue()
+      }),
+      columnHelper.accessor('nationality', {
+        header: () => 'Nationality',
+        cell: info => info.getValue()
+      }),
+      columnHelper.accessor('age_group', {
+        header: () => 'Age',
+        cell: info => info.getValue()
+      }),
       columnHelper.accessor('submitted_at', {
         header: () => 'Submitted On',
-        cell: info =>
-          DateTime.fromISO(info.getValue()).toLocaleString(
-            DateTime.DATETIME_SHORT
-          )
+        cell: info => formatDateTime(info.getValue())
       }),
       columnHelper.accessor('updated_at', {
         header: () => 'Updated On',
-        cell: info =>
-          DateTime.fromISO(info.getValue()).toLocaleString(
-            DateTime.DATETIME_SHORT
-          )
+        cell: info => formatDateTime(info.getValue())
       }),
       columnHelper.accessor('id', {
         header: () => 'id',
         cell: info => info.getValue()
       })
     ],
-    [columnHelper, onStatusChange, toggleOverlayAndPassData, type] // type is included in the dependency array
+    [columnHelper, onStatusChange, toggleOverlayAndPassData]
   );
-
-  if (isLoadingApplications) {
-    return <Loader />;
-  }
-
 
   type ReducedApplicationStats = {
     acceptedCount: number;
@@ -412,11 +440,48 @@ export default function ApplicationTable({ type }: { type: ApplicationsListParti
         </div>
       </div>
 
-      <ExportButton
-        onExport={() => exportToCsv(transformedApplications, 'applications.csv')}
-      >
-        Export CSV
-      </ExportButton>
+      <div className="mb-2 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <ExportButton
+            onExport={() => exportToCsv(transformedApplications, 'applications.csv')}
+          >
+            Export CSV
+          </ExportButton>
+
+          <fieldset className="flex items-center gap-2 mb-4 px-3 py-1.5 bg-white border border-gray-200 rounded-md shadow-sm">
+            <legend className="text-xs text-gray-500 px-1">
+              Participation class{selectedClasses.length === 0 && ' (all)'}
+            </legend>
+            {PARTICIPATION_CLASS_OPTIONS.map(({ label, value }) => (
+              <label key={value} className="flex items-center gap-1.5 cursor-pointer select-none text-sm">
+                <input
+                  type="checkbox"
+                  checked={selectedClasses.includes(value)}
+                  onChange={() => toggleClass(value)}
+                  className="cursor-pointer accent-[#1677FF]"
+                />
+                {label}
+              </label>
+            ))}
+          </fieldset>
+          <fieldset className="flex items-center gap-2 mb-4 px-3 py-1.5 bg-white border border-gray-200 rounded-md shadow-sm">
+            <legend className="text-xs text-gray-500 px-1">
+              Status{selectedClasses.length === 0 && ' (all)'}
+            </legend>
+            {APPLICATION_STATUS_OPTIONS.map(({ label, value }) => (
+              <label key={value} className="flex items-center gap-1.5 cursor-pointer select-none text-sm">
+                <input
+                  type="checkbox"
+                  checked={selectedStatuses.includes(value)}
+                  onChange={() => toggleStatus(value)}
+                  className="cursor-pointer accent-[#1677FF]"
+                />
+                {label}
+              </label>
+            ))}
+          </fieldset>
+        </div>
+      </div>
       <div className="z-50 px-6 py-6 overflow-y-scroll bg-[#FCFCFC] border-gray-300 rounded-2xl">
         <div className="h-[430px] overflow-y-scroll z-50 rounded-l border border-[#EEEEEE]">
           <Table
@@ -425,6 +490,7 @@ export default function ApplicationTable({ type }: { type: ApplicationsListParti
             search={true}
             pagination={true}
             loading={isLoadingApplications || isOptionsLoading}
+            getRowId={(row, index) => row.id ?? `missing-id-${index}`}
           />
         </div>
       </div>
@@ -432,7 +498,6 @@ export default function ApplicationTable({ type }: { type: ApplicationsListParti
         <ReviewModal
           toggleOverlay={toggleOverlay}
           item={dialogRow}
-          data={transformedApplications ?? []}
         />
       )}
     </>
@@ -442,11 +507,10 @@ export default function ApplicationTable({ type }: { type: ApplicationsListParti
 type ReviewModalProps = {
   toggleOverlay: () => void;
   item: Row<ApplicationDetail>;
-  data: ApplicationDetail[];
 };
 
-function ReviewModal({ item, data, toggleOverlay }: ReviewModalProps) {
-  const applicationData = data[item.id as any];
+function ReviewModal({ item, toggleOverlay }: ReviewModalProps) {
+  const applicationData = item.original;
   return (
     <div>
       <Modal toggleOverlay={toggleOverlay}>

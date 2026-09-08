@@ -15,9 +15,9 @@ import AdminLayout from '@/app/(dashboard)/admin/layout';
 import AdminSponsorsLayout from '@/app/(dashboard)/admin/sponsors/layout';
 import AdminHardwareLayout from '@/app/(dashboard)/admin/hardware/layout';
 import AdminRsvpLayout from '@/app/(dashboard)/admin/rsvp/layout';
-import AdminApplicationsLayout from '@/app/(dashboard)/admin/applications/layout';
 import AdminUsersLayout from '@/app/(dashboard)/admin/users/layout';
 import AdminEventsLayout from '@/app/(dashboard)/admin/events/[id]/layout';
+const AdminApplicationsLayout = lazy(() => import('@/app/(dashboard)/admin/applications/layout'));
 
 // Lazy-loaded pages
 const ApplyPage = lazy(() => import('@/app/apply/page'));
@@ -84,10 +84,9 @@ const AdminRsvpVolunteers = lazy(() => import('@/app/(dashboard)/admin/rsvp/volu
 const AdminRsvpSponsors = lazy(() => import('@/app/(dashboard)/admin/rsvp/sponsors/page'));
 const AdminRsvpOrganizers = lazy(() => import('@/app/(dashboard)/admin/rsvp/organizers/page'));
 
-const AdminApplicationsParticipants = lazy(() => import('@/app/(dashboard)/admin/applications/participants/page'));
-const AdminApplicationsMentors = lazy(() => import('@/app/(dashboard)/admin/applications/mentors/page'));
-const AdminApplicationsJudges = lazy(() => import('@/app/(dashboard)/admin/applications/judges/page'));
-const AdminApplicationsVolunteers = lazy(() => import('@/app/(dashboard)/admin/applications/volunteers/page'));
+const AdminApplicationsPage = lazy(() => import('@/app/(dashboard)/admin/applications/ApplicationsPage'))
+
+const AdminInvitesPage = lazy(() => import('@/app/(dashboard)/admin/applications/AdminInvitesPage'))
 
 const AdminUsersParticipants = lazy(() => import('@/app/(dashboard)/admin/users/participants/page'));
 const AdminUsersMentors = lazy(() => import('@/app/(dashboard)/admin/users/mentors/page'));
@@ -234,10 +233,8 @@ export const router = createBrowserRouter([
             path: 'applications',
             element: <AdminApplicationsLayout><Outlet /></AdminApplicationsLayout>,
             children: [
-              { path: 'participants', element: <AdminApplicationsParticipants /> },
-              { path: 'mentors', element: <AdminApplicationsMentors /> },
-              { path: 'judges', element: <AdminApplicationsJudges /> },
-              { path: 'volunteers', element: <AdminApplicationsVolunteers /> },
+              { path: 'applications', element: <AdminApplicationsPage /> },
+              { path: 'invites', element: <AdminInvitesPage /> },
             ],
           },
 

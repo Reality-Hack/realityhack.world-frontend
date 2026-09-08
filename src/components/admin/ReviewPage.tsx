@@ -37,11 +37,11 @@ export default function ReviewPage({
 }) {
   const { data: session } = useSession();
 
-  const { 
-    data: application, 
-    isLoading: isApplicationLoading, 
-    error: applicationError 
-} = useApplicationsRetrieve(allInfo.id, {
+  const {
+    data: application,
+    isLoading: isApplicationLoading,
+    error: applicationError
+} = useApplicationsRetrieve(allInfo?.id, {
     swr: { enabled: !!session?.access_token && !!allInfo.id }
   })
 
@@ -208,11 +208,11 @@ export default function ReviewPage({
               name={'name'}
               value=""
               onChange={() => {}}
-              label="Is willing to work on a hackers schedule and is available 
-              to attend from January 22-25, 2026 (attending on January 26 is 
-              optional for mentors). Our participants are so committed to 
-              experiential technology innovation, that they often work well 
-              into the night. We&apos;d love mentors to be with them on that journey 
+              label="Is willing to work on a hackers schedule and is available
+              to attend from January 22-25, 2026 (attending on January 26 is
+              optional for mentors). Our participants are so committed to
+              experiential technology innovation, that they often work well
+              into the night. We&apos;d love mentors to be with them on that journey
               - especially the evening before the deadline."
             />
           </div>
@@ -234,7 +234,7 @@ export default function ReviewPage({
               name={'name'}
               value=""
               onChange={() => {}}
-              label="Has a contagious passion for experiential technology, including 
+              label="Has a contagious passion for experiential technology, including
              spatial computing, AI, ML, edge computing, etc."
             />
           </div>
@@ -615,7 +615,7 @@ export default function ReviewPage({
       if (isApplicationLoading) {
         return <Loader />;
       }
-  
+
       if (applicationError) {
         return <div>Error loading application details: {applicationError.message}</div>;
       }
@@ -638,14 +638,14 @@ export default function ReviewPage({
       }
 
       if (response.selected_keys_snapshot && response.choices_snapshot) {
-        const selectedKeys = Array.isArray(response.selected_keys_snapshot) 
-          ? response.selected_keys_snapshot 
+        const selectedKeys = Array.isArray(response.selected_keys_snapshot)
+          ? response.selected_keys_snapshot
           : [response.selected_keys_snapshot];
-        
-        const selectedChoices = selectedKeys.map((key: string) => 
+
+        const selectedChoices = selectedKeys.map((key: string) =>
           response.choices_snapshot[key] || key
         );
-        
+
         return selectedChoices;
       }
 

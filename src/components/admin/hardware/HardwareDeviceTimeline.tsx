@@ -3,14 +3,7 @@ import type { HardwareDevice, HardwareDeviceHistory, HardwareRequestList } from 
 import { useHardwaredevicehistoryList, useHardwarerequestsList } from "@/types/endpoints";
 import { useMemo } from "react";
 
-function formatHistoryTimestamp(iso: string | undefined): string {
-  if (!iso) return '—';
-  try {
-    return new Date(iso).toLocaleString();
-  } catch {
-    return iso;
-  }
-}
+import { formatDateTime } from '@/app/utils/dateUtils';
 
 function sortHistoryNewestFirst(rows: HardwareDeviceHistory[]): HardwareDeviceHistory[] {
   return [...rows].sort((a, b) => {
@@ -171,7 +164,7 @@ export default function HardwareDeviceTimeline({ device }: { device: HardwareDev
             <div className="grid md:grid-cols-2 gap-2 grid-cols-1">
               <div className="flex flex-col gap-1">
                 <div className="font-medium text-gray-800">
-                  {formatHistoryTimestamp(row.updated_at)}
+                  {formatDateTime(row.updated_at)}
                 </div>
                 <div className="text-gray-800 md:py-2 py-1"> 
                   Serial: {row.serial}

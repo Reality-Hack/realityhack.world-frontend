@@ -44,7 +44,7 @@ export function ExportButton({
 
   return (
     <button
-      className="gap-1.5s flex mt-0 mb-4 bg-[#1677FF] text-white px-4 py-[6px] rounded-md shadow my-4 font-light text-sm hover:bg-[#0066F5] transition-all"
+      className="flex items-center justify-center px-4 h-10 text-sm font-medium text-white bg-[#40337F] rounded hover:opacity-90 transition-opacity disabled:opacity-50"
       disabled={exporting || disabled}
       onClick={async () => {
         setExporting(true);
@@ -52,7 +52,7 @@ export function ExportButton({
         setExporting(false);
       }}
     >
-      {exporting ? 'Exporting' : children}
+      {exporting ? 'Exporting…' : children}
     </button>
   );
 }

@@ -105,9 +105,9 @@ function PrizeItemList({
 }
 
 const PRIZE_TRACKS_DESCRIPTION =
-  'Prize track options shown to applicants and used in event configuration.';
+  'Thematic prize tracks and categories.';
 const HARDWARE_TRACKS_DESCRIPTION =
-  'Hardware track options linked to destiny hardware and sponsor prizes.';
+  'Prize tracks linked to specific devices or hardware from the catalog.';
 
 export default function EventPrizesPanel(): JSX.Element {
   const { eventId, isQueryEnabled, invalidatePrizesCache } = useAdminEvent();

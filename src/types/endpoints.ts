@@ -131,6 +131,7 @@ import type {
   ProjectRequest,
   ProjectsListParams,
   PublicEvent,
+  QueueRsvpEmailsRequest,
   RsvpsListParams,
   Skill,
   SkillProficiency,
@@ -177,11 +178,11 @@ import { customAxios } from '../lib/custom-axios';
 import type { ErrorType , BodyType } from '../lib/custom-axios';
 
 
-
+  
   type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
-
+  
 /**
  * API endpoint for managing choices for single/multiple choice questions.
  */
@@ -913,6 +914,49 @@ export const useApplicationsDestroy = <TError = ErrorType<unknown>>(
 
   const swrKey = swrOptions?.swrKey ?? getApplicationsDestroyMutationKey(id);
   const swrFn = getApplicationsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * Queue RSVP emails for the given list of application IDs.
+ */
+export const applicationsQueueRsvpEmailsCreate = (
+    queueRsvpEmailsRequest: BodyType<QueueRsvpEmailsRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/applications/queue-rsvp-emails/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: queueRsvpEmailsRequest
+    },
+    options);
+  }
+
+
+
+export const getApplicationsQueueRsvpEmailsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: QueueRsvpEmailsRequest }): Promise<void> => {
+    return applicationsQueueRsvpEmailsCreate(arg, options);
+  }
+}
+export const getApplicationsQueueRsvpEmailsCreateMutationKey = () => [`/applications/queue-rsvp-emails/`] as const;
+
+export type ApplicationsQueueRsvpEmailsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof applicationsQueueRsvpEmailsCreate>>>
+export type ApplicationsQueueRsvpEmailsCreateMutationError = ErrorType<unknown>
+
+export const useApplicationsQueueRsvpEmailsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationsQueueRsvpEmailsCreate>>, TError, Key, QueueRsvpEmailsRequest, Awaited<ReturnType<typeof applicationsQueueRsvpEmailsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationsQueueRsvpEmailsCreateMutationKey();
+  const swrFn = getApplicationsQueueRsvpEmailsCreateMutationFetcher(requestOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions)
 
@@ -2038,7 +2082,7 @@ export const useDestinyteamsDestroy = <TError = ErrorType<unknown>>(
  * API Endpoint that allows for Discord information to be viewed or edited.
  */
 export const discordList = (
-
+    
  options?: SecondParameter<typeof customAxios>) => {
     return customAxios<DiscordUsernameRole[]>(
     {url: `/discord/`, method: 'GET'
@@ -2605,7 +2649,7 @@ export const useEventrsvpsDestroy = <TError = ErrorType<unknown>>(
  * Returns a minimal list of attendees (id, first_name, last_name, checked_in_at) from event RSVPs for the active event. Intended for team attendee picker dropdowns.
  */
 export const eventrsvpsAttendeeOptionsList = (
-
+    
  options?: SecondParameter<typeof customAxios>) => {
     return customAxios<EventRsvpAttendeeOption[]>(
     {url: `/eventrsvps/attendee-options/`, method: 'GET'
@@ -2842,7 +2886,7 @@ export const useEventsPartialUpdate = <TError = ErrorType<unknown>>(
  * Get the active event. Public endpoint.
  */
 export const eventsGetActiveRetrieve = (
-
+    
  options?: SecondParameter<typeof customAxios>) => {
     return customAxios<PublicEvent>(
     {url: `/events/get-active/`, method: 'GET'
@@ -4348,7 +4392,7 @@ export const useHardwarerequestsDestroy = <TError = ErrorType<unknown>>(
  * API endpoint that allows Reality Kits to be viewed or edited.
  */
 export const lighthousesList = (
-
+    
  options?: SecondParameter<typeof customAxios>) => {
     return customAxios<LightHouse[]>(
     {url: `/lighthouses/`, method: 'GET'
@@ -4672,7 +4716,7 @@ export const useLocationsDestroy = <TError = ErrorType<unknown>>(
  * Get detailed information about an authenticated user.
  */
 export const meRetrieve = (
-
+    
  options?: SecondParameter<typeof customAxios>) => {
     return customAxios<AttendeeDetail>(
     {url: `/me/`, method: 'GET'
@@ -7931,3 +7975,4 @@ export const useWorkshopsDestroy = <TError = ErrorType<unknown>>(
     ...query
   }
 }
+

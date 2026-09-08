@@ -28,6 +28,7 @@ interface AuthContextType {
   canAccessSponsor: boolean;
   canAccessMentor: boolean;
   canAccessParticipant: boolean;
+  canSendRsvps: boolean;
   status: 'authenticated' | 'loading' | 'unauthenticated'
 }
 
@@ -50,6 +51,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const isMentor = useMemo(() => status === 'authenticated' && session?.roles?.includes('mentor'), [session, status])
   const isParticipant = useMemo(() => status === 'authenticated' && session?.roles?.includes('attendee'), [session, status])
   const isJudge = useMemo(() => status === 'authenticated' && session?.roles?.includes('judge'), [session, status])
+  const canSendRsvps = useMemo(() => status === 'authenticated' && session?.roles?.includes('send-rsvps'), [session, status])
 
   const canAccessSponsor = isAdmin || isSponsor;
   const canAccessMentor = isAdmin || isMentor;
@@ -81,6 +83,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     canAccessSponsor: canAccessSponsor ?? false,
     canAccessMentor: canAccessMentor ?? false,
     canAccessParticipant: canAccessParticipant ?? false,
+    canSendRsvps: canSendRsvps ?? false,
     status
   };
 

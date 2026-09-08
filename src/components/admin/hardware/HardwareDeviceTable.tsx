@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { formatDateTime } from '@/app/utils/dateUtils';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import Chip from '@mui/material/Chip';
 import Table from '@/components/Table';
@@ -22,15 +23,6 @@ export type HardwareDeviceTableProps = {
   pagination?: boolean;
 };
 
-function formatDate(iso: string | undefined): string {
-  if (!iso) return '—';
-  try {
-    return new Date(iso).toLocaleString();
-  } catch {
-    return iso;
-  }
-}
-
 export default function HardwareDeviceTable({
   data,
   loading = false,
@@ -42,8 +34,8 @@ export default function HardwareDeviceTable({
   search = true,
   pagination = true,
 }: HardwareDeviceTableProps): JSX.Element {
-  
-  
+
+
   const allowedHardwareIds = useMemo(() => {
     if (sponsorCatalog === undefined) {
       return null;
@@ -52,7 +44,7 @@ export default function HardwareDeviceTable({
       sponsorCatalog.map((h) => h.id).filter((id): id is string => Boolean(id)),
     );
   }, [sponsorCatalog]);
-  
+
   const rows = useMemo(() => {
     if (!allowedHardwareIds) {
       return data;
@@ -94,7 +86,7 @@ export default function HardwareDeviceTable({
         header: 'Updated',
         accessorKey: 'updated_at',
         cell: ({ row }) => (
-          <span className="text-xs text-gray-600">{formatDate(row.original.updated_at)}</span>
+          <span className="text-xs text-gray-600">{formatDateTime(row.original.updated_at)}</span>
         ),
       },
       {
@@ -102,7 +94,7 @@ export default function HardwareDeviceTable({
         header: 'Created',
         accessorKey: 'created_at',
         cell: ({ row }) => (
-          <span className="text-xs text-gray-600">{formatDate(row.original.created_at)}</span>
+          <span className="text-xs text-gray-600">{formatDateTime(row.original.created_at)}</span>
         ),
       },
     ];

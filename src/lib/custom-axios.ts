@@ -1,9 +1,11 @@
 import Axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { getAccessToken } from '@/auth/token-store';
-import { signOut } from '@/auth/client';
 
-export const AXIOS_INSTANCE = Axios.create({ 
-  baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
+export const AXIOS_INSTANCE = Axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000',
+  paramsSerializer: {
+    indexes: null,
+  },
 });
 
 AXIOS_INSTANCE.interceptors.request.use((config) => {
