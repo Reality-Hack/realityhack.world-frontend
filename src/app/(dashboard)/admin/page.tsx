@@ -1,73 +1,46 @@
 import { AppLink as Link } from '@/routing';
 import { useAuth } from '@/contexts/AuthContext';
+import { Capability } from '@/lib/access/capabilities';
 
-const isEventsEnabled = import.meta.env.VITE_IS_EVENTS_ENABLED === 'true';
-const isWorkshopsEnabled = import.meta.env.VITE_IS_WORKSHOPS_ENABLED === 'true';
-const isSponsorAdminEnabled = import.meta.env.VITE_IS_SPONSOR_ADMIN_ENABLED === 'true';
+interface AdminTile {
+  href: string;
+  label: string;
+  capability: Capability;
+}
+
+/**
+ * Tiles are gated by the same capabilities as the routes they link to, so a
+ * hidden tile is also an unreachable URL.
+ */
+const ADMIN_TILES: readonly AdminTile[] = [
+  { href: '/admin/checkin', label: 'Check In', capability: 'admin.checkin' },
+  { href: '/admin/rsvp/participants', label: 'Attendees', capability: 'admin.rsvp' },
+  {
+    href: '/admin/applications/applications',
+    label: 'Applications',
+    capability: 'admin.applications',
+  },
+  { href: '/admin/events', label: 'Events', capability: 'admin.events' },
+  { href: '/admin/teams', label: 'Teams', capability: 'admin.teams' },
+  { href: '/admin/hardware', label: 'Hardware', capability: 'admin.hardware' },
+  { href: '/admin/workshops', label: 'Workshop check in', capability: 'admin.workshops' },
+  { href: '/admin/sponsors', label: 'Sponsors', capability: 'admin.sponsors' },
+];
+
 const Dashboard = () => {
-  const { isAdmin } = useAuth();
+  const { can } = useAuth();
+
   return (
     <div className="h-screen">
       <h1 className="mt-6 mb-5 ml-6 text-3xl text">Admin Dashboard</h1>
       <div className="flex flex-wrap justify-center gap-6 ml-6 mt-14">
-        <Link href="/admin/checkin">
-          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">Check In</span>
-          </div>
-        </Link>
-        {isAdmin && (
-          <Link href="/admin/rsvp/participants">
+        {ADMIN_TILES.filter((tile) => can(tile.capability)).map((tile) => (
+          <Link key={tile.href} href={tile.href}>
             <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-              <span className="text-xl text-center text-[#40337F]">
-                Attendees
-              </span>
+              <span className="text-xl text-center text-[#40337F]">{tile.label}</span>
             </div>
           </Link>
-        )}
-        {isAdmin && (
-          <Link href="/admin/applications/applications">
-            <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-              <span className="text-xl text-center text-[#40337F]">
-                Applications
-              </span>
-            </div>
-          </Link>
-        )}
-        {isEventsEnabled && isAdmin && ˝G(
-          <Link href="/admin/events">
-            <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-              <span className="text-xl text-center text-[#40337F]">Events</span>
-            </div>
-          </Link>
-        )}
-        <Link href="/admin/teams">
-          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">Teams</span>
-          </div>
-        </Link>
-        <Link href="/admin/hardware">
-          <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-            <span className="text-xl text-center text-[#40337F]">Hardware</span>
-          </div>
-        </Link>
-        {isWorkshopsEnabled && isAdmin && (
-          <Link href="/admin/workshops">
-            <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-              <span className="text-xl text-center text-[#40337F]">
-                Workshop check in
-              </span>
-            </div>
-          </Link>
-        )}
-        {isSponsorAdminEnabled && isAdmin && (
-          <Link href="/admin/sponsors">
-            <div className="flex-col gap-2 w-[355px] h-56 bg-gradient-to-t from-[#DBF0FB] to-[#DBF0FB] rounded-[10px] shadow flex justify-center items-center">
-              <span className="text-xl text-center text-[#40337F]">
-                Sponsors
-              </span>
-            </div>
-          </Link>
-        )}
+        ))}
       </div>
     </div>
   );

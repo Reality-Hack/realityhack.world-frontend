@@ -1,4 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
+import { Capability } from '@/lib/access/capabilities';
 import { useMemo } from 'react';
 
 export interface NavItem {
@@ -9,162 +10,135 @@ export interface NavItem {
 
 export interface NavItems {
   navItems: NavItem[];
-  availableRoutes: string[];
 }
 
-const isHomeEnabled = import.meta.env.VITE_IS_HOME_ENABLED === 'true';
-const isAdminEnabled = import.meta.env.VITE_IS_ADMIN_ENABLED === 'true';
-const isScheduleEnabled = import.meta.env.VITE_IS_SCHEDULE_ENABLED === 'true';
-const isSponsorDashboardEnabled = import.meta.env.VITE_IS_SPONSOR_DASHBOARD_ENABLED === 'true';
-const isShowcaseEnabled = import.meta.env.VITE_IS_SHOWCASE_ENABLED === 'true';
-const isTracksEnabled = import.meta.env.VITE_IS_TRACKS_ENABLED === 'true';
-const isHardwareCheckoutEnabled = import.meta.env.VITE_IS_HARDWARE_CHECKOUT_ENABLED === 'true';
-const isTeamsEnabled = import.meta.env.VITE_IS_TEAMS_ENABLED === 'true';
-const isHackerHelpEnabled = import.meta.env.VITE_IS_HACKER_HELP_ENABLED === 'true';
-const isMentorHelpEnabled = import.meta.env.VITE_IS_MENTOR_HELP_ENABLED === 'true';
-const isWorkshopsEnabled = import.meta.env.VITE_IS_WORKSHOPS_ENABLED === 'true';
-const isResourcesTabEnabled = import.meta.env.VITE_IS_RESOURCES_TAB_ENABLED === 'true';
-const isEventGuideEnabled = import.meta.env.VITE_IS_EVENT_GUIDE_ENABLED === 'true';
-const isSettingsTabEnabled = import.meta.env.VITE_IS_SETTINGS_TAB_ENABLED === 'true';
-const isHackersMetEnabled = import.meta.env.VITE_IS_HACKERS_MET_ENABLED === 'true';
-const isLighthousesEnabled = import.meta.env.VITE_IS_LIGHTHOUSES_ENABLED === 'true';
+interface NavTitleContext {
+  isAdmin: boolean;
+}
+
+interface NavItemDefinition extends Omit<NavItem, 'title'> {
+  title: string | ((context: NavTitleContext) => string);
+  /** Gate for the link; the subtree it lands in is gated by ROUTE_POLICIES. */
+  capability: Capability;
+}
+
+/**
+ * The sidebar is a projection of the user's capabilities, not a source of
+ * authorization — route reachability lives in lib/access/routePolicies.
+ */
+const NAV_ITEM_DEFINITIONS: readonly NavItemDefinition[] = [
+  {
+    href: '/',
+    title: 'Home',
+    icon: '/icons/dashboard/home.svg',
+    capability: 'home.view',
+  },
+  {
+    href: '/admin',
+    title: 'Admin',
+    icon: '/icons/dashboard/admin.svg',
+    capability: 'admin.dashboard',
+  },
+  {
+    href: '/sponsor',
+    title: 'Sponsor',
+    icon: '/icons/dashboard/hardware.svg',
+    capability: 'sponsor.view',
+  },
+  {
+    href: '/mentors',
+    title: ({ isAdmin }) => `Help Queue ${isAdmin ? '(Mentor)' : ''}`,
+    icon: '/icons/dashboard/help.svg',
+    capability: 'mentors.view',
+  },
+  {
+    href: '/schedule',
+    title: 'Schedule',
+    icon: '/icons/dashboard/schedule.svg',
+    capability: 'schedule.view',
+  },
+  {
+    href: '/workshops/schedule',
+    title: 'Workshops',
+    icon: '/icons/dashboard/workshops.svg',
+    capability: 'workshops.view',
+  },
+  {
+    href: '/team-formation/hackers-met',
+    title: 'Team Formation',
+    icon: '/icons/dashboard/team.svg',
+    capability: 'teamFormation.view',
+  },
+  {
+    href: '/team',
+    title: 'My Team',
+    icon: '/icons/dashboard/team.svg',
+    capability: 'team.view',
+  },
+  {
+    href: '/help',
+    title: 'Help Queue',
+    icon: '/icons/dashboard/help.svg',
+    capability: 'help.view',
+  },
+  {
+    href: '/lighthouses',
+    title: 'Lighthouses',
+    icon: '/icons/dashboard/lighthouse.svg',
+    capability: 'lighthouses.view',
+  },
+  {
+    href: '/hardware/request',
+    title: 'Hardware',
+    icon: '/icons/dashboard/hardware.svg',
+    capability: 'hardware.view',
+  },
+  {
+    href: '/showcase',
+    title: 'Showcase',
+    icon: '/icons/dashboard/showcase.svg',
+    capability: 'showcase.view',
+  },
+  {
+    href: '/tracks',
+    title: 'Prizes / Tracks',
+    icon: '/icons/dashboard/tracks.svg',
+    capability: 'tracks.view',
+  },
+  {
+    href: '/resources',
+    title: 'Resources',
+    icon: '/icons/dashboard/resources.svg',
+    capability: 'resources.view',
+  },
+  {
+    href: '/guide',
+    title: 'Event Guide',
+    icon: '/icons/dashboard/guide.svg',
+    capability: 'guide.view',
+  },
+  {
+    href: '/settings',
+    title: 'Settings',
+    icon: '/icons/dashboard/settings.svg',
+    capability: 'settings.view',
+  },
+];
 
 export default function useNavigationAccess(): NavItems {
-  const { 
-    isAdmin, 
-    canAccessSponsor, 
-    canAccessMentor, 
-    canAccessParticipant, 
-    session,
-    isVolunteer,
-    isOrganizer,
-  } = useAuth();
+  const { capabilities, isAdmin } = useAuth();
 
-  const navItems = useMemo(() => {
-    let navItems: NavItem[] = []
-    if (isHomeEnabled) {
-      navItems.push({
-        href: '/',
-        title: 'Home',
-        icon: '/icons/dashboard/home.svg'
-      })
-    }
-    if ((isAdmin || isVolunteer || isOrganizer) && isAdminEnabled) {
-      navItems.push({
-        href: '/admin',
-        title: 'Admin',
-        icon: '/icons/dashboard/admin.svg'
-      })
-    }
-    if (canAccessSponsor && isSponsorDashboardEnabled) {
-      navItems.push({
-        href: '/sponsor',
-        title: 'Sponsor',
-        icon: '/icons/dashboard/hardware.svg'
-      })
-    }
-    if (canAccessMentor && isMentorHelpEnabled) {
-      navItems.push({
-        href: '/mentors',
-        title: `Help Queue ${isAdmin ? '(Mentor)' : ''}`,
-        icon: '/icons/dashboard/help.svg'
-      })
-    }
-    if (isScheduleEnabled) {
-      navItems.push({
-        href: '/schedule',
-        title: 'Schedule',
-        icon: '/icons/dashboard/schedule.svg'
-      })
-    }
-    if (isWorkshopsEnabled && (canAccessMentor || canAccessParticipant)) {
-      navItems.push({
-        href: '/workshops/schedule',
-        title: 'Workshops',
-        icon: '/icons/dashboard/workshops.svg'
-      })
-    }
-    if (isHackersMetEnabled && canAccessParticipant) {
-      navItems.push({
-        href: '/team-formation/hackers-met',
-        title: 'Team Formation',
-        icon: '/icons/dashboard/team.svg'
-      })
-    }
-    if (canAccessParticipant && isTeamsEnabled) {
-      navItems.push({
-        href: '/team',
-        title: 'My Team',
-        icon: '/icons/dashboard/team.svg'
-      })
-    }
-    if (canAccessParticipant && isHackerHelpEnabled) {
-      navItems.push({
-        href: '/help',
-        title: 'Help Queue',
-        icon: '/icons/dashboard/help.svg'
-      })
-    }
-    if (isLighthousesEnabled && canAccessMentor) {
-      navItems.push({
-        href: '/lighthouses',
-        title: 'Lighthouses',
-        icon: '/icons/dashboard/lighthouse.svg'
-      })
-    }
-    if (isHardwareCheckoutEnabled && canAccessParticipant) {
-      navItems.push({
-        href: '/hardware/request',
-        title: 'Hardware',
-        icon: '/icons/dashboard/hardware.svg'
-      })
-    }
-    if (isShowcaseEnabled) {
-      navItems.push({
-        href: '/showcase',
-        title: 'Showcase',
-        icon: '/icons/dashboard/showcase.svg'
-      })
-    }
-    if (isTracksEnabled) {
-      navItems.push({
-        href: '/tracks',
-        title: 'Prizes / Tracks',
-        icon: '/icons/dashboard/tracks.svg'
-      })
-    }
-    if (isResourcesTabEnabled) {
-      navItems.push({
-        href: '/resources',
-        title: 'Resources',
-        icon: '/icons/dashboard/resources.svg'
-      })
-    }
-    if (isEventGuideEnabled) {
-      navItems.push({
-        href: '/guide',
-        title: 'Event Guide',
-        icon: '/icons/dashboard/guide.svg'
-      })
-    }
-    if (isSettingsTabEnabled) {
-      navItems.push({
-        href: '/settings',
-        title: 'Settings',
-        icon: '/icons/dashboard/settings.svg'
-      })
-    }
-    return navItems
-  }, [session])
-  const availableRoutes = useMemo(() => {
-    return navItems.map(item => item.href)
-      .map(route => {
-        const segments = route.split('/');
-        return segments.length > 2 ? `/${segments[1]}` : route;
-      });
-  }, [navItems]);
-  return {
-    navItems,
-    availableRoutes
-  }
+  const navItems = useMemo(
+    () =>
+      NAV_ITEM_DEFINITIONS.filter((item) => capabilities.has(item.capability)).map(
+        ({ href, icon, title }) => ({
+          href,
+          icon,
+          title: typeof title === 'function' ? title({ isAdmin }) : title,
+        }),
+      ),
+    [capabilities, isAdmin],
+  );
+
+  return { navItems };
 }

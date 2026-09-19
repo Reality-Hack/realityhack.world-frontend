@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import AuthContent from '@/components/AuthContent';
 import Loader from '@/components/Loader';
+import RouteAccessGate from '@/components/RouteAccessGate';
 
 // Eagerly loaded (small, always needed)
 import SignIn from '@/app/signin/page';
@@ -98,9 +99,11 @@ const Loading = () => <Loader />;
 function RootLayout() {
   return (
     <AuthContent>
-      <Suspense fallback={<Loading />}>
-        <Outlet />
-      </Suspense>
+      <RouteAccessGate>
+        <Suspense fallback={<Loading />}>
+          <Outlet />
+        </Suspense>
+      </RouteAccessGate>
     </AuthContent>
   );
 }

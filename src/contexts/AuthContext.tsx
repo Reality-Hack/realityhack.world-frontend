@@ -1,5 +1,5 @@
 import { useSession } from '@/auth/client';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAppNavigate, useAppPathname, type AppNavigate } from '@/routing';
 import { AttendeeDetail } from '@/types/models';
 import { AuthSession } from '@/auth/types';
@@ -9,26 +9,30 @@ import {
   useContext,
 } from 'react';
 import { useMeRetrieve } from '@/types/endpoints';
+import { Capability, RoleFlags, deriveCapabilities } from '@/lib/access/capabilities';
+import { FEATURE_FLAGS } from '@/lib/access/featureFlags';
 
-interface AuthContextType {
+/**
+ * Extends RoleFlags so the context is statically guaranteed to supply
+ * everything deriveCapabilities consumes — widening the derivation's inputs
+ * fails to compile here rather than drifting silently.
+ */
+interface AuthContextType extends RoleFlags {
   session: AuthSession | null;
   router: AppNavigate;
   pathname: string;
   user: AttendeeDetail | null;
   isLoading: boolean;
-  isAdmin: boolean;
   isSponsor: boolean;
   isMentor: boolean;
   isParticipant: boolean;
   isJudge: boolean;
-  isOrganizer: boolean;
   isGuardian: boolean;
-  isVolunteer: boolean;
   isMedia: boolean;
-  canAccessSponsor: boolean;
-  canAccessMentor: boolean;
-  canAccessParticipant: boolean;
   canSendRsvps: boolean;
+  /** Roles × feature flags, resolved once. Drives nav, route guarding and in-page gating. */
+  capabilities: ReadonlySet<Capability>;
+  can: (capability: Capability) => boolean;
   status: 'authenticated' | 'loading' | 'unauthenticated'
 }
 
@@ -57,6 +61,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const canAccessMentor = isAdmin || isMentor;
   const canAccessParticipant = isAdmin || isParticipant;
 
+  const capabilities = useMemo(
+    () =>
+      deriveCapabilities(
+        {
+          isAdmin: isAdmin ?? false,
+          isVolunteer: isVolunteer ?? false,
+          isOrganizer: isOrganizer ?? false,
+          canAccessSponsor: canAccessSponsor ?? false,
+          canAccessMentor: canAccessMentor ?? false,
+          canAccessParticipant: canAccessParticipant ?? false,
+        },
+        FEATURE_FLAGS,
+      ),
+    [
+      isAdmin,
+      isVolunteer,
+      isOrganizer,
+      canAccessSponsor,
+      canAccessMentor,
+      canAccessParticipant,
+    ],
+  );
+
+  const can = useCallback(
+    (capability: Capability) => capabilities.has(capability),
+    [capabilities],
+  );
+
   const { data: userData, isLoading: isLoadingUser } = useMeRetrieve({
     swr: {
       enabled: !!session?.access_token
@@ -84,6 +116,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     canAccessMentor: canAccessMentor ?? false,
     canAccessParticipant: canAccessParticipant ?? false,
     canSendRsvps: canSendRsvps ?? false,
+    capabilities,
+    can,
     status
   };
 
