@@ -18,16 +18,16 @@ import Box from '@mui/material/Box';
 import {
   ColumnDef,
   Row,
-  RowSelectionState,
   createColumnHelper
 } from '@tanstack/react-table';
 import { formatDateTime } from '@/app/utils/dateUtils';
 import { useSession } from '@/auth/client';
-import { HTMLProps, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../Modal';
 import ReviewPage from '../ReviewPage';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { getApiErrorMessage } from '@/lib/custom-axios';
 
 const APPLICATION_STATUS_OPTIONS: { label: string; value: ApplicationStatusEnum }[] = [
   {
@@ -235,7 +235,7 @@ export default function ApplicationTable() {
         );
       } catch (error) {
         console.log(error)
-        toast.error(error instanceof Error ? error.message : String(error));
+        toast.error(getApiErrorMessage(error, 'Failed to update application'))
       }
     },
     [applications, isAdmin, isLoadingApplications, revalidateApplications, session?.access_token]

@@ -76,4 +76,24 @@ export const customAxios = <T>(
 // In some case with react-query and swr you want to be able to override the return error type
 export type ErrorType<Error> = AxiosError<Error>;
 
+/** Pull a human-readable message out of a DRF error response. */
+export function getApiErrorMessage(error: unknown, fallback = 'Something went wrong'): string {
+  if (Axios.isAxiosError(error)) {
+    const data = error.response?.data;
+    if (typeof data === 'string' && data) return data;
+    if (data && typeof data === 'object') {
+      if (typeof data.detail === 'string') return data.detail;
+      // Field errors: { field: ["msg", ...] } or non_field_errors
+      for (const [field, value] of Object.entries(data)) {
+        const msg = Array.isArray(value) ? value[0] : value;
+        if (typeof msg === 'string') {
+          return field === 'non_field_errors' || field === '__all__' ? msg : `${field}: ${msg}`;
+        }
+      }
+    }
+    return error.message;
+  }
+  return error instanceof Error ? error.message : String(error ?? fallback);
+}
+
 export type BodyType<BodyData> = BodyData;

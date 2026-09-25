@@ -2,7 +2,7 @@ import { createApplication, fileUpload } from '@/app/api/application';
 import Layout from '@/components/HotkeyLayout';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal } from '@mui/material';
 import Loader from '../Loader';
 import { useEventsGetActiveRetrieve } from '@/types/endpoints';
@@ -27,6 +27,7 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
   const DEBUG = false;
   const [selectedTab, setSelectedTab] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const { data: activeEvent } = useEventsGetActiveRetrieve();
   const handleTabChange = (_event: any, newValue: number) => {
     setSelectedTab(newValue);
@@ -117,6 +118,28 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
   const isOnSubmitTab = selectedTab === tabs.length - 2;
   const isOnLastTab = selectedTab === tabs.length - 1;
 
+  // Warn before leaving only once the user has entered something, and stop
+  // once the application has been submitted (confirmation tab).
+  useEffect(() => {
+    if (!isDirty || isOnLastTab) return;
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue =
+        'You have unsaved changes. Are you sure you want to leave?';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isDirty, isOnLastTab]);
+
+  const markDirty = () => {
+    if (!isDirty) setIsDirty(true);
+  };
+
   return (
     <Layout>
       <div
@@ -181,7 +204,7 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
             )}
           </div>
 
-          <div className="mt-2 overflow-y-auto">
+          <div className="mt-2 overflow-y-auto" onChangeCapture={markDirty}>
             {tabs.map((tabContent, index) => {
               return selectedTab === index ? tabContent : null;
             })}

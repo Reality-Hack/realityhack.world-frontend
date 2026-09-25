@@ -45,7 +45,6 @@ const JudgeApp = () => {
     heard_about_us_other: null,
     industry_option: null,
     hardware_hack_interest: null,
-    hardware_hack_detail: [],
     current_country: [],
     nationality: [],
     digital_designer_skills: [],
@@ -98,20 +97,6 @@ const JudgeApp = () => {
     };
     getData();
   }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue =
-        'You have unsaved changes. Are you sure you want to leave?';
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  });
 
   const handleChange = useCallback(
     (
@@ -285,8 +270,8 @@ const JudgeApp = () => {
       </div>
       <div className="flex flex-col gap-4 py-4 mt-8">
         <div className="pt-8">
-          Before you begin, please be advised that Judges only need to attend on 
-          January 26, 2026 from about 12pm Eastern and be available until 6pm at 
+          Before you begin, please be advised that Judges only need to attend on
+          January 26, 2026 from about 12pm Eastern and be available until 6pm at
           the latest. We will also need a phone number to be in touch with you during the hackathon.
         </div>
       </div>

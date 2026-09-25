@@ -42,7 +42,6 @@ const MentorApp = () => {
     proficient_languages: '',
     additional_skills: '',
     hardware_hack_interest: null,
-    hardware_hack_detail: [],
     heard_about_us: [],
     outreach_groups: null,
     gender_identity_other: null,
@@ -107,20 +106,6 @@ const MentorApp = () => {
     };
     getData();
   }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue =
-        'You have unsaved changes. Are you sure you want to leave?';
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  });
 
   const handleChange = useCallback(
     (
@@ -303,11 +288,11 @@ const MentorApp = () => {
         </div>
         <div className="border border-gray-200 border-1"></div>
         <div>
-          Is willing to work on a hackers schedule and is available to attend 
-          from January 22-25, 2026 (attending on January 26th is optional for 
-          mentors). Our participants are so committed experiential technology 
-          innovation, that they often work well into the night. We&apos;d love 
-          mentors to be with them on that journey - especially the evening 
+          Is willing to work on a hackers schedule and is available to attend
+          from January 22-25, 2026 (attending on January 26th is optional for
+          mentors). Our participants are so committed experiential technology
+          innovation, that they often work well into the night. We&apos;d love
+          mentors to be with them on that journey - especially the evening
           before the deadline.
         </div>
         <div className="pt-4">
@@ -338,7 +323,7 @@ const MentorApp = () => {
           />
         </div>
         <div className="border border-gray-200 border-1"></div>
-        <div>Has a contagious passion for experiential technology, including 
+        <div>Has a contagious passion for experiential technology, including
              spatial computing, AI, ML, edge computing, etc.
         </div>
         <div className="pt-4 mb-8">

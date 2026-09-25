@@ -208,20 +208,6 @@ const Application = () => {
     getData();
   }, []);
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue =
-        'You have unsaved changes. Are you sure you want to leave?';
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  });
-
   const handleChange = useCallback(
     (
       e: React.ChangeEvent<

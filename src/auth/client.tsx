@@ -228,16 +228,20 @@ export function AuthClientProvider({
   const doSignOut = useCallback(async (options?: SignOutOptions) => {
     const kc = keycloakRef.current;
     clearStoredTokens();
-    setSession(null);
-    setStatus('unauthenticated');
 
-    if (options?.redirect === false) return;
-
-    if (kc) {
-      kc.logout({
-        redirectUri: options?.callbackUrl ?? getKeycloakAppRedirectUri()
-      });
+    // Only clear in-memory session when not redirecting. Clearing it before
+    // kc.logout() navigates away lets NavGuard route to /signin, whose
+    // auto-login overrides the logout redirect and signs the user back in.
+    if (options?.redirect === false || !kc) {
+      setSession(null);
+      setStatus('unauthenticated');
+      return;
     }
+
+    sessionStorage.removeItem('rh.auth.login_attempted');
+    await kc.logout({
+      redirectUri: options?.callbackUrl ?? getKeycloakAppRedirectUri()
+    });
   }, []);
 
   const refreshSession = useCallback(async (): Promise<AuthSession | null> => {
