@@ -13,4 +13,39 @@ export interface PublicEvent {
   name: string;
   start_date: string;
   end_date: string;
+  /**
+   * IANA timezone the event takes place in, e.g. America/New_York
+   * @maxLength 64
+   */
+  timezone: string;
+  /** @nullable */
+  mentor_start_date?: string | null;
+  /** @nullable */
+  mentor_end_date?: string | null;
+  /** @nullable */
+  judging_start_date?: string | null;
+  /** @nullable */
+  judging_end_date?: string | null;
+  /** @nullable */
+  rsvp_deadline?: string | null;
+  /**
+   * @maxLength 200
+   * @nullable
+   */
+  discord_url?: string | null;
+  /**
+   * @maxLength 200
+   * @nullable
+   */
+  special_tracks_url?: string | null;
+  /**
+   * @maxLength 500
+   * @nullable
+   */
+  parent_consent_form_url?: string | null;
+  /**
+   * @maxLength 500
+   * @nullable
+   */
+  discounts_page_url?: string | null;
 }

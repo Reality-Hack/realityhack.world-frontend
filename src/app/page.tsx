@@ -8,6 +8,7 @@ import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { fileUpload } from './api/application';
 import { patchMe } from './api/attendee';
+import { useActiveEventDetails } from '@/hooks/useActiveEventDetails';
 
 type SetupModalProps = {
   toggleOverlay: () => void;
@@ -34,6 +35,8 @@ export default function Dashboard() {
   const toggleOverlay = () => {
     setOverlayVisible(prev => !prev);
   };
+
+  const eventDetails = useActiveEventDetails();
 
   const isParticipantOrMentor = useMemo(() => isParticipant || isMentor, [isParticipant, isMentor]);
 
@@ -65,35 +68,38 @@ export default function Dashboard() {
       return (
         <>
         <div className="p-6">
-          Now that you&apos;ve RSVP&apos;d to Reality Hack 2026, make sure you
+          Now that you&apos;ve RSVP&apos;d to {eventDetails.name}, make sure you
           join our Discord to start chatting with other accepted
           participants, coordinate housing, share resources, and get to know
           each other! We&apos;ll also be running the event and posting
           announcements through Discord!
         </div>
-        <div className="flex justify-center">
-          <a
-            href="https://discord.gg/XfDXqwTPfv"
-            className="mx-auto mt-4 bg-[#4D97E8] px-7 py-2 rounded-full text-white"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Join our Discord
-          </a>
-        </div>
+        {eventDetails.discordUrl ? (
+          <div className="flex justify-center">
+            <a
+              href={eventDetails.discordUrl}
+              className="mx-auto mt-4 bg-[#4D97E8] px-7 py-2 rounded-full text-white"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Join our Discord
+            </a>
+          </div>
+        ) : null}
       </>
       )
     } else {
       return (
         <div className="p-6">
-          Now that you&apos;ve RSVP&apos;d to Reality Hack 2026, we look forward to seeing you on Sunday, 
-          January 25, 2026 for judging day. Judges should plan to arrive on-site at noon and 
-          be prepared to stay until 5 or 6pm depending on judging needs. Stay tuned for more 
+          Now that you&apos;ve RSVP&apos;d to {eventDetails.name}, we look forward to seeing you on{' '}
+          {eventDetails.judgingDate} for judging day. Judges should plan to arrive on-site at{' '}
+          {eventDetails.judgingStartTime} and be prepared to stay until {eventDetails.judgingEndTime}{' '}
+          depending on judging needs. Stay tuned for more 
           comprehensive information from our Judging Leads.
         </div>
       )
     }
-  }, [isParticipantOrMentor]);
+  }, [eventDetails, isParticipantOrMentor]);
   
   const gettingToTheHackCopy = useMemo(() => {
     if (isParticipantOrMentor) {
@@ -105,16 +111,18 @@ export default function Dashboard() {
           to ask the organizers on Discord in the #questions-to-organizers
           channel!
         </div>
-        <div className="flex justify-center">
-          <a
-            href="https://discord.gg/XfDXqwTPfv"
-            className="mx-auto mt-4 bg-[#4D97E8] px-7 py-2 rounded-full text-white"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Join our Discord
-          </a>
-        </div>
+        {eventDetails.discordUrl ? (
+          <div className="flex justify-center">
+            <a
+              href={eventDetails.discordUrl}
+              className="mx-auto mt-4 bg-[#4D97E8] px-7 py-2 rounded-full text-white"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Join our Discord
+            </a>
+          </div>
+        ) : null}
       </>
       )
     } else {
@@ -125,17 +133,18 @@ export default function Dashboard() {
         </div>
       )
     }
-  }, [isParticipantOrMentor]);
+  }, [eventDetails, isParticipantOrMentor]);
   
   const travelAccomodationsCopy = useMemo(() => {
     if (isParticipantOrMentor) {
       return (
         <>
           <span className="font-bold">
-            You should plan to be in Boston on the evening of January 21st
-            as we begin at 8am on the 22nd.
+            You should plan to be in Boston on the evening of {eventDetails.arrivalDate}{' '}
+            as we begin at {eventDetails.startTime} on {eventDetails.startDate}.
           </span>{' '}
-          You can also plan to wrap up by around 5pm EST on the 26th.
+          You can also plan to wrap up by around {eventDetails.endTime}{' '}
+          {eventDetails.timezoneAbbreviation} on {eventDetails.endDate}.
           We&apos;ll release our full schedule later but you can use our
           guidelines right now to plan travel. <br /> <br />
         </>
@@ -143,15 +152,16 @@ export default function Dashboard() {
     } else {
       return (
         <>
-        Reality Hack at MIT runs from January 22 to 26, 2026.{' '}
+        {eventDetails.name} runs from {eventDetails.dateRange}.{' '}
         <span className="font-bold">
-          However, as a judge, you are only required to attend on Sunday, January 25, 2026.
+          However, as a judge, you are only required to attend on {eventDetails.judgingDate}.
         </span>{' '}
-        Judges should plan to arrive on-site at noon and be prepared to stay until 5 or 6pm depending on judging needs. Stay tuned for more comprehensive information from our Judging Leads. 
+        Judges should plan to arrive on-site at {eventDetails.judgingStartTime} and be prepared to stay until{' '}
+        {eventDetails.judgingEndTime} depending on judging needs. Stay tuned for more comprehensive information from our Judging Leads. 
         </>
       )
     }
-  }, [isParticipantOrMentor]);
+  }, [eventDetails, isParticipantOrMentor]);
 
   function SetupModal({ toggleOverlay }: SetupModalProps) {
     const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
@@ -417,18 +427,22 @@ export default function Dashboard() {
                 The longer you wait, the more expensive it may become. You can
                 even coordinate with other participants through our Discord to
                 lower your costs.
-                <br /> <br />
-                <span className="font-bold">
-                  We have discounts!  
-                </span>{' '}
-                 <a
-                   href="https://mitrealityhack.notion.site/Reality-Hack-at-MIT-2026-Group-Accommodation-Rates-1978c5dbe2bd81949e9fe2c72efcc2b4"
-                   className="text-[#4D97E8] hover:underline"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                 >
-                   Check this Notion page
-                 </a> to keep up to date on all of our available accommodations discounts
+                {eventDetails.discountsPageUrl ? (
+                  <>
+                    <br /> <br />
+                    <span className="font-bold">
+                      We have discounts!
+                    </span>{' '}
+                    <a
+                      href={eventDetails.discountsPageUrl}
+                      className="text-[#4D97E8] hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Check this Notion page
+                    </a> to keep up to date on all of our available accommodations discounts
+                  </>
+                ) : null}
               </div>
             </div>
           </div>

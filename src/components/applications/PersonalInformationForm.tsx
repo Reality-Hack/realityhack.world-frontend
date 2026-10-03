@@ -6,6 +6,7 @@ import {
   option_value
 } from '@/types/application_form_types';
 import Dropzone, { AcceptedFileTypes } from '../Dropzone';
+import { useActiveEventDetails } from '@/hooks/useActiveEventDetails';
 
 interface FormProps {
   formData: Partial<form_data>;
@@ -51,6 +52,7 @@ const PersonalInformationForm: React.FC<FormProps> = ({
   nationalities,
   acceptedFileTypes
 }) => {
+  const { startDate } = useActiveEventDetails();
   const handleSelectChange = (
     value: string[],
     name: string,
@@ -213,7 +215,7 @@ const PersonalInformationForm: React.FC<FormProps> = ({
         <span className="font-bold text-themeSecondary">*</span>
       </TextInput>
       <label className="mb-2">
-        As of January 22, 2026, I will fall under this age group:{' '}
+        As of {startDate}, I will fall under this age group:{' '}
       </label>
       <span className="font-bold text-themeSecondary">*</span>
       <div className="mb-8">

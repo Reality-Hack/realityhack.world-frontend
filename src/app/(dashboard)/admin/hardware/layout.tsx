@@ -35,7 +35,7 @@ export default function Hardware({ children }: { children: any }) {
             <Tab
               href="/admin/hardware/requests"
               isSelected={pathname == '/admin/hardware/requests'}
-              title="All requests"
+              title="Hardware Requests"
             ></Tab>
             <Tab
               href="/admin/hardware/checkout"

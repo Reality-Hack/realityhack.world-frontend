@@ -17,16 +17,14 @@ export default function HardwareRequests() {
   return (
     <div className="flex flex-col">
       <div className="flex justify-end">
-        <AppButton 
-          onClick={() => setDialogOpen(true)}
-        >
+        <AppButton onClick={() => setDialogOpen(true)}>
           Create Request
         </AppButton>
       </div>
       <HardwareRequestTable statusEditable={true} />
-      <AdminHardwareRequestDialog 
-        open={dialogOpen} 
-        onClose={() => setDialogOpen(false)} 
+      <AdminHardwareRequestDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
       />
     </div>
   );

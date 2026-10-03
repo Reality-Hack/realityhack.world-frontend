@@ -4,7 +4,10 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export type ApplicationsListStatusesItem = typeof ApplicationsListStatusesItem[keyof typeof ApplicationsListStatusesItem];
+/**
+ * @nullable
+ */
+export type ApplicationsListStatusesItem = typeof ApplicationsListStatusesItem[keyof typeof ApplicationsListStatusesItem] | null;
 
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare

@@ -5,6 +5,6 @@ export default function AdminEventDetailIndex() {
   const { id: eventId = '' } = useAppParams();
 
   return (
-    <Navigate to={`/admin/events/${eventId}/application-questions`} replace />
+    <Navigate to={`/admin/events/${eventId}/details`} replace />
   );
 }

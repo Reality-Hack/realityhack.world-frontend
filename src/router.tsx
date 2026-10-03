@@ -57,6 +57,7 @@ const AdminDashboard = lazy(() => import('@/app/(dashboard)/admin/page'));
 const AdminCheckin = lazy(() => import('@/app/(dashboard)/admin/checkin/page'));
 const AdminEvents = lazy(() => import('@/app/(dashboard)/admin/events/page'));
 const AdminEventsDetailIndex = lazy(() => import('@/app/(dashboard)/admin/events/[id]/page'));
+const AdminEventsDetails = lazy(() => import('@/app/(dashboard)/admin/events/[id]/details/page'));
 const AdminEventsApplicationQuestions = lazy(
   () => import('@/app/(dashboard)/admin/events/[id]/application-questions/page'),
 );
@@ -185,6 +186,7 @@ export const router = createBrowserRouter([
             ),
             children: [
               { index: true, element: <AdminEventsDetailIndex /> },
+              { path: 'details', element: <AdminEventsDetails /> },
               {
                 path: 'application-questions',
                 element: <AdminEventsApplicationQuestions />,

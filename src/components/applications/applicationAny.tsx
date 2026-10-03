@@ -5,7 +5,7 @@ import Tabs from '@mui/material/Tabs';
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mui/material';
 import Loader from '../Loader';
-import { useEventsGetActiveRetrieve } from '@/types/endpoints';
+import { useActiveEventDetails } from '@/hooks/useActiveEventDetails';
 
 interface AnyAppProps {
   tabs: React.ReactNode[];
@@ -28,7 +28,7 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
   const [selectedTab, setSelectedTab] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const { data: activeEvent } = useEventsGetActiveRetrieve();
+  const eventDetails = useActiveEventDetails();
   const handleTabChange = (_event: any, newValue: number) => {
     setSelectedTab(newValue);
   };
@@ -151,7 +151,7 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
           <div className="w-[250px] h-[250px] mt-8 mx-auto bg-logocolor dark:bg-logobw bg-contain bg-no-repeat bg-center" />
           <div className="pb-8">
             <h1 className="py-1 text-2xl leading-8 text-center text-themeSecondary drop-shadow-md font-ethnocentric">
-              {activeEvent?.name}
+              {eventDetails.name}
             </h1>
             <h2 className="text-2xl font-bold leading-8 text-center text-themeYellow drop-shadow-md">
               {' '}

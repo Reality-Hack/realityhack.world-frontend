@@ -1,6 +1,7 @@
 import React from 'react';
 import { RadioInput, TextInput } from '../Inputs';
 import { age_group, form_data } from '../../types/application_form_types';
+import { useActiveEventDetails } from '@/hooks/useActiveEventDetails';
 
 interface FormProps {
   formData: Partial<form_data>;
@@ -19,6 +20,7 @@ const AdditionalPersonalInformationForm: React.FC<FormProps> = ({
   handleBlur,
   errors
 }) => {
+  const { startDate } = useActiveEventDetails();
   return (
     <div className="px-6 mb-8">
       <p className="mb-4 text-xl font-bold text-purple-900">
@@ -114,7 +116,7 @@ const AdditionalPersonalInformationForm: React.FC<FormProps> = ({
       </TextInput>
       <div>
         <label className="mb-2">
-          As of January 22, 2026, I will fall under this age group:{' '}
+          As of {startDate}, I will fall under this age group:{' '}
         </label>
         <span className="font-bold text-themeSecondary">*</span>
         <div className="mb-8">

@@ -10,8 +10,10 @@ import { form_data } from '@/types/application_form_types';
 import { useSession } from '@/auth/client';
 import { AppLink as Link, useAppNavigate } from '@/routing';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useActiveEventDetails } from '@/hooks/useActiveEventDetails';
 
 const MentorApp = () => {
+  const eventDetails = useActiveEventDetails();
   const [formData, setFormData] = useState<Partial<form_data>>({
     participation_class: 'M',
     disclaimer_schedule: null,
@@ -253,7 +255,7 @@ const MentorApp = () => {
       <div className="text-xl font-bold text-purple-900">Welcome</div>
       <div className="flex flex-col gap-4">
         <div className="pt-8">
-          Thank you for your interest to be a Mentor at Reality Hack 2026.
+          Thank you for your interest to be a Mentor at {eventDetails.name}.
           For all mentor-related questions, contact{' '}
           <Link href="mailto:mentors@realityhackinc.org">
             <span className="text-themePrimary">mentors@realityhackinc.org</span>
@@ -262,8 +264,8 @@ const MentorApp = () => {
         </div>
 
         <div className="pb-4">
-          Please note that this form is not a commitment to attend Reality
-          Hack 2026 as a mentor. Our team will reach out to you about your
+          Please note that this form is not a commitment to attend{' '}
+          {eventDetails.name} as a mentor. Our team will reach out to you about your
           interest to confirm your participation.
         </div>
         <div>
@@ -289,8 +291,8 @@ const MentorApp = () => {
         <div className="border border-gray-200 border-1"></div>
         <div>
           Is willing to work on a hackers schedule and is available to attend
-          from January 22-25, 2026 (attending on January 26th is optional for
-          mentors). Our participants are so committed experiential technology
+          from {eventDetails.mentorDateRange} (attending on {eventDetails.endDate} is
+          optional for mentors). Our participants are so committed experiential technology
           innovation, that they often work well into the night. We&apos;d love
           mentors to be with them on that journey - especially the evening
           before the deadline.
@@ -343,7 +345,7 @@ const MentorApp = () => {
 
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
-      <p>{`Thank you for submitting your interest to be a Mentor at Reality Hack 2026, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+      <p>{`Thank you for submitting your interest to be a Mentor at ${eventDetails.name}, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 
