@@ -6,12 +6,14 @@ import AdditionalPersonalInformationForm from '@/components/applications/Additio
 import AnyApp from '@/components/applications/applicationAny';
 import { AppLink as Link, useAppNavigate } from '@/routing';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useActiveEventDetails } from '@/hooks/useActiveEventDetails';
 import { form_data } from '../../../types/application_form_types';
 import { applicationOptions } from '@/app/api/application';
 import ReviewPage from '@/components/admin/ReviewPage';
 import { useSession } from '@/auth/client';
 
 const JudgeApp = () => {
+  const eventDetails = useActiveEventDetails();
   const [formData, setFormData] = useState<Partial<form_data>>({
     participation_class: 'J',
     judge_invited_by: null,
@@ -45,7 +47,6 @@ const JudgeApp = () => {
     heard_about_us_other: null,
     industry_option: null,
     hardware_hack_interest: null,
-    hardware_hack_detail: [],
     current_country: [],
     nationality: [],
     digital_designer_skills: [],
@@ -98,20 +99,6 @@ const JudgeApp = () => {
     };
     getData();
   }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue =
-        'You have unsaved changes. Are you sure you want to leave?';
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  });
 
   const handleChange = useCallback(
     (
@@ -259,7 +246,7 @@ const JudgeApp = () => {
       <div className="text-xl font-bold text-purple-900">Welcome</div>
       <div className="flex flex-col gap-4">
         <div className="pt-8">
-          Thank you for your interest to be a Judge at Reality Hack 2026.
+          Thank you for your interest to be a Judge at {eventDetails.name}.
           For all judge-related questions, contact{' '}
           <Link href="mailto:catherine@realityhackinc.org">
             <span className="text-themePrimary">
@@ -270,8 +257,8 @@ const JudgeApp = () => {
         </div>
 
         <div className="pb-4">
-          Please note that this form is not a commitment to attend Reality
-          Hack 2026 as a judge. Our team will reach out to you about your
+          Please note that this form is not a commitment to attend{' '}
+          {eventDetails.name} as a judge. Our team will reach out to you about your
           interest to confirm your participation.
         </div>
         <div>
@@ -285,9 +272,10 @@ const JudgeApp = () => {
       </div>
       <div className="flex flex-col gap-4 py-4 mt-8">
         <div className="pt-8">
-          Before you begin, please be advised that Judges only need to attend on 
-          January 26, 2026 from about 12pm Eastern and be available until 6pm at 
-          the latest. We will also need a phone number to be in touch with you during the hackathon.
+          Before you begin, please be advised that Judges only need to attend on
+          {eventDetails.judgingDate} from about {eventDetails.judgingStartTime}{' '}
+          {eventDetails.timezoneAbbreviation} and be available until{' '}
+          {eventDetails.judgingEndTime} at the latest. We will also need a phone number to be in touch with you during the hackathon.
         </div>
       </div>
     </div>
@@ -295,7 +283,7 @@ const JudgeApp = () => {
 
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
-      <p>{`Thank you for submitting your interest to be a Judge at Reality Hack 2026, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+      <p>{`Thank you for submitting your interest to be a Judge at ${eventDetails.name}, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 

@@ -83,7 +83,8 @@ export enum previous_participation {
   _2022 = 'F',
   _2023 = 'G',
   _2024 = 'H',
-  _2025 = 'I'
+  _2025 = 'I',
+  _2026 = 'J'
 }
 
 export enum participation_role {

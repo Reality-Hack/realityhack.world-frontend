@@ -21,6 +21,7 @@ import {
 import { useSession } from '@/auth/client';
 import { AppLink as Link, useAppNavigate } from '@/routing';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useActiveEventDetails } from '@/hooks/useActiveEventDetails';
 import { applicationOptions } from '../api/application';
 import { useApplicationquestionsList } from '@/types/endpoints';
 import {
@@ -32,6 +33,7 @@ import {
 } from '@/utils/dynamicQuestions';
 
 const Application = () => {
+  const eventDetails = useActiveEventDetails();
   const [acceptedFiles, setAcceptedFiles] = useState<any>(null);
   const [rejectedFiles, setRejectedFiles] = useState<any>(null);
   const [countries, setCountries] = useState<any>(null);
@@ -207,20 +209,6 @@ const Application = () => {
     };
     getData();
   }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue =
-        'You have unsaved changes. Are you sure you want to leave?';
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  });
 
   const handleChange = useCallback(
     (
@@ -479,7 +467,7 @@ const Application = () => {
       <div className="flex flex-col gap-4">
         <div className="pt-8">
           Welcome to the Reality Hack participant application form. Please
-          fill out this form to apply for a spot at Reality Hack 2026. For all
+          fill out this form to apply for a spot at {eventDetails.name}. For all
           applications-related questions, contact{' '}
           <Link href="mailto:apply@realityhackinc.org">
             <span className="text-themePrimary">apply@realityhackinc.org</span>
@@ -495,8 +483,8 @@ const Application = () => {
           .
         </div>
         <div className="pb-4">
-          Please note that this form is not a commitment to attend Reality Hack
-          2026. You will be notified of your acceptance status by email.
+          Please note that this form is not a commitment to attend{' '}
+          {eventDetails.name}. You will be notified of your acceptance status by email.
         </div>
         <div>
           You will receive a confirmation email when you complete the
@@ -578,7 +566,7 @@ const Application = () => {
 
   const ConfirmationTab = () => (
     <div className="px-6 h-[256px]">
-      <p>{`Thank you for applying to Reality Hack 2026, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
+      <p>{`Thank you for applying to ${eventDetails.name}, ${formData.first_name}! You should receive a confirmation email from us shortly.`}</p>
     </div>
   );
 

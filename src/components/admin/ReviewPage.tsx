@@ -26,6 +26,7 @@ import {
 import { ageGroupLabels } from '../applications/PersonalInformationForm';
 import { useApplicationquestionsList, useApplicationsRetrieve } from '@/types/endpoints'
 import Loader from '../Loader';
+import { useActiveEventDetails } from '@/hooks/useActiveEventDetails';
 
 
 export default function ReviewPage({
@@ -36,12 +37,13 @@ export default function ReviewPage({
   acceptedFiles?: File[];
 }) {
   const { data: session } = useSession();
+  const eventDetails = useActiveEventDetails();
 
-  const { 
-    data: application, 
-    isLoading: isApplicationLoading, 
-    error: applicationError 
-} = useApplicationsRetrieve(allInfo.id, {
+  const {
+    data: application,
+    isLoading: isApplicationLoading,
+    error: applicationError
+} = useApplicationsRetrieve(allInfo?.id, {
     swr: { enabled: !!session?.access_token && !!allInfo.id }
   })
 
@@ -208,12 +210,12 @@ export default function ReviewPage({
               name={'name'}
               value=""
               onChange={() => {}}
-              label="Is willing to work on a hackers schedule and is available 
-              to attend from January 22-25, 2026 (attending on January 26 is 
-              optional for mentors). Our participants are so committed to 
-              experiential technology innovation, that they often work well 
-              into the night. We&apos;d love mentors to be with them on that journey 
-              - especially the evening before the deadline."
+              label={`Is willing to work on a hackers schedule and is available
+              to attend from ${eventDetails.mentorDateRange} (attending on ${eventDetails.endDate} is
+              optional for mentors). Our participants are so committed to
+              experiential technology innovation, that they often work well
+              into the night. We'd love mentors to be with them on that journey
+              - especially the evening before the deadline.`}
             />
           </div>
           <div className="border border-gray-200 border-1"></div>
@@ -234,7 +236,7 @@ export default function ReviewPage({
               name={'name'}
               value=""
               onChange={() => {}}
-              label="Has a contagious passion for experiential technology, including 
+              label="Has a contagious passion for experiential technology, including
              spatial computing, AI, ML, edge computing, etc."
             />
           </div>
@@ -274,7 +276,7 @@ export default function ReviewPage({
             </div>
           ))}
         <LabelAndValue
-          label={'What age will you be as of January 22, 2026?'}
+          label={`What age will you be as of ${eventDetails.startDate}?`}
           value={
             allInfo.age_group
               ? getLabelFromEnumValue(
@@ -615,7 +617,7 @@ export default function ReviewPage({
       if (isApplicationLoading) {
         return <Loader />;
       }
-  
+
       if (applicationError) {
         return <div>Error loading application details: {applicationError.message}</div>;
       }
@@ -638,14 +640,14 @@ export default function ReviewPage({
       }
 
       if (response.selected_keys_snapshot && response.choices_snapshot) {
-        const selectedKeys = Array.isArray(response.selected_keys_snapshot) 
-          ? response.selected_keys_snapshot 
+        const selectedKeys = Array.isArray(response.selected_keys_snapshot)
+          ? response.selected_keys_snapshot
           : [response.selected_keys_snapshot];
-        
-        const selectedChoices = selectedKeys.map((key: string) => 
+
+        const selectedChoices = selectedKeys.map((key: string) =>
           response.choices_snapshot[key] || key
         );
-        
+
         return selectedChoices;
       }
 

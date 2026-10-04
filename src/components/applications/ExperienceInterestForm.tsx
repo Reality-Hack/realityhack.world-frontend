@@ -42,7 +42,9 @@ export const previousParticipationLabels = {
   _2021: '2021',
   _2022: '2022',
   _2023: '2023',
-  _2024: '2024'
+  _2024: '2024',
+  _2025: '2025',
+  _2026: '2026'
 };
 
 export const DesignSkillsLabels = {
@@ -283,15 +285,15 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
             />
             {key === 'specialist' && (
               <p className="ml-4 text-xs italic max-w-[520px] -mt-2 mb-2">
-                Specialized skills and domain expertise includes fields like AI, 
-                machine learning, robotics, edge computing, medical technologists and professionals, 
+                Specialized skills and domain expertise includes fields like AI,
+                machine learning, robotics, edge computing, medical technologists and professionals,
                 music technology, aerospace training, TV and media, urbanists, educators or any other domain expertise.
               </p>
             )}
             {key === 'project_manager' && (
               <p className="ml-4 text-xs italic max-w-[520px] -mt-2 mb-2">
-                Recommended for marketing, project and product management specialists. 
-                Product managers help their team by doing market research, refining concepts, 
+                Recommended for marketing, project and product management specialists.
+                Product managers help their team by doing market research, refining concepts,
                 coordinating collaborative teamwork and preparing presentation materials.
               </p>
             )}
@@ -408,9 +410,9 @@ const ExperienceInterestForm: React.FC<FormProps> = ({
         valid={!errors.experienceother_skills_experiences_with_xr}
         onBlur={handleBlur}
       >
-        Do you have any other skills or experiences that you&apos;d like to tell us about? 
-        We want to see the breadth of your skillset and are most interested in skills 
-        and expertise relating to physical computing, AI, and machine learning. 
+        Do you have any other skills or experiences that you&apos;d like to tell us about?
+        We want to see the breadth of your skillset and are most interested in skills
+        and expertise relating to physical computing, AI, and machine learning.
       </TextAreaInput>
     </div>
   );

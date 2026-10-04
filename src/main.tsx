@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <SessionProviderWrapper>
       <EventsProvider>
-        <Toaster position="top-left" />
+        <Toaster position="top-left" richColors={true} />
         <RouterProvider router={router} />
       </EventsProvider>
     </SessionProviderWrapper>

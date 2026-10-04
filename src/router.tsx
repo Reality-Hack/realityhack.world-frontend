@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import AuthContent from '@/components/AuthContent';
 import Loader from '@/components/Loader';
+import RouteAccessGate from '@/components/RouteAccessGate';
 
 // Eagerly loaded (small, always needed)
 import SignIn from '@/app/signin/page';
@@ -15,9 +16,9 @@ import AdminLayout from '@/app/(dashboard)/admin/layout';
 import AdminSponsorsLayout from '@/app/(dashboard)/admin/sponsors/layout';
 import AdminHardwareLayout from '@/app/(dashboard)/admin/hardware/layout';
 import AdminRsvpLayout from '@/app/(dashboard)/admin/rsvp/layout';
-import AdminApplicationsLayout from '@/app/(dashboard)/admin/applications/layout';
 import AdminUsersLayout from '@/app/(dashboard)/admin/users/layout';
 import AdminEventsLayout from '@/app/(dashboard)/admin/events/[id]/layout';
+const AdminApplicationsLayout = lazy(() => import('@/app/(dashboard)/admin/applications/layout'));
 
 // Lazy-loaded pages
 const ApplyPage = lazy(() => import('@/app/apply/page'));
@@ -56,6 +57,7 @@ const AdminDashboard = lazy(() => import('@/app/(dashboard)/admin/page'));
 const AdminCheckin = lazy(() => import('@/app/(dashboard)/admin/checkin/page'));
 const AdminEvents = lazy(() => import('@/app/(dashboard)/admin/events/page'));
 const AdminEventsDetailIndex = lazy(() => import('@/app/(dashboard)/admin/events/[id]/page'));
+const AdminEventsDetails = lazy(() => import('@/app/(dashboard)/admin/events/[id]/details/page'));
 const AdminEventsApplicationQuestions = lazy(
   () => import('@/app/(dashboard)/admin/events/[id]/application-questions/page'),
 );
@@ -84,10 +86,9 @@ const AdminRsvpVolunteers = lazy(() => import('@/app/(dashboard)/admin/rsvp/volu
 const AdminRsvpSponsors = lazy(() => import('@/app/(dashboard)/admin/rsvp/sponsors/page'));
 const AdminRsvpOrganizers = lazy(() => import('@/app/(dashboard)/admin/rsvp/organizers/page'));
 
-const AdminApplicationsParticipants = lazy(() => import('@/app/(dashboard)/admin/applications/participants/page'));
-const AdminApplicationsMentors = lazy(() => import('@/app/(dashboard)/admin/applications/mentors/page'));
-const AdminApplicationsJudges = lazy(() => import('@/app/(dashboard)/admin/applications/judges/page'));
-const AdminApplicationsVolunteers = lazy(() => import('@/app/(dashboard)/admin/applications/volunteers/page'));
+const AdminApplicationsPage = lazy(() => import('@/app/(dashboard)/admin/applications/ApplicationsPage'))
+
+const AdminInvitesPage = lazy(() => import('@/app/(dashboard)/admin/applications/AdminInvitesPage'))
 
 const AdminUsersParticipants = lazy(() => import('@/app/(dashboard)/admin/users/participants/page'));
 const AdminUsersMentors = lazy(() => import('@/app/(dashboard)/admin/users/mentors/page'));
@@ -99,9 +100,11 @@ const Loading = () => <Loader />;
 function RootLayout() {
   return (
     <AuthContent>
-      <Suspense fallback={<Loading />}>
-        <Outlet />
-      </Suspense>
+      <RouteAccessGate>
+        <Suspense fallback={<Loading />}>
+          <Outlet />
+        </Suspense>
+      </RouteAccessGate>
     </AuthContent>
   );
 }
@@ -183,6 +186,7 @@ export const router = createBrowserRouter([
             ),
             children: [
               { index: true, element: <AdminEventsDetailIndex /> },
+              { path: 'details', element: <AdminEventsDetails /> },
               {
                 path: 'application-questions',
                 element: <AdminEventsApplicationQuestions />,
@@ -234,10 +238,8 @@ export const router = createBrowserRouter([
             path: 'applications',
             element: <AdminApplicationsLayout><Outlet /></AdminApplicationsLayout>,
             children: [
-              { path: 'participants', element: <AdminApplicationsParticipants /> },
-              { path: 'mentors', element: <AdminApplicationsMentors /> },
-              { path: 'judges', element: <AdminApplicationsJudges /> },
-              { path: 'volunteers', element: <AdminApplicationsVolunteers /> },
+              { path: 'applications', element: <AdminApplicationsPage /> },
+              { path: 'invites', element: <AdminInvitesPage /> },
             ],
           },
 

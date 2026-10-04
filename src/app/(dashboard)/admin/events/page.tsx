@@ -2,7 +2,7 @@ import { useSession } from '@/auth/client';
 import { useState } from 'react';
 import { useEventsList } from '@/types/endpoints';
 import { Event } from '@/types/models';
-import { DateTime } from 'luxon';
+import { formatEventDateTime } from '@/app/utils/eventDateUtils';
 import Loader from '@/components/Loader';
 import Table from '@/components/Table';
 import { AppLink } from '@/routing';
@@ -11,13 +11,10 @@ import AppButton from '@/components/common/AppButton';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import CreateEventForm from '@/components/admin/events/CreateEventForm';
+import EventForm from '@/components/admin/events/EventForm';
 
 const isEventsEnabled = import.meta.env.VITE_IS_EVENTS_ENABLED === 'true';
 
-function formatDate(date: string): string {
-  return DateTime.fromISO(date).toLocaleString(DateTime.DATETIME_SHORT);
-}
 
 export default function EventsAdminPage(): JSX.Element {
   const { data: session } = useSession();
@@ -38,12 +35,12 @@ export default function EventsAdminPage(): JSX.Element {
     {
       header: 'Start Date',
       accessorKey: 'start_date',
-      cell: ({ row }) => formatDate(row.original.start_date),
+      cell: ({ row }) => formatEventDateTime(row.original.start_date, row.original.timezone),
     },
     {
       header: 'End Date',
       accessorKey: 'end_date',
-      cell: ({ row }) => formatDate(row.original.end_date),
+      cell: ({ row }) => formatEventDateTime(row.original.end_date, row.original.timezone),
     },
     {
       header: 'Is Active',
@@ -84,7 +81,7 @@ export default function EventsAdminPage(): JSX.Element {
       >
         <DialogTitle>Create event</DialogTitle>
         <DialogContent className="pt-2">
-          <CreateEventForm
+          <EventForm
             onCancel={() => setCreateEventOpen(false)}
             onSuccess={() => {
               setCreateEventOpen(false);

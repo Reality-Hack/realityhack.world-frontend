@@ -10,7 +10,10 @@ import {
 } from '@/types/endpoints';
 import { ApplicationquestionsListFormType, Event } from '@/types/models';
 import { useAppParams } from '@/routing';
-import { DateTime } from 'luxon';
+import {
+  DEFAULT_EVENT_TIMEZONE,
+  formatEventDateTime,
+} from '@/app/utils/eventDateUtils';
 import {
   createContext,
   ReactNode,
@@ -61,9 +64,11 @@ export function AdminEventProvider({
     swr: { enabled: isQueryEnabled },
   });
 
-  const formatEventDate = useCallback((date: string): string => {
-    return DateTime.fromISO(date).toLocaleString(DateTime.DATETIME_SHORT);
-  }, []);
+  const formatEventDate = useCallback(
+    (date: string): string =>
+      formatEventDateTime(date, event?.timezone ?? DEFAULT_EVENT_TIMEZONE),
+    [event?.timezone],
+  );
 
   const invalidateQuestionsCache = useCallback(
     async (

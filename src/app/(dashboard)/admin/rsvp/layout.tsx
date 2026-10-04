@@ -14,7 +14,7 @@ export default function ApplicationLayout({
   }
   return (
     <div className="h-screen p-6 pt-8 pl-2">
-      <h1 className="text-3xl">RSVPs</h1>
+      <h1 className="text-3xl">Confirmed RSVPs</h1>
       <div className="py-4">
         <div className="pb-2">
           <Tab

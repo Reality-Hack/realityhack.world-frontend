@@ -32,6 +32,7 @@ import {
   useEventsGetActiveRetrieve,
 } from '@/types/endpoints';
 import { ApplicationquestionsListFormType } from '@/types/models';
+import { useActiveEventDetails } from '@/hooks/useActiveEventDetails';
 
 export default function RsvpForm() {
   const params = useAppParams();
@@ -48,6 +49,7 @@ export default function RsvpForm() {
     error: activeEventError,
   } = useEventsGetActiveRetrieve();
   const activeEventId = activeEvent?.id;
+  const eventDetails = useActiveEventDetails();
   const {
     data: rsvpQuestions,
     isLoading: isQuestionsLoading,
@@ -954,7 +956,7 @@ export default function RsvpForm() {
               {isParticipant && (
                 <>
                   <div className="pb-4">
-                    Will you be under 18 on January 22, 2026?{' '}
+                    Will you be under 18 on {eventDetails.startDate}?{' '}
                     <span className="text-red-700">*</span>
                     <div className="flex flex-col mt-[10px]">
                       <RadioInput
@@ -981,18 +983,31 @@ export default function RsvpForm() {
                         {formData.under_18_by_date === true && (
                           <div className="relative flex flex-col mb-0 ml-4 cursor-default items-left">
                             <div>
-                              As you will be under 18 when the event starts on
-                              January 22, 2026, we require the completion of a
+                              As you will be under 18 when the event starts on{' '}
+                              {eventDetails.startDate}, we require the completion of a
                               Parental Consent and Release Form. If your
                               parent/guardian has not already done so, please
                               have your parent/guardian{' '}
-                              <a
-                                href="https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=64125d74-ae74-46bf-bbab-f7fb119856c2&env=na4&acct=83645d39-e03b-40e3-b225-a975e8c6f8cc&v=2"
-                                target="_blank"
-                                className="underline cursor-pointer text-themePrimary"
-                              >
-                                fill out this form
-                              </a>
+                              {eventDetails.parentConsentFormUrl ? (
+                                <a
+                                  href={eventDetails.parentConsentFormUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="underline cursor-pointer text-themePrimary"
+                                >
+                                  fill out this form
+                                </a>
+                              ) : (
+                                <>
+                                  request the form from{' '}
+                                  <a
+                                    href="mailto:apply@realityhackinc.org"
+                                    className="underline cursor-pointer text-themePrimary"
+                                  >
+                                    apply@realityhackinc.org
+                                  </a>
+                                </>
+                              )}
                               .
                               <div className="py-4 mb-3">
                                 <CheckboxInput
@@ -1217,8 +1232,8 @@ export default function RsvpForm() {
                   Intellectual Property
                 </span>
                 <br></br>I understand that any intellectual property I develop
-                or contribute to during the Reality Hack event, scheduled for
-                January 22 - 26th, 2026, at Massachusetts Institute of
+                or contribute to during the Reality Hack event, scheduled for{' '}
+                {eventDetails.dateRange}, at Massachusetts Institute of
                 Technology in Cambridge, MA, will be subject to specific
                 licensing agreements. All code developed during the hackathon
                 must adhere to open-source licensing, ensuring its source code
@@ -1442,7 +1457,7 @@ export default function RsvpForm() {
             </div>
           ) : (
             <div className="px-6 py-6 h-[256px]">
-              <p>{`Thank you for submitting your RSVP to Reality Hack 2026! You should receive an email to log in to our platform shortly.`}</p>
+              <p>{`Thank you for submitting your RSVP to ${eventDetails.name}! You should receive an email to log in to our platform shortly.`}</p>
             </div>
           )}
         </div>

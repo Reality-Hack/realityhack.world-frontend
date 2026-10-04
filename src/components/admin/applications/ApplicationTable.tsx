@@ -1,77 +1,95 @@
 'use client';
+import { applicationOptions } from '@/app/api/application';
 import {
-  updateApplication,
-  applicationOptions
-} from '@/app/api/application';
-import { useApplicationsList } from '@/types/endpoints';
+  applicationsPartialUpdate,
+  useApplicationsList,
+} from '@/types/endpoints';
 import { getUploadedFile } from '@/app/api/uploaded_files';
 import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 import CustomSelect from '@/components/CustomSelect';
 import Table from '@/components/Table';
-import { status } from '@/types/types';
-import { Application, ApplicationDetail, ApplicationsListParticipationClass } from '@/types/models';
+import {
+  ApplicationDetail,
+  ApplicationsListParticipationClass,
+  ApplicationStatusEnum,
+  PatchedApplicationRequest,
+} from '@/types/models';
 import Box from '@mui/material/Box';
-import { ColumnDef, Row, createColumnHelper } from '@tanstack/react-table';
-import { DateTime } from 'luxon';
+import {
+  ColumnDef,
+  Row,
+  createColumnHelper
+} from '@tanstack/react-table';
+import { formatDateTime } from '@/app/utils/dateUtils';
 import { useSession } from '@/auth/client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../Modal';
 import ReviewPage from '../ReviewPage';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import Loader from '@/components/Loader';
+import { getApiErrorMessage } from '@/lib/custom-axios';
 
-interface ApplicationTableProps {
-  type: ApplicationsListParticipationClass;
-}
-
-const ApplicationStatusOptions: {
-  label: string;
-  value: status;
-}[] = [
+const APPLICATION_STATUS_OPTIONS: { label: string; value: ApplicationStatusEnum }[] = [
   {
-    label: 'Accepted In Person',
-    value: status.accepted_in_person
+    label: 'Accepted',
+    value: ApplicationStatusEnum.A
   },
   {
-    label: 'Accepted Online',
-    value: status.accepted_online
-  },
-  {
-    label: 'Waitlist In Person',
-    value: status.waitlist_in_person
-  },
-  {
-    label: 'Waitlist Online',
-    value: status.waitlist_online
+    label: 'Waitlisted',
+    value: ApplicationStatusEnum.W
   },
   {
     label: 'Declined',
-    value: status.declined
+    value: ApplicationStatusEnum.D
   }
 ];
 
-export default function ApplicationTable({ type }: ApplicationTableProps) {
+const PARTICIPATION_CLASS_OPTIONS: { label: string; value: ApplicationsListParticipationClass }[] = [
+  { label: 'Participant', value: ApplicationsListParticipationClass.P },
+  { label: 'Mentor',      value: ApplicationsListParticipationClass.M },
+  { label: 'Judge',       value: ApplicationsListParticipationClass.J },
+];
+
+export default function ApplicationTable() {
   const [dialogRow, setDialogRow] = useState<any | void>(undefined);
   const [options, setOptions] = useState<any>({});
-  const [transformedApplications, setTransformedApplications] = useState<Application[]>([]);
+  const [isOptionsLoading, setIsOptionsLoading] = useState(true);
+  const [selectedClasses, setSelectedClasses] = useState<ApplicationsListParticipationClass[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<ApplicationStatusEnum[]>([]);
   const { data: session } = useSession();
-  const isAdmin = session && session.roles?.includes('admin');
-  const [dataTransformFinished, setDataTransformFinished] = useState(false);
+  const { isAdmin } = useAuth();
 
-  const { 
-    data: applications, 
+  const toggleClass = (value: ApplicationsListParticipationClass) => {
+    setSelectedClasses(prev =>
+      prev.includes(value) ? prev.filter(c => c !== value) : [...prev, value]
+    );
+  };
+
+  const toggleStatus = (value: ApplicationStatusEnum) => {
+    setSelectedStatuses(prev =>
+      prev.includes(value) ? prev.filter(s => s !== value) : [...prev, value]
+    );
+  };
+
+  const {
+    data: applications,
     isLoading: isLoadingApplications,
     mutate: revalidateApplications
   } = useApplicationsList({
-    participation_class: type
+    ...(selectedClasses.length > 0 && { participation_classes: selectedClasses }),
+    ...(selectedStatuses.length > 0 && { statuses: selectedStatuses }),
   }, {
     swr: { enabled: !!session?.access_token },
   });
 
   useEffect(() => {
     const getData = async () => {
-      const options = await applicationOptions();
-      setOptions(options);
+      try {
+        const options = await applicationOptions();
+        setOptions(options);
+      } finally {
+        setIsOptionsLoading(false);
+      }
     };
     getData();
   }, []);
@@ -85,16 +103,18 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
     setDialogRow(row);
   }, []);
 
-  useEffect(() => {
-    if (applications) {
-      const transformedApps = transformApplications(applications, options);
-      setTransformedApplications(transformedApps);
-      setDataTransformFinished(true);
-    }
-  }, [applications, options]);
-
-  function transformApplications(apps: ApplicationDetail[], options: any): Application[] {
-    setDataTransformFinished(false);
+  function transformApplications(apps: ApplicationDetail[], options: any): ApplicationDetail[] {
+    const OMITTED_APPLICATION_FIELDS = new Set([
+      'theme_essay',
+      'theme_essay_follow_up',
+      'theme_interest_track_one',
+      'theme_interest_track_two',
+      'theme_detail_one',
+      'theme_detail_two',
+      'theme_detail_three',
+      'hardware_hack_interest',
+      'questions_responses'
+    ]);
 
     function extractThematicResponseValue(response: any): string {
       if (response.text_response) {
@@ -108,7 +128,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
       }
       return '';
     }
-    
+
     const thematicQuestionsMap = new Map<string, string>();
     apps.forEach((app: any) => {
       if (app.question_responses && Array.isArray(app.question_responses)) {
@@ -122,9 +142,10 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
 
     const transformedApps = apps.map((app: any) => {
       const transformedApp = { ...app };
+      // transformedApp.participation_class =
 
       Object.keys(transformedApp).forEach(key => {
-        if (key === 'status') {
+        if (key === 'status' || OMITTED_APPLICATION_FIELDS.has(key)) {
           return;
         }
 
@@ -152,47 +173,72 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
         const response = transformedApp.question_responses?.find(
           (r: any) => r.question === questionId
         );
-        
+
         const columnKey = `Thematic: ${questionText}`;
         transformedApp[columnKey] = response ? extractThematicResponseValue(response) : '';
+      });
+
+      OMITTED_APPLICATION_FIELDS.forEach(field => {
+        delete transformedApp[field];
       });
 
       return transformedApp;
     });
 
-    setDataTransformFinished(true);
     return transformedApps;
   }
 
+  const transformedApplications = useMemo(() => {
+    if (!applications) {
+      return [];
+    }
+
+    return transformApplications(applications, options);
+  }, [applications, options]);
+
   const onStatusChange = useCallback(
-    (app: Application) => (value: string) => {
-      if (isLoadingApplications || !applications) {
+    (app: ApplicationDetail) => async (value: string) => {
+      if (isLoadingApplications || !applications || !session?.access_token || !isAdmin) {
         toast.error('Loading applications...');
         return;
       }
-      let status: status | null = value as status;
-      if (status.length === 0) {
-        status = null;
-      }
-      let appId = applications.findIndex((a: ApplicationDetail) => a.id === app.id);
 
-      if (appId >= 0 && session?.access_token && isAdmin) {
-        setDataTransformFinished(false);
-        updateApplication(app?.id ?? '', { status }, session.access_token)
-          .then(response => {
-            if (!response) {
-              toast.error('Failed to update application');
-              return;
+      const status = value.length === 0 ? null : (value as ApplicationStatusEnum);
+      const payload: PatchedApplicationRequest = { status };
+
+      try {
+        await revalidateApplications(
+          async currentApplications => {
+            if (!currentApplications) {
+              return [];
             }
-            revalidateApplications();
-            setTransformedApplications(transformedApplications.map((a: Application) => a.id === app.id ? response : a));
-          })
-          .finally(() => {
-            setDataTransformFinished(true);
-          });
+
+            await applicationsPartialUpdate(app.id ?? '', payload, {
+              headers: {
+                Authorization: `Bearer ${session.access_token}`,
+              },
+            });
+
+            return currentApplications;
+          },
+          {
+            optimisticData: currentApplications =>
+              (currentApplications ?? []).map(currentApplication =>
+                currentApplication.id === app.id
+                  ? { ...currentApplication, status }
+                  : currentApplication
+              ),
+            rollbackOnError: true,
+            populateCache: false,
+            revalidate: true,
+          }
+        );
+      } catch (error) {
+        console.log(error)
+        toast.error(getApiErrorMessage(error, 'Failed to update application'))
       }
     },
-    [applications, isAdmin, session]
+    [applications, isAdmin, isLoadingApplications, revalidateApplications, session?.access_token]
   );
 
   const getResume = useCallback(
@@ -209,8 +255,8 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
     [isAdmin, session]
   );
 
-  const columnHelper = createColumnHelper<Application>();
-  const columns = useMemo<ColumnDef<Application, any>[]>(
+  const columnHelper = createColumnHelper<ApplicationDetail>();
+  const columns = useMemo<ColumnDef<ApplicationDetail, any>[]>(
     () => [
       columnHelper.accessor('first_name', {
         header: () => 'First Name',
@@ -247,13 +293,17 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
         header: () => 'Email',
         cell: info => info.getValue()
       }),
+      columnHelper.accessor('participation_class', {
+        header: () => 'Participation Class',
+        cell: info => info.getValue()
+      }),
       columnHelper.accessor('status', {
         header: () => 'Status',
         cell: info => (
           <Box sx={{ minWidth: 120 }}>
             <CustomSelect
               label="Select a status"
-              options={ApplicationStatusOptions}
+              options={APPLICATION_STATUS_OPTIONS}
               value={info.getValue()}
               onChange={onStatusChange(info.row.original)}
             />
@@ -283,51 +333,63 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
           </a>
         )
       }),
-      ...(type === 'P'
-        ? [
-            columnHelper.accessor('current_city', {
-              header: () => 'City',
-              cell: info => info.getValue()
-            }),
-            columnHelper.accessor('current_country', {
-              header: () => 'Country',
-              cell: info => info.getValue()
-            }),
-            columnHelper.accessor('nationality', {
-              header: () => 'Nationality',
-              cell: info => info.getValue()
-            }),
-            columnHelper.accessor('age_group', {
-              header: () => 'Age',
-              cell: info => info.getValue()
-            })
-          ]
-        : []),
+      columnHelper.accessor('current_city', {
+        header: () => 'City',
+        cell: info => info.getValue()
+      }),
+      columnHelper.accessor('current_country', {
+        header: () => 'Country',
+        cell: info => info.getValue()
+      }),
+      columnHelper.accessor('nationality', {
+        header: () => 'Nationality',
+        cell: info => info.getValue()
+      }),
+      columnHelper.accessor('age_group', {
+        header: () => 'Age',
+        cell: info => info.getValue()
+      }),
       columnHelper.accessor('submitted_at', {
         header: () => 'Submitted On',
-        cell: info =>
-          DateTime.fromISO(info.getValue()).toLocaleString(
-            DateTime.DATETIME_SHORT
-          )
+        cell: info => formatDateTime(info.getValue())
       }),
       columnHelper.accessor('updated_at', {
         header: () => 'Updated On',
-        cell: info =>
-          DateTime.fromISO(info.getValue()).toLocaleString(
-            DateTime.DATETIME_SHORT
-          )
+        cell: info => formatDateTime(info.getValue())
       }),
       columnHelper.accessor('id', {
         header: () => 'id',
         cell: info => info.getValue()
       })
     ],
-    [columnHelper, onStatusChange, toggleOverlayAndPassData, type] // type is included in the dependency array
+    [columnHelper, onStatusChange, toggleOverlayAndPassData]
   );
 
-  if (isLoadingApplications) {
-    return <Loader />;
-  }
+  type ReducedApplicationStats = {
+    acceptedCount: number;
+    waitlistedCount: number;
+    deniedCount: number;
+    totalCount: number;
+    percentage: number;
+  };
+  const reducedApplicationStats = (): ReducedApplicationStats => {
+    if (!applications) return { acceptedCount: 0, totalCount: 0, percentage: 0, waitlistedCount: 0, deniedCount: 0 };
+
+    const acceptedCount = applications.filter(
+      app => app?.status === ApplicationStatusEnum.A
+    ).length;
+    const deniedCount = applications.filter(
+      app => app?.status === ApplicationStatusEnum.D
+    ).length;
+    const waitlistedCount = applications.filter(
+      app => app?.status === ApplicationStatusEnum.W
+    ).length;
+    const totalCount = applications.length;
+    const percentage =
+      totalCount > 0 ? (acceptedCount / totalCount) * 100 : 0;
+    return { acceptedCount, waitlistedCount, deniedCount, totalCount, percentage };
+  };
+  const { acceptedCount, waitlistedCount, deniedCount, totalCount, percentage } = reducedApplicationStats();
 
   return (
     <>
@@ -337,7 +399,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Total applications
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {applications?.length ?? 0}
+            { totalCount }
           </span>
         </div>
 
@@ -346,11 +408,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Accepted
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {
-              applications?.filter(app => {
-                return app?.status === 'AO' || app?.status === 'AI';
-              }).length
-            }
+            { acceptedCount }
           </span>
         </div>
 
@@ -359,11 +417,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Waitlisted
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {
-              applications?.filter(app => {
-                return app?.status === 'WO' || app?.status === 'WI';
-              }).length
-            }
+            { waitlistedCount }
           </span>
         </div>
 
@@ -372,11 +426,7 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Rejected
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {
-              applications?.filter(app => {
-                return app?.status === 'D';
-              }).length
-            }
+            { deniedCount }
           </span>
         </div>
 
@@ -385,24 +435,53 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             Accepted rate
           </span>
           <span className="text-2xl font-semibold text-black text-opacity-90">
-            {(() => {
-              const acceptedCount = applications?.filter(
-                app => app?.status === 'AO' || app?.status === 'AI'
-              ).length;
-              const totalCount = applications?.length ?? 0;
-              const percentage =
-                totalCount > 0 ? (acceptedCount ?? 0 / totalCount) * 100 : 0;
-              return `${percentage.toFixed(1)}%`;
-            })()}
+            {percentage.toFixed(acceptedCount / totalCount)}%
           </span>
         </div>
       </div>
 
-      <ExportButton
-        onExport={() => exportToCsv(transformedApplications, 'applications.csv')}
-      >
-        Export CSV
-      </ExportButton>
+      <div className="mb-2 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <ExportButton
+            onExport={() => exportToCsv(transformedApplications, 'applications.csv')}
+          >
+            Export CSV
+          </ExportButton>
+
+          <fieldset className="flex items-center gap-2 mb-4 px-3 py-1.5 bg-white border border-gray-200 rounded-md shadow-sm">
+            <legend className="text-xs text-gray-500 px-1">
+              Participation class{selectedClasses.length === 0 && ' (all)'}
+            </legend>
+            {PARTICIPATION_CLASS_OPTIONS.map(({ label, value }) => (
+              <label key={value} className="flex items-center gap-1.5 cursor-pointer select-none text-sm">
+                <input
+                  type="checkbox"
+                  checked={selectedClasses.includes(value)}
+                  onChange={() => toggleClass(value)}
+                  className="cursor-pointer accent-[#1677FF]"
+                />
+                {label}
+              </label>
+            ))}
+          </fieldset>
+          <fieldset className="flex items-center gap-2 mb-4 px-3 py-1.5 bg-white border border-gray-200 rounded-md shadow-sm">
+            <legend className="text-xs text-gray-500 px-1">
+              Status{selectedClasses.length === 0 && ' (all)'}
+            </legend>
+            {APPLICATION_STATUS_OPTIONS.map(({ label, value }) => (
+              <label key={value} className="flex items-center gap-1.5 cursor-pointer select-none text-sm">
+                <input
+                  type="checkbox"
+                  checked={selectedStatuses.includes(value)}
+                  onChange={() => toggleStatus(value)}
+                  className="cursor-pointer accent-[#1677FF]"
+                />
+                {label}
+              </label>
+            ))}
+          </fieldset>
+        </div>
+      </div>
       <div className="z-50 px-6 py-6 overflow-y-scroll bg-[#FCFCFC] border-gray-300 rounded-2xl">
         <div className="h-[430px] overflow-y-scroll z-50 rounded-l border border-[#EEEEEE]">
           <Table
@@ -410,7 +489,8 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
             columns={columns}
             search={true}
             pagination={true}
-            loading={isLoadingApplications || !dataTransformFinished}
+            loading={isLoadingApplications || isOptionsLoading}
+            getRowId={(row, index) => row.id ?? `missing-id-${index}`}
           />
         </div>
       </div>
@@ -418,7 +498,6 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
         <ReviewModal
           toggleOverlay={toggleOverlay}
           item={dialogRow}
-          data={transformedApplications ?? []}
         />
       )}
     </>
@@ -427,12 +506,11 @@ export default function ApplicationTable({ type }: ApplicationTableProps) {
 
 type ReviewModalProps = {
   toggleOverlay: () => void;
-  item: Row<Application>;
-  data: Application[];
+  item: Row<ApplicationDetail>;
 };
 
-function ReviewModal({ item, data, toggleOverlay }: ReviewModalProps) {
-  const applicationData = data[item.id as any];
+function ReviewModal({ item, toggleOverlay }: ReviewModalProps) {
+  const applicationData = item.original;
   return (
     <div>
       <Modal toggleOverlay={toggleOverlay}>

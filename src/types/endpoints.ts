@@ -131,6 +131,7 @@ import type {
   ProjectRequest,
   ProjectsListParams,
   PublicEvent,
+  QueueRsvpEmailsRequest,
   RsvpsListParams,
   Skill,
   SkillProficiency,
@@ -913,6 +914,49 @@ export const useApplicationsDestroy = <TError = ErrorType<unknown>>(
 
   const swrKey = swrOptions?.swrKey ?? getApplicationsDestroyMutationKey(id);
   const swrFn = getApplicationsDestroyMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+
+/**
+ * Queue RSVP emails for the given list of application IDs.
+ */
+export const applicationsQueueRsvpEmailsCreate = (
+    queueRsvpEmailsRequest: BodyType<QueueRsvpEmailsRequest>,
+ options?: SecondParameter<typeof customAxios>) => {
+    return customAxios<void>(
+    {url: `/applications/queue-rsvp-emails/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: queueRsvpEmailsRequest
+    },
+    options);
+  }
+
+
+
+export const getApplicationsQueueRsvpEmailsCreateMutationFetcher = ( options?: SecondParameter<typeof customAxios>) => {
+  return (_: Key, { arg }: { arg: QueueRsvpEmailsRequest }): Promise<void> => {
+    return applicationsQueueRsvpEmailsCreate(arg, options);
+  }
+}
+export const getApplicationsQueueRsvpEmailsCreateMutationKey = () => [`/applications/queue-rsvp-emails/`] as const;
+
+export type ApplicationsQueueRsvpEmailsCreateMutationResult = NonNullable<Awaited<ReturnType<typeof applicationsQueueRsvpEmailsCreate>>>
+export type ApplicationsQueueRsvpEmailsCreateMutationError = ErrorType<unknown>
+
+export const useApplicationsQueueRsvpEmailsCreate = <TError = ErrorType<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof applicationsQueueRsvpEmailsCreate>>, TError, Key, QueueRsvpEmailsRequest, Awaited<ReturnType<typeof applicationsQueueRsvpEmailsCreate>>> & { swrKey?: string }, request?: SecondParameter<typeof customAxios>}
+) => {
+
+  const {swr: swrOptions, request: requestOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getApplicationsQueueRsvpEmailsCreateMutationKey();
+  const swrFn = getApplicationsQueueRsvpEmailsCreateMutationFetcher(requestOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions)
 
@@ -2839,7 +2883,7 @@ export const useEventsPartialUpdate = <TError = ErrorType<unknown>>(
 }
 
 /**
- * Get the active event. Public endpoint — no authentication required.
+ * Get the active event. Public endpoint.
  */
 export const eventsGetActiveRetrieve = (
     

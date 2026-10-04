@@ -10,7 +10,7 @@ import { HardwareWithType } from '@/types/types2'
 import Box from '@mui/material/Box';
 import CustomSelect from '@/components/CustomSelect';
 import { hardwarerequestsPartialUpdate, hardwarerequestsDestroy, hardwaredevicesPartialUpdate } from '@/types/endpoints';
-import { 
+import {
   HardwareRequestList,
   PatchedHardwareRequestRequest,
   HardwareRequestStatusEnum,
@@ -28,6 +28,7 @@ import {
   HardwareRequestStatusOptionsNoDevice,
   HardwareRequestStatusOptions
 } from './utils';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function HardwareRequestTable({
   statusEditable = false,
@@ -49,13 +50,14 @@ export default function HardwareRequestTable({
   ) => void;
 }) {
   const { data: session } = useSession();
-  const isAdmin = session && session.roles?.includes('admin');
+
+  const { isAdmin } = useAuth();
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDataReady, setIsDataReady] = useState(false);
 
-  const { 
-    hardwareRequests, 
-    isLoadingHardwareRequests, 
+  const {
+    hardwareRequests,
+    isLoadingHardwareRequests,
     mutateHardwareRequests,
     mutateHardwareDevices,
     setHardwareRequestParams,
@@ -73,7 +75,7 @@ export default function HardwareRequestTable({
 
   const tableData = useMemo(() => {
     if (!hardwareRequests || Object.keys(hardwareDeviceTypeMap).length === 0) return [];
-    
+
     const mappedHardwareRequests = hardwareRequests.map(req => ({
       ...req,
       teamName: req.team?.name,
@@ -85,7 +87,7 @@ export default function HardwareRequestTable({
     setIsDataReady(true);
     return mappedHardwareRequests;
   }, [hardwareRequests, hardwareDeviceTypeMap]);
-  
+
   const renderRowCheckoutButton = (
     hardwareRequest: HardwareRequestList,
   ) => {
@@ -95,17 +97,17 @@ export default function HardwareRequestTable({
     if (!validRequest) {
       return null;
     }
-    
+
     if (validCheckout && !hardwareRequest.team?.id) {
       toast.error('Team ID is undefined');
       return null;
     }
-    
+
     if (validCheckout && !hardwareRequest.requester?.id) {
       toast.error('Requester ID is undefined');
       return null;
     }
-    
+
     const buttonText = validCheckout ? 'Check Out' : 'Return';
     const buttonColor = validCheckout ? 'bg-[#2FCC32]' : 'bg-[#CCAA2F]';
 
@@ -203,7 +205,7 @@ export default function HardwareRequestTable({
   }
 
   const rowStatusOptions = (
-    currentStatus: HardwareRequestStatusEnum, 
+    currentStatus: HardwareRequestStatusEnum,
     requestedDeviceId: string
   ) => {
     if (!hardwareDeviceTypeMap) return [];
@@ -236,7 +238,7 @@ export default function HardwareRequestTable({
             columnHelper.display({
               id: 'delete',
               header: () => '',
-              cell: info => 
+              cell: info =>
                 renderDeleteButton(info.row.original.id || null, info.row.original.status || null)
             })
           ]

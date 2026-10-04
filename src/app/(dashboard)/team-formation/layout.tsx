@@ -8,7 +8,7 @@ export default function TeamFormationLayout({
   children: React.ReactNode;
 }) {
   const pathname = useAppPathname();
-
+  const isTeamFormationInterestsEnabled = import.meta.env.VITE_IS_TEAM_FORMATION_INTERESTS_ENABLED === 'true';
   const TEAM_FORMATION_STAGE = import.meta.env.VITE_TEAM_FORMATION_STAGE;
 
   return (
@@ -21,11 +21,13 @@ export default function TeamFormationLayout({
             isSelected={pathname === '/team-formation/hackers-met'}
             title="Hackers I've Met"
           />
-          <Tab
+          {isTeamFormationInterestsEnabled && (
+            <Tab  
             href="/team-formation/interests"
-            isSelected={pathname === '/team-formation/interests'}
-            title="My Interests"
-          />
+              isSelected={pathname === '/team-formation/interests'}
+              title="My Interests"
+            />
+          )}
           {/* <Tab
             href="/team-formation/profile"
             isSelected={pathname === '/team-formation/profile'}

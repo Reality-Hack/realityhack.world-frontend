@@ -2,10 +2,10 @@ import { createApplication, fileUpload } from '@/app/api/application';
 import Layout from '@/components/HotkeyLayout';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal } from '@mui/material';
 import Loader from '../Loader';
-import { useEventsGetActiveRetrieve } from '@/types/endpoints';
+import { useActiveEventDetails } from '@/hooks/useActiveEventDetails';
 
 interface AnyAppProps {
   tabs: React.ReactNode[];
@@ -27,7 +27,8 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
   const DEBUG = false;
   const [selectedTab, setSelectedTab] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
-  const { data: activeEvent } = useEventsGetActiveRetrieve();
+  const [isDirty, setIsDirty] = useState(false);
+  const eventDetails = useActiveEventDetails();
   const handleTabChange = (_event: any, newValue: number) => {
     setSelectedTab(newValue);
   };
@@ -117,6 +118,28 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
   const isOnSubmitTab = selectedTab === tabs.length - 2;
   const isOnLastTab = selectedTab === tabs.length - 1;
 
+  // Warn before leaving only once the user has entered something, and stop
+  // once the application has been submitted (confirmation tab).
+  useEffect(() => {
+    if (!isDirty || isOnLastTab) return;
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue =
+        'You have unsaved changes. Are you sure you want to leave?';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isDirty, isOnLastTab]);
+
+  const markDirty = () => {
+    if (!isDirty) setIsDirty(true);
+  };
+
   return (
     <Layout>
       <div
@@ -128,7 +151,7 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
           <div className="w-[250px] h-[250px] mt-8 mx-auto bg-logocolor dark:bg-logobw bg-contain bg-no-repeat bg-center" />
           <div className="pb-8">
             <h1 className="py-1 text-2xl leading-8 text-center text-themeSecondary drop-shadow-md font-ethnocentric">
-              {activeEvent?.name}
+              {eventDetails.name}
             </h1>
             <h2 className="text-2xl font-bold leading-8 text-center text-themeYellow drop-shadow-md">
               {' '}
@@ -181,7 +204,7 @@ const AnyApp: React.FC<AnyAppProps> = React.memo(function AnyApp({
             )}
           </div>
 
-          <div className="mt-2 overflow-y-auto">
+          <div className="mt-2 overflow-y-auto" onChangeCapture={markDirty}>
             {tabs.map((tabContent, index) => {
               return selectedTab === index ? tabContent : null;
             })}

@@ -14,6 +14,7 @@
 * `G` - 2023
 * `H` - 2024
 * `I` - 2025
+* `J` - 2026
  */
 export type PreviousParticipationEnum = typeof PreviousParticipationEnum[keyof typeof PreviousParticipationEnum];
 
@@ -29,4 +30,5 @@ export const PreviousParticipationEnum = {
   G: 'G',
   H: 'H',
   I: 'I',
+  J: 'J',
 } as const;

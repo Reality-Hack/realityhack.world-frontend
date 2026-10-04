@@ -1,10 +1,7 @@
-'use client';
 import Table from '@/components/Table';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
-import { DateTime } from 'luxon';
 import { useSession } from '@/auth/client';
 import { useMemo } from 'react';
-import Modal from '../Modal';
 import { ExportButton, exportToCsv } from '@/app/utils/ExportUtils';
 import { useEventrsvpsList } from '@/types/endpoints';
 import { EventRsvp, EventrsvpsListParticipationClass } from '@/types/models';
@@ -28,11 +25,11 @@ export default function RsvpTable({ type }: RsvpTableProps) {
     swr: { enabled: !!session?.access_token }
   });
 
-  const { 
+  const {
     choiceMaps,
     getTotalCount: total,
     shirtSizeCounts,
-    specialInterestTrackOneCounts, 
+    specialInterestTrackOneCounts,
     specialInterestTrackTwoCounts,
   } = useEventParticipants();
 
@@ -40,9 +37,9 @@ export default function RsvpTable({ type }: RsvpTableProps) {
     if (!eventRsvps || !Object.keys(choiceMaps.shirtSize).length) return [];
     return eventRsvps
       .map((rsvp: EventRsvp) => {
-        const { 
-          application, 
-          attendee, 
+        const {
+          application,
+          attendee,
           event,
           app_in_store,
           currently_build_for_xr,
@@ -54,7 +51,7 @@ export default function RsvpTable({ type }: RsvpTableProps) {
           dietary_restrictions,
           dietary_allergies,
           participation_class,
-          ...rsvpData 
+          ...rsvpData
         } = rsvp;
         return {
           first_name: rsvp.application?.first_name,

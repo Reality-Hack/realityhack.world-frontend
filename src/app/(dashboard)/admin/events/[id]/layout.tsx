@@ -51,6 +51,11 @@ function AdminEventDetailLayoutContent({
       <div className="py-4">
         <div className="pb-2">
           <Tab
+            href={`${basePath}/details`}
+            isSelected={pathname === `${basePath}/details`}
+            title="Event Details"
+          />
+          <Tab
             href={`${basePath}/application-questions`}
             isSelected={pathname === `${basePath}/application-questions`}
             title="Application Questions"
