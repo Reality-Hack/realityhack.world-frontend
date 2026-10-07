@@ -11,10 +11,8 @@ import type { DietaryRestrictionsEnum } from './dietaryRestrictionsEnum';
 import type { DietaryAllergiesEnum } from './dietaryAllergiesEnum';
 import type { EventRsvpDetailUsVisaSupportNationalIdentificationDocumentType } from './eventRsvpDetailUsVisaSupportNationalIdentificationDocumentType';
 import type { EventRsvpDetailUsVisaSupportCitizenship } from './eventRsvpDetailUsVisaSupportCitizenship';
-import type { EventRsvpDetailSpecialInterestTrackOne } from './eventRsvpDetailSpecialInterestTrackOne';
-import type { EventRsvpDetailSpecialInterestTrackTwo } from './eventRsvpDetailSpecialInterestTrackTwo';
 import type { ParticipationClassEnum } from './participationClassEnum';
-import type { EventRsvpDetailLoanerHeadsetPreference } from './eventRsvpDetailLoanerHeadsetPreference';
+import type { RsvpResponse } from './rsvpResponse';
 
 /**
  * Base serializer that automatically scopes foreign key fields to the current event.
@@ -103,10 +101,6 @@ export interface EventRsvpDetail {
   emergency_contact_email: string;
   /** @maxLength 100 */
   emergency_contact_relationship: string;
-  /** @nullable */
-  special_interest_track_one?: EventRsvpDetailSpecialInterestTrackOne;
-  /** @nullable */
-  special_interest_track_two?: EventRsvpDetailSpecialInterestTrackTwo;
   /**
    * AR or VR apps in any store? And if so, which ones?
    * @maxLength 250
@@ -137,23 +131,11 @@ export interface EventRsvpDetail {
   participation_class?: ParticipationClassEnum;
   /** @nullable */
   sponsor_company?: string | null;
-  /**
-   * @maxLength 2000
-   * @nullable
-   */
-  breakthrough_hacks_interest?: string | null;
   /** @nullable */
   checked_in_at?: string | null;
-  /** @nullable */
-  loaner_headset_preference?: EventRsvpDetailLoanerHeadsetPreference;
-  /**
-   * List other devices you are interested in ranked by preference.
-   * @maxLength 1000
-   * @nullable
-   */
-  device_preference_ranked?: string | null;
   readonly intended_event_tracks?: string;
   readonly prefers_event_destiny_hardware?: string;
   readonly created_at?: string;
   readonly updated_at?: string;
+  readonly question_responses?: readonly RsvpResponse[];
 }

@@ -191,18 +191,21 @@ export const EventParticipantsProvider = ({ children }: EventParticipantsProvide
     }, {});
   }, [eventRsvps, choiceMaps.shirtSize]);
 
+  // TODO: extract from configurable questions
   const specialInterestTrackOneCounts = useMemo(() => {
     if (!eventRsvps) return 0;
-    return eventRsvps.filter(
-      (rsvp: EventRsvp) => rsvp.special_interest_track_one === ThemeInterestTrackEnum.Y
-    ).length;
+    return 0;
+    // return eventRsvps.filter(
+    //   (rsvp: EventRsvp) => rsvp.special_interest_track_one === ThemeInterestTrackEnum.Y
+    // ).length;
   }, [eventRsvps]);
 
   const specialInterestTrackTwoCounts = useMemo(() => {
     if (!eventRsvps) return 0;
-    return eventRsvps.filter(
-      (rsvp: EventRsvp) => rsvp.special_interest_track_two === ThemeInterestTrackEnum.Y
-    ).length;
+    return 0;
+    // return eventRsvps.filter(
+    //   (rsvp: EventRsvp) => rsvp.special_interest_track_two === ThemeInterestTrackEnum.Y
+    // ).length;
   }, [eventRsvps]);
 
   const contextValue: EventParticipantsContextType = {
@@ -239,4 +242,3 @@ export const EventParticipantsProvider = ({ children }: EventParticipantsProvide
     </EventParticipantsContext.Provider>
   );
 };
-

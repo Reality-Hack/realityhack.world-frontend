@@ -31,8 +31,14 @@ import {
   useApplicationquestionsList,
   useEventsGetActiveRetrieve,
 } from '@/types/endpoints';
-import { ApplicationquestionsListFormType } from '@/types/models';
+import {
+  ApplicationquestionsListFormType,
+  type ApplicationQuestion,
+} from '@/types/models';
 import { useActiveEventDetails } from '@/hooks/useActiveEventDetails';
+
+// Stable reference so effects/memos keyed on `questions` don't re-run each render.
+const NO_QUESTIONS: ApplicationQuestion[] = [];
 
 export default function RsvpForm() {
   const params = useAppParams();
@@ -50,15 +56,23 @@ export default function RsvpForm() {
   } = useEventsGetActiveRetrieve();
   const activeEventId = activeEvent?.id;
   const eventDetails = useActiveEventDetails();
+
+  const slug = (params['*'] ?? params['slug'] ?? '').split('/');
+  const roles = ['mentor', 'judge', 'sponsor'];
+  const isParticipant = !roles.includes(slug[0]);
+  const applicationId = isParticipant ? slug[0] : slug[1];
+
+  // Configurable RSVP questions only apply to hackers. For mentors, judges and
+  // sponsors they're not fetched, rendered, validated or submitted.
   const {
     data: rsvpQuestions,
     isLoading: isQuestionsLoading,
     error: questionsError,
   } = useApplicationquestionsList(
     { form_type: ApplicationquestionsListFormType.R, event: activeEventId },
-    { swr: { enabled: !!activeEventId } },
+    { swr: { enabled: !!activeEventId && isParticipant } },
   );
-  const questions = rsvpQuestions ?? [];
+  const questions = isParticipant ? (rsvpQuestions ?? NO_QUESTIONS) : NO_QUESTIONS;
   const isPageLoading =
     isActiveEventLoading || (!!activeEventId && isQuestionsLoading);
   const pageError = activeEventError ?? questionsError;
@@ -66,11 +80,6 @@ export default function RsvpForm() {
   const [renderDiscordError, setRenderDiscordError] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
-
-  const slug = (params['*'] ?? params['slug'] ?? '').split('/');
-  const roles = ['mentor', 'judge', 'sponsor'];
-  const isParticipant = !roles.includes(slug[0]);
-  const applicationId = isParticipant ? slug[0] : slug[1];
 
   const [formData, setFormData] = useState<Partial<rsvp_data>>({
     application: applicationId,

@@ -9,10 +9,7 @@ import type { DietaryRestrictionsEnum } from './dietaryRestrictionsEnum';
 import type { DietaryAllergiesEnum } from './dietaryAllergiesEnum';
 import type { AttendeeRSVPCreateRequestUsVisaSupportNationalIdentificationDocumentType } from './attendeeRSVPCreateRequestUsVisaSupportNationalIdentificationDocumentType';
 import type { AttendeeRSVPCreateRequestUsVisaSupportCitizenship } from './attendeeRSVPCreateRequestUsVisaSupportCitizenship';
-import type { AttendeeRSVPCreateRequestSpecialInterestTrackOne } from './attendeeRSVPCreateRequestSpecialInterestTrackOne';
-import type { AttendeeRSVPCreateRequestSpecialInterestTrackTwo } from './attendeeRSVPCreateRequestSpecialInterestTrackTwo';
 import type { ParticipationClassEnum } from './participationClassEnum';
-import type { AttendeeRSVPCreateRequestLoanerHeadsetPreference } from './attendeeRSVPCreateRequestLoanerHeadsetPreference';
 
 /**
  * Base serializer that automatically scopes foreign key fields to the current event.
@@ -140,10 +137,6 @@ export interface AttendeeRSVPCreateRequest {
    * @maxLength 100
    */
   emergency_contact_relationship: string;
-  /** @nullable */
-  special_interest_track_one?: AttendeeRSVPCreateRequestSpecialInterestTrackOne;
-  /** @nullable */
-  special_interest_track_two?: AttendeeRSVPCreateRequestSpecialInterestTrackTwo;
   /**
    * Do you already have an AR or VR app in any store? And if so, which store(s)?
    * @minLength 1
@@ -177,18 +170,4 @@ export interface AttendeeRSVPCreateRequest {
   ar_vr_ap_in_store?: string | null;
   reality_hack_project_to_product?: boolean;
   participation_class?: ParticipationClassEnum;
-  /**
-   * @minLength 1
-   * @maxLength 2000
-   * @nullable
-   */
-  breakthrough_hacks_interest?: string | null;
-  /**
-   * List other devices you are interested in ranked by preference.
-   * @maxLength 1000
-   * @nullable
-   */
-  device_preference_ranked?: string | null;
-  /** @nullable */
-  loaner_headset_preference?: AttendeeRSVPCreateRequestLoanerHeadsetPreference;
 }

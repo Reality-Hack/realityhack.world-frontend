@@ -10,7 +10,6 @@ import type { PreviousParticipationEnum } from './previousParticipationEnum';
 import type { HeardAboutUsEnum } from './heardAboutUsEnum';
 import type { DigitalDesignerSkillsEnum } from './digitalDesignerSkillsEnum';
 import type { IndustryEnum } from './industryEnum';
-import type { HardwareHackDetailEnum } from './hardwareHackDetailEnum';
 import type { ApplicationResponse } from './applicationResponse';
 import type { ParticipationClassEnum } from './participationClassEnum';
 import type { ApplicationDetailAgeGroup } from './applicationDetailAgeGroup';
@@ -18,12 +17,6 @@ import type { ApplicationDetailDisabilityIdentity } from './applicationDetailDis
 import type { ApplicationDetailParticipationCapacity } from './applicationDetailParticipationCapacity';
 import type { ApplicationDetailStatus } from './applicationDetailStatus';
 import type { ApplicationDetailParticipationRole } from './applicationDetailParticipationRole';
-import type { ApplicationDetailThemeInterestTrackOne } from './applicationDetailThemeInterestTrackOne';
-import type { ApplicationDetailThemeInterestTrackTwo } from './applicationDetailThemeInterestTrackTwo';
-import type { ApplicationDetailThemeDetailOne } from './applicationDetailThemeDetailOne';
-import type { ApplicationDetailThemeDetailTwo } from './applicationDetailThemeDetailTwo';
-import type { ApplicationDetailThemeDetailThree } from './applicationDetailThemeDetailThree';
-import type { ApplicationDetailHardwareHackInterest } from './applicationDetailHardwareHackInterest';
 
 /**
  * Detailed application serializer with question responses
@@ -38,7 +31,6 @@ export interface ApplicationDetail {
   heard_about_us: HeardAboutUsEnum[];
   digital_designer_skills: DigitalDesignerSkillsEnum[];
   industry: IndustryEnum[];
-  hardware_hack_detail: HardwareHackDetailEnum[];
   readonly question_responses?: readonly ApplicationResponse[];
   /** @maxLength 100 */
   first_name: string;
@@ -143,24 +135,7 @@ export interface ApplicationDetail {
    * @maxLength 2000
    * @nullable
    */
-  theme_essay?: string | null;
-  /**
-   * @maxLength 2000
-   * @nullable
-   */
   theme_essay_follow_up?: string | null;
-  /** @nullable */
-  theme_interest_track_one?: ApplicationDetailThemeInterestTrackOne;
-  /** @nullable */
-  theme_interest_track_two?: ApplicationDetailThemeInterestTrackTwo;
-  /** @nullable */
-  theme_detail_one?: ApplicationDetailThemeDetailOne;
-  /** @nullable */
-  theme_detail_two?: ApplicationDetailThemeDetailTwo;
-  /** @nullable */
-  theme_detail_three?: ApplicationDetailThemeDetailThree;
-  /** @nullable */
-  hardware_hack_interest?: ApplicationDetailHardwareHackInterest;
   /**
    * @maxLength 20
    * @nullable

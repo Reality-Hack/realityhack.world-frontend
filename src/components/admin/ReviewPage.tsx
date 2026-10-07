@@ -533,7 +533,7 @@ export default function ReviewPage({
           <div>
             <LabelAndValue
               label={'Any related hardware that you may be willing to bring?'}
-              value={allInfo.theme_essay_follow_up}
+              value={allInfo.mentor_own_troubleshooting_devices}
             />
           </div>
           <div>
