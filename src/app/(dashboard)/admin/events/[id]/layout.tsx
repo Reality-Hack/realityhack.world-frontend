@@ -5,7 +5,8 @@ import {
   AdminEventProvider,
   useAdminEvent,
 } from '@/contexts/AdminEventContext';
-import { AppLink, useAppPathname } from '@/routing';
+import { useAppPathname } from '@/routing';
+import BackLink from '@/components/common/BackLink';
 
 const isEventsEnabled = import.meta.env.VITE_IS_EVENTS_ENABLED === 'true';
 
@@ -28,9 +29,7 @@ function AdminEventDetailLayoutContent({
 
   return (
     <div className="h-screen p-6 pt-8 pl-2">
-      <AppLink href="/admin/events" className="text-sm text-gray-500 hover:text-themePrimary">
-        ← Back to events
-      </AppLink>
+      <BackLink href="/admin/events" label="Back to events" />
       <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-3xl">{event.name}</h1>

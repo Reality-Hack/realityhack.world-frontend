@@ -16,13 +16,6 @@ import type { PatchedApplicationRequestDisabilityIdentity } from './patchedAppli
 import type { PatchedApplicationRequestParticipationCapacity } from './patchedApplicationRequestParticipationCapacity';
 import type { PatchedApplicationRequestStatus } from './patchedApplicationRequestStatus';
 import type { PatchedApplicationRequestParticipationRole } from './patchedApplicationRequestParticipationRole';
-import type { PatchedApplicationRequestThemeInterestTrackOne } from './patchedApplicationRequestThemeInterestTrackOne';
-import type { PatchedApplicationRequestThemeInterestTrackTwo } from './patchedApplicationRequestThemeInterestTrackTwo';
-import type { PatchedApplicationRequestThemeDetailOne } from './patchedApplicationRequestThemeDetailOne';
-import type { PatchedApplicationRequestThemeDetailTwo } from './patchedApplicationRequestThemeDetailTwo';
-import type { PatchedApplicationRequestThemeDetailThree } from './patchedApplicationRequestThemeDetailThree';
-import type { PatchedApplicationRequestHardwareHackInterest } from './patchedApplicationRequestHardwareHackInterest';
-import type { PatchedApplicationRequestHardwareHackDetail } from './patchedApplicationRequestHardwareHackDetail';
 
 /**
  * Base serializer that automatically scopes foreign key fields to the current event.
@@ -171,26 +164,7 @@ export interface PatchedApplicationRequest {
    * @maxLength 2000
    * @nullable
    */
-  theme_essay?: string | null;
-  /**
-   * @maxLength 2000
-   * @nullable
-   */
   theme_essay_follow_up?: string | null;
-  /** @nullable */
-  theme_interest_track_one?: PatchedApplicationRequestThemeInterestTrackOne;
-  /** @nullable */
-  theme_interest_track_two?: PatchedApplicationRequestThemeInterestTrackTwo;
-  /** @nullable */
-  theme_detail_one?: PatchedApplicationRequestThemeDetailOne;
-  /** @nullable */
-  theme_detail_two?: PatchedApplicationRequestThemeDetailTwo;
-  /** @nullable */
-  theme_detail_three?: PatchedApplicationRequestThemeDetailThree;
-  /** @nullable */
-  hardware_hack_interest?: PatchedApplicationRequestHardwareHackInterest;
-  /** @nullable */
-  hardware_hack_detail?: PatchedApplicationRequestHardwareHackDetail;
   /**
    * @minLength 1
    * @maxLength 20

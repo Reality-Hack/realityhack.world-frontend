@@ -5,6 +5,7 @@ import { EngagementDialog } from "@/components/admin/sponsors/SponsorTierDialog"
 import { TIER_LABELS } from "@/components/admin/sponsors/SponsorTierSelect";
 import { useSponsors } from '@/contexts/SponsorsContext';
 import AppButton from '@/components/common/AppButton';
+import BackLink from '@/components/common/BackLink';
 import HardwareForm from '@/components/admin/hardware/HardwareForm';
 import HardwareDeviceCreateForm from '@/components/admin/hardware/HardwareDeviceCreateForm';
 import HardwareDeviceEditForm from '@/components/admin/hardware/HardwareDeviceEditForm';
@@ -110,7 +111,8 @@ export default function AdminSponsorDetailPage() {
 
   return (
     <main className="pt-8 h-vh">
-      <div className="flex flex-col gap-4">
+      <BackLink href="/admin/sponsors" label="Back to sponsors" />
+      <div className="flex flex-col gap-4 mt-4">
         <div className="flex flex-row gap-4 items-center">
           <h1 className="text-2xl font-bold">{sponsor?.name}</h1>
           {renderLoadingState}

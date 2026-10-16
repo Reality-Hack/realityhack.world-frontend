@@ -16,13 +16,6 @@ import type { ApplicationRequestDisabilityIdentity } from './applicationRequestD
 import type { ApplicationRequestParticipationCapacity } from './applicationRequestParticipationCapacity';
 import type { ApplicationRequestStatus } from './applicationRequestStatus';
 import type { ApplicationRequestParticipationRole } from './applicationRequestParticipationRole';
-import type { ApplicationRequestThemeInterestTrackOne } from './applicationRequestThemeInterestTrackOne';
-import type { ApplicationRequestThemeInterestTrackTwo } from './applicationRequestThemeInterestTrackTwo';
-import type { ApplicationRequestThemeDetailOne } from './applicationRequestThemeDetailOne';
-import type { ApplicationRequestThemeDetailTwo } from './applicationRequestThemeDetailTwo';
-import type { ApplicationRequestThemeDetailThree } from './applicationRequestThemeDetailThree';
-import type { ApplicationRequestHardwareHackInterest } from './applicationRequestHardwareHackInterest';
-import type { ApplicationRequestHardwareHackDetail } from './applicationRequestHardwareHackDetail';
 
 /**
  * Base serializer that automatically scopes foreign key fields to the current event.
@@ -171,26 +164,7 @@ export interface ApplicationRequest {
    * @maxLength 2000
    * @nullable
    */
-  theme_essay?: string | null;
-  /**
-   * @maxLength 2000
-   * @nullable
-   */
   theme_essay_follow_up?: string | null;
-  /** @nullable */
-  theme_interest_track_one?: ApplicationRequestThemeInterestTrackOne;
-  /** @nullable */
-  theme_interest_track_two?: ApplicationRequestThemeInterestTrackTwo;
-  /** @nullable */
-  theme_detail_one?: ApplicationRequestThemeDetailOne;
-  /** @nullable */
-  theme_detail_two?: ApplicationRequestThemeDetailTwo;
-  /** @nullable */
-  theme_detail_three?: ApplicationRequestThemeDetailThree;
-  /** @nullable */
-  hardware_hack_interest?: ApplicationRequestHardwareHackInterest;
-  /** @nullable */
-  hardware_hack_detail?: ApplicationRequestHardwareHackDetail;
   /**
    * @minLength 1
    * @maxLength 20

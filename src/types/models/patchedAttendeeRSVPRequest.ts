@@ -9,9 +9,6 @@ import type { DietaryRestrictionsEnum } from './dietaryRestrictionsEnum';
 import type { DietaryAllergiesEnum } from './dietaryAllergiesEnum';
 import type { PatchedAttendeeRSVPRequestUsVisaSupportNationalIdentificationDocumentType } from './patchedAttendeeRSVPRequestUsVisaSupportNationalIdentificationDocumentType';
 import type { PatchedAttendeeRSVPRequestUsVisaSupportCitizenship } from './patchedAttendeeRSVPRequestUsVisaSupportCitizenship';
-import type { PatchedAttendeeRSVPRequestSpecialInterestTrackOne } from './patchedAttendeeRSVPRequestSpecialInterestTrackOne';
-import type { PatchedAttendeeRSVPRequestSpecialInterestTrackTwo } from './patchedAttendeeRSVPRequestSpecialInterestTrackTwo';
-import type { PatchedAttendeeRSVPRequestLoanerHeadsetPreference } from './patchedAttendeeRSVPRequestLoanerHeadsetPreference';
 import type { ParticipationClassEnum } from './participationClassEnum';
 
 /**
@@ -132,25 +129,7 @@ export interface PatchedAttendeeRSVPRequest {
    * @maxLength 100
    */
   emergency_contact_relationship?: string;
-  /** @nullable */
-  special_interest_track_one?: PatchedAttendeeRSVPRequestSpecialInterestTrackOne;
-  /** @nullable */
-  special_interest_track_two?: PatchedAttendeeRSVPRequestSpecialInterestTrackTwo;
-  /**
-   * List other devices you are interested in ranked by preference.
-   * @maxLength 1000
-   * @nullable
-   */
-  device_preference_ranked?: string | null;
-  /**
-   * @minLength 1
-   * @maxLength 2000
-   * @nullable
-   */
-  breakthrough_hacks_interest?: string | null;
   agree_to_rules_code_of_conduct?: boolean;
-  /** @nullable */
-  loaner_headset_preference?: PatchedAttendeeRSVPRequestLoanerHeadsetPreference;
   /**
    * I.e., a Discord username
    * @minLength 1

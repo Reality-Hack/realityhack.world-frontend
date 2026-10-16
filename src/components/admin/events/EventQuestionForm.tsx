@@ -4,6 +4,7 @@ import AppButton from '@/components/common/AppButton';
 import AppDialog from '@/components/common/AppDialog';
 import { CustomMultiSelect } from '@/components/CustomSelect';
 import { TextInput } from '@/components/Inputs';
+import { getApiErrorMessage } from '@/lib/custom-axios';
 import {
   applicationquestionchoicesCreate,
   applicationquestionchoicesDestroy,
@@ -26,6 +27,7 @@ import {
   nextChoiceOrder,
   questionNeedsChoices,
 } from './eventQuestionTypes';
+
 
 type EventQuestionFormProps = {
   showDialog: boolean;
@@ -145,6 +147,7 @@ export default function EventQuestionForm({
 
   const isEdit = !!item?.id;
 
+
   useEffect(() => {
     if (showDialog) {
       setValues(initialFormValues(item, defaultOrder));
@@ -210,6 +213,7 @@ export default function EventQuestionForm({
       return;
     }
 
+
     if (questionNeedsChoices(values.question_type)) {
       const hasEmpty = values.choices.some(
         (c) => !c.choice_key.trim() || !c.choice_text.trim(),
@@ -261,8 +265,13 @@ export default function EventQuestionForm({
       toast.success(isEdit ? 'Question updated' : 'Question created');
       onSuccess();
       onClose();
-    } catch {
-      toast.error(isEdit ? 'Failed to update question' : 'Failed to create question');
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(
+          error,
+          isEdit ? 'Failed to update question' : 'Failed to create question',
+        ),
+      );
     } finally {
       setIsSubmitting(false);
     }

@@ -9,10 +9,7 @@ import type { DietaryRestrictionsEnum } from './dietaryRestrictionsEnum';
 import type { DietaryAllergiesEnum } from './dietaryAllergiesEnum';
 import type { PatchedEventRsvpRequestUsVisaSupportNationalIdentificationDocumentType } from './patchedEventRsvpRequestUsVisaSupportNationalIdentificationDocumentType';
 import type { PatchedEventRsvpRequestUsVisaSupportCitizenship } from './patchedEventRsvpRequestUsVisaSupportCitizenship';
-import type { PatchedEventRsvpRequestSpecialInterestTrackOne } from './patchedEventRsvpRequestSpecialInterestTrackOne';
-import type { PatchedEventRsvpRequestSpecialInterestTrackTwo } from './patchedEventRsvpRequestSpecialInterestTrackTwo';
 import type { ParticipationClassEnum } from './participationClassEnum';
-import type { PatchedEventRsvpRequestLoanerHeadsetPreference } from './patchedEventRsvpRequestLoanerHeadsetPreference';
 
 /**
  * Base serializer that automatically scopes foreign key fields to the current event.
@@ -120,10 +117,6 @@ export interface PatchedEventRsvpRequest {
    * @maxLength 100
    */
   emergency_contact_relationship?: string;
-  /** @nullable */
-  special_interest_track_one?: PatchedEventRsvpRequestSpecialInterestTrackOne;
-  /** @nullable */
-  special_interest_track_two?: PatchedEventRsvpRequestSpecialInterestTrackTwo;
   /**
    * AR or VR apps in any store? And if so, which ones?
    * @minLength 1
@@ -159,20 +152,6 @@ export interface PatchedEventRsvpRequest {
   participation_class?: ParticipationClassEnum;
   /** @nullable */
   sponsor_company?: string | null;
-  /**
-   * @minLength 1
-   * @maxLength 2000
-   * @nullable
-   */
-  breakthrough_hacks_interest?: string | null;
   /** @nullable */
   checked_in_at?: string | null;
-  /** @nullable */
-  loaner_headset_preference?: PatchedEventRsvpRequestLoanerHeadsetPreference;
-  /**
-   * List other devices you are interested in ranked by preference.
-   * @maxLength 1000
-   * @nullable
-   */
-  device_preference_ranked?: string | null;
 }

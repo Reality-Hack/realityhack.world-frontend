@@ -9,9 +9,6 @@ import type { DietaryRestrictionsEnum } from './dietaryRestrictionsEnum';
 import type { DietaryAllergiesEnum } from './dietaryAllergiesEnum';
 import type { AttendeeRSVPUsVisaSupportNationalIdentificationDocumentType } from './attendeeRSVPUsVisaSupportNationalIdentificationDocumentType';
 import type { AttendeeRSVPUsVisaSupportCitizenship } from './attendeeRSVPUsVisaSupportCitizenship';
-import type { AttendeeRSVPSpecialInterestTrackOne } from './attendeeRSVPSpecialInterestTrackOne';
-import type { AttendeeRSVPSpecialInterestTrackTwo } from './attendeeRSVPSpecialInterestTrackTwo';
-import type { AttendeeRSVPLoanerHeadsetPreference } from './attendeeRSVPLoanerHeadsetPreference';
 import type { ParticipationClassEnum } from './participationClassEnum';
 
 /**
@@ -109,24 +106,7 @@ export interface AttendeeRSVP {
   emergency_contact_email: string;
   /** @maxLength 100 */
   emergency_contact_relationship: string;
-  /** @nullable */
-  special_interest_track_one?: AttendeeRSVPSpecialInterestTrackOne;
-  /** @nullable */
-  special_interest_track_two?: AttendeeRSVPSpecialInterestTrackTwo;
-  /**
-   * List other devices you are interested in ranked by preference.
-   * @maxLength 1000
-   * @nullable
-   */
-  device_preference_ranked?: string | null;
-  /**
-   * @maxLength 2000
-   * @nullable
-   */
-  breakthrough_hacks_interest?: string | null;
   agree_to_rules_code_of_conduct?: boolean;
-  /** @nullable */
-  loaner_headset_preference?: AttendeeRSVPLoanerHeadsetPreference;
   /**
    * I.e., a Discord username
    * @maxLength 40
