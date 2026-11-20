@@ -56,6 +56,14 @@ export default function useNavigationAccess(): NavItems {
         icon: '/icons/dashboard/admin.svg'
       })
     }
+    // admins only: not volunteers or organizers, who can see the Admin tab
+    if (isAdmin) {
+      navItems.push({
+        href: '/judging-sync',
+        title: 'Judging Sync',
+        icon: '/icons/dashboard/tools.svg'
+      })
+    }
     if (canAccessSponsor && isSponsorDashboardEnabled) {
       navItems.push({
         href: '/sponsor',
