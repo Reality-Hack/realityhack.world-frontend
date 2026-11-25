@@ -86,7 +86,8 @@ ENV VITE_IS_SPONSOR_ADMIN_ENABLED=${VITE_IS_SPONSOR_ADMIN_ENABLED}
 RUN pnpm run build
 
 # ----- Final stage: nginx static server with SPA fallback -----
-FROM nginx:1.27-alpine AS final
+# Pinned to >=1.30.7 for nginx2root CVEs (CVE-2026-123007 et al.)
+FROM nginx:1.30.7-alpine AS final
 
 # Copy built assets
 COPY --from=build /app/dist /usr/share/nginx/html
